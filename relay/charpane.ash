@@ -1,7 +1,7 @@
 script "Character Info Toolbox";
 #notify Chez;
 import <zlib.ash>
-string chitVersion = "0.8.4.2";
+string chitVersion = "0.8.4.3";
 /************************************************************************************
 CHaracter Info Toolbox
 A character pane relay override script
