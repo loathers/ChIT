@@ -265,7 +265,7 @@ table.chit_brick tr.section td {
 	font-weight:bold;
 	text-align: right; 
 	padding: 2px; 
-	width:60px;
+	max-width:60px;
 }
 #chit_organs tr td.info {
 	color:#606060;
