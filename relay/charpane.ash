@@ -1681,7 +1681,7 @@ void addCurrentMood(buffer result, boolean picker) {
 		result.addPick();
 		result.append('title="Save as Mood" href="/KoLmafia/sideCommand?cmd=save+as+mood&pwd=' + my_hash() + '">');
 		result.append('<img src="' + imagePath + 'moodsave.png">');
-		result.append(' Add current effects');
+		if(picker) result.append(' Save as Mood');
 		result.append('</a>');
 	} else if(contains_text(source, "mood+execute")) {
 		string moodname = "???";
@@ -1697,7 +1697,7 @@ void addCurrentMood(buffer result, boolean picker) {
 		result.addPick();
 		result.append('title="Burn extra MP" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=' + my_hash() + '">');
 		result.append('<img src="' + imagePath + 'moodburn.png">');
-		result.append(' Burn MP');
+		if(picker) result.append(' Burn MP');
 		result.append('</a>');
 		//[<a title="I'm feeling moody" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=ea073fd3cf87360cd2316377bd85c92f" style="color:black">burn extra mp</a>]
 	} else {
@@ -2351,16 +2351,25 @@ void bakeStats() {
 		return "restore+"+p;
 	}
 	
+	boolean addRestoreLinks(string val) {
+		if(get_property("relayAddsRestoreLinks") == "false")
+			return false;
+		int cur = call int ("my_"+val) ();  // Call my_hp() or my_mp()
+		float top = get_property(val+"AutoRecoveryTarget").to_float() * call int ("my_max"+val) ();  // call my_maxhp() or my_maxmp()
+		return cur < top;
+	}
+	
 	void addHP() {
 		result.append('<tr>');
 		result.append('<td class="label">HP</td>');
-		if (contains_text(health, "restore+HP")) {
+		#if(contains_text(health, "restore+HP")) {
+		if(addRestoreLinks("hp")) {
 			result.append('<td class="info"><a title="Restore HP" href="/KoLmafia/sideCommand?cmd=restore+hp&pwd=' + my_hash() + '">' + my_hp() + '&nbsp;/&nbsp;' + my_maxhp() + '</a></td>');
 		} else {
 			result.append('<td class="info">' + my_hp() + '&nbsp;/&nbsp;' + my_maxhp() + '</td>');
 		}
 		if(showBars) {
-			if (contains_text(health, "restore+HP")) {
+			if(addRestoreLinks("hp")) {
 				result.append('<td class="progress"><a href="/KoLmafia/sideCommand?cmd=restore+hp&pwd=' + my_hash() + '">' 
 					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
 			} else {
@@ -2395,14 +2404,14 @@ void bakeStats() {
 			return;
 		}
 		result.append('<td class="label">MP</td>');
-		if (contains_text(health, "restore+mp")) {
+		if(addRestoreLinks("mp")) {
 			result.append('<td class="info"><a title="Restore MP" href="/KoLmafia/sideCommand?cmd=restore+mp&pwd=' + my_hash() + '">' + my_mp() + '&nbsp;/&nbsp;' + my_maxmp() + '</a></td>');
 		} else {
 			result.append('<td class="info">' + my_mp() + '&nbsp;/&nbsp;' + my_maxmp() + '</td>');
 		}
 
-		if (showBars) {
-			if (contains_text(health, "restore+MP")) {
+		if(showBars) {
+			if(addRestoreLinks("mp")) {
 				result.append('<td class="progress"><a href="/KoLmafia/sideCommand?cmd=restore+mp&pwd=' + my_hash() + '">'
 					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
 			} else {
