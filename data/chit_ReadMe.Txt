@@ -147,7 +147,8 @@ chit.effects.usermap: Allows you to use personalized versions of chit_effects.tx
           true:  uses chit_effects_<yourname>.txt
           false: uses chit_effects.txt  (default)
 -------------------------------------------------------------------------------------
-chit.toolbar.moods: Shows or hides the mafia links for saving/executing moods
+chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
+          both: shows two icons, one for changing and the other for executing
           Default: true
 -------------------------------------------------------------------------------------
 chit.kol.coolimages: Shows or hides KoL's images for Extreme Meter and Zombie Horde

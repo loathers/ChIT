@@ -1,7 +1,7 @@
 script "Character Info Toolbox";
 #notify Chez;
 import <zlib.ash>
-string chitVersion = "0.8.4.3";
+string chitVersion = "0.8.4.4";
 /************************************************************************************
 CHaracter Info Toolbox
 A character pane relay override script
@@ -1670,26 +1670,42 @@ void bakeFamiliar() {
 	
 }
 
-void addCurrentMood(buffer result) {
+void addCurrentMood(buffer result, boolean picker) {
+	void addPick(buffer prefix) {
+		if(picker)
+			prefix.append('<tr class="pickitem "><td class="info"><a class="visit" ');
+		prefix.append('<a ');
+	}
 	string source = chitSource["mood"];
 	if(contains_text(source, "save+as+mood")) {
-		result.append('<a title="Save as Mood" href="/KoLmafia/sideCommand?cmd=save+as+mood&pwd=' + my_hash() + '">');
-		result.append('<img src="' + imagePath + 'moodsave.png"></a>');
-	} else if (contains_text(source, "mood+execute")) {
+		result.addPick();
+		result.append('title="Save as Mood" href="/KoLmafia/sideCommand?cmd=save+as+mood&pwd=' + my_hash() + '">');
+		result.append('<img src="' + imagePath + 'moodsave.png">');
+		result.append(' Add current effects');
+		result.append('</a>');
+	} else if(contains_text(source, "mood+execute")) {
 		string moodname = "???";
 		matcher pattern = create_matcher(">mood (.*?)</a>", source);
-		if (find(pattern)) {
+		if(find(pattern))
 			moodname = group(pattern, 1);
-		}
-		result.append('<a title="Execute Mood: ' + moodname + '" href="/KoLmafia/sideCommand?cmd=mood+execute&pwd=' + my_hash() + '">');
-		result.append('<img src="' + imagePath + 'moodplay.png"></a>');
-	} else if (contains_text(source, "burn+extra+mp")) {
-		result.append('<a title="Burn extra MP" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=' + my_hash() + '">');
-		result.append('<img src="' + imagePath + 'moodburn.png"></a>');
+		result.addPick();
+		result.append('title="Execute Mood: ' + moodname + '" href="/KoLmafia/sideCommand?cmd=mood+execute&pwd=' + my_hash() + '">');
+		result.append('<img src="' + imagePath + 'moodplay.png">');
+		if(picker) result.append(" "+moodname);
+		result.append('</a>');
+	} else if(contains_text(source, "burn+extra+mp")) {
+		result.addPick();
+		result.append('title="Burn extra MP" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=' + my_hash() + '">');
+		result.append('<img src="' + imagePath + 'moodburn.png">');
+		result.append(' Burn MP');
+		result.append('</a>');
 		//[<a title="I'm feeling moody" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=ea073fd3cf87360cd2316377bd85c92f" style="color:black">burn extra mp</a>]
 	} else {
+		if(picker) result.append('<tr><td>');
 		result.append('<img src="' + imagePath + 'moodnone.png">');
 	}
+	if(picker)
+		result.append('</td></tr>');
 }
 
 void pickMood() {
@@ -1699,31 +1715,10 @@ void pickMood() {
 	foreach i,m in get_moods()
 		picker.append('<tr class="pickitem "><td class="info"><a class="visit" href="/KoLmafia/sideCommand?cmd=mood+' + m + '&pwd=' + my_hash() + '">' + m + '</a></td></tr>');
 		
-	picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Current Mood</td></tr>');
-	// Add link to execute mood
-	string source = chitSource["mood"];
-	if(source != "") {
-		if(contains_text(source, "save+as+mood")) {
-			picker.append('<tr class="pickitem "><td class="info"><a class="visit" href="/KoLmafia/sideCommand?cmd=');
-			picker.append('<a href="/KoLmafia/sideCommand?cmd=save+as+mood&pwd=' + my_hash() + '" title="Save as Mood">');
-			picker.append('<img src="' + imagePath + 'moodsave.png"> Add current effects</a>');
-		} else if(contains_text(source, "mood+execute")) {
-			string moodname = "???";
-			matcher pattern = create_matcher(">mood (.*?)</a>", source);
-			if(find(pattern))
-				moodname = group(pattern, 1);
-			picker.append('<tr class="pickitem "><td class="info"><a class="visit" href="/KoLmafia/sideCommand?cmd=');
-			picker.append('mood+execute&pwd=' + my_hash() + '" title="Execute Current Mood">');
-			picker.append('<img src="' + imagePath + 'moodplay.png"> ' + moodname + '</a>');
-		} else if(contains_text(source, "burn+extra+mp")) {
-			picker.append('<tr class="pickitem "><td class="info"><a class="visit" href="/KoLmafia/sideCommand?cmd=');
-			picker.append('burn+extra+mp&pwd=' + my_hash() + '" title="Burn extra MP">');
-			picker.append('<img src="' + imagePath + 'moodburn.png">Burn MP</a>');
-			//[<a title="I'm feeling moody" href="/KoLmafia/sideCommand?cmd=burn+extra+mp&pwd=ea073fd3cf87360cd2316377bd85c92f" style="color:black">burn extra mp</a>]
-		} else {
-			picker.append('<tr><td><img title="No active Mood" src="' + imagePath + 'moodnone.png"> Do nothing');
-		}
-		picker.append('</td></tr>');
+	// Add link to execute mood unless it's on the toolbar
+	if(vars["chit.toolbar.moods"] != "bonus") {
+		picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Current Mood</td></tr>');
+		picker.addCurrentMood(true);
 	}
 	
 	picker.append('</table>');
@@ -1743,16 +1738,16 @@ void bakeToolbar() {
 		if(vars["chit.toolbar.moods"] == "false")
 			return;
 
-		result.append('<ul style="float:right"><li>');
+		result.append('<ul style="float:right">');
 
 		// Add button to switch mood
-		result.append('<a href="#" class="chit_launcher" rel="chit_pickermood" title="Select Mood">');
+		result.append('<li><a href="#" class="chit_launcher" rel="chit_pickermood" title="Select Mood">');
 		result.append('<img src="' + imagePath + 'select_mood.png"></a></li>');
 		
 		// If chit.toolbar.moods == bonus, then add extra mood execution button
 		if(vars["chit.toolbar.moods"] == "bonus") {
 			result.append('<li>');
-			result.addCurrentMood();
+			result.addCurrentMood(false);
 			result.append('</li>');
 		}
 		
@@ -2689,18 +2684,16 @@ void bakeCharacter() {
 
 	result.append('<table id="chit_character" class="chit_brick nospace">');
 
+	// Character name and outfit name
 	result.append('<tr>');
-	if (myAvatar == "") {
-		result.append('<th colspan="2"><a target="mainpane" href="charsheet.php">' + myName + '</a>' + myOutfit + '</th>');
-	} else {
-		result.append('<th colspan="3"><a target="mainpane" href="charsheet.php">' + myName + '</a>' + myOutfit + '</th>');
+	result.append('<th colspan="'+ (myAvatar == ""? "2": "3") +'">');
+	// If there's no avatar, place Outfit switcher here
+	if(vars["chit.character.avatar"] == "false") {
+		result.append('<div style="float:left"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit"><img src="');
+		result.append(imagePath);
+		result.append('select_outfit.png"></a></div>');
 	}
-		// If there's no avatar, place Outfit switcher here
-/*		if(vars["chit.character.avatar"] == "false") {
-			result.append('<a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit">');
-			result.append('<img src="' + imagePath + 'select_outfit.png"></a></li>');
-		} */
-	result.append('</th>');
+	result.append('<a target="mainpane" href="charsheet.php">' + myName + '</a>' + myOutfit + '</th>');
  	result.append('</tr>');
 	
 	result.append('<tr>');
@@ -4099,7 +4092,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.stats.showbars",true);
 	setvar("chit.stats.layout","muscle,myst,moxie|hp,mp,axel|mcd|trail");
 	setvar("chit.toolbar.layout","trail,quests,modifiers,elements,organs");
-	setvar("chit.toolbar.moods",true);
+	setvar("chit.toolbar.moods","true");
 	setvar("chit.kol.coolimages",true);
 	
 	//Check for updates (once a day)
