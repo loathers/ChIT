@@ -120,8 +120,8 @@ void checkVersion(string soft, string thisver, int thread) {
 				vprint("You have a current version of "+soft+".","green",1); 
 			} else {
 				string msg = "<font color=red><b>New Version of "+soft+" Available: "+zv[soft].ver+"</b></font>";
-				msg = msg + "<br><a href='http://kolmafia.us/showthread.php?t="+thread+"' target='_blank'><u>Upgrade from "+thisver+" to "+zv[soft].ver+" here!</u></a><br>";
-				#msg = msg + "<small>Think you are getting this message in error?  Force a re-check by typing \"set _version_"+prop+" =\" in the CLI.</small><br>";
+				#msg = msg + "<br><a href='http://kolmafia.us/showthread.php?t="+thread+"' target='_blank'><u>Upgrade from "+thisver+" to "+zv[soft].ver+" here!</u></a><br>";
+				msg = msg + '<br>Upgrade from '+thisver+' to '+zv[soft].ver+' with <font color=blue><u>svn update</u></font> command!<br>';
 				vprint_html(msg,1);
 			}
 		} else {
@@ -139,11 +139,11 @@ void checkVersion(string soft, string thisver, int thread) {
 		//result.append('<p>A new version of Character Info Toolbox is available</p>');
 		result.append('<p>(Version ' + thisver + ')</p>');
 		result.append('<p>Version ' + zv[soft].ver + ' is now available');
-		result.append('<br>Click <a href="http://kolmafia.us/showthread.php?t='+thread+'" target="_blank">here</a> to upgrade</p>');
+		result.append('<br>Click <a href="/KoLmafia/sideCommand?cmd=svn+update&pwd=' + my_hash() + '" title="SVN Update">here</a> to upgrade from SVN</p>');
 		result.append('</td></tr></tbody></table>');
 		chitBricks["update"] = result.to_string();		
 	}
-	
+
 	return;
 }
 
