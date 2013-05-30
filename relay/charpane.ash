@@ -2554,7 +2554,7 @@ void pickOutfit() {
 			break;
 		case "War Hippy Fatigues":
 		case "Frat Warrior Fatigues":
-			if(my_location().zone == "IsleWar")
+			if(my_location().parent == "IsleWar")
 				return boldit(o);
 			break;
 		}
@@ -2988,10 +2988,11 @@ void bakeTracker() {
 
 	// Start building our table	
 	buffer result;	
-	result.append('<table id="chit_tracker" class="chit_brick nospace">');
-	result.append('<tr>');
-	result.append('<th><a target="mainpane" href="questlog.php">Quest Tracker</a></th>');
- 	result.append('</tr>');
+	result.append('<table id="chit_tracker" class="chit_brick nospace"><tr><th>');
+	result.append('<div style="float:left"><img src="');
+	result.append(imagePath);
+	result.append('tracker.png"></div>');
+	result.append('<a target="mainpane" href="questlog.php">Quest Tracker</a></th></tr>');
 
 	//Add Tracker for each available quest
 	//G for Guild. S for Sea. F for Familiar. I for Item. M for Miscellaneous 
@@ -3665,7 +3666,7 @@ void bakeTracker() {
 	
 	if(length(result) != 136) { // 136 is the size of an empty table
 		chitBricks["tracker"] = result;
-		chitTools["tracker"] = "Tracker|quests.png";
+		chitTools["tracker"] = "Tracker|tracker.png";
 	}
 
 }

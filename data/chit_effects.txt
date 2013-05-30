@@ -1,4 +1,3 @@
-# Last modified for ChIT v0.8
 # Accordion Thief Buffs
 The Moxious Madrigal	type:"at", alias:"Moxious Madrigal"
 The Magical Mojomuscular Melody	type:"at", alias:"Mojomuscular Melody"

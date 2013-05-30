@@ -1,4 +1,3 @@
-// Last modified for ChIT v0.8
 
 var roofOffset = 4;
 var floorOffset = 4;
