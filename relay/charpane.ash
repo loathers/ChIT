@@ -59,6 +59,8 @@ Many thanks to:
 			Restore rollover warning to top of effects pane
 			Lots more improvements and bugfixes
 	0.8.1	Added tracker brick by ckb
+	0.8.4	Updating through SVN!
+			All future changelogs will be on the SVN and will be much more complete.
 	
 ************************************************************************************/
 	
@@ -120,7 +122,6 @@ void checkVersion(string soft, string thisver, int thread) {
 				vprint("You have a current version of "+soft+".","green",1); 
 			} else {
 				string msg = "<font color=red><b>New Version of "+soft+" Available: "+zv[soft].ver+"</b></font>";
-				#msg = msg + "<br><a href='http://kolmafia.us/showthread.php?t="+thread+"' target='_blank'><u>Upgrade from "+thisver+" to "+zv[soft].ver+" here!</u></a><br>";
 				msg = msg + '<br>Upgrade from '+thisver+' to '+zv[soft].ver+' with <font color=blue><u>svn update</u></font> command!<br>';
 				vprint_html(msg,1);
 			}
@@ -135,8 +136,6 @@ void checkVersion(string soft, string thisver, int thread) {
 		result.append('<table id="chit_update" class="chit_brick nospace">');
 		result.append('<thead><tr><th colspan="2">Character Info Toolbox</th></tr>');
 		result.append('</thead><tbody><tr><td class="info">');
-		//result.append('<p>Character Info Toolbox');
-		//result.append('<p>A new version of Character Info Toolbox is available</p>');
 		result.append('<p>(Version ' + thisver + ')</p>');
 		result.append('<p>Version ' + zv[soft].ver + ' is now available');
 		result.append('<br>Click <a href="/KoLmafia/sideCommand?cmd=svn+update&pwd=' + my_hash() + '" title="SVN Update">here</a> to upgrade from SVN</p>');
@@ -2541,6 +2540,27 @@ string fancycurrency(string page) {
 }
 
 void pickOutfit() {
+	string boldit(string o) { return '<div style ="font-weight:600;color:darkred;">'+o+'</div>'; }
+	string topical(string o) {
+		switch(o) {
+		case "Swashbuckling Getup":
+			if($locations[Pirate Cove, Barrrney's Barrr, F'c'le] contains my_location())
+				return boldit(o);
+			break;
+		case "Mining Gear":
+		case "eXtreme Cold-Weather Gear":
+			if(my_location().zone == "McLarge")
+				return boldit(o);
+			break;
+		case "War Hippy Fatigues":
+		case "Frat Warrior Fatigues":
+			if(my_location().zone == "IsleWar")
+				return boldit(o);
+			break;
+		}
+		return o;
+	}
+
 	buffer picker;
 	picker.pickerStart("outfit", "Select Outfit");
 	
@@ -2551,16 +2571,12 @@ void pickOutfit() {
 			if(is_wearing_outfit(o) && o != "Birthday Suit")
 				picker.append('<tr class="pickitem current"><td class="info">' + o + '</td>');
 			else
-				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '">' + o + '</a></td>');
+				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '">' + topical(o) + '</a></td>');
 		}
 		
 	picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
 	foreach i,o in get_custom_outfits() {
 		if(i != 0)
-#			picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '"><div style="white-space:nowrap;max-width:175px;overflow-x:hidden;" title="' 
-#			  + o + '">' + o + '</div></a></td>');
-#			picker.append('<tr class="pickitem "><td class="info" style="white-space:nowrap;max-width:180px;overflow:hidden;" title="' + o  // Custom Outfits can have really long names. Crop and title with full name.
-#			  + '"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '">' + o + '</a></td>');
 			picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '">' + o + '</a></td>');
 	}
 	

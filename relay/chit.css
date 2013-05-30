@@ -328,7 +328,7 @@ div.progressbar {height:100%; background-color:blue}
 
 /* MCD Panel + popup */
 #chit_mcd tr th.busy {
-	background-image: url(/images/relayimages/chit/busy.gif);
+	background-image: url(/images/chit/busy.gif);
 	background-position: 5px center;
 	background-repeat: no-repeat;
 }
@@ -544,7 +544,7 @@ div.chit_skeleton table.chit_brick th {
 	cursor:pointer;
 }
 div.chit_skeleton table.chit_brick th:hover {
-	background-image: url(/images/relayimages/chit/collapse.png);
+	background-image: url(/images/chit/collapse.png);
 }
 
 /* Current Quests Panel (#nudges ID matched KOL usage) */
