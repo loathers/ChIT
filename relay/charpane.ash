@@ -3095,14 +3095,6 @@ void bakeTracker() {
 			result.append('999</td></tr><tr><td><span style="color:black">&nbsp;&nbsp;&nbsp;Haert of the Cyrpt</span>');
 		} else {
 			result.append(get_property("cyrptTotalEvilness"));
-/*			result.append('</td></tr><tr><td>');
-			result.evilat("Nook");
-			result.append('<br>');
-			result.evilat("Cranny");
-			result.append('</td><td>');
-			result.evilat("Niche");
-			result.append('<br>');
-			result.evilat("Alcove");*/
 			result.append('</td></tr><tr><td><table><tr><td title="+items">');
 			result.evilat("Nook");
 			result.append('</td><td title="sniff dirty old lihc">');
@@ -3120,6 +3112,7 @@ void bakeTracker() {
 	//if (get_property("questM12Pirate")!="unstarted" && get_property("questM12Pirate")!="finished") { 
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
+	if(item_amount($item[The Big Book of Pirate Insults]) > 0 && !($strings[step5, finished] contains get_property("questM12Pirate"))) {
 	if(available_amount($item[pirate fledges])==0 && is_wearing_outfit("Swashbuckling Getup")) {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
