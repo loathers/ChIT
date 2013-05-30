@@ -776,7 +776,9 @@ void bakeEffects() {
 
 	if (total > 0) {
 		result.append('<table id="chit_effects" class="chit_brick nospace">');
-		result.append('<thead><tr><th colspan="4">Effects</th></tr></thead>');
+		result.append('<thead><tr><th colspan="4"><img src="');
+		result.append(imagePath);
+		result.append('effects.png">Effects</th></tr></thead>');
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
@@ -798,11 +800,11 @@ void bakeElements() {
 	buffer result;
 	
 	result.append('<table id="chit_elements" class="chit_brick nospace">');
-	result.append('<tr><th>Elements</th></tr>');
+	result.append('<thead><tr><th><img src="');
+	result.append(imagePath);
+	result.append('elements.png">Elements</th></tr></thead>');
 	result.append("<tr><td>");
-	result.append('<img src="' + imagePath + 'Elements2.gif">');
-	result.append("</tr>");
-	result.append("</table>");
+	result.append('<img src="' + imagePath + 'Elements2.gif"></tr></table>');
 	
 	chitBricks["elements"] = result;
 }

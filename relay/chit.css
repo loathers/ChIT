@@ -581,7 +581,7 @@ div.chit_skeleton table.chit_brick th:hover {
 	overflow-x:hidden;
 }
 
-#chit_elements img {
+#chit_elements td img {
 	vertical-align:middle;
 	text-align:center;
 	width:100%;
