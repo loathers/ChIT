@@ -120,6 +120,9 @@ table.chit_brick th {
 	background-color: #F0F0F0; 
 	padding:2px;
 }
+table.chit_brick th img {
+	float:left;
+}
 div.chit_skeleton table.chit_brick th {
 	background-color: #F0F0B0; 
 }

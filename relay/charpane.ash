@@ -819,7 +819,9 @@ void bakeTrail() {
 	if (find(target)) {
 		url = group(target, 1);
 	}
-	result.append('<tr><th><a class="visit" target="mainpane" href="' + url + '">Last Adventure</a></th></tr>');
+	result.append('<tr><th><a class="visit" target="mainpane" href="' + url + '"><img src="');
+	result.append(imagePath);
+	result.append('trail.png">Last Adventure</a></th></tr>');
 	
 	
 	//Last Adventure
@@ -1839,10 +1841,10 @@ void bakeModifiers() {
 	
 	//Heading
 	result.append('<table id="chit_modifiers" class="chit_brick nospace">');
-	result.append('<thead>');
-	result.append('<tr>');
-	result.append('<th colspan="2">Modifiers</th>');
-	result.append('</tr>');
+	result.append('<thead><tr><th colspan="2"><img src="');
+	result.append(imagePath);
+	result.append('modifiers.png">');
+	result.append('Modifiers</th></tr>');
 	result.append('</thead>');
 
 	result.append('<tbody>');
@@ -2039,7 +2041,9 @@ void bakeSubStats() {
 	result.append('<table id="chit_substats" class="chit_brick nospace">');
 	result.append('<thead>');
 	result.append('<tr>');
-	result.append('<th colspan="'+(to_boolean(vars["chit.stats.showbars"])? 3: 2)+'">Substats</th>');
+	result.append('<th colspan="'+(to_boolean(vars["chit.stats.showbars"])? 3: 2)+'"><img src="');
+	result.append(imagePath);
+	result.append('stats.png">Substats</th>');
 	result.append('</tr>');
 	result.append('</thead>');
 	result.append('<tbody>');
@@ -2166,7 +2170,9 @@ void addMCD(buffer result, boolean bake) {
 		result.append('<table id="chit_mcd" class="chit_brick nospace">');
 		result.append('<thead>');
 		result.append('<tr>');
-		result.append('<th colspan="2" rel="' + mcdbusy + '"><a href="' + mcdpage + '" target="mainpane" title="' + mcdtitle + '">' + mcdname + '</a></th>');
+		result.append('<th colspan="2" rel="' + mcdbusy + '"><img src="');
+		result.append(imagePath);
+		result.append('mcdon.png"><a href="' + mcdpage + '" target="mainpane" title="' + mcdtitle + '">' + mcdname + '</a></th>');
 		result.append('</tr>');
 		result.append('</thead><tbody>');
 		result.mcdlist(false);
@@ -2231,10 +2237,9 @@ void bakeOrgans() {
 	
 	//Heading
 	result.append('<table id="chit_organs" class="chit_brick nospace">');
-	result.append('<thead>');
-	result.append('<tr>');
-	result.append('<th colspan="3">Consumption</th>');
-	result.append('</tr>');
+	result.append('<thead><tr><th colspan="3"><img src="');
+	result.append(imagePath);
+	result.append('organs.png">Consumption</th></tr>');
 	result.append('</thead>');
 
 	result.addStomach(true);
@@ -2839,8 +2844,10 @@ void bakeQuests() {
 	//result.append('<div id="nudgeblock">');
 	result.append('<table id="nudges" class="chit_brick nospace">');
 
-	result.append('<tr>');
-	result.append('<th><a target="mainpane" href="questlog.php">Current Quests</a></th>');
+	result.append('<tr><th><img src="');
+	result.append(imagePath);
+	result.append('quests.png">');
+	result.append('<a target="mainpane" href="questlog.php">Current Quests</a></th>');
  	result.append('</tr>');
 	
 	if(bugbears != "")
@@ -2989,9 +2996,9 @@ void bakeTracker() {
 	// Start building our table	
 	buffer result;	
 	result.append('<table id="chit_tracker" class="chit_brick nospace"><tr><th>');
-	result.append('<div style="float:left"><img src="');
+	result.append('<img src="');
 	result.append(imagePath);
-	result.append('tracker.png"></div>');
+	result.append('tracker.png">');
 	result.append('<a target="mainpane" href="questlog.php">Quest Tracker</a></th></tr>');
 
 	//Add Tracker for each available quest
