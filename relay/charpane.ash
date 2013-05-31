@@ -855,6 +855,14 @@ void pickerStart(buffer picker, string rel, string message) {
 	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
 }
 
+void pickerStart(buffer picker, string rel, string message, string image) {
+	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
+	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
+	picker.append(imagePath + image);
+	picker.append('.png">');
+	picker.append(message + '</th></tr>');
+}
+
 void addLoader(buffer picker, string message) {
 	picker.append('<tr class="pickloader" style="display:none">');
 	picker.append('<td class="info">' + message + '</td>');
@@ -3672,8 +3680,8 @@ void bakeTracker() {
 
 
 	result.append("</table>");
-	
-	if(length(result) != 136) { // 136 is the size of an empty table
+
+	if(length(result) != 172) { // 172 is the size of an empty table
 		chitBricks["tracker"] = result;
 		chitTools["tracker"] = "Tracker|tracker.png";
 	}
