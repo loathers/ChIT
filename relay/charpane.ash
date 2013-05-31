@@ -1146,7 +1146,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 	}
 	
-	picker.pickerStart("fam", "Equip Thine Familiar Well");
+	picker.pickerStart("fam", "Equip Thy Familiar Well");
 	
 	//Feeding time
 	string [familiar] feedme;
