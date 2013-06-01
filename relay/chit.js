@@ -16,7 +16,9 @@ $(document).ready(function () {
 			if (picker.is(':hidden')) {					
 				picker.css({
 					'position': 'absolute',
-					'top': top
+					'top': top,
+					'max-height': '600px',
+					'overflow-y': 'auto'
 				});
 				if ((top + picker.height() + 30) > $(document).height()) {
 					picker.css('top', ($(document).height()-picker.height()-30));
