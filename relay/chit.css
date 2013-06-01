@@ -285,7 +285,7 @@ table.chit_brick tr.section td {
 	color:blue;
 }
 #chit_stats.nobars tr td.info {
-	width:auto;
+	width:135px;
 }
 #chit_stats tr td.progress, #chit_substats tr td.progress, #chit_organs tr td.progress {
 	width:100%;
@@ -522,10 +522,6 @@ table.chit_picker tr.pickitem a:hover {
 }
 
 /* Familiar Panel */
-#chit_pickerfam {
-	max-height:600px;
-	overflow-y:auto;
-}
 #chit_pickerfam tr:hover td {
 	background-color:#F0F0F0;
 }
