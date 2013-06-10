@@ -1,5 +1,5 @@
 script "Character Info Toolbox";
-#notify Chez;
+notify "Bale";
 import <zlib.ash>
 string chitVersion = "0.8.5";
 /************************************************************************************
@@ -2569,7 +2569,7 @@ void pickOutfit() {
 			break;
 		case "War Hippy Fatigues":
 		case "Frat Warrior Fatigues":
-			if(my_location().parent == "IsleWar")
+			if($strings[IsleWar, Island] contains my_location().parent)
 				return boldit(o);
 			break;
 		}
@@ -2593,6 +2593,7 @@ void pickOutfit() {
 	foreach i,o in get_custom_outfits() {
 		if(i != 0)
 			picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '">' + o + '</a></td>');
+			#picker.append('<tr class="pickitem "><td class="info"><a class="change" href="/KoLmafia/sideCommand?cmd=outfit+'+o+'&pwd=' + my_hash() + '"><div style="white-space:nowrap;overflow-x:hidden;">' + o + '</div></a></td>');
 	}
 	
 	#picker.append('<tr class="pickitem "><td class="info" style="background-color:lightgray;font-weight:bold;"><a class="change" href="charsheet.php" target="mainpane">Check Character Profile</a></td></tr>');
@@ -3001,6 +3002,22 @@ void bakeTracker() {
 		return need;
 	}
 	
+	buffer highlands() {
+		buffer high;
+		high.append("<br>A-boo Peak: ");
+		high.append(item_report(get_property("booPeakProgress") == "0", get_property("booPeakProgress")+'% haunted'));
+		//L9: twin peak
+		high.append("<br>Twin Peak: "+twinPeak());
+		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
+		//L9: oil peak
+		high.append("<br>Oil Peak: ");
+		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' µB/Hg'));
+		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
+			high.set_length(0);
+			high.append('<br>Return to <a target="mainpane" href="place.php?whichplace=highlands&action=highlands_dude">High Landlord</a>');
+		}
+		return high;
+	}
 	string source = chitSource["quests"]; 
 
 	// Start building our table	
@@ -3167,7 +3184,6 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
-
 	//L8: trapper: 3 ore, 3 goat cheese, questL08Trapper
 	if(started("questL08Trapper")) {
 		result.append('<tr><td><a target="mainpane" href="place.php?whichplace=mclargehuge">Help the Trapper</a>');
@@ -3209,22 +3225,10 @@ void bakeTracker() {
 			result.append("<br>Bridge Progress: "+(get_property("lastChasmReset") == my_ascensions()? get_property("chasmBridgeProgress"): "0")+"/30");
 		} else {
 			result.append('Explore the <a target="mainpane" href="place.php?whichplace=highlands">Highlands</a>');
-			//L9: A-boo peak
-			result.append("<br>A-boo Peak: ");
-			result.append(item_report(get_property("booPeakProgress") == "0", get_property("booPeakProgress")+'% haunted'));
-			//L9: twin peak
-			result.append("<br>Twin Peak: "+twinPeak());
-			//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
-			//L9: oil peak
-			result.append("<br>Oil Peak: ");
-			result.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' µB/Hg'));
+			result.append(highlands());
 		}
 		result.append("</td></tr>");
 	}
-	
-
-	
-	
 	
 	//L10: SOCK, Giants Castle, questL10Garbage
 	if(started("questL10Garbage")) { 
@@ -3238,15 +3242,6 @@ void bakeTracker() {
 		}
 		result.append("</td></tr>");
 	}
-
-
-
-
-
-
-
-
-
 
 	//L11: MacGuffin, questL11MacGuffin
 	if (started("questL11MacGuffin")) {
@@ -3262,11 +3257,6 @@ void bakeTracker() {
 		}
 		result.append("</td></tr>");		
 	}
-	
-	
-	
-	
-	
 	
 	//L11: questL11Manor
 	// Open second floor and ballroom early
@@ -3302,11 +3292,6 @@ void bakeTracker() {
 	//wineCellarProgress=3
 	//cellarLayout=1092
 	//lastCellarReset
-	
-
-
-
-
 		
 	//L11: questL11Palindome
 	if (started("questL11Palindome")) {
@@ -3488,8 +3473,6 @@ void bakeTracker() {
 	//sidequestLighthouseCompleted=none
 	//sidequestNunsCompleted=none
 	//sidequestOrchardCompleted=none
-
-	
 	
 	//L13: NS, questL13Final
 	// check for lair items, tower items, wand
@@ -4139,7 +4122,14 @@ buffer modifyPage(buffer source) {
 	setvar("chit.kol.coolimages",true);
 	
 	//Check for updates (once a day)
-	checkVersion("Character Info Toolbox", chitVersion, 7594);
+	if(svn_exists("mafiachit")) {
+		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true" && !svn_at_head("bale-ocd")) {
+			print("Character Info Toolbox has become outdated. Automatically updating from SVN...", "red");
+			cli_execute("svn update mafiachit");
+			print("On the script's next invocation it will be up to date.", "green");
+		}
+		set_property("_ocdUpdated", "true");
+	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
 	
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 ) {
 		inValhalla = true;
