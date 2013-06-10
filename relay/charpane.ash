@@ -4123,10 +4123,12 @@ buffer modifyPage(buffer source) {
 	
 	//Check for updates (once a day)
 	if(svn_exists("mafiachit")) {
-		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true" && !svn_at_head("bale-ocd")) {
-			print("Character Info Toolbox has become outdated. Automatically updating from SVN...", "red");
-			cli_execute("svn update mafiachit");
-			print("On ChIT's next invocation it will be up to date.", "green");
+		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true") {
+			if(!svn_at_head("bale-ocd")) {
+				print("Character Info Toolbox has become outdated. Automatically updating from SVN...", "red");
+				cli_execute("svn update mafiachit");
+				print("On ChIT's next invocation it will be up to date.", "green");
+			}
 			set_property("_chitUpdated", "true");
 		}
 	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
