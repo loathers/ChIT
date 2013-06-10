@@ -4126,9 +4126,9 @@ buffer modifyPage(buffer source) {
 		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true" && !svn_at_head("bale-ocd")) {
 			print("Character Info Toolbox has become outdated. Automatically updating from SVN...", "red");
 			cli_execute("svn update mafiachit");
-			print("On the script's next invocation it will be up to date.", "green");
+			print("On ChIT's next invocation it will be up to date.", "green");
+			set_property("_chitUpdated", "true");
 		}
-		set_property("_ocdUpdated", "true");
 	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
 	
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 ) {
