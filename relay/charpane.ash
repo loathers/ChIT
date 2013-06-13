@@ -1681,6 +1681,13 @@ void bakeFamiliar() {
 	
 }
 
+string currentMood() {
+	matcher pattern = create_matcher(">mood (.*?)</a>", chitSource["mood"]);
+	if(find(pattern))
+		return group(pattern, 1);
+	return "???";
+}
+
 void addCurrentMood(buffer result, boolean picker) {
 	void addPick(buffer prefix) {
 		if(picker)
@@ -1695,10 +1702,7 @@ void addCurrentMood(buffer result, boolean picker) {
 		if(picker) result.append(' Save as Mood');
 		result.append('</a>');
 	} else if(contains_text(source, "mood+execute")) {
-		string moodname = "???";
-		matcher pattern = create_matcher(">mood (.*?)</a>", source);
-		if(find(pattern))
-			moodname = group(pattern, 1);
+		string moodname = currentMood();
 		result.addPick();
 		result.append('title="Execute Mood: ' + moodname + '" href="/KoLmafia/sideCommand?cmd=mood+execute&pwd=' + my_hash() + '">');
 		result.append('<img src="' + imagePath + 'moodplay.png">');
@@ -1720,15 +1724,44 @@ void addCurrentMood(buffer result, boolean picker) {
 }
 
 void pickMood() {
+	boolean mood_plus(string full, string mood) {
+		if(mood == "apathetic") return false;
+		foreach i,m in split_string(full,", ")
+			if(m == mood) return false;
+		return true;
+	}
+
 	buffer picker;
 	picker.pickerStart("mood", "Select New Mood");
 	picker.addLoader("Getting Moody");
-	foreach i,m in get_moods()
-		picker.append('<tr class="pickitem "><td class="info"><a class="visit" href="/KoLmafia/sideCommand?cmd=mood+' + m + '&pwd=' + my_hash() + '">' + m + '</a></td></tr>');
+	string moodname = currentMood();
+	foreach i,m in get_moods() {
+		if(m == "") continue;
+		picker.append('<tr class="pickitem "><td class="info"><a title="Make this your current mood" class="visit" href="/KoLmafia/sideCommand?cmd=mood+');
+		picker.append(m);
+		picker.append('&pwd=');
+		picker.append(my_hash());
+		picker.append('">');
+		picker.append(m);
+		picker.append('</a></td><td>');
+		if(mood_plus(moodname,m)) {
+			picker.append('<a title="ADD this to current mood" href="/KoLmafia/sideCommand?cmd=mood+');
+			picker.append(moodname);
+			picker.append(",+");
+			picker.append(m);
+			picker.append('&pwd=');
+			picker.append(my_hash());
+			picker.append('"><img src="');
+			picker.append(imagePath);
+			picker.append('control_add_blue.png"><a>');
+		} else
+			picker.append('&nbsp;');
+		picker.append('</td></tr>');
+	}
 		
 	// Add link to execute mood unless it's on the toolbar
 	if(vars["chit.toolbar.moods"] != "bonus") {
-		picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Current Mood</td></tr>');
+		picker.append('<tr><th colspan="2">Current Mood</th></tr>');
 		picker.addCurrentMood(true);
 	}
 	
@@ -2089,7 +2122,7 @@ void addMCD(buffer result, boolean bake) {
 			mcdmap[4] = "Boss Bat britches";
 			mcdmap[5] = "Rib of the Bonerdagon";
 			mcdmap[6] = "Horoscope of the Hermit";
-			mcdmap[7] = "Codpiece of the Goblin King";
+			mcdmap[7] = "Codpiece of the King";
 			mcdmap[8] = "Boss Bat bling";
 			mcdmap[9] = "Ratsworth's tophat";
 			mcdmap[10]= "Vertebra of the Bonerdagon";
