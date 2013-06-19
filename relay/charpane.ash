@@ -3187,7 +3187,7 @@ void bakeTracker() {
 	//if (get_property("questM12Pirate")!="unstarted" && get_property("questM12Pirate")!="finished") { 
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if(item_amount($item[The Big Book of Pirate Insults]) > 0 && !($strings[step5, finished] contains get_property("questM12Pirate"))) {
+	if(item_amount($item[Pirate Fledges]) == 0 && get_property("questM12Pirate") != "finished") {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
@@ -3280,13 +3280,15 @@ void bakeTracker() {
 	if (started("questL11MacGuffin")) {
 		result.append("<tr><td>");
 		result.append("Quest for the Holy MacGuffin");
-		if (get_property("questL11MacGuffin")=="started") {
-			result.append('<br>Find the <a target="mainpane" href="woods.php">Black Market</a>');
+		if(get_property("questL11MacGuffin")=="started") {
+			if(item_amount($item[black market map]) == 0)
+				result.append('<br>Find the <a target="mainpane" href="woods.php">Black Market</a>');
+			else
+				result.append('<br><a target="mainpane" href="inv_use.php?which=f0&whichitem=2054&pwd='+my_hash()+'">Follow the Black MAP!</a>');
 		}
-		if (get_property("questL11MacGuffin")=="step1" && item_amount($item[your father's MacGuffin diary])==0) {
+		if(get_property("questL11MacGuffin")=="step1" && item_amount($item[your father's MacGuffin diary])==0) {
 			result.append('<br>Get your Father\'s <a target="mainpane" href="shore.php">Diary</a>');
 			result.append("<br>"+item_report($item[forged identification documents]));
-			
 		}
 		result.append("</td></tr>");		
 	}
