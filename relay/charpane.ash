@@ -3187,7 +3187,7 @@ void bakeTracker() {
 	//if (get_property("questM12Pirate")!="unstarted" && get_property("questM12Pirate")!="finished") { 
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if(item_amount($item[Pirate Fledges]) == 0 && get_property("questM12Pirate") != "finished") {
+	if(have_outfit("Swashbuckling Getup") && item_amount($item[Pirate Fledges]) == 0) {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
