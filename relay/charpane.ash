@@ -523,9 +523,9 @@ string helperSemiRare() {
 		rewards[$location[haunted pantry]] = "pie.gif|Tasty tart (3)|0";
 		rewards[$location[limerick dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
 		rewards[$location[orc chasm]] = "scroll2.gif|Fight Bad ASCII Art|68";
-		rewards[$location[Giant's Castle (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
+		rewards[$location[Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
 		rewards[$location[kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
-		rewards[$location[outskirts of the knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
+		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 		rewards[$location[hidden temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		
 	int lastCounter = to_int(get_property("semirareCounter"));
@@ -1744,7 +1744,7 @@ void pickMood() {
 		picker.append('">');
 		picker.append(m);
 		picker.append('</a></td><td>');
-		if(mood_plus(moodname,m)) {
+		if(moodname != "???" && mood_plus(moodname,m)) {
 			picker.append('<a title="ADD this to current mood" href="/KoLmafia/sideCommand?cmd=mood+');
 			picker.append(moodname);
 			picker.append(",+");
@@ -2603,6 +2603,12 @@ void pickOutfit() {
 		case "War Hippy Fatigues":
 		case "Frat Warrior Fatigues":
 			if($strings[IsleWar, Island] contains my_location().parent)
+				return boldit(o);
+			break;
+		case "Mer-kin Gladiatorial Gear":
+		case "Mer-kin Scholar's Vestments":
+		case "Clothing of Loathing":
+			if(my_location().parent == "The Sea")
 				return boldit(o);
 			break;
 		}
@@ -3800,7 +3806,6 @@ boolean parsePage(buffer original) {
 		chitSource["trail"] = chitSource["trail"].replace_string(" Floor)", ")");  // End of Castle
 		chitSource["trail"] = chitSource["trail"].replace_string("McMillicancuddy", "Farm");  // McMillicancuddy's various farm locations
 		chitSource["trail"] = chitSource["trail"].replace_string("Haunted Wine Cellar", "Wine Cellar");
-		#chitSource["trail"] = chitSource["trail"].replace_string("The Battlefield", "Battlefield");
 		chitSource["trail"] = chitSource["trail"].replace_string('">The', '">'); // Remove leading "The " from all locations
 	}
 
