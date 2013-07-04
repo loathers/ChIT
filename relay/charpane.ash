@@ -69,10 +69,10 @@ string [string] chitBricks;
 string [string] chitPickers;
 string [string] chitTools;
 string [string] chitEffectsMap;
+location last_location;
 boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/chit/";
-
 
 /*****************************************************
 	Script functions
@@ -2589,26 +2589,29 @@ string fancycurrency(string page) {
 
 void pickOutfit() {
 	string boldit(string o) { return '<div style ="font-weight:600;color:darkred;">'+o+'</div>'; }
+	location loc = my_location();
+	if(loc == $location[none]) // Possibly beccause a fax was used
+		loc = last_location;
 	string topical(string o) {
 		switch(o) {
 		case "Swashbuckling Getup":
-			if($locations[Pirate Cove, Barrrney's Barrr, F'c'le] contains my_location())
+			if($locations[Pirate Cove, Barrrney's Barrr, F'c'le] contains loc)
 				return boldit(o);
 			break;
 		case "Mining Gear":
 		case "eXtreme Cold-Weather Gear":
-			if(my_location().zone == "McLarge")
+			if(loc.zone == "McLarge")
 				return boldit(o);
 			break;
 		case "War Hippy Fatigues":
 		case "Frat Warrior Fatigues":
-			if($strings[IsleWar, Island] contains my_location().parent)
+			if($strings[IsleWar, Island] contains loc.parent)
 				return boldit(o);
 			break;
 		case "Mer-kin Gladiatorial Gear":
 		case "Mer-kin Scholar's Vestments":
 		case "Clothing of Loathing":
-			if(my_location().parent == "The Sea")
+			if(loc.parent == "The Sea")
 				return boldit(o);
 			break;
 		}
@@ -3418,7 +3421,7 @@ void bakeTracker() {
 		case "step3":
 			result.append(item_report($item[black paint]));
 			if(questL11Pyramid == "step3")
-				result.append("Explore the Desert");
+				result.append("</br>Explore the Desert");
 			break;
 		case "step6":
 		case "step7":
@@ -3801,11 +3804,16 @@ boolean parsePage(buffer original) {
 	if(find(parse)) {
 		chitSource["trail"] = parse.group(1);
 		source = parse.replace_first("");
+		// Pull out last_location
+		matcher target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
+		if(find(target))
+			last_location = target.group(2).to_location();
 		// Shorten some unreasonable locations
 		chitSource["trail"] = chitSource["trail"].replace_string("The Castle in the Clouds in the Sky", "Giant's Castle");
 		chitSource["trail"] = chitSource["trail"].replace_string(" Floor)", ")");  // End of Castle
 		chitSource["trail"] = chitSource["trail"].replace_string("McMillicancuddy", "Farm");  // McMillicancuddy's various farm locations
 		chitSource["trail"] = chitSource["trail"].replace_string("Haunted Wine Cellar", "Wine Cellar");
+		chitSource["trail"] = chitSource["trail"].replace_string("The Enormous Greater-Than Sign", "Greater-Than Sign");
 		chitSource["trail"] = chitSource["trail"].replace_string('">The', '">'); // Remove leading "The " from all locations
 	}
 
