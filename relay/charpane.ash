@@ -287,7 +287,7 @@ string helperDanceCard() {
 	result.append('<tr>');
 	result.append('<td class="icon"><img src="images/itemimages/guildapp.gif"></td>');
 	result.append('<td class="location">');
-	result.append('<a href="' + to_url($location[Haunted Ballroom]) + '" class="visit" target="mainpane">Haunted Ballroom</a>');
+	result.append('<a href="' + to_url($location[The Haunted Ballroom]) + '" class="visit" target="mainpane">Haunted Ballroom</a>');
 	result.append('You have a date with Matilda');
 	result.append('</td>');
 	result.append('</tr>');
@@ -520,13 +520,13 @@ string helperSemiRare() {
 	//Set up all the locations we support
 	string [location] rewards;
 		rewards[$location[sleazy back alley]] = "wine.gif|Distilled fotified wine (3)|0";
-		rewards[$location[haunted pantry]] = "pie.gif|Tasty tart (3)|0";
-		rewards[$location[limerick dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
-		rewards[$location[orc chasm]] = "scroll2.gif|Fight Bad ASCII Art|68";
+		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
+		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
+		rewards[$location[Orc Chasm]] = "scroll2.gif|Fight Bad ASCII Art|68";
 		rewards[$location[Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
-		rewards[$location[kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
+		rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
-		rewards[$location[hidden temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
+		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		
 	int lastCounter = to_int(get_property("semirareCounter"));
 	string lastLocation = lastCounter == 0? "none": get_property("semirareLocation");
@@ -899,9 +899,9 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	generic[10]=$item[snow suit];
 
 	//Mr. Store Foldables
-	generic[100]=$item[2225];	//flaming familiar doppelgänger
-	generic[101]=$item[3194];	//origami "gentlemen's" magazine
-	generic[102]=$item[4924];	//Loathing Legion helicopter
+	generic[100]=$item[flaming familiar doppelg&auml;nger];	//flaming familiar doppelgänger
+	generic[101]=$item[origami &quot;gentlemen's&quot; magazine];	//origami "gentlemen's" magazine
+	generic[102]=$item[Loathing Legion helicopter];
 	
 	//Special items
 	generic[200]=$item[ittah bittah hookah];	
@@ -939,7 +939,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "Doppelshifter";
 		case $item[bugged balaclava]:
 			return "Volleyball, ML +20";
-		case to_item(4577):
+		case $item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t]:
 			return "Fairy: Food, Pants, Candy +5%";
 		}
 		
@@ -1193,7 +1193,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 
 	//Bugged Bugbear (Get free equipment from Arena)
 	if (myfam == $familiar[Baby Bugged Bugbear]) {
-		if ((available_amount($item[4575]) + available_amount($item[4576]) + available_amount($item[4577])) == 0) {
+		if ((available_amount($item[bugged beanie]) + available_amount($item[bugged balaclava]) + available_amount($item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t])) == 0) {
 			url = 'arena.php';
 			picker.append('<tr class="pickitem"><td class="action" colspan="2"><a class="done" target="mainpane" href="' + url + '">Visit the Arena</a></tr>');
 		}
@@ -1480,7 +1480,7 @@ void bakeFamiliar() {
 	} else 	if (famitem == $item[moveable feast]) {
 		charges = get_property("_feastUsed") + " / 5";
 		chargeTitle = "Familiars Feasted";
-	} else 	if ( (myfam == $familiar[stomping boots]) && (get_property("bootsCharged") == "true") ) {
+	} else 	if ( (myfam == $familiar[Pair of Stomping Boots]) && (get_property("bootsCharged") == "true") ) {
 		charges = "GO";
 		chargeTitle = "Your Boots are charged and ready for some stomping";
 	}
@@ -2919,36 +2919,36 @@ void bakeQuests() {
 
 			e = to_int(get_property("cyrptAlcoveEvilness"));
 			if (e > 25) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (+init)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (+init)';
 			} else if (e > 0) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (Boss ready)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Alcove</s>';
 			}
 
 			e = to_int(get_property("cyrptCrannyEvilness"));
 			if (e > 25) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (+NC, +ML)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (+NC, +ML)';
 			} else if (e > 0) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (Boss ready)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Cranny</s>';
 			}
 
 			e = to_int(get_property("cyrptNicheEvilness"));
 			if (e > 25) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled niche]) +'" target="mainpane">Niche:</a> ' + e + ' (sniff dirty old lihc)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Niche]) +'" target="mainpane">Niche:</a> ' + e + ' (sniff dirty old lihc)';
 			} else if (e > 0) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled niche]) +'" target="mainpane">Niche:</a> ' + e + ' (Boss ready)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Niche]) +'" target="mainpane">Niche:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Niche</s>';
 			}
 
 			e = to_int(get_property("cyrptNookEvilness"));
 			if (e > 25) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled nook]) +'" target="mainpane">Nook:</a> ' + e + ' (+items)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Nook]) +'" target="mainpane">Nook:</a> ' + e + ' (+items)';
 			} else if (e > 0) {			
-				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[defiled nook]) +'" target="mainpane">Nook:</a> ' + e + ' (Boss ready)';
+				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Nook]) +'" target="mainpane">Nook:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Nook</s>';
 			}
@@ -3351,7 +3351,7 @@ void bakeTracker() {
 		if(available_amount($item[Talisman o' Nam])==0)
 			result.append('<br>Find the <a target="mainpane" href="cove.php">Talisman o Nam</a>');
 		// have items required: photograph of God, hard rock candy, ketchup hound, hard-boiled ostrich egg 
-		if(item_amount($item["I Love Me, Vol. I"]) == 0) {
+		if(item_amount($item[&quot;I Love Me, Vol. I&quot;]) == 0) {
 			result.append("<br>Obtain: ");
 			result.append(item_report($item[photograph of God]));
 			result.append(", ");
@@ -3419,7 +3419,7 @@ void bakeTracker() {
 			result.append(item_report($item[stone rose], "stone rose, "));
 			result.append(item_report($item[drum machine], "drum machine, "));
 		case "step3":
-			result.append(item_report($item[black paint]));
+			result.append(item_report($item[can of black paint]));
 			if(questL11Pyramid == "step3")
 				result.append("</br>Explore the Desert");
 			break;
@@ -3432,7 +3432,7 @@ void bakeTracker() {
 			break;
 		case "step9":
 			result.append(item_report($item[drum machine], "drum machine, "));
-			result.append(item_report($item[worm riding hooks]));
+			result.append(item_report($item[worm-riding hooks]));
 			break;
 		case "step10":
 			result.append('<a target="mainpane" href="beach.php?action=woodencity&pwd='+my_hash()+'">Ride the Worm !</a>');
@@ -3694,7 +3694,7 @@ void bakeTracker() {
 		biodata[count(biodata)] = new bio("Spooky Forest", "biodataMedbay", 3);
 		biodata[count(biodata)] = new bio("Bat Hole", "biodataSonar", 3);
 		biodata[count(biodata)] = new bio("Knob Laboratory", "biodataScienceLab", 6);
-		biodata[count(biodata)] = new bio("Defiled Nook", "biodataMorgue", 6);
+		biodata[count(biodata)] = new bio("The Defiled Nook", "biodataMorgue", 6);
 		biodata[count(biodata)] = new bio("Ninja Snowmen", "biodataSpecialOps", 6);
 		biodata[count(biodata)] = new bio("Haunted Gallery", "biodataNavigation", 9);
 		biodata[count(biodata)] = new bio("Fantasy Airship", "biodataEngineering", 9);
