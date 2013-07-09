@@ -519,11 +519,11 @@ string helperSemiRare() {
 
 	//Set up all the locations we support
 	string [location] rewards;
-		rewards[$location[sleazy back alley]] = "wine.gif|Distilled fotified wine (3)|0";
+		rewards[$location[Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
 		rewards[$location[Orc Chasm]] = "scroll2.gif|Fight Bad ASCII Art|68";
-		rewards[$location[Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
+		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
 		rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
@@ -863,9 +863,9 @@ string toPlant(int i) {
  return "";
 }
 
-void pickerFlorist(location lastLoc, string[int] planted){
+void pickerFlorist(string[int] planted){
 	int plantsPlanted;
-	string terrain = lastLoc.environment;
+	string terrain = last_location.environment;
 	boolean marked = false;
 	foreach i,s in planted {
 		if (s!="") plantsPlanted+=1;
@@ -878,33 +878,57 @@ void pickerFlorist(location lastLoc, string[int] planted){
 	buffer picker;
 	picker.append('<div id="chit_pickerflorist" class="chit_skeleton" style="display:none">');
 	picker.append('<table class="chit_picker">');
-	string color;
+	string color, plant;
 	if (plantsPlanted == 3) {
 		picker.append('<tr><th colspan="2">Pull a Plant</th></tr>');
 		foreach i,s in planted {
 			color = (plantsUsed.contains_text(s)?(plantData[s].territorial?'lightyellow':'lightgray'):(plantData[s].territorial?'lightgreen':'lightblue'));
 			picker.append('<tr style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/itemimages/shovel.gif"></td>');
-			picker.append('<td><a target="mainpane" href="choice.php?option=2&whichchoice=720&pwd='+my_hash()+'&plnti='+i+'">'+ s +'<br>(' + plantData[s].desc + ')</a></td></tr>');
+			picker.append('<td><a href="/KoLmafia/sideCommand?pwd=' + my_hash() + '&cmd=text+' + url_encode('choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i) +'">'+ s +'<br>(' + plantData[s].desc + ')</a></td></tr>');
 		}
 		if (count(plantable)>0) {
 			picker.append('<tr><th colspan="2">Remaining Plants</th></tr>');
 			foreach i in plantable {
 				if (!plantable[i]) continue;
-				color = (plantable[i]?(plantData[i.toPlant()].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
-				picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + i.toPlant() + ' (' + plantData[i.toPlant()].desc + ')"></td>');
-				picker.append('<td>' + i.toPlant() + '<br>(' + plantData[i.toPlant()].desc + ')</td></tr>');
+				plant = i.toPlant();
+				color = (plantable[i]?(plantData[plant].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
+				picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
+				picker.append('<td>' + plant + '<br>(' + plantData[plant].desc + ')</td></tr>');
 			}
 		} else picker.append('<tr><th colspan="2">No plants in stock for this area.</th></tr>');
 	} else {
 		picker.append('<tr><th colspan="2">Plant an ' + terrain + ' Herb</th></tr>');
 		if (count(plantable)>0) foreach i in plantable {
-			color = (plantable[i]?(plantData[i.toPlant()].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
-			picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + i.toPlant() + ' (' + plantData[i.toPlant()].desc + ')"></td>');
-			picker.append('<td><a target="mainpane" href="choice.php?whichchoice=720&pwd=' + my_hash() + '&option=1&plant=' + i + '">' + i.toPlant() + '<br>(' + plantData[i.toPlant()].desc + ')</a></td></tr>');
+			plant = i.toPlant();
+			color = (plantable[i]?(plantData[plant].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
+			picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
+			picker.append('<td><a href="/KoLmafia/sideCommand?cmd=florist+plant+' + url_encode(plant) + '&pwd=' + my_hash() + '">' + plant + '<br>(' + plantData[plant].desc + ')</a></td></tr>');
 		} else picker.append('<tr><td colspan="2">No more plants available to plant here</td></tr>');
 	}
 	picker.append('</table></div>');
 	chitPickers["florist"] = picker;
+}
+
+void addPlants(buffer result) {
+	string[int] plants=get_florist_plants()[last_location];
+	result.append('<a class="chit_launcher" rel="chit_pickerflorist" href="#">');
+	foreach i,s in plants
+		if (plantData[s].no>0)
+			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant'+plantData[s].no+'.gif" title="'+s+' ('+plantData[s].desc+')">');
+		else {
+			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/noplant.gif" title="No Plant">');
+			break;
+		}
+	result.append('</a>');
+	pickerFlorist(plants);
+}
+
+void addFlorist(buffer result) {
+	if(florist_available()) {
+		result.append('<tr><td>&nbsp;</td><td>');
+		result.addPlants();
+		result.append('</td></tr>');
+	}
 }
 
 void bakeFlorist() {
@@ -913,15 +937,9 @@ void bakeFlorist() {
 	if ((last_location.environment != "none") && florist_available()) {
 		result.append('<table id="chit_florist" class="chit_brick nospace">');
 		result.append('<tr><th><a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist Friar</a></th></tr>');
-		string[int] plants=get_florist_plants()[last_location];
-		result.append('<tr><td><a class="chit_launcher" rel="chit_pickerflorist" href="#">');
-		foreach i,s in plants if (plantData[s].no>0) result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant'+plantData[s].no+'.gif" title="'+s+' ('+plantData[s].desc+')">');
-		else {
-			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/noplant.gif" title="No Plant">');
-			break;
-		}
-		result.append('</a></td></tr></table>');
-		pickerFlorist(last_location, plants);
+		result.append('<tr><td>');
+		result.addPlants();
+		result.append('</td></tr></table>');
 	}
 	
 	chitBricks["florist"] = result;
@@ -2614,11 +2632,12 @@ void bakeStats() {
 				case "stomach": result.addStomach(showBars); 		break;
 				case "liver": 	result.addLiver(showBars); 			break;
 				case "spleen": 	result.addSpleen(showBars); 		break;
-				case "hp": 		addHP(); 			break;
-				case "mp": 		addMP(); 			break;
-				case "axel": 	addAxel(); 			break;
-				case "mcd": 	result.addMCD(); 	break;
-				case "trail": 	result.addTrail();	break;
+				case "hp": 		addHP(); 				break;
+				case "mp": 		addMP(); 				break;
+				case "axel": 	addAxel(); 				break;
+				case "mcd": 	result.addMCD(); 		break;
+				case "trail": 	result.addTrail();		break;
+				case "florist": result.addFlorist();	break;
 				default:
 			}
 		}
