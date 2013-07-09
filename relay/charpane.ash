@@ -910,6 +910,10 @@ void pickerFlorist(string[int] planted){
 }
 
 void addPlants(buffer result) {
+	if(last_location.environment == "none" || last_location == $location[none]) {
+		result.append('(Cannot plant here)');
+		return;
+	}
 	string[int] plants=get_florist_plants()[last_location];
 	result.append('<a class="chit_launcher" rel="chit_pickerflorist" href="#">');
 	foreach i,s in plants
@@ -932,7 +936,7 @@ void addFlorist(buffer result, boolean label) {
 			label = false;
 		result.append(label? '<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist</a>': '&nbsp;');
 		
-		result.append('</td><td colspan="2">');
+		result.append('</td><td class="florist" colspan="2">');
 		result.addPlants();
 		result.append('</td></tr>');
 	}
@@ -941,10 +945,10 @@ void addFlorist(buffer result, boolean label) {
 void bakeFlorist() {
 	buffer result;
 
-	if ((last_location.environment != "none") && florist_available()) {
+	if (florist_available()) {
 		result.append('<table id="chit_florist" class="chit_brick nospace">');
 		result.append('<tr><th><a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist Friar</a></th></tr>');
-		result.append('<tr><td>');
+		result.append('<tr><td class="florist">');
 		result.addPlants();
 		result.append('</td></tr></table>');
 	}
@@ -3959,12 +3963,13 @@ boolean parsePage(buffer original) {
 		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
 		if(find(parse))
 			last_location = parse.group(2).to_location();
-		// Shorten some unreasonable locations
+		// Shorten some unreasonablely lengthy locations
 		chitSource["trail"] = chitSource["trail"].replace_string("The Castle in the Clouds in the Sky", "Giant's Castle");
 		chitSource["trail"] = chitSource["trail"].replace_string(" Floor)", ")");  // End of Castle
 		chitSource["trail"] = chitSource["trail"].replace_string("McMillicancuddy", "Farm");  // McMillicancuddy's various farm locations
 		chitSource["trail"] = chitSource["trail"].replace_string("Haunted Wine Cellar", "Wine Cellar");
 		chitSource["trail"] = chitSource["trail"].replace_string("The Enormous Greater-Than Sign", "Greater-Than Sign");
+		chitSource["trail"] = chitSource["trail"].replace_string("The Penultimate Fantasy Airship", "Fantasy Airship");
 		chitSource["trail"] = chitSource["trail"].replace_string('">The', '">'); // Remove leading "The " from all locations
 	}
 

@@ -269,6 +269,13 @@ table.chit_brick tr.section td {
 	padding: 2px; 
 	max-width:60px;
 }
+tr td.florist{
+	color:#606060;
+	font-weight:bold;
+	text-align: center; 
+	padding: 2px; 
+	max-width:60px;
+}
 #chit_organs tr td.info {
 	color:#606060;
 	font-weight:bold;
@@ -308,8 +315,16 @@ table.chit_brick tr.section td {
 	color:blue;
 }
 
-div.progressbox {padding:1px; background-color:#F0F0F0; border:1px solid #E0E0E0; height:6px}
-div.progressbar {height:100%; background-color:blue}
+div.progressbox {
+	padding:1px;
+	background-color:#F0F0F0;
+	border:1px solid #E0E0E0;
+	height:6px
+}
+div.progressbar {
+	height:100%;
+	background-color:blue
+}
 
 /* Modifiers Panel */
 #chit_modifiers tbody tr:first-child td {
