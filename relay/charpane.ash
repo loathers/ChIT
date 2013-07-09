@@ -917,15 +917,22 @@ void addPlants(buffer result) {
 			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant'+plantData[s].no+'.gif" title="'+s+' ('+plantData[s].desc+')">');
 		else {
 			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/noplant.gif" title="No Plant">');
-			break;
+			#break;		// I think I prefer the look of three empty plots
 		}
 	result.append('</a>');
 	pickerFlorist(plants);
 }
 
-void addFlorist(buffer result) {
+void addFlorist(buffer result, boolean label) {
 	if(florist_available()) {
-		result.append('<tr><td>&nbsp;</td><td>');
+		result.append('<tr><td class="label">');
+		
+		// label is not necessary if right after trail
+		if(vars["chit.stats.layout"].to_lower_case().replace_string(" ", "").contains_text("trail,florist"))
+			label = false;
+		result.append(label? '<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist</a>': '&nbsp;');
+		
+		result.append('</td><td colspan="2">');
 		result.addPlants();
 		result.append('</td></tr>');
 	}
@@ -2449,6 +2456,13 @@ void addTrail(buffer result) {
 		result.append('<td class="info" colspan="2">(None)</td>');
 	}
 	result.append('</tr>');
+	
+	// Should I auto-add Florist here?
+	if(!florist_available()) return;
+	foreach layout in $strings[roof, walls, floor, toolbar, stats]
+		if(vars["chit." + layout + ".layout"].to_lower_case().contains_text("florist"))
+			return;
+	result.addFlorist(false);
 }
 
 void bakeStats() {
@@ -2632,12 +2646,12 @@ void bakeStats() {
 				case "stomach": result.addStomach(showBars); 		break;
 				case "liver": 	result.addLiver(showBars); 			break;
 				case "spleen": 	result.addSpleen(showBars); 		break;
-				case "hp": 		addHP(); 				break;
-				case "mp": 		addMP(); 				break;
-				case "axel": 	addAxel(); 				break;
-				case "mcd": 	result.addMCD(); 		break;
-				case "trail": 	result.addTrail();		break;
-				case "florist": result.addFlorist();	break;
+				case "florist": result.addFlorist(true);			break;
+				case "hp": 		addHP(); 			break;
+				case "mp": 		addMP(); 			break;
+				case "axel": 	addAxel(); 			break;
+				case "mcd": 	result.addMCD(); 	break;
+				case "trail": 	result.addTrail();	break;
 				default:
 			}
 		}
@@ -4302,7 +4316,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.walls.layout","helpers,effects");
 	setvar("chit.floor.layout","update,familiar");
 	setvar("chit.stats.showbars",true);
-	setvar("chit.stats.layout","muscle,myst,moxie|hp,mp,axel|mcd|trail");
+	setvar("chit.stats.layout","muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 	setvar("chit.toolbar.layout","trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods","true");
 	setvar("chit.kol.coolimages",true);
