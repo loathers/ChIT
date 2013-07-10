@@ -882,7 +882,7 @@ void pickerFlorist(string[int] planted){
 	if (plantsPlanted == 3) {
 		picker.append('<tr><th colspan="2">Pull a Plant</th></tr>');
 		foreach i,s in planted {
-			color = plantsUsed.contains_text(s)? (plantData[s].territorial? 'Khaki': 'lightgray'): (plantData[s].territorial? 'PaleGreen': 'LightSkyBlue');
+			color = plantsUsed.contains_text(s)? (plantData[s].territorial? 'Khaki': 'Gainsboro'): (plantData[s].territorial? 'PaleGreen': 'LightSkyBlue');
 			picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/itemimages/shovel.gif"></td>');
 			picker.append('<td><a href="/KoLmafia/sideCommand?pwd=' + my_hash() + '&cmd=text+' + url_encode('choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i) +'">'+ s +'<br>(' + plantData[s].desc + ')</a></td></tr>');
 		}
@@ -891,7 +891,7 @@ void pickerFlorist(string[int] planted){
 			foreach i in plantable {
 				if (!plantable[i]) continue;
 				plant = i.toPlant();
-				color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "lightgray";
+				color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "Gainsboro";
 				picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
 				picker.append('<td>' + plant + '<br>(' + plantData[plant].desc + ')</td></tr>');
 			}
@@ -900,7 +900,7 @@ void pickerFlorist(string[int] planted){
 		picker.append('<tr><th colspan="2">Plant an ' + terrain + ' Herb</th></tr>');
 		if (count(plantable)>0) foreach i in plantable {
 			plant = i.toPlant();
-			color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "lightgray";
+			color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "Gainsboro";
 			picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
 			picker.append('<td><a href="/KoLmafia/sideCommand?cmd=florist+plant+' + url_encode(plant) + '&pwd=' + my_hash() + '">' + plant + '<br>(' + plantData[plant].desc + ')</a></td></tr>');
 		} else picker.append('<tr><td colspan="2">No more plants available to plant here</td></tr>');
