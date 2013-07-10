@@ -882,8 +882,8 @@ void pickerFlorist(string[int] planted){
 	if (plantsPlanted == 3) {
 		picker.append('<tr><th colspan="2">Pull a Plant</th></tr>');
 		foreach i,s in planted {
-			color = (plantsUsed.contains_text(s)?(plantData[s].territorial?'lightyellow':'lightgray'):(plantData[s].territorial?'lightgreen':'lightblue'));
-			picker.append('<tr style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/itemimages/shovel.gif"></td>');
+			color = plantsUsed.contains_text(s)? (plantData[s].territorial? 'Khaki': 'lightgray'): (plantData[s].territorial? 'PaleGreen': 'LightSkyBlue');
+			picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/itemimages/shovel.gif"></td>');
 			picker.append('<td><a href="/KoLmafia/sideCommand?pwd=' + my_hash() + '&cmd=text+' + url_encode('choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i) +'">'+ s +'<br>(' + plantData[s].desc + ')</a></td></tr>');
 		}
 		if (count(plantable)>0) {
@@ -891,8 +891,8 @@ void pickerFlorist(string[int] planted){
 			foreach i in plantable {
 				if (!plantable[i]) continue;
 				plant = i.toPlant();
-				color = (plantable[i]?(plantData[plant].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
-				picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
+				color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "lightgray";
+				picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
 				picker.append('<td>' + plant + '<br>(' + plantData[plant].desc + ')</td></tr>');
 			}
 		} else picker.append('<tr><th colspan="2">No plants in stock for this area.</th></tr>');
@@ -900,8 +900,8 @@ void pickerFlorist(string[int] planted){
 		picker.append('<tr><th colspan="2">Plant an ' + terrain + ' Herb</th></tr>');
 		if (count(plantable)>0) foreach i in plantable {
 			plant = i.toPlant();
-			color = (plantable[i]?(plantData[plant].territorial?(marked?"lightyellow":"lightgreen"):"lightblue"):"lightgray");
-			picker.append('<tr style="background-color:' + color + '"><td><img width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
+			color = plantable[i]? (plantData[plant].territorial? (marked? "Khaki": "PaleGreen"): "LightSkyBlue"): "lightgray";
+			picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/otherimages/friarplants/plant' + i + '.gif" title="' + plant + ' (' + plantData[plant].desc + ')"></td>');
 			picker.append('<td><a href="/KoLmafia/sideCommand?cmd=florist+plant+' + url_encode(plant) + '&pwd=' + my_hash() + '">' + plant + '<br>(' + plantData[plant].desc + ')</a></td></tr>');
 		} else picker.append('<tr><td colspan="2">No more plants available to plant here</td></tr>');
 	}
@@ -918,9 +918,9 @@ void addPlants(buffer result) {
 	result.append('<a class="chit_launcher" rel="chit_pickerflorist" href="#">');
 	foreach i,s in plants
 		if (plantData[s].no>0)
-			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/plant'+plantData[s].no+'.gif" title="'+s+' ('+plantData[s].desc+')">');
+			result.append('<img src="http://images.kingdomofloathing.com/otherimages/friarplants/plant'+plantData[s].no+'.gif" title="'+s+' ('+plantData[s].desc+')">');
 		else {
-			result.append('<img style="vertical-align:middle" width="21" height="40" src="http://images.kingdomofloathing.com/otherimages/friarplants/noplant.gif" title="No Plant">');
+			result.append('<img src="http://images.kingdomofloathing.com/otherimages/friarplants/noplant.gif" title="No Plant">');
 			#break;		// I think I prefer the look of three empty plots
 		}
 	result.append('</a>');

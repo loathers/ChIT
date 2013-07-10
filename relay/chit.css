@@ -39,16 +39,16 @@ a:hover {
 	overflow-x:hidden;
 	overflow-y:auto;
 	margin:0px;
-	top: 4px;
-	left: 4px;
-	right: 4px
+	top:4px;
+	left:4px;
+	right:4px
 }
 #chit_walls {
 	border-top:1px solid #E0E0E0;
 	border-bottom:1px solid #E0E0E0;
 	margin:0px;
-	left: 4px;
-	right: 4px;
+	left:4px;
+	right:4px;
 	position:absolute;
 	overflow-x:hidden;
 	overflow-y:auto;
@@ -63,12 +63,12 @@ a:hover {
 	bottom:4px
 }
 #chit_toolbar {
-	border-collapse:separate; 
+	border-collapse:separate;
 	border:1px solid #D0D0D0;
 	empty-cells:show;
-	font-size:12px; 
-	font-weight:normal; 
-	margin: 0px; 
+	font-size:12px;
+	font-weight:normal;
+	margin:0px;
 	width:100%;
 	padding:1px 1px 1px 1px;
 }
@@ -81,24 +81,24 @@ a:hover {
 #chit_toolbar th {
 	text-align:center;
 	vertical-align:middle;
-	background-color: #F0F0F0; 
+	background-color:#F0F0F0;
 	padding:2px;
 }
 
 /* Table defaults */
 table.chit_brick {
 	background-color:white;
-	border-collapse:separate; 
+	border-collapse:separate;
 	border:1px solid #D0D0D0;
 	empty-cells:show;
-	font-size:12px; 
-	font-weight:normal; 
-	margin-bottom: 5px; 
+	font-size:12px;
+	font-weight:normal;
+	margin-bottom:5px;
 	width:100%;
 	padding:1px 1px 0px 1px;
 }
 table.chit_brick:last-child {
-	margin-bottom: 0px; 
+	margin-bottom:0px;
 }
 table.chit_brick a {
 	text-decoration:none;
@@ -112,19 +112,19 @@ table.chit_brick img {
 	padding:0;
 }
 div.chit_skeleton table.chit_brick {
-	margin-bottom: 0px; 
+	margin-bottom:0px;
 }
 table.chit_brick th {
 	text-align:center;
 	vertical-align:middle;
-	background-color: #F0F0F0; 
+	background-color:#F0F0F0;
 	padding:2px;
 }
 table.chit_brick th img {
 	float:left;
 }
 div.chit_skeleton table.chit_brick th {
-	background-color: #F0F0B0; 
+	background-color:#F0F0B0;
 }
 
 /* location: used for counter checkers locations */
@@ -132,7 +132,7 @@ table.chit_brick tr td.location {
 	background-color:white;
 	padding:3px 6px;
 	text-align:left;
-	color: #666666;
+	color:#666666;
 	line-height:1.4;
 }
 table.chit_brick tr td.location a {
@@ -143,19 +143,19 @@ table.chit_brick tr td.info {
 	padding:3px;
 }
 table.chit_brick tr.helper th {
-	background-color: #F0F0B0; 
+	background-color:#F0F0B0;
 }
 table.chit_brick tr.wellfed th {
-	background-color: #F0F0B0; 
+	background-color:#F0F0B0;
 }
 
 table.chit_brick td {
-	border: 0px;
+	border:0px;
 	text-align:center;
 	vertical-align:middle;
 }
 table.chit_brick tr td.progress {
-	padding:1px; 
+	padding:1px;
 }
 table.chit_brick tr td.icon {
 	background-color:white;
@@ -188,21 +188,42 @@ table.chit_brick tr td.companion  img{
 
 /* section adds the light grey bar above the table row */
 table.chit_brick tr.section td {
-	border-top:1px solid #F0F0F0; 
+	border-top:1px solid #F0F0F0;
+}
+
+/* Florist Friars formatting */
+td.florist {
+	color:#606060;
+	font-weight:bold;
+	text-align:center;
+	padding:0px;
+	max-width:60px;
+}
+td.florist img {
+	margin:0px 2px 0px 2px;
+	vertical-align:middle;
+	height:40px;
+}
+tr.florist img {
+	vertical-align:middle;
+	max-height:50px;
+}
+tr.florist :first-line {
+	font-weight:bold;
 }
 
 /* Character Panel */
 #chit_character tr td.level {
-	font-size:21px; 
+	font-size:21px;
 	background-color:#F8F8F8;
 	width:40px;
 }
 
 #chit_character tr td.avatar {
-	background-color: white;
+	background-color:white;
 	padding:2px;
 	width:45px;
-	vertical-align: middle;
+	vertical-align:middle;
 }
 #chit_character tr td.avatar img {
 	height:75px;
@@ -210,13 +231,13 @@ table.chit_brick tr.section td {
 }
 #chit_character tr td.label {
 	font-weight:bold;
-	text-align: left; 
-	padding: 1px 4px; 
+	text-align:left;
+	padding:1px 4px;
 }
 #chit_character tr td.info {
 	color:#606060;
-	text-align: left; 
-	padding: 1px 4px; 
+	text-align:left;
+	padding:1px 4px;
 }
 #chit_character tr td.info a {
 	font-weight:bold;
@@ -225,11 +246,11 @@ table.chit_brick tr.section td {
 
 #chit_character tr td.turns {
 	border-top:1px solid white;
-	background-color:#F8F8F8; 
-	padding: 1px 4px; 
+	background-color:#F8F8F8;
+	padding:1px 4px;
 }
 #chit_character tr td.progress {
-	border-top:1px solid #DDDDDD; 
+	border-top:1px solid #DDDDDD;
 	height:5px;
 }
 #chit_character tr td.progress div.progressbar {
@@ -240,10 +261,10 @@ table.chit_brick tr.section td {
 	color:darkred;
 	font-weight:bold;
 	background-color:#F8F8F8;
-	padding: 0px 2px;
+	padding:0px 2px;
 }
 .chit_resource div span, .chit_resource div img {
-	vertical-align: middle;
+	vertical-align:middle;
 }
 .chit_resource div img {
 	max-width:12px;
@@ -258,29 +279,22 @@ table.chit_brick tr.section td {
 
 #chit_stats tr td.label, #chit_substats tr td.label, #chit_organs tr td.label {
 	font-weight:bold;
-	text-align: left; 
-	padding: 2px;
+	text-align:left;
+	padding:2px;
 	width:50px;
 }
 #chit_stats tr td.info, #chit_substats tr td.info tr td.info {
 	color:#606060;
 	font-weight:bold;
-	text-align: right; 
-	padding: 2px; 
-	max-width:60px;
-}
-tr td.florist{
-	color:#606060;
-	font-weight:bold;
-	text-align: center; 
-	padding: 2px; 
+	text-align:right;
+	padding:2px;
 	max-width:60px;
 }
 #chit_organs tr td.info {
 	color:#606060;
 	font-weight:bold;
-	text-align: center; 
-	padding: 2px; 
+	text-align:center;
+	padding:2px;
 	width:40px;
 	display:block;
 }
@@ -296,7 +310,7 @@ tr td.florist{
 }
 #chit_stats tr td.progress, #chit_substats tr td.progress, #chit_organs tr td.progress {
 	width:100%;
-	padding: 2px 2px 2px 4px;
+	padding:2px 2px 2px 4px;
 	text-align:right;
 	font-weight:bold;
 	color:#A0A0A0;
@@ -304,8 +318,8 @@ tr td.florist{
 #chit_stats tr td.history {
 	color:#606060;
 	font-weight:normal;
-	text-align: left; 
-	padding: 2px; 
+	text-align:left;
+	padding:2px;
 }
 #chit_stats tr td.history a {
 	font-weight:bold;
@@ -333,21 +347,21 @@ div.progressbar {
 
 #chit_modifiers tr td.label {
 	font-weight:bold;
-	text-align: left; 
-	padding: 2px;
+	text-align:left;
+	padding:2px;
 }
 #chit_modifiers tr td.info{
 	color:#606060;
 	font-weight:bold;
-	text-align: right; 
-	padding: 2px; 
+	text-align:right;
+	padding:2px;
 }
 
 /* MCD Panel + popup */
 #chit_mcd tr th.busy {
-	background-image: url(/images/chit/busy.gif);
-	background-position: 5px center;
-	background-repeat: no-repeat;
+	background-image:url(/images/chit/busy.gif);
+	background-position:5px center;
+	background-repeat:no-repeat;
 }
 #chit_mcd td, #chit_pickermcd td {
 	padding:2px 4px;
@@ -357,7 +371,7 @@ div.progressbar {
 	background-color:#F8F8F8;
 }
 #chit_mcd tr.current td, #chit_pickermcd tr.current td {
-	background-color: #F0F0F0;
+	background-color:#F0F0F0;
 	font-weight:bold;
 }
 #chit_mcd td.level, #chit_pickermcd td.level  {
@@ -371,13 +385,13 @@ div.progressbar {
 
 /* Familiars Panel */
 #chit_familiar tr td.progress {
-	border-top:1px solid #DDDDDD; 
+	border-top:1px solid #DDDDDD;
 }
 #chit_familiar tr td.progress div.progressbar {
 	height:4px;
 }
 #chit_familiar tr td.info {
-	border-left:1px solid #F0F0F0; 
+	border-left:1px solid #F0F0F0;
 	border-right:1px solid #F0F0F0;
 	font-weight:bold;
 	line-height:1.4;
@@ -385,11 +399,11 @@ div.progressbar {
 
 /* Trail (Last Adventure) Panel */
 #chit_trail tr td {
-	padding: 0px 4px 2px 4px;
+	padding:0px 4px 2px 4px;
 	font-size:12px;
 }
 #chit_trail tr td.last {
-	padding: 2px 4px;
+	padding:2px 4px;
 	font-size:12px;
 	font-weight:bold;
 }
@@ -443,7 +457,7 @@ div.progressbar {
 }
 #chit_effects td.infinity {
 	text-align:center;
-	font-size: 16px;
+	font-size:16px;
 	font-weight:bold;
 }
 #chit_effects td.powerup a {
@@ -469,27 +483,27 @@ table.chit_picker {
 table.chit_picker th {
 	background-color:blue;
 	color:white;
-	padding: 4px 12px;
-	background-position: top right;
-	background-image: none;
-	background-repeat: no-repeat;
+	padding:4px 12px;
+	background-position:top right;
+	background-image:none;
+	background-repeat:no-repeat;
 	cursor:pointer;
 }
 table.chit_picker th:hover {
-	background-image: url(/images/closebutton.gif);
+	background-image:url(/images/closebutton.gif);
 }
 
 table.chit_picker td {
 	border-left:0px;
 	border-right:0px;
-	border-top: 0px solid #DDDDDD;
-	border-bottom: 1px solid white;
+	border-top:0px solid #DDDDDD;
+	border-bottom:1px solid white;
 }
 table.chit_picker tr.pickitem td {
 }
 table.chit_picker tr.picknone td.info {
-		padding: 8px;
-		color: #333333;
+		padding:8px;
+		color:#333333;
 }
 table.chit_picker td.icon {
 	width:30px;
@@ -521,7 +535,7 @@ table.chit_picker tr.pickitem td.retrieve {
 }
 table.chit_picker tr.pickitem td.action {
 	border-bottom:1px solid #E0E0E0;
-	padding: 4px 8px;
+	padding:4px 8px;
 	font-weight:bold;
 }
 table.chit_picker tr td a {
@@ -551,13 +565,13 @@ div.chit_skeleton {
 }
 
 div.chit_skeleton table.chit_brick th {
-	background-position: top right;
-	background-image: none;
-	background-repeat: no-repeat;
+	background-position:top right;
+	background-image:none;
+	background-repeat:no-repeat;
 	cursor:pointer;
 }
 div.chit_skeleton table.chit_brick th:hover {
-	background-image: url(/images/chit/collapse.png);
+	background-image:url(/images/chit/collapse.png);
 }
 
 /* Current Quests Panel (#nudges ID matched KOL usage) */
@@ -571,19 +585,19 @@ div.chit_skeleton table.chit_brick th:hover {
 	display:inline;
 }
 
-#nudges div { 
-	padding-right: 20px;
+#nudges div {
+	padding-right:20px;
 	text-align:left;
 	line-height:1.4;
 }
 
-#nudges div .close { 
-	position: absolute; 
-	top: 0px; 
-	right: 0px; 
-	border: 0px solid red; 
-	display: inline;
-	height: 10px;
+#nudges div .close {
+	position:absolute;
+	top:0px;
+	right:0px;
+	border:0px solid red;
+	display:inline;
+	height:10px;
 	width:10px;
 }
 
@@ -655,12 +669,12 @@ img#fam_equip {
 	z-index:10;
 	max-width:16px;
 	max-height:16px;
-	border: 1px solid black;
+	border:1px solid black;
 }
 
 /* Quests Tracker Panel added by ckb */
 #chit_tracker tr td {
-	padding: 0px 4px 2px 4px;
+	padding:0px 4px 2px 4px;
 	/* font-size:12px; */
 	font-size:12px;
 	text-align:left;
@@ -675,7 +689,7 @@ img#fam_equip {
 	padding:0px 0px 0px 0px;
 }
 #chit_tracker tr td table tr td {
-	margin-bottom: 0px; 
+	margin-bottom:0px;
 	border:0px;
 	padding:0px 0px 0px 0px;
 }
@@ -683,37 +697,38 @@ img#fam_equip {
 /* Fancy Currency by DeadNed (#1909053) 
    Not curently being used, but maybe... if I put in some time */
 #chit_currency ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+	margin:0;
+	padding:0;
+	list-style:none;
 }
 #chit_currency ul li {
-	display: block;
+	display:block;
 	position:relative;
-	float: left;
+	float:left;
 }
 #chit_currency li ul {
-	display: none;
+	display:none;
 }
 #chit_currency ul li a {
-	display: block;
-	text-decoration: none;
-	padding: 5px 15px 5px 15px;
-	background: #ffffff; margin-left: 1px;
-	white-space: nowrap;
-	font-weight: bold;
-	color: black;
-	font-size: smaller;
+	display:block;
+	text-decoration:none;
+	padding:5px 15px 5px 15px;
+	background:#ffffff;
+	margin-left:1px;
+	white-space:nowrap;
+	font-weight:bold;
+	color:black;
+	font-size:smaller;
 }
 #chit_currency ul li a:hover {
-	background: #eeeeee;
+	background:#eeeeee;
 }
 #chit_currency li:hover ul {
-	display: block;
-	position: absolute;
+	display:block;
+	position:absolute;
 }
 #chit_currency li:hover li {
-	float: none;
-	font-size: 12px;
+	float:none;
+	font-size:12px;
 }
 
