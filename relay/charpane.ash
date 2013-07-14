@@ -838,6 +838,35 @@ void bakeElements() {
 	chitBricks["elements"] = result;
 }
 
+// Functions for pickers
+void pickerStart(buffer picker, string rel, string message) {
+	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
+	picker.append('<table class="chit_picker">');
+	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
+}
+
+void pickerStart(buffer picker, string rel, string message, string image) {
+	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
+	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
+	picker.append(imagePath + image);
+	picker.append('.png">');
+	picker.append(message + '</th></tr>');
+}
+
+void addLoader(buffer picker, string message) {
+	picker.append('<tr class="pickloader" style="display:none">');
+	picker.append('<td class="info">' + message + '</td>');
+	picker.append('<td class="icon"><img src="/images/itemimages/karma.gif"></td>');
+	picker.append('</tr>');
+}
+
+void addSadFace(buffer picker, string message) {
+	picker.append('<tr class="picknone">');
+	picker.append('<td class="info" colspan="2">');
+	picker.append(message);
+	picker.append('</td></tr>');
+}
+
 record plantInfo {
 	int no;
 	string desc;
@@ -904,35 +933,6 @@ string toPlant(int i) {
  return "";
 }
 
-// Fucntions for pickers
-void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker">');
-	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
-}
-
-void pickerStart(buffer picker, string rel, string message, string image) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
-	picker.append(imagePath + image);
-	picker.append('.png">');
-	picker.append(message + '</th></tr>');
-}
-
-void addLoader(buffer picker, string message) {
-	picker.append('<tr class="pickloader" style="display:none">');
-	picker.append('<td class="info">' + message + '</td>');
-	picker.append('<td class="icon"><img src="/images/itemimages/karma.gif"></td>');
-	picker.append('</tr>');
-}
-
-void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone">');
-	picker.append('<td class="info" colspan="2">');
-	picker.append(message);
-	picker.append('</td></tr>');
-}
-
 void pickerFlorist(string[int] planted){
 	int plantsPlanted;
 	string terrain = lastLoc.environment;
@@ -980,7 +980,7 @@ void pickerFlorist(string[int] planted){
 
 void addPlants(buffer result) {
 	if(lastLoc.environment == "none" || lastLoc == $location[none]) {
-		result.append('(Cannot plant here)');
+		result.append('<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">(Cannot plant here)</a>');
 		return;
 	}
 	string[int] plants=get_florist_plants()[lastLoc];
@@ -1920,7 +1920,7 @@ void pickMood() {
 		picker.append(m);
 		picker.append('</a></td><td>');
 		if(moodname != "???" && mood_plus(moodname,m)) {
-			picker.append('<a title="ADD this to current mood" href="/KoLmafia/sideCommand?cmd=mood+');
+			picker.append('<a title="ADD this to current mood" href="');
 			picker.append(sideCommand("mood "+moodname+", "+m));
 			picker.append('"><img src="');
 			picker.append(imagePath);
@@ -2817,16 +2817,34 @@ void pickOutfit() {
 	
 	// Certain quest items need to be equipped to enter locations
 	item [int] gear;
-	foreach e in $items[Talisman o' Nam, pirate fledges, black glass, Mega Gem]
-		if(!have_equipped(e) && available_amount(e) > 0) gear[count(gear)] = e;
+	void addGear(boolean [item] list) {
+		foreach e in list
+			if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0) gear[count(gear)] = e;
+	}
+	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1)
+		addGear($items[continuum transfunctioner]);
+	addGear($items[pirate fledges, Talisman o' Nam, Mega Gem, black glass]);
+	switch(lastLoc) {
+	case $location[The Castle in the Clouds in the Sky (Basement)]:
+		addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
+		break;
+	case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
+	case $location[The Castle in the Clouds in the Sky (Top Floor)]:
+		addGear($items[mohawk wig]);
+		break;
+	}
+	
 	if(count(gear) > 0) {
 		picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Equip Quest Item</td></tr>');
 		foreach i, e in gear {
-			if(e == $item[Mega Gem]) {
-				if(get_property("questL11Palindome") != "finished")
-					picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem") + '">Talisman o\' Nam & Mega Gem</a></td>');
+			if(e.to_slot() == $slot[acc1]) {
+				if(e == $item[Mega Gem]) {
+					if(get_property("questL11Palindome") != "finished")
+						picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem") + '">Talisman o\' Nam & Mega Gem</a></td>');
+				} else
+					picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 "+e) + '">' + e + '</a></td>');
 			} else
-				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 "+e) + '">' + e + '</a></td>');
+				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip "+e) + '">' + e + '</a></td>');
 		}
 	}
 	
@@ -3244,7 +3262,7 @@ void bakeTracker() {
 		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
 		//L9: oil peak
 		high.append("<br>Oil Peak: ");
-		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' µB/Hg'));
+		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' ï¿½B/Hg'));
 		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
 			high.set_length(0);
 			high.append('<br>Return to <a target="mainpane" href="place.php?whichplace=highlands&action=highlands_dude">High Landlord</a>');
@@ -4007,6 +4025,11 @@ boolean parsePage(buffer original) {
 			.replace_string("Haunted Wine Cellar", "Wine Cellar")
 			.replace_string("The Enormous Greater-Than Sign", "Greater-Than Sign")
 			.replace_string("The Penultimate Fantasy Airship", "Fantasy Airship")
+			.replace_string("Next to that Barrel with Something Burning in it", "Barrel with Something Burning")
+			.replace_string("Near an Abandoned Refrigerator", "Abandoned Refrigerator")
+			.replace_string("Over Where the Old Tires Are", "Where the Old Tires Are")
+			.replace_string("Out by that Rusted-Out Car", "Rusted-Out Car")
+			.replace_string("Cobb's Knob Menagerie, Level", "Menagerie, Level")		// All three menagerie levels
 			.replace_string('">The', '">'); 										// Remove leading "The " from all locations
 	}
 
