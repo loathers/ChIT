@@ -13,11 +13,11 @@ $(document).ready(function () {
 		var picker = $("#" + caller.attr("rel"));
 		
 		if (picker) {
-			if (picker.is(':hidden')) {					
+			if (picker.is(':hidden')) {
 				picker.css({
 					'position': 'absolute',
 					'top': top,
-					'max-height': '600px',
+					'max-height': '93%',
 					'overflow-y': 'auto'
 				});
 				if ((top + picker.height() + 30) > $(document).height()) {
@@ -60,7 +60,7 @@ $(document).ready(function () {
 		var tool = $("#chit_tool" + caller.attr("rel"));
 		
 		if (tool) {
-			if (tool.is(':hidden')) {					
+			if (tool.is(':hidden')) {
 				$(".chit_skeleton").hide();
 				tool.css({
 					'position': 'absolute',

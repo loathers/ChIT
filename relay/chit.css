@@ -200,7 +200,7 @@ td.florist {
 	max-width:60px;
 }
 td.florist img {
-	margin:0px 2px 0px 2px;
+	margin:-5px 2px 0px 2px;
 	vertical-align:middle;
 	height:40px;
 }

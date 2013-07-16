@@ -11,7 +11,7 @@ Everything after that by Bale
 Additional major contributors:
 	AlbinoRhino - Provided invaluable assistance with CSS & Javascript
 	ckb - Created the tracker brick
-	bordemstirs - Created the florist brick
+	bordemstirs - Created the florist brick and moved the frams to make charpane taller
 
 *************************************************************************************
 Many thanks to:
@@ -551,7 +551,7 @@ string helperSemiRare() {
 		rewards[$location[Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
-		rewards[$location[Orc Chasm]] = "scroll2.gif|Fight Bad ASCII Art|68";
+		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
 		rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
@@ -583,7 +583,9 @@ string helperSemiRare() {
 	//wrap everything up in a pretty table
 	if (rows > 0) {
 		result.append('<table id="chit_semirares" class="chit_brick nospace">');
-		result.append('<tr class="helper"><th colspan="2">Semi-Rares</th></tr>');
+		result.append('<tr class="helper"><th colspan="2"><img src="');
+		result.append(imagePath);
+		result.append('fortune.png">Semi-Rares</th></tr>');
 		result.append('<tr>');
 		result.append('<td class="info" colspan="2">' + message + '</td>');
 		result.append('</tr>');
@@ -1001,7 +1003,7 @@ void addFlorist(buffer result, boolean label) {
 		result.append('<tr><td class="label">');
 		
 		// label is not necessary if right after trail
-		if(vars["chit.stats.layout"].to_lower_case().replace_string(" ", "").contains_text("trail,florist"))
+		if(vars["chit.stats.layout"].contains_text("trail,florist"))
 			label = false;
 		result.append(label? '<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist</a>': '&nbsp;');
 		
@@ -1946,7 +1948,8 @@ void bakeToolbar() {
 	buffer result;
 	
 	void addRefresh() {
-		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a></li></ul>');
+		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a></li>');
+		result.append('<li><a href="'+sideCommand("zlib chit.disable = true")+'" title="Disable ChIT"><img style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;" src="'+imagePath+'disable.png"></a></li></ul>');
 	}
 
 	void addMood() {
@@ -1974,7 +1977,7 @@ void bakeToolbar() {
 	void addTools () {
 		result.append('<ul>');
 	
-		string layout = vars["chit.toolbar.layout"].to_lower_case().replace_string(" ", "");
+		string layout = vars["chit.toolbar.layout"];
 		
 		string [int] bricks = split_string(layout,",");
 		string brick;
@@ -2488,7 +2491,7 @@ void addTrail(buffer result) {
 	// Should I auto-add Florist after trail? Do it if florist not defined elsewhere
 	if(florist_available()) {
 		foreach layout in $strings[roof, walls, floor, toolbar, stats]
-			if(vars["chit." + layout + ".layout"].to_lower_case().contains_text("florist"))
+			if(vars["chit." + layout + ".layout"].contains_text("florist"))
 				return;
 		result.addFlorist(false);
 	}
@@ -2706,7 +2709,6 @@ void bakeStats() {
 	result.append('</thead>');
 
 	string layout = vars["chit.stats.layout"];
-	layout = to_lower_case(replace_string(layout, " ",""));
 	string remainder = layout;
 	string [int] sections = split_string(layout, "\\|");
 	for i from 0 to (sections.count()-1) {
@@ -3060,7 +3062,7 @@ void bakeQuests() {
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "biodataGalley", 9);
 	}
 	
-	// Interpret readout for Oil Peak. u is ÂµB/Hg.
+	// Interpret readout for Oil Peak. u is µB/Hg.
 	string to_slick(float u) {
 		float ml = numeric_modifier("Monster Level");
 		string oil = "cartel";
@@ -3262,7 +3264,7 @@ void bakeTracker() {
 		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
 		//L9: oil peak
 		high.append("<br>Oil Peak: ");
-		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' ï¿½B/Hg'));
+		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' &mu;B/Hg'));
 		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
 			high.set_length(0);
 			high.append('<br>Return to <a target="mainpane" href="place.php?whichplace=highlands&action=highlands_dude">High Landlord</a>');
@@ -4194,14 +4196,16 @@ void bakeBricks() {
 	bakeHeader();
 	bakeFooter();
 
+	// Standardize brick layouts
+	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
+		vars[layout] = vars[layout].to_lower_case().replace_string(" ", "");
+	
+
 	if (inValhalla) {
 		bakeValhalla();
 	} else {
 		foreach layout in $strings[roof, walls, floor, toolbar] {
-
-			string prefname = "chit." + layout + ".layout";
-			layout = vars[prefname].to_lower_case().replace_string(" ", "");
-			string [int] bricks = split_string(layout,",");
+			string [int] bricks = split_string(vars["chit." + layout + ".layout"],",");
 			string brick;
 			for i from 0 to (bricks.count()-1) {
 				brick = bricks[i];
@@ -4263,7 +4267,7 @@ buffer addBricks(string layout) {
 }
 
 buffer buildRoof() {
-	string layout = vars["chit.roof.layout"].to_lower_case().replace_string(" ", "");
+	string layout = vars["chit.roof.layout"];
 	
 	buffer result;
 	result.append('<div id="chit_roof" class="chit_chamber">');
@@ -4276,7 +4280,7 @@ buffer buildRoof() {
 }
 
 buffer buildWalls() {
-	string layout = vars["chit.walls.layout"].to_lower_case().replace_string(" ", "");
+	string layout = vars["chit.walls.layout"];
 
 	buffer result;
 	result.append('<div id="chit_walls" class="chit_chamber">');
@@ -4288,7 +4292,7 @@ buffer buildWalls() {
 }
 
 buffer buildFloor() {
-	string layout = vars["chit.floor.layout"].to_lower_case().replace_string(" ", "");
+	string layout = vars["chit.floor.layout"];
 	
 	buffer result;
 	result.append('<div id="chit_floor" class="chit_chamber">');
@@ -4310,7 +4314,7 @@ buffer buildCloset() {
 	foreach key,value in chitPickers
 		result.append(value);
 	
-	string layout = vars["chit.toolbar.layout"].to_lower_case().replace_string(" ", "");
+	string layout = vars["chit.toolbar.layout"];
 	
 	string [int] bricks = split_string(layout,",");
 	string brick;
@@ -4357,7 +4361,7 @@ buffer modifyPage(buffer source) {
 	if(source.length() < 6)
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
 	if(vars["chit.disable"]=="true")
-		return source;
+		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
 	//Set default values for zlib variables
 	setvar("chit.checkversion", true);
 	setvar("chit.disable",false);
