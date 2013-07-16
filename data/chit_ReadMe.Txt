@@ -40,16 +40,18 @@ So how do you design and build your own house? Easy. Simply place your bricks in
 All of the preferences below can be found in /data/vars_yourname.txt
 -------------------------------------------------------------------------------------
 chit.roof.layout: Comma-separated list of bricks to place in your roof
-          Default: character,stats,familiar,trail
+          Default: character,stats
 
 chit.walls.layout: Comma-separated list of bricks to place in your walls
           Default: helpers,effects
 
 chit.floor.layout: Comma-separated list of bricks to place in your floor
-          Default: update
+          Default: update,familiar
                   
 chit.toolbar.layout: Comma-separated list of bricks to place in the toolbar
-          Default: quests,modifiers
+          Special values:
+             disable - a brick you can add here which is actually a small button to disable ChIT.
+          Default: trail,quests,modifiers,elements,organs
 
 *************************************************************************************
 The following preferences further refine the content and appearance of individual bricks
@@ -70,7 +72,8 @@ chit.stats.layout: Your stats can be further customized with another comma-separ
              axel - that creepy spooky little girl from the spaaaaace quest (only while doing the quest)
              mcd - the progress bar is clickable to let you set a new value
              trail - last adventure
-          Default: muscle,myst,moxie|stomach,liver,spleen|hp,mp,axel|mcd
+             florist - shows Florist Friars plants for current location, if you have access to it
+          Default: muscle,myst,moxie|hp,mp,axel|mcd|trail,florist
 chit.stats.showbars: Shows or hides progress bars
           Default: true
 -------------------------------------------------------------------------------------
@@ -142,7 +145,7 @@ chit.effects.layout: Comma-separated list
            Example: 
              intrinsics,songs,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs
           Default: 
-             buffs,intrinsics (standard behaviour)
+             songs,buffs,intrinsics
 chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
           true:  uses chit_effects_<yourname>.txt
           false: uses chit_effects.txt  (default)

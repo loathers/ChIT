@@ -1948,8 +1948,7 @@ void bakeToolbar() {
 	buffer result;
 	
 	void addRefresh() {
-		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a></li>');
-		result.append('<li><a href="'+sideCommand("zlib chit.disable = true")+'" title="Disable ChIT"><img style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;" src="'+imagePath+'disable.png"></a></li></ul>');
+		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a></li></ul>');
 	}
 
 	void addMood() {
@@ -1974,6 +1973,10 @@ void bakeToolbar() {
 		
 	}
 	
+	void addDisable() {
+		result.append('<li><a href="'+sideCommand("zlib chit.disable = true")+'" title="Disable ChIT"><img style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;" src="'+imagePath+'disable.png"></a></li>');
+	}
+	
 	void addTools () {
 		result.append('<ul>');
 	
@@ -1986,7 +1989,9 @@ void bakeToolbar() {
 		string toolhover;
 		for i from 0 to (bricks.count()-1) {
 			brick = bricks[i];
-			if ((chitTools contains brick) && (chitBricks contains brick)) {
+			if(brick == "disable") {
+				addDisable();
+			} else if ((chitTools contains brick) && (chitBricks contains brick)) {
 				toolprops = split_string(chitTools[brick],"\\|");
 				if (chitBricks[brick] == "") {
 					result.append('<li>');
