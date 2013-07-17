@@ -1945,21 +1945,24 @@ void pickMood() {
 }
 
 void bakeToolbar() {
-	buffer result;
+	buffer toolbar;
 	
-	void addRefresh() {
-		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a></li></ul>');
+	void addRefresh(buffer result) {
+		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="');
+		result.append(imagePath);
+		result.append('refresh.png"></a></li></ul>');
 	}
 
-	void addMood() {
+	void addMood(buffer result) {
 		if(vars["chit.toolbar.moods"] == "false")
 			return;
 
 		result.append('<ul style="float:right">');
 
 		// Add button to switch mood
-		result.append('<li><a href="#" class="chit_launcher" rel="chit_pickermood" title="Select Mood">');
-		result.append('<img src="' + imagePath + 'select_mood.png"></a></li>');
+		result.append('<li><a href="#" class="chit_launcher" rel="chit_pickermood" title="Select Mood"><img src="');
+		result.append(imagePath);
+		result.append('select_mood.png"></a></li>');
 		
 		// If chit.toolbar.moods == bonus, then add extra mood execution button
 		if(vars["chit.toolbar.moods"] == "bonus") {
@@ -1973,11 +1976,24 @@ void bakeToolbar() {
 		
 	}
 	
-	void addDisable() {
-		result.append('<li><a href="'+sideCommand("zlib chit.disable = true")+'" title="Disable ChIT"><img style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;" src="'+imagePath+'disable.png"></a></li>');
+	// If disable is first, attach it to the refresh button
+	void addDisable(buffer result, int i) {
+		buffer button;
+		button.append('<li><a href="');
+		button.append(sideCommand("zlib chit.disable = true"));
+		button.append('" title="Disable ChIT"><img');
+		if(i == 0)
+			button.append(' style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;"');
+		else
+			button.append(' style="vertical-align:bottom;margin-bottom:-3;"');
+		button.append(' src="');
+		button.append(imagePath);
+		button.append('disable.png"></a></li>');
+		int point = i == 0? result.index_of("</ul>"): length(result);
+		result.insert(point, button);
 	}
 	
-	void addTools () {
+	void addTools (buffer result) {
 		result.append('<ul>');
 	
 		string layout = vars["chit.toolbar.layout"];
@@ -1990,7 +2006,7 @@ void bakeToolbar() {
 		for i from 0 to (bricks.count()-1) {
 			brick = bricks[i];
 			if(brick == "disable") {
-				addDisable();
+				result.addDisable(i);
 			} else if ((chitTools contains brick) && (chitBricks contains brick)) {
 				toolprops = split_string(chitTools[brick],"\\|");
 				if (chitBricks[brick] == "") {
@@ -1998,26 +2014,29 @@ void bakeToolbar() {
 					result.append('<img src="' + imagePath + toolprops[1] + '" title="' + toolprops[0] + '" >');
 					result.append('</li>');
 				} else {
-					result.append('<li>');
-					result.append('<a class="tool_launcher" title="' + toolprops[0] + '" href="#" rel="' + brick +'">');
-					result.append('<img src="' + imagePath + toolprops[1] + '">');
-					result.append('</a>');				
-					result.append('</li>');				
+					result.append('<li><a class="tool_launcher" title="');
+					result.append(toolprops[0]);
+					result.append('" href="#" rel="');
+					result.append(brick);
+					result.append('"><img src="');
+					result.append(imagePath);
+					result.append(toolprops[1]);
+					result.append('"></a></li>');				
 				}
 			}
 		}	
 		result.append("</ul>");
 	}
 
-	result.append('<table id="chit_toolbar"><tr><th>');
-	addRefresh();
+	toolbar.append('<table id="chit_toolbar"><tr><th>');
+	toolbar.addRefresh();
 	if (!inValhalla) {
-		addMood();
-		addTools();
+		toolbar.addMood();
+		toolbar.addTools();
 	}
- 	result.append('</th></tr>');
- 	result.append('</table>');	
-	chitBricks["toolbar"] = result;
+ 	toolbar.append('</th></tr>');
+ 	toolbar.append('</table>');	
+	chitBricks["toolbar"] = toolbar;
 }
 
 float init_MLpenalty() {
@@ -2831,7 +2850,7 @@ void pickOutfit() {
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1)
 		addGear($items[continuum transfunctioner]);
 	addGear($items[pirate fledges, Talisman o' Nam, Mega Gem, black glass]);
-	switch(lastLoc) {
+	switch(loc) {
 	case $location[The Castle in the Clouds in the Sky (Basement)]:
 		addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
 		break;
