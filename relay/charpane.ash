@@ -616,22 +616,22 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('<td>(.*?itemimages/([^"]*)[^<]*).*?<font[^>]*>(.*?) \\((?:(.*?), )?(<a.*?>(\\d+)</a>|&infin;|\\d+)\\)(?:.*?(<a .*?</a>))?', source);
+	matcher parse = create_matcher('(<img.*?itemimages/([^"]*)).*?(onCl.+?;)?.*?<font[^>]*>(.*?) \\((?:(.*?), )?(<a.*?>(\\d+)</a>|&infin;|\\d+)\\)(?:.*?(<a .*?</a>))?', source);
 	# <td>(.*?itemimages/([^"]*)[^<]*).*?<font[^>]*>(.*?) \((?:(.*?), )?(<a.*?>(\d+)</a>|&infin;|\d+)\)(?:.*?(<a .*?</a>))?
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
-		columnIcon = parse.group(1);
+		columnIcon = parse.group(1)+'" '+parse.group(3)+'\'>';
 		myBuff.effectImage = parse.group(2);
-		myBuff.effectName = parse.group(3);
-		spoiler = parse.group(4);  // This appears for "Form of...Bird!" and "On the Trail"
-		columnTurns = parse.group(5);
+		myBuff.effectName = parse.group(4);
+		spoiler = parse.group(5);  // This appears for "Form of...Bird!" and "On the Trail"
+		columnTurns = parse.group(6);
 		if(columnTurns == "&infin;") { // Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
 		} else
-			myBuff.effectTurns = parse.group(6).to_int();
-		if(parse.group(7) != "")
-			columnArrow = parse.group(7).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "upred.png");
+			myBuff.effectTurns = parse.group(7).to_int();
+		if(parse.group(8) != "")
+			columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "upred.png");
 	}
 	string effectAlias = myBuff.effectName;
 
@@ -938,6 +938,7 @@ string toPlant(int i) {
 void pickerFlorist(string[int] planted){
 	int plantsPlanted;
 	string terrain = lastLoc.environment;
+	if(lastLoc == $location[hidden city (automatic)]) terrain = "outdoor";
 	boolean marked = false;
 	foreach i,s in planted {
 		if (s!="") plantsPlanted+=1;
@@ -981,7 +982,7 @@ void pickerFlorist(string[int] planted){
 }
 
 void addPlants(buffer result) {
-	if(lastLoc.environment == "none" || lastLoc == $location[none]) {
+	if(lastLoc != $location[hidden city (automatic)] && (lastLoc.environment == "none" || lastLoc == $location[none])) {
 		result.append('<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">(Cannot plant here)</a>');
 		return;
 	}
@@ -4041,8 +4042,11 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 		// Pull out last adventured location
 		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
-		if(find(parse))
+		if(find(parse)) {
 			lastLoc = parse.group(2).to_location();
+			if(lastLoc == $location[none] && parse.group(2) == "The Hidden City")
+				lastLoc = $location[hidden city (automatic)];
+		}
 		// Shorten some unreasonablely lengthy locations
 		chitSource["trail"] = chitSource["trail"]
 			.replace_string("The Castle in the Clouds in the Sky", "Giant's Castle")
@@ -4068,7 +4072,7 @@ boolean parsePage(buffer original) {
 
 	// Mood, Buffs, Intrinsic Effects
 	#parse = create_matcher('<center><p><b><font size=2>Effects:(.+?)?(<table><tr><td>.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
-	parse = create_matcher('<center><p><b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td>.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
+	parse = create_matcher('<center><p><b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
 	if(find(parse)) {
 		chitSource["mood"] = parse.group(1);
 		// Regular effects are group 2. Intrinisics are group 3.
