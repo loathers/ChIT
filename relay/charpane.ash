@@ -616,26 +616,24 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	#matcher parse = create_matcher('(<img.*?itemimages/([^"]*)).*?(onCl.+?;)?.*?<font[^>]*>(.*?) \\((?:(.*?), )?(<a.*?>(\\d+)</a>|&infin;|\\d+)\\)(?:.*?(<a .*?</a>))?', source);
-	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<img.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<img.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
-		#columnIcon = parse.group(1)+'" '+parse.group(3)+'\'>';
-		columnIcon = parse.group(2);
+		columnIcon = parse.group(2);	// This is full html for the icon
 		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
-		spoiler = parse.group(5);  // This appears for "Form of...Bird!" and "On the Trail"
+		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
 		columnTurns = parse.group(6);
-		if(columnTurns == "&infin;") { // Is it intrinsic?
+		if(columnTurns == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
 		} else
 			myBuff.effectTurns = parse.group(7).to_int();
 		if(parse.group(1) != "") {
-			doArrows = true; // In case it was disabled. Make a column for it.
+			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
 		} else if(parse.group(8) != "")
-			columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "upred.png");
+			columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "redup.png");
 	}
 	string effectAlias = myBuff.effectName;
 
