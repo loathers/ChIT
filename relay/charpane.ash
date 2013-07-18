@@ -616,12 +616,13 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('(<img.*?itemimages/([^"]*)).*?(onCl.+?;)?.*?<font[^>]*>(.*?) \\((?:(.*?), )?(<a.*?>(\\d+)</a>|&infin;|\\d+)\\)(?:.*?(<a .*?</a>))?', source);
-	# <td>(.*?itemimages/([^"]*)[^<]*).*?<font[^>]*>(.*?) \((?:(.*?), )?(<a.*?>(\d+)</a>|&infin;|\d+)\)(?:.*?(<a .*?</a>))?
+	#matcher parse = create_matcher('(<img.*?itemimages/([^"]*)).*?(onCl.+?;)?.*?<font[^>]*>(.*?) \\((?:(.*?), )?(<a.*?>(\\d+)</a>|&infin;|\\d+)\\)(?:.*?(<a .*?</a>))?', source);
+	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<img.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
-		columnIcon = parse.group(1)+'" '+parse.group(3)+'\'>';
-		myBuff.effectImage = parse.group(2);
+		#columnIcon = parse.group(1)+'" '+parse.group(3)+'\'>';
+		columnIcon = parse.group(2);
+		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);  // This appears for "Form of...Bird!" and "On the Trail"
 		columnTurns = parse.group(6);
@@ -4072,7 +4073,7 @@ boolean parsePage(buffer original) {
 
 	// Mood, Buffs, Intrinsic Effects
 	#parse = create_matcher('<center><p><b><font size=2>Effects:(.+?)?(<table><tr><td>.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
-	parse = create_matcher('<center><p><b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
+	parse = create_matcher('<center><p><b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(.*?<center><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
 	if(find(parse)) {
 		chitSource["mood"] = parse.group(1);
 		// Regular effects are group 2. Intrinisics are group 3.
