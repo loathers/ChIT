@@ -631,7 +631,10 @@ buff parseBuff(string source) {
 			myBuff.isIntrinsic = true;
 		} else
 			myBuff.effectTurns = parse.group(7).to_int();
-		if(parse.group(8) != "")
+		if(parse.group(1) != "") {
+			doArrows = true; // In case it was disabled. Make a column for it.
+			columnArrow = parse.group(1);
+		} else if(parse.group(8) != "")
 			columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "upred.png");
 	}
 	string effectAlias = myBuff.effectName;
