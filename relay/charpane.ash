@@ -548,7 +548,7 @@ string helperSemiRare() {
 
 	//Set up all the locations we support
 	string [location] rewards;
-		rewards[$location[Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
+		rewards[$location[The Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
@@ -556,6 +556,8 @@ string helperSemiRare() {
 		rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
+	if(can_interact())
+		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|200";
 		
 	int lastCounter = to_int(get_property("semirareCounter"));
 	string lastLocation = lastCounter == 0? "none": get_property("semirareLocation");
@@ -2850,18 +2852,19 @@ void pickOutfit() {
 		foreach e in list
 			if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0) gear[count(gear)] = e;
 	}
-	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1)
+	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($items[continuum transfunctioner]);
 	addGear($items[pirate fledges, Talisman o' Nam, Mega Gem, black glass]);
-	switch(loc) {
-	case $location[The Castle in the Clouds in the Sky (Basement)]:
-		addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
-		break;
-	case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
-	case $location[The Castle in the Clouds in the Sky (Top Floor)]:
-		addGear($items[mohawk wig]);
-		break;
-	}
+	if(get_property("questL10Garbage") != "finished")
+		switch(loc) {
+		case $location[The Castle in the Clouds in the Sky (Basement)]:
+			addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
+			break;
+		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
+		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
+			addGear($items[mohawk wig]);
+			break;
+		}
 	
 	if(count(gear) > 0) {
 		picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Equip Quest Item</td></tr>');
