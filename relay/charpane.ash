@@ -618,7 +618,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<img.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -635,7 +635,8 @@ buff parseBuff(string source) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
 		} else if(parse.group(8) != "")
-			columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "redup.png");
+	#		columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "redup.png");
+			columnArrow = parse.group(8).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
 	}
 	string effectAlias = myBuff.effectName;
 
