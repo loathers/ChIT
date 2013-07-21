@@ -635,7 +635,6 @@ buff parseBuff(string source) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
 		} else if(parse.group(8) != "")
-	#		columnArrow = parse.group(8).replace_string("/images/up.gif", imagePath + "up.png").replace_string("/images/redup.gif", imagePath + "redup.png");
 			columnArrow = parse.group(8).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
 	}
 	string effectAlias = myBuff.effectName;
@@ -1208,6 +1207,10 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 					hover = "Retrieve and equip " + it.to_string();
 					cli = "equip familiar "+it;
 					break;
+				case "clancy":
+					hover = "Eequip Clancy with his " + it.to_string();
+					cli = "use "+it;
+					break;
 				default:	
 					hover = "Equip " + it.to_string();
 					cli = "equip familiar "+it;
@@ -1319,7 +1322,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	void pickClancy() {
 		foreach instrument in $items[Clancy's sackbut,Clancy's crumhorn,Clancy's lute]
 			if(allmystuff contains instrument)
-				addEquipment(instrument, "inventory");
+				addEquipment(instrument, "clancy");
 	}
 	
 	void pickChameleon() {

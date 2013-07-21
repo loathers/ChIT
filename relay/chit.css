@@ -530,6 +530,9 @@ table.chit_picker tr.pickitem td.make {
 table.chit_picker tr.pickitem td.inventory {
 	border-left:4px solid green;
 }
+table.chit_picker tr.pickitem td.clancy {
+	border-left:4px solid green;
+}
 table.chit_picker tr.pickitem td.retrieve {
 	border-left:4px solid purple;
 }
