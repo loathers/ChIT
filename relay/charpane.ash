@@ -631,7 +631,8 @@ buff parseBuff(string source) {
 			myBuff.isIntrinsic = true;
 		} else
 			myBuff.effectTurns = parse.group(7).to_int();
-		if(parse.group(1) != "") {
+		// Only prefer KoL upeffect to mafia upeffect for skills (since KoL upeffect won't buy items) unless there are no KoL upeffect arrows
+		if(parse.group(1) != "" && (parse.group(1).contains_text("Click to cast") || parse.group(8) == "")) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
 		} else if(parse.group(8) != "")
