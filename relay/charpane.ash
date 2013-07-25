@@ -587,7 +587,7 @@ string helperSemiRare() {
 		result.append('<table id="chit_semirares" class="chit_brick nospace">');
 		result.append('<tr class="helper"><th colspan="2"><img src="');
 		result.append(imagePath);
-		result.append('fortune.png">Semi-Rares</th></tr>');
+		result.append('helpers.png">Semi-Rares</th></tr>');
 		result.append('<tr>');
 		result.append('<td class="info" colspan="2">' + message + '</td>');
 		result.append('</tr>');
@@ -631,12 +631,13 @@ buff parseBuff(string source) {
 			myBuff.isIntrinsic = true;
 		} else
 			myBuff.effectTurns = parse.group(7).to_int();
-		// Only prefer KoL upeffect to mafia upeffect for skills (since KoL upeffect won't buy items) unless there are no KoL upeffect arrows
-		if(parse.group(1) != "" && (parse.group(1).contains_text("Click to cast") || parse.group(8) == "")) {
+		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
+		if(parse.group(8) != "")
+			columnArrow = parse.group(8).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
+		else if(parse.group(1) != "" ) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
-		} else if(parse.group(8) != "")
-			columnArrow = parse.group(8).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
+		}
 	}
 	string effectAlias = myBuff.effectName;
 
@@ -3442,7 +3443,7 @@ void bakeTracker() {
 	//if (get_property("questM12Pirate")!="unstarted" && get_property("questM12Pirate")!="finished") { 
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if(have_outfit("Swashbuckling Getup") && item_amount($item[Pirate Fledges]) == 0) {
+	if(have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges]) == 0) {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
@@ -4052,7 +4053,7 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 		// Pull out last adventured location
 		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
-		if(find(parse)) {
+		if(find(parse)) {  // Parse out last location for use by other functions
 			lastLoc = parse.group(2).to_location();
 			if(lastLoc == $location[none] && parse.group(2) == "The Hidden City")
 				lastLoc = $location[hidden city (automatic)];
