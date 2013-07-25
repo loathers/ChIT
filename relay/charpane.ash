@@ -964,7 +964,7 @@ void pickerFlorist(string[int] planted){
 			picker.append('<td><a href="' + sideCommand('ashq visit_url("forestvillage.php?action=floristfriar");visit_url("choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i +'");') +'">'+ plantDesc(s, true) + '</a></td></tr>');
 		}
 		if (count(plantable)>0) {
-			picker.append('<tr><td colspan="2" style="color:white;background-color:blue;font-weight:bold;">Remaining Plants</th></tr>');
+			picker.append('<tr class="pickitem"><td colspan="2" style="color:white;background-color:blue;font-weight:bold;">Remaining Plants</th></tr>');
 			foreach i in plantable {
 				if (!plantable[i]) continue;
 				plant = i.toPlant();
@@ -1881,7 +1881,7 @@ string currentMood() {
 void addCurrentMood(buffer result, boolean picker) {
 	void addPick(buffer prefix) {
 		if(picker)
-			prefix.append('<tr class="pickitem "><td class="info"><a class="visit" ');
+			prefix.append('<tr class="pickitem"><td class="info"><a class="visit" ');
 		prefix.append('<a ');
 	}
 	string source = chitSource["mood"];
@@ -1927,7 +1927,7 @@ void pickMood() {
 	string moodname = currentMood();
 	foreach i,m in get_moods() {
 		if(m == "") continue;
-		picker.append('<tr class="pickitem "><td class="info"><a title="Make this your current mood" class="visit" href="');
+		picker.append('<tr class="pickitem"><td class="info"><a title="Make this your current mood" class="visit" href="');
 		picker.append(sideCommand("mood "+m));
 		picker.append('">');
 		picker.append(m);
@@ -1945,7 +1945,7 @@ void pickMood() {
 		
 	// Add link to execute mood unless it's on the toolbar
 	if(vars["chit.toolbar.moods"] != "bonus") {
-		picker.append('<tr><th colspan="2">Current Mood</th></tr>');
+		picker.append('<tr class="pickitem"><th colspan="2">Current Mood</th></tr>');
 		picker.addCurrentMood(true);
 	}
 	
@@ -2844,13 +2844,13 @@ void pickOutfit() {
 			if(is_wearing_outfit(o) && o != "Birthday Suit")
 				picker.append('<tr class="pickitem current"><td class="info">' + o + '</td>');
 			else
-				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + local(o) + '</a></td>');
+				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + local(o) + '</a></td>');
 		}
 		
-	picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
+	picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
 	foreach i,o in get_custom_outfits()
 		if(i != 0)
-			picker.append('<tr class="pickitem "><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + o + '</a></td>');
+			picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + o + '</a></td>');
 	
 	// Certain quest items need to be equipped to enter locations
 	item [int] gear;
@@ -2873,16 +2873,16 @@ void pickOutfit() {
 		}
 	
 	if(count(gear) > 0) {
-		picker.append('<tr><td style="color:white;background-color:blue;font-weight:bold;">Equip Quest Item</td></tr>');
+		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip Quest Item</td></tr>');
 		foreach i, e in gear {
 			if(e.to_slot() == $slot[acc1]) {
 				if(e == $item[Mega Gem]) {
 					if(get_property("questL11Palindome") != "finished")
-						picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem") + '">Talisman o\' Nam & Mega Gem</a></td>');
+						picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem") + '">Talisman o\' Nam & Mega Gem</a></td>');
 				} else
-					picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip acc3 "+e) + '">' + e + '</a></td>');
+					picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip acc3 "+e) + '">' + e + '</a></td>');
 			} else
-				picker.append('<tr class="pickitem "><td class="info"><a class="change" href="' + sideCommand("equip "+e) + '">' + e + '</a></td>');
+				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip "+e) + '">' + e + '</a></td>');
 		}
 	}
 	
@@ -4055,8 +4055,16 @@ boolean parsePage(buffer original) {
 		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
 		if(find(parse)) {  // Parse out last location for use by other functions
 			lastLoc = parse.group(2).to_location();
-			if(lastLoc == $location[none] && parse.group(2) == "The Hidden City")
-				lastLoc = $location[hidden city (automatic)];
+			if(lastLoc == $location[none]) {	// Some of these are really tough for KoLmafia to deal with!
+				switch(parse.group(2)) {
+				case "The Hidden City":
+					lastLoc = $location[hidden city (automatic)];
+					break;
+				case "The Arid, Extra-Dry Desert":
+					lastLoc = $location[Desert (Ultrahydrated)];
+					break;
+				}
+			}
 		}
 		// Shorten some unreasonablely lengthy locations
 		chitSource["trail"] = chitSource["trail"]
@@ -4082,12 +4090,10 @@ boolean parsePage(buffer original) {
 	}
 
 	// Mood, Buffs, Intrinsic Effects
-	#parse = create_matcher('<center><p><b><font size=2>Effects:(.+?)?(<table><tr><td>.+?</td></tr></table>)(.*?<center><p><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
-	parse = create_matcher('<center><p><b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(.*?<center><b><font size=2>Intrinsics:.*?</td></tr></table>)?', source);
+	parse = create_matcher('<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(?:.*?<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>))?', source);
 	if(find(parse)) {
-		chitSource["mood"] = parse.group(1);
-		// Regular effects are group 2. Intrinisics are group 3.
-		chitSource["effects"] = parse.group(2) + parse.group(3);
+		chitSource["mood"] = parse.group(1) + parse.group(3); // Only one of those might contain useful data
+		chitSource["effects"] = parse.group(2) + parse.group(4); // Effects plus Instrinsics
 		source = parse.replace_first("");
 	}
 
