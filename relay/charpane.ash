@@ -618,7 +618,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^.]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('<td[^>]*>(.*?)</td><td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^>]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -4062,6 +4062,12 @@ boolean parsePage(buffer original) {
 					break;
 				case "The Arid, Extra-Dry Desert":
 					lastLoc = $location[Desert (Ultrahydrated)];
+					break;
+				case "The Orcish Frat House":
+					lastLoc = $location[Frat House];
+					break;
+				case "The Hippy Camp":
+					lastLoc = $location[Hippy Camp];
 					break;
 				}
 			}
