@@ -207,20 +207,18 @@ if (get_property("kingLiberated") == true) {
 }
 
 //Path
-string myPath = "";
+string myPath = my_path();
 if (myLifestyle == "Aftercore") {
 	myPath = "No Restrictions";
-} else if (my_path() == "None") {
+} else if(myPath == "None") {
 	myPath = "No Path";
-} else if (my_path() == "Way of the Surprising Fist") {
+} else if(myPath == "Way of the Surprising Fist") {
 	myPath = "Surprising Fist";
 	//myPath = "Surprising Fist: " + get_property("fistSkillsKnown");
-} else if (my_path() == "Avatar of Jarlsberg") {
+} else if(myPath == "Avatar of Jarlsberg") {
 	myPath = "Jarlsberg";
-} else if (my_path() == "Avatar of St. Sneaky Pete") {
+} else if (myPath == "Avatar of St. Sneaky Pete") {
 	myPath = "Sneaky Pete";
-} else {
-	myPath = my_path();
 }
 
 string itemimages(string img) {
@@ -1135,6 +1133,12 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "Volleyball, ML +20";
 		case $item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t]:
 			return "Fairy: Food, Pants, Candy +5%";
+		case $item[fixed-gear bicycle]:
+			return "+3 stats per fight";
+		case $item[chiptune guitar]:
+			return "+25% Item Drops";
+		case $item[ironic moustache]:
+			return "Weight: +10";
 		}
 		
 		if(famitem != $item[none]) {
@@ -2341,6 +2345,7 @@ void addMCD(buffer result, boolean bake) {
 			if (mcdlevel == current_mcd()) {
 				mcd.append('<tr class="' + (picker? 'pickitem ': '') + 'current"><td class="info">' + mcdmap[mcdlevel] + '</td>');
 			} else {
+#				mcd.append('<tr class="' + (picker? 'pickitem ': 'change') + '"><td class="info"><a ref="charpane.php" class="clilink through" title="mcd '+mcdlevel+'">' + mcdmap[mcdlevel] + '</a></td>');
 				mcd.append('<tr class="' + (picker? 'pickitem ': 'change') + '"><td class="info"><a ' + (picker? 'class="change" ': '') + ' href="' 
 					+ (mcdchange == ""? "": sideCommand("mcd "+mcdlevel))
 					+ '">' + mcdmap[mcdlevel] + '</a></td>');
@@ -2760,7 +2765,8 @@ void bakeStats() {
 			checkExtra = false;
 		}
 	}
-	
+#	result.append('<tr><td colspan="3"><a href="charpane.php" class="clilink through" title="mcd 10">MCD 10: Vertebra of the Bonerdagon</a></td></tr>');
+
 	result.append('</table>');
 	chitBricks["stats"] = result.to_string();
 }
@@ -2886,6 +2892,13 @@ void pickOutfit() {
 		}
 	}
 	
+	// If using Kung Fu Fighting, you might want to empty your hands
+	if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
+		picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("unequip weapon; unequip off-hand") + '">Empty Hands</a></td>');
+	// In KOLHS, might want to remove hat
+	if(my_path() == "KOLHS" && equipped_item($slot[hat]) != $item[none])
+		picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("unequip hat") + '">Remove Hat for School</a></td>');
+	
 	picker.addLoader("Getting Dressed");
 	picker.append('</table>');
 	picker.append('</div>');
@@ -2991,6 +3004,8 @@ void bakeCharacter() {
 		}
 	} else if(myPath == "Bugbear Invasion") {
 		myPath = "Bugbear&nbsp;Invasion";
+	} else if(myPath == "KOLHS") {
+		myPath = "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
 	}
 	
 	//Stat Progress
@@ -3968,20 +3983,28 @@ void bakeHeader() {
 
 	//Try to get IE to play nicely in the absense of a proper doctype
 	result = chitSource["header"].replace_string('<head>', '<head>\n<meta http-equiv="X-UA-Compatible" content="IE=8" />\n');
+#	result = chitSource["header"].replace_string('<head>', '<head>\n<meta http-equiv="X-UA-Compatible" content="IE=8" />\n'
+#		+'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>\n'
+#		+'<script src="clilinks.js"></script>\n');
+#	result.replace_string('<script language=Javascript src="/images/scripts/jquery-1.3.1.min.js"></script>',"");
+#	result.replace_string('</head>','<script src="//code.jquery.com/jquery-1.7.2.min.js"></script><script src="clilinks.js"></script></head>'); 
+
+	// Add doctype to escape quirks mode
+	result.replace_string('<html>', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>');
 	
 	//Add CSS to the <head> tag
-	result = result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n</head>');
+	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n</head>');
 	
 	//Add JavaScript just before the <body> tag. 
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
-	result = result.replace_string('<body', '\n<script type="text/javascript" src="chit.js"></script>\n<body');
+	result.replace_string('<body', '\n<script type="text/javascript" src="chit.js"></script>\n<body');
 	
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
-	result = result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
+	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
 	
 	// Dunno... I'm not sure why KoLmafia adds these... Removing them is probably a mistake...
 	#result = result.replace_string('<script language="Javascript" src="/basics.js"></script><link rel="stylesheet" href="/basics.css" />', '');
-	result = result.replace_string('onload="updateSafetyText();" ', '');
+	result.replace_string('onload="updateSafetyText();" ', '');
 	
 	chitBricks["header"] = result.to_string();
 		
