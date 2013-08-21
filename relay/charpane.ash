@@ -4119,10 +4119,13 @@ boolean parsePage(buffer original) {
 	}
 
 	// Mood, Buffs, Intrinsic Effects
-	parse = create_matcher('<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)(?:.*?<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>))?', source);
+	parse = create_matcher('<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)'
+		+ '(?:.*?<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>))?'
+		+ '(?:.*?(?:Recently Expired Effects.+?</tr>)(.+?</tr></table>))?' 			// This is a KoL option
+		, source);
 	if(find(parse)) {
-		chitSource["mood"] = parse.group(1) + parse.group(3); // Only one of those might contain useful data
-		chitSource["effects"] = parse.group(2) + parse.group(4); // Effects plus Instrinsics
+		chitSource["mood"] = parse.group(1) + parse.group(3); 						// Only one of those might contain useful data
+		chitSource["effects"] = parse.group(2) + parse.group(4) + parse.group(5); 	// Effects plus Instrinsics, plus recently expired effects
 		source = parse.replace_first("");
 	}
 
