@@ -942,7 +942,6 @@ string toPlant(int i) {
 void pickerFlorist(string[int] planted){
 	int plantsPlanted;
 	string terrain = lastLoc.environment;
-	if(lastLoc == $location[hidden city (automatic)]) terrain = "outdoor";
 	boolean marked = false;
 	foreach i,s in planted {
 		if (s!="") plantsPlanted+=1;
@@ -4040,10 +4039,9 @@ boolean parsePage(buffer original) {
 	if(find(parse)) {
 		// Header: Includes everything up to and including the body tag
 		chitSource["header"] = parse.group(1);
-		//Rollover: Includes everything after the close body tag
-#		matcher test = create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)", chitSource["header"]);
-#		if(test.find()) chitSource["header"] = chitSource["header"].replace_string(test.group(1), to_string(to_int(test.group(2)) + 50));
-		chitSource["rollover"] = parse.group(2);
+		//Rollover: Edited because I want the pop-up to fit the text
+		chitSource["rollover"] = parse.group(2).replace_string('doc("maintenance")', 'poop("doc.php?topic=maintenance", "documentation", 558, 518, "scrollbars=yes,resizable=no")');
+		#matcher test=create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)",chitSource["header"]);if(test.find())chitSource["header"]=chitSource["header"].replace_string(test.group(1),to_string(to_int(test.group(2))+30));
 		//Character: Name/Class/Level etc
 		chitSource["character"] = parse.group(3);
 		// Stats: Muscle/Mysticality/Moxie/Fullness/Drunkenness
@@ -4069,6 +4067,20 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 	}
 	
+	// This is for help finding current location (below)
+	location parseLoc(string loc) {
+		if(to_location(loc) != $location[none])
+			return to_location(loc);
+		switch(loc) {	// Some of these are really tough for KoLmafia to deal with!
+		case "The Arid, Extra-Dry Desert":
+			return $location[Desert (Ultrahydrated)];
+		case "The Orcish Frat House":
+			return $location[Frat House];
+		case "The Hippy Camp":
+			return $location[Hippy Camp];
+		}
+		return my_location();
+	}
 	// Recent Adventures: May or may not be present
 	parse = create_matcher("(<center><font size=2>.+?Last Adventure:.+?</center>)", source);
 	if(find(parse)) {
@@ -4076,25 +4088,8 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 		// Pull out last adventured location
 		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
-		if(find(parse)) {  // Parse out last location for use by other functions
-			lastLoc = parse.group(2).to_location();
-			if(lastLoc == $location[none]) {	// Some of these are really tough for KoLmafia to deal with!
-				switch(parse.group(2)) {
-				case "The Hidden City":
-					lastLoc = $location[hidden city (automatic)];
-					break;
-				case "The Arid, Extra-Dry Desert":
-					lastLoc = $location[Desert (Ultrahydrated)];
-					break;
-				case "The Orcish Frat House":
-					lastLoc = $location[Frat House];
-					break;
-				case "The Hippy Camp":
-					lastLoc = $location[Hippy Camp];
-					break;
-				}
-			}
-		}
+		if(find(parse))  // Parse out last location for use by other functions
+			lastLoc = parse.group(2).parseLoc();
 		// Shorten some unreasonablely lengthy locations
 		chitSource["trail"] = chitSource["trail"]
 			.replace_string("The Castle in the Clouds in the Sky", "Giant's Castle")
