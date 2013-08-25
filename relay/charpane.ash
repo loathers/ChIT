@@ -985,7 +985,7 @@ void pickerFlorist(string[int] planted){
 }
 
 void addPlants(buffer result) {
-	if(lastLoc != $location[hidden city (automatic)] && (lastLoc.environment == "none" || lastLoc == $location[none])) {
+	if((lastLoc.environment == "none" || lastLoc == $location[none])) {
 		result.append('<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">(Cannot plant here)</a>');
 		return;
 	}
