@@ -333,9 +333,9 @@ string helperWormwood() {
 
 	// Set up all the location and reward data
 	location [string] zones;
-		zones["windmill"] = $location[rogue windmill];
-		zones["mansion"] = $location[mouldering mansion];
-		zones["dome"] = $location[stately pleasure dome];
+		zones["windmill"] = $location[The Rogue Windmill];
+		zones["mansion"] = $location[The Mouldering Mansion];
+		zones["dome"] = $location[The Stately Pleasure Dome];
 			
 	string [string] rewards;
 		rewards["moxie"] = "discomask.gif|Gain Moxie Substats";
