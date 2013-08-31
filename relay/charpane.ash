@@ -1997,9 +1997,9 @@ void bakeToolbar() {
 		button.append(sideCommand("zlib chit.disable = true"));
 		button.append('" title="Disable ChIT"><img');
 		if(i == 0)
-			button.append(' style="height:11px;width:11px;vertical-align:bottom;margin:0 -4 -3 -8;"');
+			button.append(' style="height:11px;width:11px;vertical-align:bottom;margin:0px -4px -3px -8px;"');
 		else
-			button.append(' style="vertical-align:bottom;margin-bottom:-3;"');
+			button.append(' style="vertical-align:bottom;margin-bottom:-3px;"');
 		button.append(' src="');
 		button.append(imagePath);
 		button.append('disable.png"></a></li>');
@@ -2551,10 +2551,9 @@ void bakeStats() {
 		if(vars["chit.kol.coolimages"].to_boolean() && index_of(health, "Extreme Meter:") > -1) {
 			matcher extreme = create_matcher("Extreme Meter.*?otherimages/(.*?)><", health);
 			if(find(extreme)) {
-				result.append('<tr><td colspan="'+ (showBars? 3: 2) +'"><center>');
-				// extmeter1, extmeter2, extmeter3: width=200 height = 50,125,200
-				#result.append('<img src=images/otherimages/'+extreme.group(1)+' width=160 height=' +(to_int(char_at(extreme.group(1), 8)) * 60 - 20)+ ' border=0>');
-				result.append('<img src=images/otherimages/'+extreme.group(1)+' style="max-width:85%;" border=0>');
+				result.append('<tr style="height:'+(to_int(char_at(extreme.group(1), 8)) * 69 - 23)+'px;"><td colspan="'+ (showBars? 3: 2) +'"><center>');
+				// extmeter1, extmeter2, extmeter3: width=200 height = 50,125,200 = 60x - 20. (176x44, 176x110, 176x176 = ) (height *.92 = 46, 115, 184 = 69x-23)
+				result.append('<img width=95% border=0 src=images/otherimages/'+extreme.group(1)+'>');
 				result.append('</center></td></tr>');
 			}
 		}
@@ -2856,47 +2855,52 @@ void pickOutfit() {
 	foreach i,o in get_custom_outfits()
 		if(i != 0)
 			picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + o + '</a></td>');
-	
-	// Certain quest items need to be equipped to enter locations
-	item [int] gear;
-	void addGear(boolean [item] list) {
-		foreach e in list
-			if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0) gear[count(gear)] = e;
+
+	// Special equipment control section
+	buffer special;
+	void addGear(buffer result, string cmd, string desc) {
+		result.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand(cmd) + '">' + desc + '</a></td></tr>');
 	}
-	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
-		addGear($items[continuum transfunctioner]);
-	addGear($items[pirate fledges, Talisman o' Nam, Mega Gem, black glass]);
-	if(get_property("questL10Garbage") != "finished")
-		switch(loc) {
-		case $location[The Castle in the Clouds in the Sky (Basement)]:
-			addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
-			break;
-		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
-		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
-			addGear($items[mohawk wig]);
-			break;
-		}
-	
-	if(count(gear) > 0) {
-		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip Quest Item</td></tr>');
-		foreach i, e in gear {
-			if(e.to_slot() == $slot[acc1]) {
-				if(e == $item[Mega Gem]) {
-					if(get_property("questL11Palindome") != "finished")
-						picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem") + '">Talisman o\' Nam & Mega Gem</a></td>');
-				} else
-					picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip acc3 "+e) + '">' + e + '</a></td>');
-			} else
-				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("equip "+e) + '">' + e + '</a></td>');
-		}
+	void addGear(buffer result, item e) {
+		result.addGear("equip "
+			+(e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot())
+			+ " "+e, e);
+	}
+	void addGear(buffer result, boolean [item] list) {
+		foreach e in list
+			if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0) result.addGear(e);
 	}
 	
 	// If using Kung Fu Fighting, you might want to empty your hands
 	if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
-		picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("unequip weapon; unequip off-hand") + '">Empty Hands</a></td>');
+		special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
 	// In KOLHS, might want to remove hat
 	if(my_path() == "KOLHS" && equipped_item($slot[hat]) != $item[none])
-		picker.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand("unequip hat") + '">Remove Hat for School</a></td>');
+		special.addGear("unequip hat", "Remove Hat for School");
+		
+	// Certain quest items need to be equipped to enter locations
+	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
+		special.addGear($item[continuum transfunctioner]);
+	
+	special.addGear($items[pirate fledges, Talisman o' Nam, black glass]);
+	if(get_property("questL10Garbage") != "finished")
+		switch(loc) {
+		case $location[The Castle in the Clouds in the Sky (Basement)]:
+			special.addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
+			break;
+		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
+		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
+			special.addGear($item[mohawk wig]);
+			break;
+		}
+	if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
+		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
+	
+	if(length(special) > 0) {
+		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
+		picker.append(special);
+	}
+	
 	
 	picker.addLoader("Getting Dressed");
 	picker.append('</table>');
@@ -4072,6 +4076,8 @@ boolean parsePage(buffer original) {
 		if(to_location(loc) != $location[none])
 			return to_location(loc);
 		switch(loc) {	// Some of these are really tough for KoLmafia to deal with!
+		case "(none)":
+			return $location[none];
 		case "The Arid, Extra-Dry Desert":
 			return $location[Desert (Ultrahydrated)];
 		case "The Orcish Frat House":
