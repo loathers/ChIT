@@ -191,36 +191,6 @@ string tostring(stat s) {
 	return s.to_string();
 }
 
-//LifeStyle
-string myLifeStyle = "";
-string ronin = "--";
-if (get_property("kingLiberated") == true) {
-	myLifeStyle = "Aftercore";
-} else if(in_bad_moon()) {
-	myLifeStyle = "Bad Moon";
-} else if(in_hardcore()) {
-	myLifeStyle = "Hardcore";
-} else if(can_interact()) {
-	myLifeStyle = "Casual";
-} else {
-	myLifeStyle = '<a target=mainpane href="storage.php">Ronin</a>: ' + formatInt(1000 - turns_played());
-}
-
-//Path
-string myPath = my_path();
-if (myLifestyle == "Aftercore") {
-	myPath = "No Restrictions";
-} else if(myPath == "None") {
-	myPath = "No Path";
-} else if(myPath == "Way of the Surprising Fist") {
-	myPath = "Surprising Fist";
-	//myPath = "Surprising Fist: " + get_property("fistSkillsKnown");
-} else if(myPath == "Avatar of Jarlsberg") {
-	myPath = "Jarlsberg";
-} else if (myPath == "Avatar of St. Sneaky Pete") {
-	myPath = "Sneaky Pete";
-}
-
 string itemimages(string img) {
 	buffer src;
 	src.append('src="http://images.kingdomofloathing.com/itemimages/');
@@ -1138,6 +1108,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "+25% Item Drops";
 		case $item[ironic moustache]:
 			return "Weight: +10";
+		case $item[school spirit socket set]:
+			return "Keeps more steam in";
 		}
 		
 		if(famitem != $item[none]) {
@@ -1425,7 +1397,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			if(count(addeditems) == 0) picker.addSadFace(sadMessage("equipment", myfam));
 			break;
 		case $familiar[none]:
-			if(myPath == "Avatar of Boris") {
+			if(my_path() == "Avatar of Boris") {
 				picker.addLoader("Changing Instrument...");
 				pickClancy();
 				if(item_amount($item[Clancy's lute]) + item_amount($item[Clancy's crumhorn]) == 0)
@@ -1662,7 +1634,8 @@ void bakeFamiliar() {
 				}
 			} else info = "Unknown effect";
 		} else info = "None";
-	}
+	} else if(myfam == $familiar[Steam-Powered Cheerleader])
+		info = (get_property("_cheerleaderSteam").to_int() / 2)+"% Steam";
 	
 	// Charges
 	if (famitem == $item[sugar shield]) {
@@ -1696,7 +1669,7 @@ void bakeFamiliar() {
 	}
 	
 	// Special Challenge Path Familiar-ish things?
-	if(myPath == "Avatar of Boris") {
+	if(my_path() == "Avatar of Boris") {
 		famtype = "Clancy";
 		protect = true;
 		matcher level = create_matcher("Level <b>(.*?)</b> Minstrel", source);
@@ -1753,7 +1726,7 @@ void bakeFamiliar() {
 		pickerFamiliar(myfam, famitem, isFed);
 
 		return;
-	} else if(myPath == "Jarlsberg") {
+	} else if(my_path() == "Avatar of Jarlsberg") {
 		# <font size=2><b>Companion:</b><br><img src=http://images.kingdomofloathing.com/adventureimages/jarlcomp3.gif width=100 height=100><br><b>Ella</b><br>the Hippotatomous</font><br><font color=blue size=2><b>+3 Stats per Combat</b></font>
 		# <font size=2><b>Companion:</b><br>(none)
 		matcher companion = create_matcher('images/(.*?\\.gif).*?<b>([^<]*)</b><br>([^<]*).*?<br>(.*?font>)', source);
@@ -2553,7 +2526,7 @@ void bakeStats() {
 			if(find(extreme)) {
 				result.append('<tr style="height:'+(to_int(char_at(extreme.group(1), 8)) * 69 - 23)+'px;"><td colspan="'+ (showBars? 3: 2) +'"><center>');
 				// extmeter1, extmeter2, extmeter3: width=200 height = 50,125,200 = 60x - 20. (176x44, 176x110, 176x176 = ) (height *.92 = 46, 115, 184 = 69x-23)
-				result.append('<img width=95% border=0 src=images/otherimages/'+extreme.group(1)+'>');
+				result.append('<img style="width:95%;border:0px" src=images/otherimages/'+extreme.group(1)+'>');
 				result.append('</center></td></tr>');
 			}
 		}
@@ -2648,8 +2621,7 @@ void bakeStats() {
 	}
 	
 	void addMP() {
-		result.append('<tr>');
-		if(my_path() == "10" || my_path() == "Zombie Slayer") {
+		if(my_path() == "Zombie Slayer") {
 			string HordeLink = get_property("baleUr_ZombieAuto") == ""? '<a href="skills.php" target="mainpane" title="Use Horde Skills">'
 				// If using Universal_recovery, add link to recover Horde
 				: '<a href="' + sideCommand("restore mp") + '" title="Restore Horde">';
@@ -2659,18 +2631,18 @@ void bakeStats() {
 				matcher horde = create_matcher("(zombies/.*?\\.gif).*?Horde:\\s*(\\d+)", health);
 				if(find(horde)) {
 					# image: 167 x 100 pixels
-					result.append('<td colspan="'+ (showBars? 3: 2) +'"><center><img src=images/otherimages/' + horde.group(1) + ' width=167 height=100 border=0></center></td></tr>');
+					result.append('<tr style="height:100px;"><td colspan="'+ (showBars? 3: 2) +'"><center><img src=images/otherimages/' + horde.group(1) + ' style="width:100%; border:0px"></center></td></tr>');
 					result.append('<tr><td class="label" colspan="'+ (showBars? 3: 2) +'"><center>'+HordeLink+'Horde: ' + horde.group(2) + '</a></center></td></tr>');
 					return;
 				}
 			}
-			result.append('<td class="label">'+HordeLink+'Horde</a></td>');
+			result.append('<tr><td class="label">'+HordeLink+'Horde</a></td>');
 			result.append('<td class="info">'+HordeLink + my_mp() + '</a></td>');
 			if(showBars) result.append('<td class="progress"></td>');
 			result.append('</tr>');
 			return;
 		}
-		result.append('<td class="label">MP</td>');
+		result.append('<tr><td class="label">MP</td>');
 		if(addRestoreLinks("mp")) {
 			result.append('<td class="info"><a title="Restore MP" href="' + sideCommand("restore mp") + '">' + my_mp() + '&nbsp;/&nbsp;' + my_maxmp() + '</a></td>');
 		} else {
@@ -2875,8 +2847,12 @@ void pickOutfit() {
 	if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
 		special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
 	// In KOLHS, might want to remove hat
-	if(my_path() == "KOLHS" && equipped_item($slot[hat]) != $item[none])
-		special.addGear("unequip hat", "Remove Hat for School");
+	if(my_path() == "KOLHS") {
+		if(equipped_item($slot[hat]) != $item[none])
+			special.addGear("unequip hat; set _hatBeforeKolhs = "+equipped_item($slot[hat]), "Remove Hat for School");
+		else if(get_property("_hatBeforeKolhs") != "")
+			special.addGear("equip "+get_property("_hatBeforeKolhs")+"; set _hatBeforeKolhs = ", "Restore "+get_property("_hatBeforeKolhs"));
+	}
 		
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
@@ -2982,33 +2958,53 @@ void bakeCharacter() {
 			break;
 	}
 	
-	if(myPath == "Avatar of Boris")
+	if(my_path() == "Avatar of Boris")
 		myGuild = "da.php?place=gate1";
-	else if(myPath == "Zombie Slayer")
+	else if(my_path() == "Zombie Slayer")
 		myGuild = "campground.php?action=grave";
-	else if(myPath == "Jarlsberg")
+	else if(my_path() == "Avatar of Jarlsberg")
 		myGuild = "da.php?place=gate2";
 
-	//Path
-	if(myPath == "Bees Hate You") {
-		int bees = 0;
-		matcher bs;
-		foreach s in $slots[] {
-			item q = equipped_item(s);
-			if (q != $item[none]) {
-				bs = create_matcher("[Bb]", to_string(q));
-				while (bs.find()) {
-					bees = bees + 1;
+	// LifeStyle suitable for charpane
+	string myLifeStyle() {
+		if(get_property("kingLiberated") == true)
+			return "Aftercore";
+		else if(in_bad_moon())
+			return "Bad Moon";
+		else if(in_hardcore())
+			return "Hardcore";
+		else if(can_interact())
+			return "Casual";
+		return '<a target=mainpane href="storage.php">Ronin</a>: ' + formatInt(1000 - turns_played());
+	}
+
+	// Path title suitable for charpane
+	string myPath() {
+		if(get_property("kingLiberated") == true)
+			return "No Restrictions";
+		switch(my_path()) {
+		case "None": return "No Path";
+		case "Bees Hate You":
+			int bees = 0;
+			matcher bs;
+			foreach s in $slots[] {
+				if(equipped_item(s) != $item[none]) {
+					bs = create_matcher("[Bb]", to_string(equipped_item(s)));
+					while(bs.find())
+						bees += 1;
 				}
 			}
+			if(bees > 0)
+				return '<span style="color:red" title="Beeosity">Bees Hate (' + bees + ')</span>';
+			break;
+		case "Way of the Surprising Fist": return "Surprising Fist";
+			//myPath = "Surprising Fist: " + get_property("fistSkillsKnown");
+		case "Bugbear Invasion": return "Bugbear&nbsp;Invasion";
+		case "Avatar of Jarlsberg": return "Jarlsberg";
+		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
+		case "Avatar of St. Sneaky Pete": return "Sneaky Pete";
 		}
-		if (bees > 0) {
-			myPath = '<span style="color:red" title="Beeosity">Bees Hate (' + bees + ')</span>';
-		}
-	} else if(myPath == "Bugbear Invasion") {
-		myPath = "Bugbear&nbsp;Invasion";
-	} else if(myPath == "KOLHS") {
-		myPath = "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
+		return my_path();
 	}
 	
 	//Stat Progress
@@ -3053,13 +3049,13 @@ void bakeCharacter() {
 	result.append('</tr>');
 
 	result.append('<tr>');
-	result.append('<td class="info">' + myLifeStyle + '</td>');
+	result.append('<td class="info">' + myLifeStyle() + '</td>');
 	result.append('</tr>');
 	
 	// 30x30:	hp.gif		meat.gif		hourglass.gif		swords.gif
 	// 20x20:	slimhp.gif	slimmeat.gif	slimhourglass.gif	slimpvp.gif
 	result.append('<tr>');
-	result.append('<td class="info">' + myPath + '</td>');
+	result.append('<td class="info">' + myPath() + '</td>');
 	if(hippy_stone_broken() && index_of(chitSource["health"], "peevpee.php") > 0) {
 		matcher fites = create_matcher("PvP Fights Remaining.+?black>(\\d+)</span>", chitSource["health"]);
 		if(fites.find())
@@ -4147,21 +4143,16 @@ void bakeValhalla() {
 
 	buffer result;
 	string myName = my_name();
-	string myOutfit = "";
-	string myLifeStyle = "Valhalla";
-	string myPath = "";
 	string inf = '<img src="/images/otherimages/inf_small.gif">';
 	string karma = "??";
 
 	matcher nameMatcher = create_matcher("<b>(.*?)</b></a><br>Level", chitSource["character"]);
-	if (find(nameMatcher)){
+	if(find(nameMatcher))
 		myName = group(nameMatcher, 1);
-	}
 	#<td align=center><img src="http://images.kingdomofloathing.com/itemimages/karma.gif" width=30 height=30 alt="Karma" title="Karma"><br>12,620</td>
 	matcher karmaMatcher = create_matcher('title="Karma"><br>(.*?)</td>', chitSource["wtfisthis"]);
-	if (find(karmaMatcher)) {
+	if(find(karmaMatcher))
 		karma = group(karmaMatcher, 1);
-	}
 
 	result.append('<table id="chit_character" class="chit_brick nospace">');
 	result.append('<tr>');
@@ -4189,8 +4180,6 @@ void bakeValhalla() {
 	result.append('</table>');
 
 	
-	int severity = 0;
-	string message = "";
 	string progress = "";
 	result.append('<table id="chit_stats" class="chit_brick nospace">');
 
@@ -4201,9 +4190,7 @@ void bakeValhalla() {
 	result.append('</tr>');
 	result.append('</thead>');
 
-	severity = -1;
-	message = "&infin; / &infin;";
-	progress = progressCustom(0, 10000, message, severity, false);
+	progress = progressCustom(0, 10000, "&infin; / &infin;", -1, false);
 	
 	//Muscle
 	result.append('<tr>');
