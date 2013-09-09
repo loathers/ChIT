@@ -1634,8 +1634,7 @@ void bakeFamiliar() {
 				}
 			} else info = "Unknown effect";
 		} else info = "None";
-	} else if(myfam == $familiar[Steam-Powered Cheerleader])
-		info = (get_property("_cheerleaderSteam").to_int() / 2)+"% Steam";
+	}
 	
 	// Charges
 	if (famitem == $item[sugar shield]) {
