@@ -75,7 +75,7 @@ string [string] chitEffectsMap;
 location lastLoc;
 boolean isCompact = false;
 boolean inValhalla = false;
-string imagePath = "/images/chit/";
+string imagePath = "/images/relayimages/chit/";
 
 /*****************************************************
 	Script functions
@@ -3695,7 +3695,7 @@ void bakeTracker() {
 			result.append(item_report($item[worm-riding hooks]));
 			break;
 		case "step10":
-			result.append('<a target="mainpane" href="beach.php?action=woodencity&pwd='+my_hash()+'">Ride the Worm !</a>');
+			result.append('<a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
 			break;
 		// Open the Bottom Chamber of the Pyramid
 		case "step11":
@@ -4432,9 +4432,9 @@ buffer modifyPage(buffer source) {
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
 	setvar("chit.quests.hide", false);
-	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau");
+	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
 	setvar("chit.familiar.pants", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts");
-	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella");
+	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing");
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.effects.classicons", "none");
