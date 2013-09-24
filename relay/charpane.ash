@@ -3967,8 +3967,8 @@ void bakeTracker() {
 
 
 	result.append("</table>");
-
-	if(length(result) > 177) { // 176 is the size of an empty table
+	
+	if(length(result) > 184) { // 184 is the size of an empty table
 		chitBricks["tracker"] = result;
 		chitTools["tracker"] = "Tracker|tracker.png";
 	}
