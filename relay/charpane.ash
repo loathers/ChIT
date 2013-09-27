@@ -2240,6 +2240,33 @@ int severity(string organ, int cur, int lim) {
 	return 0;
 }
 
+void addFury(buffer result) {
+	void spanWrap(buffer wrap, string stuff, string span) {
+		if(span == "")
+			wrap.append(stuff);
+		else {
+			wrap.append(span);
+			wrap.append(stuff);
+			wrap.append("</span>");
+		}
+	}
+	matcher fury = create_matcher("Fury:.*?<font color=red>(<span[^>]*>)?((\\d+) gal.)", chitSource["stats"]);
+	if(fury.find()) {
+		result.append('<tr>');
+		result.append('<td class="label">');
+		result.spanWrap("Fury", fury.group(1));
+		result.append('</td><td class="fury">');
+		result.spanWrap(fury.group(2), fury.group(1));
+		result.append('</td>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress">');
+			result.spanWrap('<div class="progressbox"><div class="progressbar" style="width:' + (to_float(fury.group(3)) / 5 * 100) + '%"></div></div></td>', fury.group(1));
+			result.append('</td>');
+		}
+		result.append('</tr>');
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr>');
@@ -2510,7 +2537,6 @@ void addTrail(buffer result) {
 
 void bakeStats() {
 
-	string stats = chitSource["stats"];
 	string health = chitSource["health"]; 
 	buffer result;
 	boolean showBars = to_boolean(vars["chit.stats.showbars"]);
@@ -2696,6 +2722,8 @@ void bakeStats() {
 				default:
 			}
 		}
+		if(section.contains_text("muscle") && chitSource["stats"].contains_text("Fury:"))
+			result.addFury();
 		result.append("</tbody>");
 	}
 
@@ -4043,7 +4071,7 @@ boolean parsePage(buffer original) {
 		#matcher test=create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)",chitSource["header"]);if(test.find())chitSource["header"]=chitSource["header"].replace_string(test.group(1),to_string(to_int(test.group(2))+30));
 		//Character: Name/Class/Level etc
 		chitSource["character"] = parse.group(3);
-		// Stats: Muscle/Mysticality/Moxie/Fullness/Drunkenness
+		// Stats: Muscle/Mysticality/Moxie/Fullness/Drunkenness & Fury
 		chitSource["stats"] = parse.group(4);
 		// Health: HP/MP/Meat/Advs/PvP Fights & Extreme Meter. In Zombie Slayer, this inclusdes Horde
 		// (?:.*?axelottal\\.gif.*?</table>)? is the spooky little girl, Axel

@@ -290,6 +290,13 @@ tr.florist :first-line {
 	padding:2px;
 	max-width:60px;
 }
+#chit_stats tr td.fury {
+	color:red;
+	font-weight:900;
+	text-align:center;
+	padding:2px;
+	max-width:60px;
+}
 #chit_organs tr td.info {
 	color:#606060;
 	font-weight:bold;
