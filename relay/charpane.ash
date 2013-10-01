@@ -1634,6 +1634,8 @@ void bakeFamiliar() {
 				}
 			} else info = "Unknown effect";
 		} else info = "None";
+	} else if(myfam == $familiar[Reanimated Reanimator]) {
+		famname += ' <a target=mainpane href="main.php?talktoreanimator=1">[chat]</a>';
 	}
 	
 	// Charges
