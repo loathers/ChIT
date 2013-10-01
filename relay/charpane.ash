@@ -2260,7 +2260,7 @@ void addFury(buffer result) {
 		result.append('</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress">');
-			result.spanWrap('<div class="progressbox"><div class="progressbar" style="width:' + (to_float(fury.group(3)) / 5 * 100) + '%"></div></div></td>', fury.group(1));
+			result.spanWrap('<div class="progressbox"><div class="progressbar" style="width:' + (to_float(fury.group(3)) / (have_skill($skill[Ire of the Orca])? 5:3) * 100) + '%"></div></div></td>', fury.group(1));
 			result.append('</td>');
 		}
 		result.append('</tr>');
