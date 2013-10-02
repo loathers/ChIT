@@ -1583,6 +1583,10 @@ void bakeFamiliar() {
 			case $familiar[blavious kloop]:
 				info = "Folio: " + info;
 				break;
+			case $familiar[Steam-Powered Cheerleader]:
+				// Truncate the decimal
+				info = replace_first(create_matcher("\\.\\d", info), "");
+				break;
 			default:
 		}
 	}
