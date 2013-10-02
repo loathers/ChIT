@@ -2622,25 +2622,17 @@ void bakeStats() {
 		return "restore+"+p;
 	}
 	
-	boolean addRestoreLinks(string val) {
-		if(get_property("relayAddsRestoreLinks") == "false")
-			return false;
-		int cur = call int ("my_"+val) ();  // Call my_hp() or my_mp()
-		float top = get_property(val+"AutoRecoveryTarget").to_float() * call int ("my_max"+val) ();  // call my_maxhp() or my_maxmp()
-		return cur < top;
-	}
-	
 	void addHP() {
 		result.append('<tr>');
 		result.append('<td class="label">HP</td>');
 		#if(contains_text(health, "restore+HP")) {
-		if(addRestoreLinks("hp")) {
+		if(health.contains_text("restore+HP")) {
 			result.append('<td class="info"><a title="Restore HP" href="' + sideCommand("restore hp") + '">' + my_hp() + '&nbsp;/&nbsp;' + my_maxhp() + '</a></td>');
 		} else {
 			result.append('<td class="info">' + my_hp() + '&nbsp;/&nbsp;' + my_maxhp() + '</td>');
 		}
 		if(showBars) {
-			if(addRestoreLinks("hp")) {
+			if(health.contains_text("restore+HP")) {
 				result.append('<td class="progress"><a href="' + sideCommand("restore hp") + '">' 
 					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
 			} else {
@@ -2674,14 +2666,14 @@ void bakeStats() {
 			return;
 		}
 		result.append('<tr><td class="label">MP</td>');
-		if(addRestoreLinks("mp")) {
+		if(health.contains_text("restore+MP")) {
 			result.append('<td class="info"><a title="Restore MP" href="' + sideCommand("restore mp") + '">' + my_mp() + '&nbsp;/&nbsp;' + my_maxmp() + '</a></td>');
 		} else {
 			result.append('<td class="info">' + my_mp() + '&nbsp;/&nbsp;' + my_maxmp() + '</td>');
 		}
 
 		if(showBars) {
-			if(addRestoreLinks("mp")) {
+			if(health.contains_text("restore+MP")) {
 				result.append('<td class="progress"><a href="' + sideCommand("restore mp") + '">'
 					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
 			} else {
