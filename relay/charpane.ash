@@ -251,10 +251,11 @@ string progressCustom(int current, int limit, string hover, int severity, boolea
 		case 6	: color = "black"; 		break;		//super-busted
 		default	: color = "blue";
 	}
+	string title() { return current + ' / ' + limit; }
 	switch (hover) {
 		case "" : title = ""; break;
-		case "auto": title = ' title="' + current + ' / ' + limit + '"'; break;
-		default: title = ' title="' + hover +'"';
+		case "auto": title = ' title="' + title() + '"'; break;
+		default: title = ' title="' + hover +' ('+ title() +')"';
 	}
 	if (active) border = ' style="border-color:#707070"';
 	if (limit == 0) limit = 1;
@@ -928,7 +929,7 @@ void pickerFlorist(string[int] planted){
 		foreach i,s in planted {
 			color = plantsUsed.contains_text(s)? (plantData[s].territorial? 'Khaki': 'Gainsboro'): (plantData[s].territorial? 'PaleGreen': 'LightSkyBlue');
 			picker.append('<tr class="florist" style="background-color:' + color + '"><td><img src="http://images.kingdomofloathing.com/itemimages/shovel.gif"></td>');
-			picker.append('<td><a href="' + sideCommand('ashq visit_url("forestvillage.php?action=floristfriar");visit_url("choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i +'");') +'">'+ plantDesc(s, true) + '</a></td></tr>');
+			picker.append('<td><a href="' + sideCommand('ashq visit_url("place.php?whichplace=forestvillage&action=fv_friar");visit_url("choice.php?option=2&whichchoice=720&pwd=' + my_hash() + '&plnti=' + i +'");') +'">'+ plantDesc(s, true) + '</a></td></tr>');
 		}
 		if (count(plantable)>0) {
 			picker.append('<tr class="pickitem"><td colspan="2" style="color:white;background-color:blue;font-weight:bold;">Remaining Plants</th></tr>');
@@ -956,7 +957,7 @@ void pickerFlorist(string[int] planted){
 
 void addPlants(buffer result) {
 	if((lastLoc.environment == "none" || lastLoc == $location[none])) {
-		result.append('<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">(Cannot plant here)</a>');
+		result.append('<a class="visit" target="mainpane" href="place.php?whichplace=forestvillage&action=fv_friar">(Cannot plant here)</a>');
 		return;
 	}
 	string[int] plants=get_florist_plants()[lastLoc];
@@ -979,7 +980,7 @@ void addFlorist(buffer result, boolean label) {
 		// label is not necessary if right after trail
 		if(vars["chit.stats.layout"].contains_text("trail,florist"))
 			label = false;
-		result.append(label? '<a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist</a>': '&nbsp;');
+		result.append(label? '<a class="visit" target="mainpane" href="place.php?whichplace=forestvillage&action=fv_friar">Florist</a>': '&nbsp;');
 		
 		result.append('</td><td class="florist" colspan="2">');
 		result.addPlants();
@@ -992,7 +993,7 @@ void bakeFlorist() {
 
 	if (florist_available()) {
 		result.append('<table id="chit_florist" class="chit_brick nospace">');
-		result.append('<tr><th><a class="visit" target="mainpane" href="forestvillage.php?action=floristfriar">Florist Friar</a></th></tr>');
+		result.append('<tr><th><a class="visit" target="mainpane" href="place.php?whichplace=forestvillage&action=fv_friar">Florist Friar</a></th></tr>');
 		result.append('<tr><td class="florist">');
 		result.addPlants();
 		result.append('</td></tr></table>');
@@ -1110,6 +1111,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "Weight: +10";
 		case $item[school spirit socket set]:
 			return "Keeps more steam in";
+		case $item[flask of embalming fluid]:
+			return "Helps collect body parts";
 		}
 		
 		if(famitem != $item[none]) {
@@ -1493,23 +1496,16 @@ void bakeFamiliar() {
 
 	string famname = "Familiar";
 	string famtype = '<a target=mainpane href="familiar.php" class="familiarpick">(None)</a>';
-	string actortype = "";
 	string famimage = "/images/itemimages/blank.gif";
-	string equiptype = "";
 	string equipimage = "blank.gif";
-	string famweight = "";
-	string info = "";
-	string famstyle = "";
+	string equiptype, actortype, famweight, info, famstyle, charges, chargeTitle;
 	boolean isFed = false;
-	string charges = "";
-	string chargeTitle = "";
 	string weight_title = "Buffed Weight";
 	
 	familiar myfam = my_familiar();
-	familiar actor = my_familiar();
 	item famitem = $item[none];
 
-	if (myfam != $familiar[none]) {
+	if(myfam != $familiar[none]) {
 		famtype = to_string(myfam);
 		actortype = famtype;
 		// Set Familiar image
@@ -1608,8 +1604,7 @@ void bakeFamiliar() {
 		matcher actorMatcher = create_matcher("</b\> pound (.*?),", source);
 		if (find(actorMatcher)) {
 			actortype = group(actorMatcher, 1);
-			actor = to_familiar(actortype);
-			equipimage = actor.image;
+			equipimage = to_familiar(actortype).image;
 			info = actortype;
 		}
 	} else {
@@ -1639,7 +1634,7 @@ void bakeFamiliar() {
 			} else info = "Unknown effect";
 		} else info = "None";
 	} else if(myfam == $familiar[Reanimated Reanimator]) {
-		famname += ' <a target=mainpane href="main.php?talktoreanimator=1">[chat]</a>';
+		famname += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
 	}
 	
 	// Charges
@@ -1792,8 +1787,6 @@ void bakeFamiliar() {
 		result.append('<th width="30" title="' + chargeTitle + '">' + charges + '</th>');
 	}
 	result.append('</tr><tr>');
-	#result.append('<td class="icon" title="Familiar Haiku and Description">');
-	#result.append('<img src="' + famimage + '" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>');
 	result.append('<td class="icon" title="' + hover + '">');
 	if (protect) {
 		result.append('<img src="' + famimage + '">');
