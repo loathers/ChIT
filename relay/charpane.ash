@@ -1587,7 +1587,14 @@ void bakeFamiliar() {
 		}
 	}
 
-	
+	// Show Reanimator parts
+	if(myfam == $familiar[Reanimated Reanimator])
+		foreach l in $strings[Arm, Leg, Skull, Wing, WeirdPart] {
+			string prop = get_property("reanimator"+l+"s");
+			if(prop != "0")
+				info += (length(info) == 0? "": ", ") + prop + " "+ l +(prop == "1"? "": "s");
+		}
+
 	//Get Familiar Weight
 	matcher weightMatcher = create_matcher("</a></b>, the (<i>extremely</i> well-fed)? <b>(.*?)</b> pound ", source);
 	if (find(weightMatcher)) {
