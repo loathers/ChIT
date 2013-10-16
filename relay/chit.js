@@ -33,6 +33,7 @@ $(document).ready(function () {
 	$(".chit_picker a.change").live("click", function(e) {
 		$(this).closest(".chit_picker").find("tr.pickloader").show();
 		$(this).closest(".chit_picker").find("tr.pickitem").hide();
+		$(this).closest(".chit_picker").find("tr.florist").hide();
 	});
 	$(".chit_picker a.done").live("click", function(e) {
 		$(this).closest(".chit_skeleton").hide();
@@ -178,13 +179,13 @@ var self = {
 			if (style == 2)
 				ht +='<li>&middot;<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+'">'+fam[1]+'</a></li>';
 			else if (style == 3)
-				ht +='<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+' (the '+fam[1]+')" style="padding-left: 4px;"><img src="http://images.kingdomofloathing.com/itemimages/'+fam[2]+'.gif" border="1" /></a></li>';
+				ht +='<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+' (the '+fam[1]+')" style="padding-left: 4px;"><img src="/images/itemimages/'+fam[2]+'.gif" border="1" /></a></li>';
 			else
 				ht +='<li>&middot;<a href="#" class="picker" rel="'+fam[3]+'" title="(the '+fam[1]+')">'+name+'</a></li>';
 		}
 		ht +='</ul>';
 		ht += '<div class="settype" style="padding-top: 3px; font-size:7pt">show: <a href="#" rel="1">name</a> <a href="#" rel="2">type</a> <a href="#" rel="3">image</a></div>';
-		var $div = $('<div><div style="color:white;background-color:blue;padding:2px 15px 2px 15px;white-space: nowrap;text-align:center" class="title">Favorites</div><img class="close" style="cursor: pointer; position: absolute;right:1px;top:1px;" alt="Cancel" title="Cancel" src="http://images.kingdomofloathing.com/closebutton.gif"/><div style="padding:4px; text-align: left" class="guts">'+ht+'</div><div style="clear:both"></div></div>');
+		var $div = $('<div><div style="color:white;background-color:blue;padding:2px 15px 2px 15px;white-space: nowrap;text-align:center" class="title">Favorites</div><img class="close" style="cursor: pointer; position: absolute;right:1px;top:1px;" alt="Cancel" title="Cancel" src="/images/closebutton.gif"/><div style="padding:4px; text-align: left" class="guts">'+ht+'</div><div style="clear:both"></div></div>');
 		var pos = caller.offset();
 		$div.css({
 			'position': 'absolute',
