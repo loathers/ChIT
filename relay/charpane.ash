@@ -191,22 +191,6 @@ string tostring(stat s) {
 	return s.to_string();
 }
 
-string itemimages(string img) {
-	buffer src;
-	src.append('src="/images/itemimages/');
-	src.append(img);
-	src.append('.gif"');
-	return src;
-}
-string otherimages(string prefix, string img) {
-	buffer src;
-	src.append('src="/images/otherimages/');
-	src.append(prefix);
-	src.append(img);
-	src.append('.gif"');
-	return src;
-}
-
 string formatStats(stat s) {
 	int buffed = my_buffedstat(s);
 	int unbuffed = my_basestat(s);
@@ -2859,13 +2843,12 @@ void pickOutfit() {
 		result.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand(cmd) + '">' + desc + '</a></td></tr>');
 	}
 	void addGear(buffer result, item e) {
-		result.addGear("equip "
-			+(e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot())
-			+ " "+e, e);
+		if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
+			result.addGear("equip " + (e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot()) + " " + e, e);
 	}
 	void addGear(buffer result, boolean [item] list) {
 		foreach e in list
-			if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0) result.addGear(e);
+			result.addGear(e);
 	}
 	
 	// If using Kung Fu Fighting, you might want to empty your hands
@@ -3687,41 +3670,26 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		// Header for steps 1 to 10
 		switch(questL11Pyramid) {
-		case "started": case "step11": case "step12": break;
+		case "started": case "step11": case "step12":
 		default:
 			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
 		}
 		// Step-by-step
 		switch(questL11Pyramid) {
 		case "started":
-			result.append('Find the Oasis at the <a target="mainpane" href="beach.php">Desert</a>');
-			break;
-		case "step1":
-		case "step4":
-		case "step5":
-			result.append("Explore the Desert");
-			break;
-		case "step2":
-			result.append(item_report($item[stone rose], "stone rose, "));
-			result.append(item_report($item[drum machine], "drum machine, "));
-		case "step3":
-			result.append(item_report($item[can of black paint]));
-			if(questL11Pyramid == "step3")
-				result.append("</br>Explore the Desert");
-			break;
-		case "step6":
-		case "step7":
-		case "step8":
-			result.append(item_report($item[worm-riding manual page 1], "Page 1, "));
-			result.append(item_report($item[worm-riding manual page 2], "Page 2, "));
-			result.append(item_report($item[worm-riding manual pages 3-15], "Pages 3-15"));
-			break;
-		case "step9":
-			result.append(item_report($item[drum machine], "drum machine, "));
-			result.append(item_report($item[worm-riding hooks]));
-			break;
-		case "step10":
-			result.append('<a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
+			int desertExploration = get_property("desertExploration").to_int();
+			if(desertExploration < 10)
+				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
+			else if(desertExploration < 100) {
+				result.append("Exploration: "+desertExploration+"%<br>");
+				result.append(item_report($item[worm-riding manual page], 15));
+				result.append("<br>");
+				result.append(item_report($item[stone rose], "stone rose, "));
+				result.append(item_report($item[drum machine], "drum machine, "));
+				result.append(item_report($item[worm-riding hooks], "worm-riding hooks, "));
+				result.append(item_report($item[can of black paint]));
+				result.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
+			}
 			break;
 		// Open the Bottom Chamber of the Pyramid
 		case "step11":
@@ -4100,7 +4068,7 @@ boolean parsePage(buffer original) {
 		case "(none)":
 			return $location[none];
 		case "The Arid, Extra-Dry Desert":
-			return $location[Desert (Ultrahydrated)];
+			return $location[The Arid\, Extra-Dry Desert];
 		case "The Orcish Frat House":
 			return $location[Frat House];
 		case "The Hippy Camp":
@@ -4125,6 +4093,7 @@ boolean parsePage(buffer original) {
 			.replace_string("Haunted Wine Cellar", "Wine Cellar")
 			.replace_string("The Enormous Greater-Than Sign", "Greater-Than Sign")
 			.replace_string("The Penultimate Fantasy Airship", "Fantasy Airship")
+			.replace_string("An Overgrown", "Overgrown")							// An Overgrown Shrine
 			.replace_string("Next to that Barrel with Something Burning in it", "Barrel with Something Burning")
 			.replace_string("Near an Abandoned Refrigerator", "Abandoned Refrigerator")
 			.replace_string("Over Where the Old Tires Are", "Where the Old Tires Are")
