@@ -687,14 +687,12 @@ buff parseBuff(string source) {
 void bakeEffects() {
 
 	buffer result;
+	buffer songs;
+	buffer expression;
 	buffer buffs;
 	buffer intrinsics;
-	buffer songs;
 	buffer helpers;
 	int total = 0;
-	int buffCount = 0;
-	int intrinsicCount = 0;
-	int songCount = 0;
 
 	//Get layout preferences
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
@@ -719,13 +717,14 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentbuff.effectHTML);
-			intrinsicCount = intrinsicCount + 1;
 		} else if (showSongs && $strings[at, aob, aoj] contains currentbuff.effectType) {
 			songs.append(currentbuff.effectHTML);
-			songCount = songCount + 1;			
+		} else if(showSongs && to_skill(currentbuff.effectName).expression == true) {
+			expression.append('<tbody class="buffs">');
+			expression.append(currentbuff.effectHTML);
+			expression.append('</tbody>');
 		} else {
 			buffs.append(currentbuff.effectHTML);
-			buffCount = buffCount + 1;
 		}
 		total = total + 1;
 		
@@ -747,19 +746,18 @@ void bakeEffects() {
 	while (find(rowMatcher)){
 		currentbuff = rowMatcher.group(1).parseBuff();
 		intrinsics.append(currentbuff.effectHTML);
-		intrinsicCount = intrinsicCount + 1;
 		total = total + 1;
 	}
 
-	if (intrinsicCount > 0 ) {
+	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');
 		intrinsics.append('</tbody>');
 	}
-	if (songCount > 0 ) {
+	if (length(songs) > 0 ) {
 		songs.insert(0, '<tbody class="songs">');
 		songs.append('</tbody>');
 	}
-	if (buffCount > 0) {
+	if (length(buffs) > 0) {
 		buffs.insert(0, '<tbody class="buffs">');
 		buffs.append('</tbody>');
 	}
@@ -772,7 +770,10 @@ void bakeEffects() {
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
-				case "buffs": result.append(buffs); break;
+				case "buffs": 
+					result.append(expression); 
+					result.append(buffs); 
+					break;
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
 				default: //ignore all other values					
@@ -2840,7 +2841,11 @@ void pickOutfit() {
 	// Special equipment control section
 	buffer special;
 	void addGear(buffer result, string cmd, string desc) {
-		result.append('<tr class="pickitem"><td class="info"><a class="change" href="' + sideCommand(cmd) + '">' + desc + '</a></td></tr>');
+		result.append('<tr class="pickitem"><td class="info"><a class="change" href="');
+		result.append(sideCommand(cmd));
+		result.append('">');
+		result.append(desc);
+		result.append('</a></td></tr>');
 	}
 	void addGear(buffer result, item e) {
 		if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
@@ -2879,6 +2884,8 @@ void pickOutfit() {
 		}
 	if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
+	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
+		special.addGear("equip antique machete", "antique machete");
 	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
@@ -3392,7 +3399,7 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		result.append('Clear the <a target="mainpane" href="friars.php">Deep Fat Friars</a><br>');
 		result.append(item_report($item[eldritch butterknife])+" (Elbow)<br>");
-		result.append(item_report($item[box of birthday candles])+" (Heart)<br>");
+		result.append(item_report($item[box of birthday candles], "birthday candles")+" (Heart)<br>");
 		result.append(item_report($item[dodecagram])+" (Neck)");
 		result.append("</td></tr>");
 	}
