@@ -4074,14 +4074,12 @@ boolean parsePage(buffer original) {
 		switch(loc) {	// Some of these are really tough for KoLmafia to deal with!
 		case "(none)":
 			return $location[none];
-		case "The Arid, Extra-Dry Desert":
-			return $location[The Arid\, Extra-Dry Desert];
 		case "The Orcish Frat House":
 			return $location[Frat House];
 		case "The Hippy Camp":
 			return $location[Hippy Camp];
 		}
-		return my_location();
+		return get_property("lastAdventure").to_location();
 	}
 	// Recent Adventures: May or may not be present
 	parse = create_matcher("(<center><font size=2>.+?Last Adventure:.+?</center>)", source);
