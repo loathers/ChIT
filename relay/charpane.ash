@@ -506,29 +506,33 @@ string helperSemiRare() {
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
-		rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
-		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
-	if(can_interact())
+	if(can_interact()) {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|200";
+	} else {
+		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
+		if(!have_outfit("Knob Goblin Elite Guard Uniform"))
+			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
+		if(!have_outfit("Mining Gear"))
+			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
+	}
 		
-	int lastCounter = to_int(get_property("semirareCounter"));
-	string lastLocation = lastCounter == 0? "none": get_property("semirareLocation");
-	location lastZone = to_location(lastLocation);
-	string message = lastCounter == 0? "No semirare so far during this ascension"
-		: ("Last semirare found " + (turns_played()-lastCounter) + " turns ago (on turn " + lastCounter + ") in " + lastZone);
+	int semirareCounter = to_int(get_property("semirareCounter"));
+	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
+	string message = semirareCounter == 0? "No semirare so far during this ascension"
+		: ("Last semirare found " + (turns_played()-semirareCounter) + " turns ago (on turn " + semirareCounter + ") in " + semirareLocation);
 	
 	//Iterate through all the predefined zones
 	string[3] reward;
 	buffer rowdata;
 	int rows = 0;
-	foreach zone, value in rewards {
+	foreach loc, value in rewards {
 		reward = split_string(value, "\\|");
-		if (zone != lastZone) {
+		if (loc != semirareLocation) {
 			if (my_basestat(my_primestat()) >= to_int(reward[2])) {
 				rowdata.append('<tr class="section">');
 				rowdata.append('<td class="icon" title="' + reward[1] + '"><img src="images/itemimages/' + reward[0] + '"></td>');
-				rowdata.append('<td class="location" title="' + reward[1] + '"><a class="visit" target="mainpane" href="' + to_url(zone) + '">' + to_string(zone) + '</a>' + reward[1] + '</td>');
+				rowdata.append('<td class="location" title="' + reward[1] + '"><a class="visit" target="mainpane" href="' + to_url(loc) + '">' + to_string(loc) + '</a>' + reward[1] + '</td>');
 				rowdata.append('</tr>');
 				rows = rows + 1;
 			}
@@ -3646,28 +3650,49 @@ void bakeTracker() {
 	
 	if(started("questL11Worship")) {
 		result.append("<tr><td>");
-		if(get_property("questL11Worship") == "step3") {
-			int spheres, altars;
-			for s from 2174 to 2177
-				if(item_amount(to_item(s)) > 0 || get_property("lastStoneSphere"+s) != "")
-					spheres += 1;
-			if(get_property("lastHiddenCityAscension") == my_ascensions())
-				foreach cc in $strings[N, W, L, F]
-					if(get_property("hiddenCityLayout").contains_text(cc))
-						altars += 1;
-			if(spheres + altars < 8) {
-				result.append('Explore <a target="mainpane" href="hiddencity.php">Hidden City</a><br>Spheres found: ');
-				result.append(item_report(spheres == 4, spheres+"/4"));
-				result.append("<br>Altars found: ");
-				result.append(item_report(altars == 4, altars+"/4"));
-			} else {
-				if(get_property("hiddenCityLayout").contains_text("T"))
-					result.append('<a target="mainpane" href="hiddencity.php">Hidden City</a>: Kill Spectre');
-				else
-					result.append('Search for Temple at <a target="mainpane" href="hiddencity.php">Hidden City</a>');
-			}
-		} else
+		switch(get_property("questL11Worship")) {
+		case "started": case "step1": case "step2":
 			result.append('Search <a target="mainpane" href="woods.php">Temple</a> for Hidden City');
+			break;
+		case "step3":
+			result.append('Explore <a target="mainpane" href="hiddencity.php">Hidden City</a>:<br>');
+			boolean relocatePygmyJanitor = get_property("relocatePygmyJanitor").to_int() == my_ascensions();
+			if(available_amount($item[antique machete]) == 0 || !relocatePygmyJanitor) {
+				result.append("Hidden Park: ");
+				result.append(item_report($item[antique machete]));
+				result.append(", ");
+				result.append(item_report(relocatePygmyJanitor, "relocate janitors"));
+				result.append("<br>");
+			}
+			foreach loc in $strings[Hospital, BowlingAlley, Apartment, Office] {
+				result.append(loc+": ");
+				int prog = get_property("hidden"+loc+"Progress").to_int();
+				if(prog == 0)
+					result.append(item_report(false, "Explore Shrine<br>"));
+				else if(prog < 7) {
+					switch(loc) {
+					case "Hospital":
+						result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
+						break;
+					case "BowlingAlley":
+						result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
+						break;
+					case "Apartment":
+						result.append(item_report(get_property("relocatePygmyJanitor").to_boolean(), "relocate Janitors, "));
+					default:
+						result.append(item_report(false, "Search for Boss<br>"));
+					}
+				} else if(prog == 7)
+					result.append(item_report(false, "Use Sphere<br>"));
+				else
+					result.append(item_report(true, "Done!<br>"));
+			}
+			if(get_property("hiddenTavernUnlock") == "false") {
+				result.append("Tavern: ");
+				result.append(item_report($item[book of matches]));
+				result.append("<br>");
+			}
+		}
 		result.append("</td></tr>");
 	}
 	
