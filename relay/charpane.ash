@@ -3649,6 +3649,13 @@ void bakeTracker() {
 	}
 	
 	if(started("questL11Worship")) {
+		// How many McClusky file pages are present?
+		int files() {
+			for f from 6693 downto 6689
+				if(to_item(f).available_amount() > 0)
+					return f - 6688;
+			return 0;
+		}
 		result.append("<tr><td>");
 		switch(get_property("questL11Worship")) {
 		case "started": case "step1": case "step2":
@@ -3675,12 +3682,24 @@ void bakeTracker() {
 						result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
 						break;
 					case "BowlingAlley":
+						result.append(item_report($item[bowling ball]));
+						result.append(", ");
 						result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
 						break;
 					case "Apartment":
-						result.append(item_report(get_property("relocatePygmyJanitor").to_boolean(), "relocate Janitors, "));
-					default:
+						result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
 						result.append(item_report(false, "Search for Boss<br>"));
+						break;
+					case "Office":
+						if(available_amount($item[McClusky file (complete)]) > 0)
+							result.append(item_report(false, "Kill Boss!"));
+						else {
+							int f = files();
+							result.append(item_report(f >=5, "McClusky files (" + f + "/5), "));
+							result.append(item_report($item[boring binder clip], "binder clip"));
+						}
+						result.append("<br>");
+						break;
 					}
 				} else if(prog == 7)
 					result.append(item_report(false, "Use Sphere<br>"));
