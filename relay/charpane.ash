@@ -2262,6 +2262,19 @@ void addFury(buffer result) {
 	}
 }
 
+void addSauce(buffer result) {
+	result.append('<tr>');
+	result.append('<td class="label">Soulsaucee</td><td class="info">');
+	result.append(my_soulsauce());
+	result.append('</td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		result.append('<td class="progress">');
+		#result.append('<div class="progressbox"><div class="progressbar" style="width:' + (100.0 * my_soulsauce() / my_maxfury()) + '%"></div></div></td>');
+		result.append('</td>');
+	}
+	result.append('</tr>');
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr>');
@@ -2709,8 +2722,10 @@ void bakeStats() {
 				default:
 			}
 		}
-		if(section.contains_text("muscle") && chitSource["stats"].contains_text("Fury:"))
+		if(my_fury() > 0 && section.contains_text("muscle"))
 			result.addFury();
+		if(my_soulsauce() > 0 && section.contains_text("myst"))
+			result.addSauce();
 		result.append("</tbody>");
 	}
 
@@ -2890,6 +2905,8 @@ void pickOutfit() {
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
 	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
 		special.addGear("equip antique machete", "antique machete");
+	if(get_property("questL11Pyramid") == "started" && item_amount($item[UV-resistant compass]) > 0)
+		special.addGear("equip UV-resistant compass", "UV-resistant compass");
 	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
@@ -3637,9 +3654,11 @@ void bakeTracker() {
 			result.append(", ");
 			result.append(item_report($item[hard rock candy]));
 			result.append(", ");
+			result.append(item_report($item[hard-boiled ostrich egg]));
+			result.append(", ");
 			result.append(item_report($item[ketchup hound]));
 			result.append(", ");
-			result.append(item_report($item[hard-boiled ostrich egg]));
+			result.append(item_report($item[stunt nuts]));
 		}
 		// get wet stunt nut stew, mega gem
 		if (available_amount($item[Mega Gem])==0) {
@@ -3719,15 +3738,10 @@ void bakeTracker() {
 	if(started("questL11Pyramid")) {
 		string questL11Pyramid = get_property("questL11Pyramid");
 		result.append("<tr><td>");
-		// Header for steps 1 to 10
-		switch(questL11Pyramid) {
-		case "started": case "step11": case "step12":
-		default:
-			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
-		}
 		// Step-by-step
 		switch(questL11Pyramid) {
 		case "started":
+			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
 			int desertExploration = get_property("desertExploration").to_int();
 			if(desertExploration < 10)
 				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
