@@ -2264,7 +2264,7 @@ void addFury(buffer result) {
 
 void addSauce(buffer result) {
 	result.append('<tr>');
-	result.append('<td class="label">Soulsaucee</td><td class="info">');
+	result.append('<td class="label">Soulsauce</td><td class="info">');
 	result.append(my_soulsauce());
 	result.append('</td>');
 	if(to_boolean(vars["chit.stats.showbars"])) {
