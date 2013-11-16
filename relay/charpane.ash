@@ -2245,7 +2245,7 @@ void addFury(buffer result) {
 			wrap.append("</span>");
 		}
 	}
-	matcher fury = create_matcher("Fury:.*?<font color=red>(<span[^>]*>)?((\\d+) gal.)", chitSource["stats"]);
+	matcher fury = create_matcher("Fury:.*?<font color[^>]*>(<span[^>]*>)?((\\d+) gal.)", chitSource["stats"]);
 	if(fury.find()) {
 		result.append('<tr>');
 		result.append('<td class="label">');
