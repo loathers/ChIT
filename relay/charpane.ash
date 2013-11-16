@@ -2255,7 +2255,7 @@ void addFury(buffer result) {
 		result.append('</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress">');
-			result.spanWrap('<div class="progressbox"><div class="progressbar" style="width:' + (100.0 * my_fury() / my_maxfury()) + '%"></div></div></td>', fury.group(1));
+			result.spanWrap('<div class="progressbox" title="' + my_fury() + ' / ' + my_maxfury() + '"><div class="progressbar" style="width:' + (100.0 * my_fury() / my_maxfury()) + '%"></div></div></td>', fury.group(1));
 			result.append('</td>');
 		}
 		result.append('</tr>');
@@ -2264,12 +2264,12 @@ void addFury(buffer result) {
 
 void addSauce(buffer result) {
 	result.append('<tr>');
-	result.append('<td class="label">Soulsauce</td><td class="info">');
+	result.append('<td class="label">Sauce</td><td class="info">');
 	result.append(my_soulsauce());
 	result.append('</td>');
 	if(to_boolean(vars["chit.stats.showbars"])) {
 		result.append('<td class="progress">');
-		#result.append('<div class="progressbox"><div class="progressbar" style="width:' + (100.0 * my_soulsauce() / my_maxfury()) + '%"></div></div></td>');
+		result.append('<div class="progressbox" title="' + my_soulsauce() + ' / 100"><div class="progressbar" style="width:' + my_soulsauce() + '%"></div></div></td>');
 		result.append('</td>');
 	}
 	result.append('</tr>');
