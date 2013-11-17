@@ -1841,6 +1841,37 @@ void bakeFamiliar() {
 	
 }
 
+void bakeThrall() {
+	if(chitSource["thrall"].length() == 0) return;
+	string famimage, click, famname, famtype, actortype;
+	string equiptype = "<font color=blue size=2><b>Click to Summon a Thrall</b></font>";
+	# <b>Pasta Thrall:</b></font><br><img onClick='javascript:window.open("desc_guardian.php","","height=200,width=300")' src=/images/itemimages/t_vampieroghi.gif width=30 height=30><br><font size=2><b>Wally</b><br>the Lvl. 3 Vampieroghi</font>
+	matcher thrall = create_matcher("<b>Pasta Thrall:</b></font><br>(<img (onClick='[^']+')[^>]+>)<br><font size=2>(<b>([^<]+)</b><br>[^\\d]+(\\d+) *([^<]+))</font>", chitSource["thrall"]);
+	if(find(thrall)) {
+		famimage = thrall.group(1);
+		click = thrall.group(2);
+		actortype = thrall.group(3);
+		famname = thrall.group(4);
+		famtype = thrall.group(6);
+		#equiptype = thrall.group(4);
+	} else {
+		famimage = '<img src="images/adventureimages/blank.gif">';
+		actortype = "(No Thrall)";
+		#equiptype = "<font color=blue size=2><b>Click to Summon a Thrall</b></font>";
+	}
+	buffer result;
+	result.append('<table id="chit_thrall" class="chit_brick nospace">');
+	result.append('<tr><th colspan="2" title="Thrall">Pasta Thrall</th></tr>');
+	
+	result.append('<tr><td class="icon" title="Playing with this food">');
+	result.append('<a class="chit_launcher" rel="chit_pickerthrall" href="#">');
+	result.append(famimage + '</a></td>');
+	result.append('<td class="info"><a class="hand" '+click+'>' + actortype + '</a></td>');
+	result.append('</tr></table>');
+	
+	chitBricks["thrall"] = result;
+}
+
 string currentMood() {
 	matcher pattern = create_matcher(">mood (.*?)</a>", chitSource["mood"]);
 	if(find(pattern))
@@ -2534,13 +2565,6 @@ void addTrail(buffer result) {
 	}
 	result.append('</tr>');
 	
-	// Should I auto-add Florist after trail? Do it if florist not defined elsewhere
-	if(florist_available()) {
-		foreach layout in $strings[roof, walls, floor, toolbar, stats]
-			if(vars["chit." + layout + ".layout"].contains_text("florist"))
-				return;
-		result.addFlorist(false);
-	}
 }
 
 void bakeStats() {
@@ -4182,6 +4206,13 @@ boolean parsePage(buffer original) {
 		chitSource["effects"] = parse.group(2) + parse.group(4) + parse.group(5); 	// Effects plus Instrinsics, plus recently expired effects
 		source = parse.replace_first("");
 	}
+	
+	// Pasta Thrall?
+	parse = create_matcher('(<center><font size=2><b>Pasta Thrall:</b></font>.+?</font>)', source);
+	if(find(parse)) {
+		chitSource["thrall"] = parse.group(1);
+		source = parse.replace_first("");
+	}
 
 	// Refresh Link: <center><font size=1>[<a href="charpane.php">refresh</a>]</font>
 	parse = create_matcher("(<center><font.+?refresh.+?</font>)", source);
@@ -4346,6 +4377,7 @@ void bakeBricks() {
 						case "modifiers":	bakeModifiers();	break;
 						case "elements":	bakeElements();		break;
 						case "tracker":		bakeTracker();		break;
+						case "thrall":		bakeThrall();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
@@ -4504,13 +4536,24 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.dancecard", true);
 	setvar("chit.helpers.semirare", true);
 	setvar("chit.roof.layout","character,stats");
-	setvar("chit.walls.layout","helpers,effects");
+	setvar("chit.walls.layout","helpers,thrall,effects");
 	setvar("chit.floor.layout","update,familiar");
 	setvar("chit.stats.showbars",true);
 	setvar("chit.stats.layout","muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 	setvar("chit.toolbar.layout","trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods","true");
 	setvar("chit.kol.coolimages",true);
+	
+	// Check var version.
+	if(get_property("chitVarVer").to_int() < 1) {
+		if(!vars["chit.stats.layout"].contains_text("florist") && vars["chit.stats.layout"].contains_text("trail"))
+			vars["chit.stats.layout"] = vars["chit.stats.layout"].replace_string("trail", "trail,florist");
+		if(substring(vars["chit.walls.layout"], 0, 7) == "helpers")
+			vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("helpers", "helpers,thrall");
+		else vars["chit.walls.layout"] = "thrall,"+vars["chit.stats.layout"];
+		updatevars();
+		set_property("chitVarVer", "1");
+	}
 	
 	//Check for updates (once a day)
 	if(svn_exists("mafiachit")) {
