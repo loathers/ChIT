@@ -4548,9 +4548,11 @@ buffer modifyPage(buffer source) {
 	if(get_property("chitVarVer").to_int() < 1) {
 		if(!vars["chit.stats.layout"].contains_text("florist") && vars["chit.stats.layout"].contains_text("trail"))
 			vars["chit.stats.layout"] = vars["chit.stats.layout"].replace_string("trail", "trail,florist");
-		if(length(vars["chit.walls.layout"]) >= 7 && substring(vars["chit.walls.layout"], 0, 7) == "helpers")
-			vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("helpers", "helpers,thrall");
-		else vars["chit.walls.layout"] = "thrall,"+vars["chit.stats.layout"];
+		if(!contains_text(vars["chit.walls.layout"], "thrall")) {
+			if(length(vars["chit.walls.layout"]) >= 7 && substring(vars["chit.walls.layout"], 0, 7) == "helpers")
+				vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("helpers", "helpers,thrall");
+			else vars["chit.walls.layout"] = "thrall,"+vars["chit.stats.layout"];
+		}
 		updatevars();
 		set_property("chitVarVer", "1");
 	}
