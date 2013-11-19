@@ -1524,8 +1524,9 @@ void pickerThrall(string famname, string famtype) {
 	}
 	skill [int] orderedBinds;
 	foreach s in bind
-		orderedBinds[mp_cost(s)] = s;
-	
+		orderedBinds[count(orderedBinds)] = s;
+	sort orderedBinds by mp_cost(value);
+
 	void addThrall(buffer result, skill s) {
 		buffer legend;
 		legend.append("<b>");
