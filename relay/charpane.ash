@@ -511,9 +511,9 @@ string helperSemiRare() {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|200";
 	} else {
 		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
-		if(!have_outfit("Knob Goblin Elite Guard Uniform"))
+		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
-		if(!have_outfit("Mining Gear"))
+		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
 	}
 		
@@ -1479,6 +1479,95 @@ void pickerCompanion(string famname, string famtype) {
 		
 }
 
+static { string [string] [int] pasta;
+	pasta["Vampieroghi"][1] = "Attacks and heals you";
+	pasta["Vampieroghi"][5] = "Dispels bad effects";
+	pasta["Vampieroghi"][10] = "+60 max HP";
+	pasta["Vermincelli"][1] = "Restores MP";
+	pasta["Vermincelli"][5] = "Attacks enemy";
+	pasta["Vermincelli"][10] = "+30 max MP";
+	pasta["Angel Hair Wisp"][1] = "Combat Initiative";
+	pasta["Angel Hair Wisp"][5] = "Prevents enemy crits";
+	pasta["Angel Hair Wisp"][10] = "Blocks enemy attacks";
+	pasta["Elbow Macaroni"][1] = "Muscle matches Myst";
+	pasta["Elbow Macaroni"][5] = "+ Weapon damage";
+	pasta["Elbow Macaroni"][10] = "+10% Critical hits";
+	pasta["Penne Dreadful"][1] = "Moxie matches Myst";
+	pasta["Penne Dreadful"][5] = "Delevels enemy";
+	pasta["Penne Dreadful"][10] = "Damage Reduction: 10";
+	pasta["Spaghetti Elemental"][1] = "Increase stat gains";
+	pasta["Spaghetti Elemental"][5] = "Blocks first attack";
+	pasta["Spaghetti Elemental"][10] = "Spell damage +5";
+	pasta["Lasagmbie"][1] = "Increase meat drops";
+	pasta["Lasagmbie"][5] = "Attacks with Spooky";
+	pasta["Lasagmbie"][10] = "Spooky spells +10";
+	pasta["Spice Ghost"][1] = "Increase item drops";
+	pasta["Spice Ghost"][5] = "Drops spice";
+	pasta["Spice Ghost"][10] = "Better Entangling";
+}
+
+void pickerThrall(string famname, string famtype) {
+
+	record binder {
+		string name;
+		string img;
+	};
+	static { binder [skill] bind;
+		bind [$skill[Bind Vampieroghi]] = new binder("Vampieroghi", "t_vampieroghi");
+		bind [$skill[Bind Vermincelli]] = new binder("Vermincelli", "t_vermincelli");
+		bind [$skill[Bind Angel Hair Wisp]] = new binder("Angel Hair Wisp", "t_wisp");
+		bind [$skill[Bind Undead Elbow Macaroni]] = new binder("Elbow Macaroni", "t_elbowmac");
+		bind [$skill[Bind Penne Dreadful]] = new binder("Penne Dreadful", "t_dreadful");
+		bind [$skill[Bind Spaghetti Elemental]] = new binder("Spaghetti Elemental", "t_spagdemon");
+		bind [$skill[Bind Lasagmbie]] = new binder("Lasagmbie", "t_lasagmbie");
+		bind [$skill[Bind Spice Ghost]] = new binder("Spice Ghost", "t_spiceghost");
+	}
+	skill [int] orderedBinds;
+	foreach s in bind
+		orderedBinds[mp_cost(s)] = s;
+	
+	void addThrall(buffer result, skill s) {
+		buffer legend;
+		legend.append("<b>");
+		legend.append(bind[s].name);
+		legend.append("</b> <span style='color:#707070'>");
+		legend.append(mp_cost(s));
+		legend.append("mp<br /></span>");
+		legend.append("<span style='font-weight:100;color:blue'>");
+		legend.append(pasta[bind[s].name][1]);
+		legend.append("</span>");
+		
+		string url = sideCommand("cast " + s);
+		result.append('<tr class="pickitem">');
+		result.append('<td class="inventory"><a class="change" href="' + url + '" title="' + s + '">' + legend + '</a></td>');
+		result.append('<td class="icon"><a class="change" href="' + url + '" title="' + s + '"><img src="/images/itemimages/' + bind[s].img + '.gif"></a></td>');
+		result.append('</tr>');
+	}
+
+	buffer picker;
+	picker.pickerStart("thrall", "Bind thy Thrall");
+	
+	// Check for all companions
+	picker.addLoader("Binding Thrall...");
+	boolean sad = true;
+	foreach x,s in orderedBinds
+		if(have_skill(s) && bind[s].name != famtype) {
+			picker.addThrall(s);
+			sad = false;
+		}
+	if(sad) {
+		if(famname == "")
+			picker.addSadFace("You haven't yet learned how to play with your food.<br /><br />How sad.");
+		else
+			picker.addSadFace("Poor "+famname+" has no other food to play with.");
+	}
+	
+	picker.append('</table></div>');
+
+	chitPickers["thrall"] = picker;
+		
+}
+
 void bakeFamiliar() {
 
 	string source = chitSource["familiar"];
@@ -1842,34 +1931,51 @@ void bakeFamiliar() {
 }
 
 void bakeThrall() {
-	if(chitSource["thrall"].length() == 0) return;
-	string famimage, click, famname, famtype, actortype;
+	if(my_class() != $class[Pastamancer]) return;
+	string famimage, click, famname, famtype;
+	buffer actor;
+	int famweight;
 	string equiptype = "<font color=blue size=2><b>Click to Summon a Thrall</b></font>";
 	# <b>Pasta Thrall:</b></font><br><img onClick='javascript:window.open("desc_guardian.php","","height=200,width=300")' src=/images/itemimages/t_vampieroghi.gif width=30 height=30><br><font size=2><b>Wally</b><br>the Lvl. 3 Vampieroghi</font>
-	matcher thrall = create_matcher("<b>Pasta Thrall:</b></font><br>(<img (onClick='[^']+')[^>]+>)<br><font size=2>(<b>([^<]+)</b><br>[^\\d]+(\\d+) *([^<]+))</font>", chitSource["thrall"]);
+	matcher thrall = create_matcher("<b>Pasta Thrall:</b></font><br><img (onClick='[^']+') *([^ ]+)[^>]+><br><font size=2>(<b>([^<]+)[^\\d]+(\\d+) *([^<]+))</font>", chitSource["thrall"]);
 	if(find(thrall)) {
-		famimage = thrall.group(1);
-		click = thrall.group(2);
-		actortype = thrall.group(3);
+		famimage = thrall.group(2);
+		click = thrall.group(1);
 		famname = thrall.group(4);
+		famweight = thrall.group(5).to_int();
 		famtype = thrall.group(6);
-		#equiptype = thrall.group(4);
+		actor.append('<span style="color:blue;font-weight:bold">');
+		foreach i,s in pasta[famtype]
+			if(famweight >= i) {
+				actor.append(s);
+				actor.append('<br>');
+			}
+		actor.append('</span>');
 	} else {
 		famimage = '<img src="images/adventureimages/blank.gif">';
-		actortype = "(No Thrall)";
-		#equiptype = "<font color=blue size=2><b>Click to Summon a Thrall</b></font>";
+		actor.append("(No Thrall)");
 	}
 	buffer result;
 	result.append('<table id="chit_thrall" class="chit_brick nospace">');
-	result.append('<tr><th colspan="2" title="Thrall">Pasta Thrall</th></tr>');
+	result.append('<tr><th title="Thrall Level">Lvl. ');
+	result.append(famweight);
+	result.append('</th><th colspan="2" title="Pasta Thrall"><a title="');
+	result.append(famname);
+	result.append('" class="hand" ');
+	result.append(click);
+	result.append('>');
+	result.append(famtype);
+	result.append('</a></th></tr>');
 	
-	result.append('<tr><td class="icon" title="Playing with this food">');
+	result.append('<tr><td class="icon" title="Thrall">');
 	result.append('<a class="chit_launcher" rel="chit_pickerthrall" href="#">');
-	result.append(famimage + '</a></td>');
-	result.append('<td class="info"><a class="hand" '+click+'>' + actortype + '</a></td>');
+	result.append('<img title="Bind thy Thrall" ');
+	result.append(famimage + '></a></td>');
+	result.append('<td class="info"><a title="Click for Thrall description" class="hand" '+click+'>' + actor + '</a></td>');
 	result.append('</tr></table>');
 	
 	chitBricks["thrall"] = result;
+	pickerThrall(famname, famtype);
 }
 
 string currentMood() {
