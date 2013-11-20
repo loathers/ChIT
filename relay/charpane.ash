@@ -1474,9 +1474,7 @@ void pickerCompanion(string famname, string famtype) {
 	}
 	
 	picker.append('</table></div>');
-
 	chitPickers["equipment"] = picker;
-		
 }
 
 static { string [string] [int] pasta;
@@ -1495,13 +1493,13 @@ static { string [string] [int] pasta;
 	pasta["Penne Dreadful"][1] = "Moxie matches Myst";
 	pasta["Penne Dreadful"][5] = "Delevels enemy";
 	pasta["Penne Dreadful"][10] = "Damage Reduction: 10";
-	pasta["Spaghetti Elemental"][1] = "Increase stat gains";
+	pasta["Spaghetti Elemental"][1] = "Increases stat gains";
 	pasta["Spaghetti Elemental"][5] = "Blocks first attack";
 	pasta["Spaghetti Elemental"][10] = "Spell damage +5";
 	pasta["Lasagmbie"][1] = "Increase meat drops";
 	pasta["Lasagmbie"][5] = "Attacks with Spooky";
 	pasta["Lasagmbie"][10] = "Spooky spells +10";
-	pasta["Spice Ghost"][1] = "Increase item drops";
+	pasta["Spice Ghost"][1] = "Increases item drops";
 	pasta["Spice Ghost"][5] = "Drops spice";
 	pasta["Spice Ghost"][10] = "Better Entangling";
 }
@@ -1581,9 +1579,7 @@ void pickerThrall(string famname, string famtype) {
 	}
 	
 	picker.append('</table></div>');
-
 	chitPickers["thrall"] = picker;
-		
 }
 
 void bakeFamiliar() {
@@ -2541,7 +2537,7 @@ void addMCD(buffer result, boolean bake) {
 		mcdpage = "gnomes.php?place=machine";
 		mcdchange = "gnomes.php?action=changedial&whichlevel=";
 		mcdbusy = "Changing Dial...";
-		if ((item_amount($item[bitchin' meatcar]) + item_amount($item[Desert Bus pass]) + item_amount($item[pumpkin carriage])) == 0
+		if((item_amount($item[bitchin' meatcar]) + item_amount($item[Desert Bus pass]) + item_amount($item[pumpkin carriage]) + item_amount($item[tin lizzie])) == 0
 		 && get_property("questG01Meatcar") != "finished") {
 			mcdSettable = false;			
 			progress = '<span title="The Gnomad camp has not been unlocked yet">No Beach?</span>';
