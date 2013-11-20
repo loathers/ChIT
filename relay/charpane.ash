@@ -1527,22 +1527,39 @@ void pickerThrall(string famname, string famtype) {
 		orderedBinds[count(orderedBinds)] = s;
 	sort orderedBinds by mp_cost(value);
 
+	string color(skill s) {
+		if(my_mp() >= mp_cost(s)) return "inventory"; 	// Green
+		if(my_maxmp() >= mp_cost(s)) return "make";		// Orange
+		return "remove";								// Red
+	}
+	
 	void addThrall(buffer result, skill s) {
-		buffer legend;
-		legend.append("<b>");
-		legend.append(bind[s].name);
-		legend.append("</b> <span style='color:#707070'>");
-		legend.append(mp_cost(s));
-		legend.append("mp<br /></span>");
-		legend.append("<span style='font-weight:100;color:blue'>");
-		legend.append(pasta[bind[s].name][1]);
-		legend.append("</span>");
+		buffer url;
+		url.append('<a class="change" href="');
+		url.append(sideCommand("cast " + s));
+		url.append('" title="');
+		url.append(s);
+		url.append(' for ');
+		url.append(mp_cost(s));
+		url.append('mp">');
 		
-		string url = sideCommand("cast " + s);
-		result.append('<tr class="pickitem">');
-		result.append('<td class="inventory"><a class="change" href="' + url + '" title="' + s + '">' + legend + '</a></td>');
-		result.append('<td class="icon"><a class="change" href="' + url + '" title="' + s + '"><img src="/images/itemimages/' + bind[s].img + '.gif"></a></td>');
-		result.append('</tr>');
+		result.append('<tr class="pickitem"><td class="');
+		result.append(color(s));
+		result.append('">');
+		result.append(url);
+		result.append('<b>');
+		result.append(bind[s].name);
+		result.append('</b> <span style="float:right;color:#707070">');
+		result.append(mp_cost(s));
+		result.append('mp<br /></span>');
+		result.append('<span style="font-weight:100;color:blue">');
+		result.append(pasta[bind[s].name][1]);
+		result.append('</span></a></td>');
+		result.append('<td class="icon">');
+		result.append(url);
+		result.append('<img src="/images/itemimages/');
+		result.append(bind[s].img);
+		result.append('.gif"></a></td></tr>');
 	}
 
 	buffer picker;
