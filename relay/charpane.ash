@@ -1493,7 +1493,7 @@ static { string [thrall] [int] pasta;
 	pasta[$thrall[Penne Dreadful]][1] = "Moxie matches Myst";
 	pasta[$thrall[Penne Dreadful]][5] = "Delevels enemy";
 	pasta[$thrall[Penne Dreadful]][10] = "Damage Reduction: 10";
-	pasta[$thrall[Spaghetti Elemental]][1] = "Increases stat gains";
+	pasta[$thrall[Spaghetti Elemental]][1] = "Increases exp";
 	pasta[$thrall[Spaghetti Elemental]][5] = "Blocks first attack";
 	pasta[$thrall[Spaghetti Elemental]][10] = "Spell damage +5";
 	pasta[$thrall[Lasagmbie]][1] = "Increase meat drops";
@@ -1523,7 +1523,7 @@ void pickerThrall() {
 		if(t.level == 0) { // If this is a first time summmons, I want to see it in mainpaine!
 			url.append('<a target=mainpane class="change" href="skills.php?action=Skillz&whichskill=');
 			url.append(to_int(t.skill));
-			url.append('&skillform=Use+Skill&quantity=1&ajax=1&pwd='); // ajax=1 prevents entire skills form from appearing
+			url.append('&skillform=Use+Skill&quantity=1&pwd=');
 			url.append(my_hash());
 		} else {
 			url.append('<a class="change" href="');
