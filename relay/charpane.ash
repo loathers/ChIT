@@ -657,31 +657,6 @@ buff parseBuff(string source) {
 	result.append('>');
 	if(showIcons) 
 		result.append('<td class="icon">' + columnIcon + '</td>');
-/*	if(myBuff.isIntrinsic) {
-		if (doArrows) {
-			result.append('<td class="info" colspan="2">' + effectAlias + '</td>');
-			result.append('<td class="infinity">'+ columnTurns +'</td>');
-		} else {
-			result.append('<td class="info">' + effectAlias + '</td>');
-			result.append('<td class="infinity right">'+ columnTurns +'</td>');
-		}
-	} else {
-		result.append('<td class="info">' + effectAlias + '</td>');
-		if (!doArrows) {
-			result.append('<td class="right">' + columnTurns + '</td>');
-		} else if (columnTurns != "") {
-			result.append('<td class="shrug">' + columnTurns + '</td>');
-		} else {
-			result.append('<td class="noshrug">' + myBuff.effectTurns + '</td>');
-		}
-		if (doArrows) {
-			if (columnArrow == "") {
-				result.append('<td>&nbsp;</td>');
-			} else {
-				result.append('<td class="powerup">' + columnArrow + '</td>');
-			}
-		}
-	} */
 	result.append('<td class="info"');
 	if(doArrows && myBuff.isIntrinsic)
 		result.append(' colspan="2"');
@@ -1552,7 +1527,7 @@ void pickerThrall() {
 		buffer url;
 		if(t.level == 0) { // If this is a first time summmons, I want to see it in mainpaine!
 			url.append('<a target=mainpane class="change" href="skills.php?action=Skillz&whichskill=');
-			url.append(to_int(t.skill));
+			url.append(to_int(s));
 			url.append('&skillform=Use+Skill&quantity=1&pwd=');
 			url.append(my_hash());
 		} else {
@@ -1573,14 +1548,32 @@ void pickerThrall() {
 		result.append(t);
 		result.append('</b> <span style="float:right;color:#707070">');
 		result.append(mp_cost(s));
-		result.append('mp<br /></span>');
-		result.append('<span style="font-weight:100;color:blue">');
+		result.append('mp</span><br /><span style="color:blue">');
 		result.append(pasta[t][1]);
-		result.append('</span></a></td>');
-		result.append('<td class="icon">');
+		result.append('</span></a></td><td class="icon">');
 		result.append(url);
 		result.append('<img src="/images/itemimages/');
 		result.append(t.tinyimage);
+		result.append('"></a></td></tr>');
+	}
+
+	void dismissThrall(buffer result) {
+		skill s = $skill[Dismiss Pasta Thrall];
+		buffer url;
+		url.append('<a class="change" href="');
+		url.append(sideCommand("cast Dismiss Pasta Thrall"));
+		url.append('" title="Dismiss Pasta Thrall">');
+		
+		result.append('<tr class="pickitem"><td class="retrieve">');
+		result.append(url);
+		result.append('<b>Dismiss ');
+		result.append(my_thrall());
+		result.append('</b><br /><span style="color:blue">Goodbye ');
+		result.append(my_thrall().name);
+		result.append('</span></a></td><td class="icon">');
+		result.append(url);
+		result.append('<img src="/images/itemimages/');
+		result.append(my_thrall().tinyimage);
 		result.append('"></a></td></tr>');
 	}
 
@@ -1595,11 +1588,13 @@ void pickerThrall() {
 			picker.addThrall(t);
 			sad = false;
 		}
+	if(my_thrall() != $thrall[none])
+		picker.dismissThrall();
 	if(sad) {
 		if(my_thrall() == $thrall[none])
-			picker.addSadFace("You haven't yet learned how to play with your food.<br /><br />How sad.");
+			picker.addSadFace("You haven't yet learned how to summon Thralls.<br /><br />How sad.");
 		else
-			picker.addSadFace("Poor "+my_thrall().name+" has no other food to play with.");
+			picker.addSadFace("Poor "+my_thrall().name+" has no other thralls to play with.");
 	}
 	
 	picker.append('</table></div>');
