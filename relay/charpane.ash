@@ -575,7 +575,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?(<a[^>]*>(\\d+)</a>|&infin;|\\d+)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) \\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -583,7 +583,7 @@ buff parseBuff(string source) {
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
 		columnTurns = parse.group(6);
-		if(columnTurns == "&infin;") {	// Is it intrinsic?
+		if(parse.group(7) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
 		} else
@@ -660,10 +660,10 @@ buff parseBuff(string source) {
 	if(myBuff.isIntrinsic) {
 		if (doArrows) {
 			result.append('<td class="info" colspan="2">' + effectAlias + '</td>');
-			result.append('<td class="infinity">&infin;</td>');
+			result.append('<td class="infinity">'+ columnTurns +'</td>');
 		} else {
 			result.append('<td class="info">' + effectAlias + '</td>');
-			result.append('<td class="infinity right">&infin;</td>');
+			result.append('<td class="infinity right">'+ columnTurns +'</td>');
 		}
 	} else {
 		result.append('<td class="info">' + effectAlias + '</td>');
@@ -1500,7 +1500,7 @@ static { string [thrall] [int] pasta;
 	pasta[$thrall[Lasagmbie]][5] = "Attacks with Spooky";
 	pasta[$thrall[Lasagmbie]][10] = "Spooky spells +10";
 	pasta[$thrall[Spice Ghost]][1] = "Increases item drops";
-	pasta[$thrall[Spice Ghost]][5] = "Drops spice";
+	pasta[$thrall[Spice Ghost]][5] = "Drops spices";
 	pasta[$thrall[Spice Ghost]][10] = "Better Entangling";
 }
 
