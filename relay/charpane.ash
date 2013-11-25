@@ -657,7 +657,7 @@ buff parseBuff(string source) {
 	result.append('>');
 	if(showIcons) 
 		result.append('<td class="icon">' + columnIcon + '</td>');
-	if(myBuff.isIntrinsic) {
+/*	if(myBuff.isIntrinsic) {
 		if (doArrows) {
 			result.append('<td class="info" colspan="2">' + effectAlias + '</td>');
 			result.append('<td class="infinity">'+ columnTurns +'</td>');
@@ -680,6 +680,36 @@ buff parseBuff(string source) {
 			} else {
 				result.append('<td class="powerup">' + columnArrow + '</td>');
 			}
+		}
+	} */
+	result.append('<td class="info"');
+	if(doArrows && myBuff.isIntrinsic)
+		result.append(' colspan="2"');
+	result.append('>');
+	result.append(effectAlias);
+	result.append('</td>');
+	if(myBuff.isIntrinsic) {
+		result.append('<td class="infinity');
+		if(!doArrows)
+			result.append(' right');
+		result.append('">');
+	} else {
+		if(!doArrows)
+			result.append('<td class="right">');
+		else if (columnTurns != "")
+			result.append('<td class="shrug">');
+		else
+			result.append('<td class="noshrug">');
+	}
+	result.append(columnTurns);
+	result.append('</td>');
+	if(doArrows && !myBuff.isIntrinsic) {
+		if(columnArrow == "")
+			result.append('<td>&nbsp;</td>');
+		else {
+			result.append('<td class="powerup">');
+			result.append(columnArrow);
+			result.append('</td>');
 		}
 	}
 	result.append('</tr>');
