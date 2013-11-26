@@ -556,6 +556,35 @@ string helperSemiRare() {
 	return result;
 }
 
+// Functions for pickers
+void pickerStart(buffer picker, string rel, string message) {
+	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
+	picker.append('<table class="chit_picker">');
+	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
+}
+
+void pickerStart(buffer picker, string rel, string message, string image) {
+	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
+	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
+	picker.append(imagePath + image);
+	picker.append('.png">');
+	picker.append(message + '</th></tr>');
+}
+
+void addLoader(buffer picker, string message) {
+	picker.append('<tr class="pickloader" style="display:none">');
+	picker.append('<td class="info">' + message + '</td>');
+	picker.append('<td class="icon"><img src="/images/itemimages/karma.gif"></td>');
+	picker.append('</tr>');
+}
+
+void addSadFace(buffer picker, string message) {
+	picker.append('<tr class="picknone">');
+	picker.append('<td class="info" colspan="2">');
+	picker.append(message);
+	picker.append('</td></tr>');
+}
+
 // elements2.gif or elements3.gif are valid values for img
 void addElementMap(buffer result, string img) {
 	result.append('<img src="');
@@ -564,21 +593,34 @@ void addElementMap(buffer result, string img) {
 	result.append('" width="190" height="190"');
 	if(have_skill($skill[Flavour of Magic])) {
 		result.append('" width="190" height="190" alt="Cast Flavour of Magic" usemap="#flavmap">');
-		result.append('<map id="flavmap" name="flavmap"><area shape="circle" alt="Bacon Grease (Sleaze)" title="Bacon Grease (Sleaze)" coords="86,33,22" href="');
+		result.append('<map id="flavmap" name="flavmap"><area shape="circle" alt="Sleaze" title="Spirit of Bacon Grease (Sleaze)" coords="86,33,22" href="');
 		result.append(sideCommand('cast spirit of bacon grease'));
-		result.append('" target="" /><area shape="circle" alt="Peppermint (Cold)" title="Peppermint (Cold)" coords="156,84,22" href="');
+		result.append('" target="" /><area shape="circle" alt="Cold" title="Spirit of Peppermint (Cold)" coords="156,84,22" href="');
 		result.append(sideCommand('cast spirit of peppermint'));
-		result.append('" target="" /><area shape="circle" alt="Wormwood (Spooky)" title="Wormwood (Spooky)" coords="133,155,22" href="');
+		result.append('" target="" /><area shape="circle" alt="Spooky" title="Spirit of Wormwood (Spooky)" coords="133,155,22" href="');
 		result.append(sideCommand('cast spirit of wormwood'));
-		result.append('" target="" /><area shape="circle" alt="Cayenne (Hot)" title="Cayenne (Hot)" coords="39,155,22" href="');
+		result.append('" target="" /><area shape="circle" alt="Hot" title="Spirit of Cayenne (Hot)" coords="39,155,22" href="');
 		result.append(sideCommand('cast spirit of cayenne'));
-		result.append('" target="" /><area shape="circle" alt="Garlic (Stench)" title="Garlic (Stench)" coords="25,84,22" href="');
+		result.append('" target="" /><area shape="circle" alt="Stench" title="Spirit of Garlic (Stench)" coords="25,84,22" href="');
 		result.append(sideCommand('cast spirit of garlic'));
 		result.append('" target="" /><area shape="circle" alt="Cancel Flavour of Magic" title="Cancel Flavour of Magic" coords="86,95,22" href="');
 		result.append(sideCommand('cast spirit of nothing'));
 		result.append('" target="" /></map>');
 	} else
 		result.append('>');
+}
+
+void pickerFlavour() {
+	buffer picker;
+	picker.pickerStart("flavour", "Cast Flavour of Magic");
+	
+	picker.addLoader("Spiriting flavours...");
+	picker.append('<tr class="pickitem"><td>');
+	picker.addElementMap("elements3.gif");
+	picker.append('</td></tr>');
+	
+	picker.append('</table></div>');
+	chitPickers["flavour"] = picker;
 }
 
 record buff {
@@ -621,7 +663,7 @@ buff parseBuff(string source) {
 		}
 	}
 	string effectAlias = myBuff.effectName;
-
+	
 	//Apply any styling/renaming as specified in effects map
 	if(chitEffectsMap contains myBuff.effectName) {
 		matcher pattern = create_matcher('(type|alias|style|href|image):"([^"]*)', chitEffectsMap[myBuff.effectName]);
@@ -653,6 +695,13 @@ buff parseBuff(string source) {
 		}
 	}
 	
+	// Flavour of Magic picker!
+	if($strings[Spirit of Cayenne, Spirit of Peppermint, Spirit of Garlic, Spirit of Wormwood, Spirit of Bacon Grease] contains myBuff.effectName) {
+		columnIcon = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">' + columnIcon + '</a>';
+		columnTurns = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a>';
+		pickerFlavour();
+	}
+
 	//Add spoiler info
 	if(length(spoiler) > 0)
 		effectAlias += " "+spoiler;
@@ -832,35 +881,6 @@ void bakeElements() {
 	result.append('</tr></table>');
 	
 	chitBricks["elements"] = result;
-}
-
-// Functions for pickers
-void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker">');
-	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
-}
-
-void pickerStart(buffer picker, string rel, string message, string image) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
-	picker.append(imagePath + image);
-	picker.append('.png">');
-	picker.append(message + '</th></tr>');
-}
-
-void addLoader(buffer picker, string message) {
-	picker.append('<tr class="pickloader" style="display:none">');
-	picker.append('<td class="info">' + message + '</td>');
-	picker.append('<td class="icon"><img src="/images/itemimages/karma.gif"></td>');
-	picker.append('</tr>');
-}
-
-void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone">');
-	picker.append('<td class="info" colspan="2">');
-	picker.append(message);
-	picker.append('</td></tr>');
 }
 
 record plantInfo {
@@ -1605,7 +1625,7 @@ void pickerThrall() {
 	buffer picker;
 	picker.pickerStart("thrall", "Bind thy Thrall");
 	
-	// Check for all companions
+	// Check for all thralls
 	picker.addLoader("Binding Thrall...");
 	boolean sad = true;
 	foreach x,t in binds
