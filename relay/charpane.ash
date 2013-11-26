@@ -556,6 +556,30 @@ string helperSemiRare() {
 	return result;
 }
 
+// elements2.gif or elements3.gif are valid values for img
+void addElementMap(buffer result, string img) {
+	result.append('<img src="');
+	result.append(imagePath);
+	result.append(img);
+	result.append('" width="190" height="190"');
+	if(have_skill($skill[Flavour of Magic])) {
+		result.append('" width="190" height="190" alt="Cast Flavour of Magic" usemap="#flavmap">');
+		result.append('<map id="flavmap" name="flavmap"><area shape="circle" alt="Bacon Grease (Sleaze)" title="Bacon Grease (Sleaze)" coords="86,33,22" href="');
+		result.append(sideCommand('cast spirit of bacon grease'));
+		result.append('" target="" /><area shape="circle" alt="Peppermint (Cold)" title="Peppermint (Cold)" coords="156,84,22" href="');
+		result.append(sideCommand('cast spirit of peppermint'));
+		result.append('" target="" /><area shape="circle" alt="Wormwood (Spooky)" title="Wormwood (Spooky)" coords="133,155,22" href="');
+		result.append(sideCommand('cast spirit of wormwood'));
+		result.append('" target="" /><area shape="circle" alt="Cayenne (Hot)" title="Cayenne (Hot)" coords="39,155,22" href="');
+		result.append(sideCommand('cast spirit of cayenne'));
+		result.append('" target="" /><area shape="circle" alt="Garlic (Stench)" title="Garlic (Stench)" coords="25,84,22" href="');
+		result.append(sideCommand('cast spirit of garlic'));
+		result.append('" target="" /><area shape="circle" alt="Cancel Flavour of Magic" title="Cancel Flavour of Magic" coords="86,95,22" href="');
+		result.append(sideCommand('cast spirit of nothing'));
+		result.append('" target="" /></map>');
+	} else
+		result.append('>');
+}
 
 record buff {
 	string effectName;
@@ -804,7 +828,8 @@ void bakeElements() {
 	result.append(imagePath);
 	result.append('elements.png">Elements</th></tr></thead>');
 	result.append("<tr><td>");
-	result.append('<img src="' + imagePath + 'Elements2.gif"></tr></table>');
+	result.addElementMap("elements2.gif");
+	result.append('</tr></table>');
 	
 	chitBricks["elements"] = result;
 }
@@ -3838,57 +3863,60 @@ void bakeTracker() {
 			result.append('Search <a target="mainpane" href="woods.php">Temple</a> for Hidden City');
 			break;
 		case "step3":
-			result.append('Explore <a target="mainpane" href="hiddencity.php">Hidden City</a>:<br>');
-			boolean relocatePygmyJanitor = get_property("relocatePygmyJanitor").to_int() == my_ascensions();
-			result.append("Hidden Park: ");
-			if(available_amount($item[antique machete]) == 0 || !relocatePygmyJanitor) {
-				result.append(item_report($item[antique machete]));
-				result.append(", ");
-				result.append(item_report(relocatePygmyJanitor, "relocate janitors"));
-				result.append("<br>");
-			} else 
-				result.append(item_report(true, "Done!<br>"));
-			foreach loc in $strings[Hospital, BowlingAlley, Apartment, Office] {
-				result.append(loc+": ");
-				int prog = get_property("hidden"+loc+"Progress").to_int();
-				if(prog == 0)
-					result.append(item_report(false, "Explore Shrine<br>"));
-				else if(prog < 7) {
-					switch(loc) {
-					case "Hospital":
-						result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
-						break;
-					case "BowlingAlley":
-						result.append(item_report($item[bowling ball]));
-						result.append(", ");
-						result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
-						break;
-					case "Apartment":
-						result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
-						result.append(item_report(false, "Search for Boss<br>"));
-						break;
-					case "Office":
-						if(available_amount($item[McClusky file (complete)]) > 0)
-							result.append(item_report(false, "Kill Boss!"));
-						else {
-							int f = files();
-							result.append(item_report(f >=5, "McClusky files (" + f + "/5), "));
-							result.append(item_report($item[boring binder clip], "binder clip"));
-						}
-						result.append("<br>");
-						break;
-					}
-				} else if(prog == 7)
-					result.append(item_report(false, "Use Sphere<br>"));
-				else
+			if(item_amount($item[stone triangle]) < 4) {
+				result.append('Explore <a target="mainpane" href="hiddencity.php">Hidden City</a>:<br>');
+				boolean relocatePygmyJanitor = get_property("relocatePygmyJanitor").to_int() == my_ascensions();
+				result.append("Hidden Park: ");
+				if(available_amount($item[antique machete]) == 0 || !relocatePygmyJanitor) {
+					result.append(item_report($item[antique machete]));
+					result.append(", ");
+					result.append(item_report(relocatePygmyJanitor, "relocate janitors"));
+					result.append("<br>");
+				} else 
 					result.append(item_report(true, "Done!<br>"));
-			}
-			result.append("Tavern: ");
-			if(get_property("hiddenTavernUnlock") == "false") {
-				result.append(item_report($item[book of matches]));
-				result.append("<br>");
+				foreach loc in $strings[Hospital, BowlingAlley, Apartment, Office] {
+					result.append(loc+": ");
+					int prog = get_property("hidden"+loc+"Progress").to_int();
+					if(prog == 0)
+						result.append(item_report(false, "Explore Shrine<br>"));
+					else if(prog < 7) {
+						switch(loc) {
+						case "Hospital":
+							result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
+							break;
+						case "BowlingAlley":
+							result.append(item_report($item[bowling ball]));
+							result.append(", ");
+							result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
+							break;
+						case "Apartment":
+							result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
+							result.append(item_report(false, "Search for Boss<br>"));
+							break;
+						case "Office":
+							if(available_amount($item[McClusky file (complete)]) > 0)
+								result.append(item_report(false, "Kill Boss!"));
+							else {
+								int f = files();
+								result.append(item_report(f >=5, "McClusky files (" + f + "/5), "));
+								result.append(item_report($item[boring binder clip], "binder clip"));
+							}
+							result.append("<br>");
+							break;
+						}
+					} else if(prog == 7)
+						result.append(item_report(false, "Use Sphere<br>"));
+					else
+						result.append(item_report(true, "Done!<br>"));
+				}
+				result.append("Tavern: ");
+				if(get_property("hiddenTavernUnlock") == "false") {
+					result.append(item_report($item[book of matches]));
+					result.append("<br>");
+				} else
+					result.append(item_report(true, "Unlocked<br>"));
 			} else
-				result.append(item_report(true, "Unlocked<br>"));
+				result.append('<a target="mainpane" href="hiddencity.php">Hidden City</a>: Kill the Protector Spectre');
 		}
 		result.append("</td></tr>");
 	}
@@ -3904,7 +3932,7 @@ void bakeTracker() {
 			int desertExploration = get_property("desertExploration").to_int();
 			if(desertExploration < 10)
 				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
-			else if(desertExploration < 100) {
+			if(desertExploration < 100) {
 				result.append("Exploration: "+desertExploration+"%<br>");
 				result.append(item_report($item[worm-riding manual page], 15));
 				result.append("<br>");
