@@ -592,20 +592,20 @@ void addElementMap(buffer result, string img) {
 	result.append(img);
 	result.append('" width="190" height="190"');
 	if(have_skill($skill[Flavour of Magic])) {
-		result.append('" width="190" height="190" alt="Cast Flavour of Magic" usemap="#flavmap">');
+		result.append(' alt="Cast Flavour of Magic" usemap="#flavmap">');
 		result.append('<map id="flavmap" name="flavmap"><area shape="circle" alt="Sleaze" title="Spirit of Bacon Grease (Sleaze)" coords="86,33,22" href="');
 		result.append(sideCommand('cast spirit of bacon grease'));
-		result.append('" target="" /><area shape="circle" alt="Cold" title="Spirit of Peppermint (Cold)" coords="156,84,22" href="');
+		result.append('" /><area shape="circle" alt="Cold" title="Spirit of Peppermint (Cold)" coords="156,84,22" href="');
 		result.append(sideCommand('cast spirit of peppermint'));
-		result.append('" target="" /><area shape="circle" alt="Spooky" title="Spirit of Wormwood (Spooky)" coords="133,155,22" href="');
+		result.append('" /><area shape="circle" alt="Spooky" title="Spirit of Wormwood (Spooky)" coords="133,155,22" href="');
 		result.append(sideCommand('cast spirit of wormwood'));
-		result.append('" target="" /><area shape="circle" alt="Hot" title="Spirit of Cayenne (Hot)" coords="39,155,22" href="');
+		result.append('" /><area shape="circle" alt="Hot" title="Spirit of Cayenne (Hot)" coords="39,155,22" href="');
 		result.append(sideCommand('cast spirit of cayenne'));
-		result.append('" target="" /><area shape="circle" alt="Stench" title="Spirit of Garlic (Stench)" coords="25,84,22" href="');
+		result.append('" /><area shape="circle" alt="Stench" title="Spirit of Garlic (Stench)" coords="25,84,22" href="');
 		result.append(sideCommand('cast spirit of garlic'));
-		result.append('" target="" /><area shape="circle" alt="Cancel Flavour of Magic" title="Cancel Flavour of Magic" coords="86,95,22" href="');
+		result.append('" /><area shape="circle" alt="Cancel Flavour of Magic" title="Cancel Flavour of Magic" coords="86,95,22" href="');
 		result.append(sideCommand('cast spirit of nothing'));
-		result.append('" target="" /></map>');
+		result.append('" /></map>');
 	} else
 		result.append('>');
 }
@@ -1613,7 +1613,7 @@ void pickerThrall() {
 		result.append(url);
 		result.append('<b>Dismiss ');
 		result.append(my_thrall());
-		result.append('</b><br /><span style="color:blue">Goodbye ');
+		result.append('</b><br /><span style="color:blue">Goodbye, ');
 		result.append(my_thrall().name);
 		result.append('</span></a></td><td class="icon">');
 		result.append(url);
@@ -2015,7 +2015,7 @@ void bakeThrall() {
 		result.append('<table id="chit_thrall" class="chit_brick nospace">');
 		result.append('<tr><th title="Thrall Level">');
 		if(lvl != "")
-			result.append('Lvl. ');
+			result.append('Lvl.&nbsp;');
 		result.append(lvl);
 		result.append('</th><th colspan="2" title="Pasta Thrall"><a title="');
 		result.append(name);
@@ -3930,7 +3930,7 @@ void bakeTracker() {
 						result.append(item_report(true, "Done!<br>"));
 				}
 				result.append("Tavern: ");
-				if(get_property("hiddenTavernUnlock") == "false") {
+				if(get_property("hiddenTavernUnlock") != my_ascensions()) {
 					result.append(item_report($item[book of matches]));
 					result.append("<br>");
 				} else
