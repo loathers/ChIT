@@ -2662,12 +2662,12 @@ void addMCD(buffer result, boolean bake) {
 	
 	string mcdvalue() {
 		if(mcdAvailable) {
-			string mcdvalue = mcdSettable? '<a href="#" class="chit_launcher" rel="chit_pickermcd" title="' + mcdtitle + '">' + to_string(current_mcd()) + '</a>'
+			string mcdvalue = mcdSettable? '<a href="#" class="chit_launcher" style="white-space:pre" rel="chit_pickermcd" title="' + mcdtitle + '">' + to_string(current_mcd()) + '</a>'
 				: '<span title="' + mcdname + '">' + to_string(current_mcd()) + '</span>';
 			if(monster_level_adjustment() == current_mcd())
 				return mcdvalue;
 			return '<span style="color:' + (monster_level_adjustment() > current_mcd()? "blue": "red")
-				+ '" title="Total ML">' + formatModifier(monster_level_adjustment()) + '</span>&nbsp;&nbsp;(' + mcdvalue + ')';
+				+ '" title="Total ML">' + formatModifier(monster_level_adjustment()) + '</span>&nbsp;(' + mcdvalue + ')';
 		}
 		return '<span title="' + mcdname + '">' + to_string(monster_level_adjustment()) + '</span>';
 	}
@@ -3240,6 +3240,7 @@ void bakeCharacter() {
 		case "Bugbear Invasion": return "Bugbear&nbsp;Invasion";
 		case "Avatar of Jarlsberg": return "Jarlsberg";
 		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
+		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
 		case "Avatar of St. Sneaky Pete": return "Sneaky Pete";
 		}
 		return my_path();
@@ -3339,15 +3340,15 @@ void bakeQuests() {
 			int data;
 		};
 		bio [int] biodata;
-		biodata[count(biodata)] = new bio("Sleazy Back Alley", "biodataWasteProcessing", 3);
-		biodata[count(biodata)] = new bio("Spooky Forest", "biodataMedbay", 3);
-		biodata[count(biodata)] = new bio("Bat Hole", "biodataSonar", 3);
-		biodata[count(biodata)] = new bio("Knob Laboratory", "biodataScienceLab", 6);
-		biodata[count(biodata)] = new bio("Defiled Nook", "biodataMorgue", 6);
-		biodata[count(biodata)] = new bio("Ninja Snowmen", "biodataSpecialOps", 6);
-		biodata[count(biodata)] = new bio("Haunted Gallery", "biodataNavigation", 9);
-		biodata[count(biodata)] = new bio("Fantasy Airship", "biodataEngineering", 9);
-		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "biodataGalley", 9);
+		biodata[count(biodata)] = new bio("Sleazy Back Alley", "statusWasteProcessing", 3);
+		biodata[count(biodata)] = new bio("Spooky Forest", "statusMedbay", 3);
+		biodata[count(biodata)] = new bio("Bat Hole", "statusSonar", 3);
+		biodata[count(biodata)] = new bio("Knob Laboratory", "statusScienceLab", 6);
+		biodata[count(biodata)] = new bio("Defiled Nook", "statusMorgue", 6);
+		biodata[count(biodata)] = new bio("Ninja Snowmen", "statusSpecialOps", 6);
+		biodata[count(biodata)] = new bio("Haunted Gallery", "statusNavigation", 9);
+		biodata[count(biodata)] = new bio("Fantasy Airship", "statusEngineering", 9);
+		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "statusGalley", 9);
 	}
 	
 	// Interpret readout for Oil Peak. u is µB/Hg.
@@ -3374,7 +3375,7 @@ void bakeQuests() {
 	string bugbears;
 	if(my_path() == "Bugbear Invasion") {
 		if(item_amount($item[key-o-tron]) > 0) {
-			foreach i,b in biodata if(get_property(b.prop).to_int() < b.data)
+			foreach i,b in biodata if(get_property(b.prop).is_integer())
 				bugbears += '<br>&nbsp;&nbsp;&nbsp;* '+ b.loc +': ' + get_property(b.prop).to_int() + '/'+ b.data;
 			if(bugbears != "")
 				bugbears = '<tr><td class="small"><div>Bugbear '
@@ -3509,6 +3510,11 @@ void bakeTracker() {
 		return get_property(pref) != "unstarted" && get_property(pref) != "finished";
 	}
 	
+	void comma(buffer b, string s) {
+		if(length(b) > 0)
+			b.append(", ");
+		b.append(s);
+	}
 	string twinPeak() {
 		int p = get_property("twinPeakProgress").to_int();
 		boolean mystery(int c) { return (p & (1 << c)) == 0; }
@@ -3525,11 +3531,6 @@ void bakeTracker() {
 				return numeric_modifier( my_familiar(), "Item Drop", famw , fameq );
 		}
 		float foodDrop() { return round(numeric_modifier("Item Drop") - famBonus() + numeric_modifier("Food Drop")); }
-		void comma(buffer b, string s) {
-			if(length(b) > 0)
-				b.append(", ");
-			b.append(s);
-		}
 		buffer need;
 		// Only check for final if first three done
 		if(p < 7) {
@@ -3947,31 +3948,38 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		// Step-by-step
 		switch(questL11Pyramid) {
-		case "started": case "step1": case "step2": case "step3": case "step4": case "step5": case "step6": case "step7": case "step8": case "step9":
+		case "started": case "step1": case "step2": case "step3": case "step4": case "step5": case "step6": case "step7": case "step8": case "step9": case "step10":
 			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
 			int desertExploration = get_property("desertExploration").to_int();
 			if(desertExploration < 10)
 				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
 			if(desertExploration < 100) {
 				result.append("Exploration: "+desertExploration+"%<br>");
-				result.append(item_report($item[worm-riding manual page], 15));
-				result.append("<br>");
-				result.append(item_report($item[stone rose], "stone rose, "));
-				result.append(item_report($item[drum machine], "drum machine, "));
-				result.append(item_report($item[worm-riding hooks], "worm-riding hooks, "));
-				result.append(item_report($item[killing jar], "killing jar, "));
-				result.append(item_report($item[can of black paint]));
+				int gnasirProgress = get_property("gnasirProgress").to_int();
+				buffer gnasir;
+				if((gnasirProgress & 8) == 0)
+					gnasir.append(item_report($item[worm-riding manual page], 15));
+				if((gnasirProgress & 2) == 0)
+					gnasir.comma(item_report($item[can of black paint]));
+				if((gnasirProgress & 1) == 0)
+					gnasir.comma(item_report($item[stone rose]));
+				if((gnasirProgress & 4) == 0)
+					gnasir.comma(item_report($item[killing jar]));
+				if((gnasirProgress & 16) == 0) {
+					gnasir.comma(item_report($item[drum machine]));
+					gnasir.comma(item_report($item[worm-riding hooks]));
+				}
+				result.append(gnasir);
 				result.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
 			}
 			break;
 		// Open the Bottom Chamber of the Pyramid
-		case "step10":
+		case "step11":
 				result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a><br>');
 				result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
 				result.append(item_report($item[ancient amulet], "amulet, "));
 				result.append(item_report($item[Eye of Ed], "Eye of Ed"));
 				result.append("<br>");
-		case "step11":
 		case "step12":
 			if(get_property("pyramidBombUsed")=="false") {
 				result.append('Find Ed in the <a target="mainpane" href="pyramid.php">Pyramid</a><br>');
@@ -4228,7 +4236,10 @@ void bakeTracker() {
 		biodata[count(biodata)] = new bio("Fantasy Airship", "biodataEngineering", 9);
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "biodataGalley", 9);
 
-	
+ mothershipProgress goes from 0 to 3 as levels are cleared.
+ statusMedbay (for example) is 0-x (insufficient bodata collected), open (all
+ biodata collected and zone accessible), unlocked (biodata collected but zone
+ not yet accessible), or cleared (zone has been cleared.
 	
 	
 	*/
