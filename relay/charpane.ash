@@ -510,8 +510,9 @@ string helperSemiRare() {
 	if(can_interact()) {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|200";
 	} else {
-		rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
-		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist")
+		if(available_amount($item[stone wool]) < 1)
+			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
+		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
@@ -808,7 +809,7 @@ void bakeEffects() {
 		} else {
 			buffs.append(currentbuff.effectHTML);
 		}
-		total = total + 1;
+		total += 1;
 		
 		if (currentbuff.effectTurns == 0) {
 			if (currentbuff.effectName == "Fortune Cookie")  {
@@ -828,7 +829,25 @@ void bakeEffects() {
 	while (find(rowMatcher)){
 		currentbuff = rowMatcher.group(1).parseBuff();
 		intrinsics.append(currentbuff.effectHTML);
-		total = total + 1;
+		total += 1;
+	}
+	
+	// Add Flavour of Nothing
+	boolean have_flavour() {
+		for i from 167 to 171
+			if(have_effect(to_effect(i)) > 0) return true;
+		return false;
+	}
+	if(have_skill($skill[flavour of magic]) && !have_flavour()) {
+		intrinsics.append('<tr class="effect">');
+		if(vars["chit.effects.showicons"] == "true" && !isCompact)
+			intrinsics.append('<td class="icon"><a class="chit_launcher" rel="chit_pickerflavour" href="#"><img height=20 width=20 src="/images/itemimages/flavorofmagic.gif"></a></td>');
+		intrinsics.append('<td class="info"');
+		if(get_property("relayAddsUpArrowLinks").to_boolean())
+			intrinsics.append(' colspan="2"');
+		intrinsics.append('><a class="chit_launcher" rel="chit_pickerflavour" href="#">Choose a Flavour</a></td><td class="infinity right"><a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a></td></tr>');
+		pickerFlavour();
+		total += 1;
 	}
 
 	if (length(intrinsics) > 0 ) {
@@ -1152,6 +1171,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "Keeps more steam in";
 		case $item[flask of embalming fluid]:
 			return "Helps collect body parts";
+		case $item[tiny bowler]:
+			return "Lets your familiar bowl";
 		}
 		
 		if(famitem != $item[none]) {
@@ -1169,7 +1190,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			mod = m.replace_all("");
 			// Collapse Regen info.
 			m = create_matcher('((HP|MP) Regen Min: \\+(\\d+), \\2 Regen Max: \\+(\\d+))', mod);
-			if(find(m))
+			while(find(m))
 				mod = mod.replace_string(m.group(1), m.group(2)+" Regen: "+ave(m.group(3), m.group(4)));
 			// Remove comma abandoned at the beginning
 			m = create_matcher('^ *, *', mod);
@@ -3503,7 +3524,7 @@ void bakeTracker() {
 		return item_report(available_amount(it) >= num, itname + ' '+available_amount(it)+'/'+num);
 	}
 	string item_report(item it, int num) {
-		return item_report(it, to_string(it), num);
+		return item_report(it, to_plural(it), num);
 	}
 
 	boolean started(string pref) {
@@ -3777,8 +3798,8 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		result.append('Climb the <a target="mainpane" href="place.php?whichplace=beanstalk">Beanstalk</a>');
 		if (item_amount($item[S.O.C.K.])==0) {
-			int numimma = item_amount($item[Tissue Paper Immateria])+item_amount($item[Tin Foil Immateria])+item_amount($item[Gauze Immateria])+item_amount($item[Plastic Wrap Immateria]);
-			result.append('<br>Immateria found: '+item_report(numimma == 4, to_string(numimma)+'/4'));
+			int numina = item_amount($item[Tissue Paper Immateria])+item_amount($item[Tin Foil Immateria])+item_amount($item[Gauze Immateria])+item_amount($item[Plastic Wrap Immateria]);
+			result.append('<br>Immateria found: '+item_report(numina == 4, to_string(numina)+'/4'));
 		} else {
 			result.append('<br>Conquer the <a target="mainpane" href="place.php?whichplace=giantcastle">Giant\'s Castle</a>');
 		}
@@ -3957,20 +3978,22 @@ void bakeTracker() {
 				result.append("Exploration: "+desertExploration+"%<br>");
 				int gnasirProgress = get_property("gnasirProgress").to_int();
 				buffer gnasir;
-				if((gnasirProgress & 8) == 0)
-					gnasir.append(item_report($item[worm-riding manual page], 15));
+				if((gnasirProgress & 4) == 0)
+					gnasir.comma(item_report($item[killing jar]));
 				if((gnasirProgress & 2) == 0)
 					gnasir.comma(item_report($item[can of black paint]));
 				if((gnasirProgress & 1) == 0)
 					gnasir.comma(item_report($item[stone rose]));
-				if((gnasirProgress & 4) == 0)
-					gnasir.comma(item_report($item[killing jar]));
-				if((gnasirProgress & 16) == 0) {
+				if((gnasirProgress & 8) == 0) {
+					gnasir.comma(item_report($item[worm-riding manual page], 15));
+					gnasir.comma(item_report($item[drum machine]));
+				} else if((gnasirProgress & 16) == 0) {
 					gnasir.comma(item_report($item[drum machine]));
 					gnasir.comma(item_report($item[worm-riding hooks]));
+					gnasir.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
+					#gnasir.append('<br><a target="mainpane" href="inv_use.php?which=3&whichitem=2328&pwd='+my_hash()+'">Ride the Worm !</a>');
 				}
 				result.append(gnasir);
-				result.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
 			}
 			break;
 		// Open the Bottom Chamber of the Pyramid
@@ -4720,7 +4743,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.quests.hide", false);
 	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
 	setvar("chit.familiar.pants", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts");
-	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing");
+	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.effects.classicons", "none");
