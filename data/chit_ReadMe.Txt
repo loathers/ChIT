@@ -149,6 +149,8 @@ chit.effects.layout: Comma-separated list
 chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
           true:  uses chit_effects_<yourname>.txt
           false: uses chit_effects.txt  (default)
+chit.effects.describe: Adds descriptions for each active effect. Kinda cluttery, but some like it.
+          Default: false
 -------------------------------------------------------------------------------------
 chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
           both: shows two icons, one for changing and the other for executing

@@ -736,6 +736,17 @@ buff parseBuff(string source) {
 		result.append(' colspan="2"');
 	result.append('>');
 	result.append(effectAlias);
+	
+	//ckb: Add modification details for buffs and effects
+	if(vars["chit.effects.describe"] == "true") {
+		string effectMod = string_modifier(myBuff.effectName,"Evaluated Modifiers");
+		if(length(effectMod)>0) {
+			result.append('<br><small style="color:gray">');
+			result.append(effectMod);
+			result.append('</small>');
+		}
+	}
+	
 	result.append('</td>');
 	if(myBuff.isIntrinsic) {
 		result.append('<td class="infinity');
@@ -845,7 +856,21 @@ void bakeEffects() {
 		intrinsics.append('<td class="info"');
 		if(get_property("relayAddsUpArrowLinks").to_boolean())
 			intrinsics.append(' colspan="2"');
-		intrinsics.append('><a class="chit_launcher" rel="chit_pickerflavour" href="#">Choose a Flavour</a></td><td class="infinity right"><a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a></td></tr>');
+		intrinsics.append('><a class="chit_launcher" rel="chit_pickerflavour" href="#">Choose a Flavour</a></td><td class="infinity right"><a class="chit_launcher" rel="chit_pickerflavour" href="#">0</a></td></tr>');
+		pickerFlavour();
+		total += 1;
+	}
+	// Add Lack of Iron Palm Intrinsic
+	if(have_effect($effect[Iron Palms]) == 0 && have_skill($skill[Iron Palm Technique]) && my_class() == $class[Seal Clubber]) {
+		intrinsics.append('<tr class="effect">');
+		if(vars["chit.effects.showicons"] == "true" && !isCompact)
+			intrinsics.append('<td class="icon"><img height=20 width=20 src="/images/itemimages/palmtree.gif" onClick=\'eff("1f53c39b96204181351b24031c0c8c62");\'></td>');
+		intrinsics.append('<td class="info"');
+		if(get_property("relayAddsUpArrowLinks").to_boolean())
+			intrinsics.append(' colspan="2"');
+		intrinsics.append('>Lack of Iron Palms</td><td class="infinity right"><a href="');
+		intrinsics.append(sideCommand("cast Iron Palm Technique"));
+		intrinsics.append('" title="Cast Iron Palms">0</a></td></tr>');
 		pickerFlavour();
 		total += 1;
 	}
@@ -1176,7 +1201,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 		
 		if(famitem != $item[none]) {
-			string mod = string_modifier(to_string(famitem), "Modifiers");
+			string mod = string_modifier(to_string(famitem), "Evaluated Modifiers");
 			// Effects for Scarecrow and Hatrack
 			matcher m = create_matcher('Familiar Effect: \\"(.*?), cap (.*?)\\"', mod);
 			if(find(m))
@@ -4751,6 +4776,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.effects.modicons", true);
 	setvar("chit.effects.layout","songs,buffs,intrinsics");
 	setvar("chit.effects.usermap",false);
+	setvar("chit.effects.describe",false);
 	setvar("chit.helpers.wormwood", "stats,spleen");
 	setvar("chit.helpers.dancecard", true);
 	setvar("chit.helpers.semirare", true);
