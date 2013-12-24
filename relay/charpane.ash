@@ -11,7 +11,7 @@ Everything after that by Bale
 
 Additional major contributors:
 	AlbinoRhino - Provided invaluable assistance with CSS & Javascript
-	ckb - Created the tracker brick
+	ckb - Created the tracker brick and effect description code
 	bordemstirs - Created the florist brick and moved the frams to make charpane taller
 
 *************************************************************************************
@@ -625,7 +625,7 @@ void pickerFlavour() {
 	chitPickers["flavour"] = picker;
 }
 
-//ckb: new function for effect descriptions to make them short and pretty, called by chit.effects.describe
+//ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
