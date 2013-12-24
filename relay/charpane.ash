@@ -2,6 +2,7 @@ script "Character Info Toolbox";
 notify "Bale";
 import "zlib.ash";
 string chitVersion = "0.8.5";
+
 /************************************************************************************
 CHaracter Info Toolbox
 A character pane relay override script
@@ -624,6 +625,156 @@ void pickerFlavour() {
 	chitPickers["flavour"] = picker;
 }
 
+//ckb: new function for effect descriptions to make them short and pretty, called by chit.effects.describe
+string parseMods(string ef) {
+
+	string evm = string_modifier(ef,"Evaluated Modifiers");
+	evm = to_lower_case(evm);
+	evm = replace_string(evm,"hp regen","HP regen");
+	evm = replace_string(evm,"mp regen","MP regen");
+	evm = replace_string(evm,"maximum hp","maximum HP");
+	evm = replace_string(evm,"maximum mp","maximum MP");
+	evm = replace_string(evm,"db combat","DB combat");
+	
+	string sold = "";
+	string snew = "";
+	int aa, bb, cc, dd, ee;
+	string ab;
+	
+	//Combine multiple similar modifiers into a single line
+	if (contains_text(evm,"HP regen max:")) {
+		aa = round(numeric_modifier(ef, "HP Regen Min"));
+		bb = round(numeric_modifier(ef, "HP Regen Max"));
+		if (aa == bb) {
+			ab = to_string(aa);
+		} else {
+			ab = aa+"-"+bb;
+		}
+		sold = "HP regen min: "+aa+", HP regen max: "+bb;
+		snew = "regen "+ab+" HP";
+		evm = replace_string(evm,sold,snew);
+	}
+	if (contains_text(evm,"MP regen max:")) {
+		aa = round(numeric_modifier(ef, "MP Regen Min"));
+		bb = round(numeric_modifier(ef, "MP Regen Max"));
+		if (aa == bb) {
+			ab = to_string(aa);
+		} else {
+			ab = aa+"-"+bb;
+		}
+		sold = "MP regen min: "+aa+", MP regen max: "+bb;
+		snew = "regen "+ab+" MP";
+		evm = replace_string(evm,sold,snew);
+	}
+	
+	if ( contains_text(evm,"cold damage:") && contains_text(evm,"hot damage:") && contains_text(evm,"spooky damage:") && contains_text(evm,"stench damage:") &&	contains_text(evm,"sleaze damage:") ) {
+		aa = round(numeric_modifier(ef, "Cold Damage"));
+		bb = round(numeric_modifier(ef, "Hot Damage"));
+		cc = round(numeric_modifier(ef, "Spooky Damage"));
+		dd = round(numeric_modifier(ef, "Stench Damage"));
+		ee = round(numeric_modifier(ef, "Sleaze Damage"));
+		if (aa==bb && aa==cc && aa==dd && aa==ee) {
+			ab = to_string(aa);
+			sold = "cold damage: +"+ab;
+			snew = "prismatic dmg: +"+ab;
+			evm = replace_string(evm,sold,snew);
+			evm = replace_string(evm,"hot damage: +"+ab,"");
+			evm = replace_string(evm,"spooky damage: +"+ab,"");
+			evm = replace_string(evm,"stench damage: +"+ab,"");
+			evm = replace_string(evm,"sleaze damage: +"+ab,"");
+		}
+	}
+	if ( contains_text(evm,"cold resistance:") && contains_text(evm,"hot resistance:") && contains_text(evm,"spooky resistance: ") && contains_text(evm,"stench resistance:") && contains_text(evm,"sleaze resistance:") ) {
+		aa = round(numeric_modifier(ef, "Cold Resistance"));
+		bb = round(numeric_modifier(ef, "Hot Resistance"));
+		cc = round(numeric_modifier(ef, "Spooky Resistance"));
+		dd = round(numeric_modifier(ef, "Stench Resistance"));
+		ee = round(numeric_modifier(ef, "Sleaze Resistance"));
+		if (aa==bb && aa==cc && aa==dd && aa==ee) {
+			ab = to_string(aa);
+			sold = "cold resistance: +"+ab;
+			snew = "elemental res: +"+ab;
+			evm = replace_string(evm,sold,snew);
+			evm = replace_string(evm,"hot resistance: +"+ab,"");
+			evm = replace_string(evm,"spooky resistance: +"+ab,"");
+			evm = replace_string(evm,"stench resistance: +"+ab,"");
+			evm = replace_string(evm,"sleaze resistance: +"+ab,"");
+		}
+	}	
+	if ( contains_text(evm,"muscle:") && contains_text(evm,"mysticality:") && contains_text(evm,"moxie:") ) {
+		aa = round(numeric_modifier(ef, "Muscle"));
+		bb = round(numeric_modifier(ef, "Mysticality"));
+		cc = round(numeric_modifier(ef, "Moxie"));
+		if (aa==bb && aa==cc) {
+			if (aa < 0) {
+				ab = to_string(aa);
+			} else {
+				ab = "+"+to_string(aa);
+			}
+			sold = "muscle: "+ab;
+			snew = "all stats: "+ab;
+			evm = replace_string(evm,sold,snew);
+			evm = replace_string(evm,"mysticality: "+ab,"");
+			evm = replace_string(evm,"moxie: "+ab,"");
+		}
+	}
+	if ( contains_text(evm,"muscle percent:") && contains_text(evm,"mysticality percent:") && contains_text(evm,"moxie percent:") ) {
+		aa = round(numeric_modifier(ef, "Muscle Percent"));
+		bb = round(numeric_modifier(ef, "Mysticality Percent"));
+		cc = round(numeric_modifier(ef, "Moxie Percent"));
+		if (aa==bb && aa==cc) {
+			if (aa < 0) {
+				ab = to_string(aa);
+			} else {
+				ab = "+"+to_string(aa);
+			}
+			sold = "muscle percent: "+ab;
+			snew = "all stats: "+ab+"%";
+			evm = replace_string(evm,sold,snew);
+			evm = replace_string(evm,"mysticality percent: "+ab,"");
+			evm = replace_string(evm,"moxie percent: "+ab,"");
+		}
+	}
+
+	//change "percent: XX" to "XX%"
+	matcher mm = create_matcher("([A-Za-z]+) percent: (\\+|-)([0-9]+)",evm);
+	while (find(mm)) {
+		sold = group(mm);
+		snew = group(mm,1)+": "+group(mm,2)+group(mm,3)+"%";
+		evm = replace_string(evm,sold,snew);
+	}
+
+	//shorten various text
+	evm = replace_string(evm," drop","");
+	evm = replace_string(evm,"damage","dmg");
+	evm = replace_string(evm,"experience","exp");
+	evm = replace_string(evm,"initiative","init");
+	evm = replace_string(evm,"absorption","absorb");
+	evm = replace_string(evm,"monster level","ML");
+	evm = replace_string(evm,"moxie","mox");
+	evm = replace_string(evm,"muscle","mus");
+	evm = replace_string(evm,"mysticality","myst");
+	evm = replace_string(evm,"resistance","res");
+	evm = replace_string(evm,"familiar","fam");
+	evm = replace_string(evm,"maximum","max");
+	evm = replace_string(evm,"percent","%");
+	//decorate elemental tags with pretty colors
+	evm = replace_string(evm,"hot","<span style=\"color:red\">hot</span>");
+	evm = replace_string(evm,"cold","<span style=\"color:blue\">cold</span>");
+	evm = replace_string(evm,"spooky","<span style=\"color:gray\">spooky</span>");
+	evm = replace_string(evm,"stench","<span style=\"color:green\">stench</span>");
+	evm = replace_string(evm,"sleaze","<span style=\"color:purple\">sleaze</span>");
+	evm = replace_string(evm,"prismatic","<span style=\"color:gray\">p</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
+	evm = replace_string(evm,"elemental","<span style=\"color:gray\">e</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
+
+	//clean up extra commas we might have from combining mods above
+	evm = replace_all(create_matcher(",(\\s*,)+", evm), ",");
+	evm = replace_all(create_matcher("(\\s*,\\s*$|^\\s*,\\s*)", evm), "");
+
+	return evm;
+
+}
+
 record buff {
 	string effectName;
 	string effectHTML;
@@ -739,10 +890,9 @@ buff parseBuff(string source) {
 	
 	//ckb: Add modification details for buffs and effects
 	if(vars["chit.effects.describe"] == "true") {
-		string effectMod = string_modifier(myBuff.effectName,"Evaluated Modifiers");
-		if(length(effectMod)>0) {
+		if(length(string_modifier(myBuff.effectName,"Evaluated Modifiers"))>0) {
 			result.append('<br><small style="color:gray">');
-			result.append(effectMod);
+			result.append(parseMods(myBuff.effectName));
 			result.append('</small>');
 		}
 	}
