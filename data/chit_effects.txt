@@ -23,6 +23,7 @@ Prelude of Precision	type:"at", alias:"Prelude of Precision"
 Donho's Bubbly Ballad	type:"at", alias:"Donho's Bubbly Ballad"
 Cringle's Curative Carol	type:"at", alias:"Cringle's Curative Carol"
 Inigo's Incantation of Inspiration	type:"at", alias:"Inigo's"
+Rolando's Rondo of Resisto	type:"at", alias:"Rondo of Resisto"
 
 #Turtle Tamer Buffs
 Ghostly Shell	type:"tt"
