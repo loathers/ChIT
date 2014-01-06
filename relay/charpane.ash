@@ -4333,7 +4333,7 @@ void bakeTracker() {
 			result.append(item_report($item[Richard's star key]));
 			result.append(", ");
 			//check for instruments
-			result.append(item_report($items[acoustic guitarrr, heavy metal thunderrr guitarrr, stone banjo, Disco Banjo, Shagadelic Disco Banjo, Seeger's Unstoppable Banjo, Crimbo ukelele, Massive sitar, 4-dimensional guitar, plastic guitar, half-sized guitar, out-of-tune biwa, Zim Merman's guitar, dueling banjo],"stringed instrument"));
+			result.append(item_report($items[acoustic guitarrr, heavy metal thunderrr guitarrr, stone banjo, Disco Banjo, Shagadelic Disco Banjo, Seeger's Unstoppable Banjo, Crimbo ukulele, Massive sitar, 4-dimensional guitar, plastic guitar, half-sized guitar, out-of-tune biwa, Zim Merman's guitar, dueling banjo],"stringed instrument"));
 			result.append(", ");
 			result.append(item_report($items[stolen accordion, calavera concertina, Rock and Roll Legend, Squeezebox of the Ages, The Trickster's Trikitixa],"accordion"));
 			result.append(", ");

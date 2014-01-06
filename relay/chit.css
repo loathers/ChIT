@@ -467,6 +467,11 @@ div.progressbar {
 	font-size:16px;
 	font-weight:bold;
 }
+#chit_effects td.infizero {
+	text-align:center;
+	font-size:10px;
+	font-weight:bold;
+}
 #chit_effects td.powerup a {
 	display:block;
 	height:100%;
@@ -509,8 +514,8 @@ table.chit_picker td {
 table.chit_picker tr.pickitem td {
 }
 table.chit_picker tr.picknone td.info {
-		padding:8px;
-		color:#333333;
+	padding:8px;
+	color:#333333;
 }
 table.chit_picker td.icon {
 	width:30px;
