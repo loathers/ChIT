@@ -3,18 +3,6 @@ A character pane relay override script
 By Chez up to v 0.6.0
 All revisions after that by Bale
 
-*************************************************************************************
-Chez offers many thanks to:
-   Zarqon, for his zlib library
-   Bale, from whose CounterChecker script I stole some ideas and code
-   All the countless KoLMafia devs and contributors, whose work make all our little pet projects possible
-   Ereinion and Caprosmaster, for helping with initial testing and feedback
-   Icons from http://www.famfamfam.com/lab/icons/silk/
-*************************************************************************************
-Bale also wants to offer thanks to:
-   AlbinoRhino who has helped me with javascript, html and css when it exceeded my ability
-*************************************************************************************
-
 CHIT allows you to customize the layout of your charpane (Let's call it your House).
 Your house consists of 4 separate areas:
    Roof:       Always anchored to the top of the screen
@@ -149,7 +137,7 @@ chit.effects.layout: Comma-separated list
 chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
           true:  uses chit_effects_<yourname>.txt
           false: uses chit_effects.txt  (default)
-chit.effects.describe: Adds descriptions for each active effect. Kinda cluttery, but some like it.
+chit.effects.describe: Adds descriptions for each active effect.
           Default: false
 -------------------------------------------------------------------------------------
 chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
@@ -165,3 +153,15 @@ chit.disable: If this is set true, then chit will be disabled
 chit.checkversion: Automatically check for new versions once a day
           Must be enabled for the "update" brick to work
           Default: true
+
+*************************************************************************************
+Chez offers many thanks to:
+   Zarqon, for his zlib library
+   Bale, from whose CounterChecker script I stole some ideas and code
+   All the countless KoLMafia devs and contributors, whose work make all our little pet projects possible
+   Ereinion and Caprosmaster, for helping with initial testing and feedback
+   Icons from http://www.famfamfam.com/lab/icons/silk/
+Bale also wants to offer thanks to:
+   AlbinoRhino who has helped me with javascript, html and css when it exceeded my ability
+   ckb who wrote the tracker brick and added display and parsing for effects descriptions
+*************************************************************************************
