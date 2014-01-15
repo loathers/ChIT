@@ -629,12 +629,6 @@ void pickerFlavour() {
 string parseMods(string ef) {
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
-	# evm = to_lower_case(evm);
-	# evm = replace_string(evm,"hp regen","HP regen");
-	# evm = replace_string(evm,"mp regen","MP regen");
-	# evm = replace_string(evm,"maximum hp","maximum HP");
-	# evm = replace_string(evm,"maximum mp","maximum MP");
-	# evm = replace_string(evm,"db combat","DB combat");
 	
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
@@ -642,6 +636,7 @@ string parseMods(string ef) {
 		string val;
 	} [string] modsort;
 	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
+	# foreach i,j in modparse print("modparse[" + i + "][" + j + "] = " + modparse[i][j]);
 	string key;
 	foreach m in modparse {
 		if($strings[Muscle,Mysticality,Moxie] contains modparse[m][2])
@@ -652,11 +647,10 @@ string parseMods(string ef) {
 			modsort[ key ].original[ modparse[m][0] ] = true;
 			modsort[ key ].val = modparse[m][4];
 		}
-		modsort[ key ].val = modparse[m][4];
 	}
 	foreach m,s in modsort
 		if((m.contains_text("Stats") && count(s.original) == 3) || (m.contains_text("Elemental") && count(s.original) == 5)) {
-			foreach o in modsort[ key ].original
+			foreach o in s.original
 				evm = evm.replace_string(o, "");
 			buffer result;
 			if(length(evm) > 0) {
@@ -670,6 +664,8 @@ string parseMods(string ef) {
 			result.append(s.val);
 			evm = to_string(result);
 		}
+	// May be extra comma at start. bug :(
+	evm = replace_all(create_matcher("^\\s*,\\s*", evm), "");
 
 	string sold = "";
 	string snew = "";
@@ -714,6 +710,8 @@ string parseMods(string ef) {
 		evm = evm.replace_string(drop.group(0), drop.group(1)+"%");
 	
 	//shorten various text
+	evm = replace_string(evm,"Damage Reduction","DR");
+	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Damage","Dmg");
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
@@ -2501,7 +2499,7 @@ void bakeModifiers() {
 
 	result.append('<tbody>');
 	result.append('<tr>');
-	result.append('<td class="label">Damage Absorp</td>');
+	result.append('<td class="label">Damage Absorb</td>');
 	result.append('<td class="info">' + to_int(damage_absorption_percent()) 
 	  + '%&nbsp;(' + formatInt(raw_damage_absorption()) + ')</td>');
 	result.append('</tr>');
