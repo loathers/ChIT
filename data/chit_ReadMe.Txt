@@ -1,7 +1,5 @@
-CHaracter Info Toolbox
-A character pane relay override script
-By Chez up to v 0.6.0
-All revisions after that by Bale
+CHaracter Info Toolbox: A character pane relay override script
+By Chez up to v 0.6.0, All revisions after that by Bale
 
 CHIT allows you to customize the layout of your charpane (Let's call it your House).
 Your house consists of 4 separate areas:
@@ -16,6 +14,7 @@ Inside each area you can place any of the following "bricks":
    familiar:   Familiar information, with a built-in equipment changer thingy (Not available in toolbar)
    trail:      Recent adventures
    quests:     Quest nudges (when available)
+   tracker:    Detailed ascension related quest information
    helpers:    Adventure helpers (described in more detail below)
    effects:    List of current effects (Not available in toolbar)
    organs:     similar to stats, but only shows spleen, stomach and liver (more useful when used in the toolbar)
@@ -138,7 +137,7 @@ chit.effects.usermap: Allows you to use personalized versions of chit_effects.tx
           true:  uses chit_effects_<yourname>.txt
           false: uses chit_effects.txt  (default)
 chit.effects.describe: Adds descriptions for each active effect.
-          Default: false
+          Default: true
 -------------------------------------------------------------------------------------
 chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
           both: shows two icons, one for changing and the other for executing

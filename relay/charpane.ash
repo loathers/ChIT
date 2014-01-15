@@ -636,12 +636,40 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"maximum mp","maximum MP");
 	evm = replace_string(evm,"db combat","DB combat");
 	
+	// Anything that applies the same modifier to all stats or all elements can be combined
+	record {
+		boolean [string] original;
+		int val;
+	} [string] modsort;
+	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(muscle|mysticality|moxie|hot|cold|spooky|stench|sleaze)([^:]*):\\s*([+-]?\\d+)");
+	string key;
+	foreach m in modparse {
+		if($strings[muscle,mysticality,moxie] contains modparse[m][2])
+			key = modparse[m][1]+"all stats"+modparse[m][3];
+		else
+			key = modparse[m][1]+"elemental"+modparse[m][3];
+		if(!(modsort contains key) || modsort[key].val == to_int(modparse[m][4])) {
+			modsort[ key ].original[ modparse[m][0] ] = true;
+			modsort[ key ].val = to_int(modparse[m][4]);
+		}
+		modsort[ key ].val = to_int(modparse[m][4]);
+	}
+	foreach m,s in modsort
+		if((m.contains_text("all stats") && count(s.original) == 3) || (m.contains_text("elemental") && count(s.original) == 5)) {
+			foreach o in modsort[ key ].original
+				evm = evm.replace_string(o, "");
+			if(length(evm) > 0)
+				evm += ", "+ m +": "+ s.val;
+			else
+				evm = m +": "+ s.val;
+		}
+
 	string sold = "";
 	string snew = "";
 	int aa, bb, cc, dd, ee;
 	string ab;
 	
-	//Combine multiple similar modifiers into a single line
+	//Combine regen modifiers into a single line
 	if (contains_text(evm,"HP regen max:")) {
 		aa = round(numeric_modifier(ef, "HP Regen Min"));
 		bb = round(numeric_modifier(ef, "HP Regen Max"));
@@ -667,82 +695,11 @@ string parseMods(string ef) {
 		evm = replace_string(evm,sold,snew);
 	}
 	
-	if ( contains_text(evm,"cold damage:") && contains_text(evm,"hot damage:") && contains_text(evm,"spooky damage:") && contains_text(evm,"stench damage:") &&	contains_text(evm,"sleaze damage:") ) {
-		aa = round(numeric_modifier(ef, "Cold Damage"));
-		bb = round(numeric_modifier(ef, "Hot Damage"));
-		cc = round(numeric_modifier(ef, "Spooky Damage"));
-		dd = round(numeric_modifier(ef, "Stench Damage"));
-		ee = round(numeric_modifier(ef, "Sleaze Damage"));
-		if (aa==bb && aa==cc && aa==dd && aa==ee) {
-			ab = to_string(aa);
-			sold = "cold damage: +"+ab;
-			snew = "prismatic dmg: +"+ab;
-			evm = replace_string(evm,sold,snew);
-			evm = replace_string(evm,"hot damage: +"+ab,"");
-			evm = replace_string(evm,"spooky damage: +"+ab,"");
-			evm = replace_string(evm,"stench damage: +"+ab,"");
-			evm = replace_string(evm,"sleaze damage: +"+ab,"");
-		}
-	}
-	if ( contains_text(evm,"cold resistance:") && contains_text(evm,"hot resistance:") && contains_text(evm,"spooky resistance: ") && contains_text(evm,"stench resistance:") && contains_text(evm,"sleaze resistance:") ) {
-		aa = round(numeric_modifier(ef, "Cold Resistance"));
-		bb = round(numeric_modifier(ef, "Hot Resistance"));
-		cc = round(numeric_modifier(ef, "Spooky Resistance"));
-		dd = round(numeric_modifier(ef, "Stench Resistance"));
-		ee = round(numeric_modifier(ef, "Sleaze Resistance"));
-		if (aa==bb && aa==cc && aa==dd && aa==ee) {
-			ab = to_string(aa);
-			sold = "cold resistance: +"+ab;
-			snew = "elemental res: +"+ab;
-			evm = replace_string(evm,sold,snew);
-			evm = replace_string(evm,"hot resistance: +"+ab,"");
-			evm = replace_string(evm,"spooky resistance: +"+ab,"");
-			evm = replace_string(evm,"stench resistance: +"+ab,"");
-			evm = replace_string(evm,"sleaze resistance: +"+ab,"");
-		}
-	}	
-	if ( contains_text(evm,"muscle:") && contains_text(evm,"mysticality:") && contains_text(evm,"moxie:") ) {
-		aa = round(numeric_modifier(ef, "Muscle"));
-		bb = round(numeric_modifier(ef, "Mysticality"));
-		cc = round(numeric_modifier(ef, "Moxie"));
-		if (aa==bb && aa==cc) {
-			if (aa < 0) {
-				ab = to_string(aa);
-			} else {
-				ab = "+"+to_string(aa);
-			}
-			sold = "muscle: "+ab;
-			snew = "all stats: "+ab;
-			evm = replace_string(evm,sold,snew);
-			evm = replace_string(evm,"mysticality: "+ab,"");
-			evm = replace_string(evm,"moxie: "+ab,"");
-		}
-	}
-	if ( contains_text(evm,"muscle percent:") && contains_text(evm,"mysticality percent:") && contains_text(evm,"moxie percent:") ) {
-		aa = round(numeric_modifier(ef, "Muscle Percent"));
-		bb = round(numeric_modifier(ef, "Mysticality Percent"));
-		cc = round(numeric_modifier(ef, "Moxie Percent"));
-		if (aa==bb && aa==cc) {
-			if (aa < 0) {
-				ab = to_string(aa);
-			} else {
-				ab = "+"+to_string(aa);
-			}
-			sold = "muscle percent: "+ab;
-			snew = "all stats: "+ab+"%";
-			evm = replace_string(evm,sold,snew);
-			evm = replace_string(evm,"mysticality percent: "+ab,"");
-			evm = replace_string(evm,"moxie percent: "+ab,"");
-		}
-	}
-
-	//change "percent: XX" to "XX%"
-	matcher mm = create_matcher("([A-Za-z]+) percent: (\\+|-)([0-9]+)",evm);
-	while (find(mm)) {
-		sold = group(mm);
-		snew = group(mm,1)+": "+group(mm,2)+group(mm,3)+"%";
-		evm = replace_string(evm,sold,snew);
-	}
+	
+	// change "percent: XX" to "XX%"
+	matcher percent = create_matcher("((?:,|^)\\s*[^,]*?)(\\s*percent)(:\\s*[+-]?\\d+)", evm);
+	while(percent.find())
+		evm = evm.replace_string(percent.group(0), percent.group(1)+percent.group(3)+"%");
 
 	//shorten various text
 	evm = replace_string(evm," drop","");
@@ -766,10 +723,6 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"sleaze","<span style=\"color:purple\">sleaze</span>");
 	evm = replace_string(evm,"prismatic","<span style=\"color:gray\">p</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
 	evm = replace_string(evm,"elemental","<span style=\"color:gray\">e</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
-
-	//clean up extra commas we might have from combining mods above
-	evm = replace_all(create_matcher(",(\\s*,)+", evm), ",");
-	evm = replace_all(create_matcher("(\\s*,\\s*$|^\\s*,\\s*)", evm), "");
 
 	return evm;
 
@@ -3342,7 +3295,7 @@ void bakeCharacter() {
 				myTitle = group(titleMatcher, 1);
 			}
 		} else {
-			titleMatcher = create_matcher("<br>(.*?)<", source);
+			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+".*?level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
 			if (find(titleMatcher)) {
 				myTitle = group(titleMatcher, 1);
 			}
@@ -3456,7 +3409,7 @@ void bakeCharacter() {
 	string councilStyle = "";
 	string councilText = "Visit the Council";
 	if(to_int(get_property("lastCouncilVisit")) < my_level() && get_property("kingLiberated") == "false") {
-		councilStyle = ' style="background-color:#F0F060"';
+		councilStyle = 'background-color:#F0F060';
 		councilText = "The Council wants to see you urgently";		
 	}
 
@@ -3479,7 +3432,7 @@ void bakeCharacter() {
 		result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit"><img src="' + myAvatar + '"></a></td>');
 	pickOutfit();
 	result.append('<td class="label"><a target="mainpane" href="' + myGuild +'" title="Visit your guild">' + myTitle + '</a></td>');
-	result.append('<td class="level" rowspan="2"' + councilStyle + '><a target="mainpane" href="council.php" title="' + councilText + '">' + my_level() +	'</a></td>');
+	result.append('<td class="level" rowspan="2" style="width:30px;' + councilStyle + '"><a target="mainpane" href="council.php" title="' + councilText + '">' + my_level() + '</a></td>');
 	result.append('</tr>');
 
 	result.append('<tr>');
@@ -3968,14 +3921,14 @@ void bakeTracker() {
 	}
 	
 	//L10: SOCK, Giants Castle, questL10Garbage
-	if(started("questL10Garbage")) { 
+	if(started("questL10Garbage")) {
 		result.append("<tr><td>");
-		result.append('Climb the <a target="mainpane" href="place.php?whichplace=beanstalk">Beanstalk</a>');
-		if (item_amount($item[S.O.C.K.])==0) {
+		if(item_amount($item[S.O.C.K.])==0) {
+			result.append('Climb the <a target="mainpane" href="place.php?whichplace=beanstalk">Beanstalk</a>');
 			int numina = item_amount($item[Tissue Paper Immateria])+item_amount($item[Tin Foil Immateria])+item_amount($item[Gauze Immateria])+item_amount($item[Plastic Wrap Immateria]);
 			result.append('<br>Immateria found: '+item_report(numina == 4, to_string(numina)+'/4'));
 		} else {
-			result.append('<br>Conquer the <a target="mainpane" href="place.php?whichplace=giantcastle">Giant\'s Castle</a>');
+			result.append('Conquer the <a target="mainpane" href="place.php?whichplace=giantcastle">Giant\'s Castle</a>');
 		}
 		result.append("</td></tr>");
 	}
@@ -4925,7 +4878,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.effects.modicons", true);
 	setvar("chit.effects.layout","songs,buffs,intrinsics");
 	setvar("chit.effects.usermap",false);
-	setvar("chit.effects.describe",false);
+	setvar("chit.effects.describe",true);
 	setvar("chit.helpers.wormwood", "stats,spleen");
 	setvar("chit.helpers.dancecard", true);
 	setvar("chit.helpers.semirare", true);
