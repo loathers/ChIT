@@ -629,33 +629,33 @@ void pickerFlavour() {
 string parseMods(string ef) {
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
-	evm = to_lower_case(evm);
-	evm = replace_string(evm,"hp regen","HP regen");
-	evm = replace_string(evm,"mp regen","MP regen");
-	evm = replace_string(evm,"maximum hp","maximum HP");
-	evm = replace_string(evm,"maximum mp","maximum MP");
-	evm = replace_string(evm,"db combat","DB combat");
+	# evm = to_lower_case(evm);
+	# evm = replace_string(evm,"hp regen","HP regen");
+	# evm = replace_string(evm,"mp regen","MP regen");
+	# evm = replace_string(evm,"maximum hp","maximum HP");
+	# evm = replace_string(evm,"maximum mp","maximum MP");
+	# evm = replace_string(evm,"db combat","DB combat");
 	
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
 		boolean [string] original;
-		int val;
+		string val;
 	} [string] modsort;
-	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(muscle|mysticality|moxie|hot|cold|spooky|stench|sleaze)([^:]*):\\s*([+-]?\\d+)");
+	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
 	string key;
 	foreach m in modparse {
-		if($strings[muscle,mysticality,moxie] contains modparse[m][2])
-			key = modparse[m][1]+"all stats"+modparse[m][3];
+		if($strings[Muscle,Mysticality,Moxie] contains modparse[m][2])
+			key = modparse[m][1]+"Stats"+modparse[m][3];
 		else
-			key = modparse[m][1]+"elemental"+modparse[m][3];
-		if(!(modsort contains key) || modsort[key].val == to_int(modparse[m][4])) {
+			key = modparse[m][1]+"Elemental"+modparse[m][3];
+		if(!(modsort contains key) || modsort[key].val == modparse[m][4]) {
 			modsort[ key ].original[ modparse[m][0] ] = true;
-			modsort[ key ].val = to_int(modparse[m][4]);
+			modsort[ key ].val = modparse[m][4];
 		}
-		modsort[ key ].val = to_int(modparse[m][4]);
+		modsort[ key ].val = modparse[m][4];
 	}
 	foreach m,s in modsort
-		if((m.contains_text("all stats") && count(s.original) == 3) || (m.contains_text("elemental") && count(s.original) == 5)) {
+		if((m.contains_text("Stats") && count(s.original) == 3) || (m.contains_text("Elemental") && count(s.original) == 5)) {
 			foreach o in modsort[ key ].original
 				evm = evm.replace_string(o, "");
 			if(length(evm) > 0)
@@ -697,32 +697,33 @@ string parseMods(string ef) {
 	
 	
 	// change "percent: XX" to "XX%"
-	matcher percent = create_matcher("((?:,|^)\\s*[^,]*?)(\\s*percent)(:\\s*[+-]?\\d+)", evm);
+	matcher percent = create_matcher("((?:,|^)\\s*[^,]*?)(\\s*Percent)(:\\s*[+-]?\\d+)", evm);
 	while(percent.find())
 		evm = evm.replace_string(percent.group(0), percent.group(1)+percent.group(3)+"%");
 
 	//shorten various text
-	evm = replace_string(evm," drop","");
-	evm = replace_string(evm,"damage","dmg");
-	evm = replace_string(evm,"experience","exp");
-	evm = replace_string(evm,"initiative","init");
-	evm = replace_string(evm,"absorption","absorb");
-	evm = replace_string(evm,"monster level","ML");
-	evm = replace_string(evm,"moxie","mox");
-	evm = replace_string(evm,"muscle","mus");
-	evm = replace_string(evm,"mysticality","myst");
-	evm = replace_string(evm,"resistance","res");
-	evm = replace_string(evm,"familiar","fam");
-	evm = replace_string(evm,"maximum","max");
+	evm = replace_string(evm," Drop","");
+	evm = replace_string(evm,"Damage","Dmg");
+	evm = replace_string(evm,"Experience","Exp");
+	evm = replace_string(evm,"Initiative","Init");
+	evm = replace_string(evm,"Absorption","Absorb");
+	evm = replace_string(evm,"Monster Level","ML");
+	evm = replace_string(evm,"Moxie","Mox");
+	evm = replace_string(evm,"Muscle","Mus");
+	evm = replace_string(evm,"Mysticality","Myst");
+	evm = replace_string(evm,"Resistance","Res");
+	evm = replace_string(evm,"Familiar","Fam");
+	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"percent","%");
+	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
-	evm = replace_string(evm,"hot","<span style=\"color:red\">hot</span>");
-	evm = replace_string(evm,"cold","<span style=\"color:blue\">cold</span>");
-	evm = replace_string(evm,"spooky","<span style=\"color:gray\">spooky</span>");
-	evm = replace_string(evm,"stench","<span style=\"color:green\">stench</span>");
-	evm = replace_string(evm,"sleaze","<span style=\"color:purple\">sleaze</span>");
-	evm = replace_string(evm,"prismatic","<span style=\"color:gray\">p</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
-	evm = replace_string(evm,"elemental","<span style=\"color:gray\">e</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
+	evm = replace_string(evm,"Hot","<span style=\"color:red\">Hot</span>");
+	evm = replace_string(evm,"Cold","<span style=\"color:blue\">Cold</span>");
+	evm = replace_string(evm,"Spooky","<span style=\"color:gray\">Spooky</span>");
+	evm = replace_string(evm,"Stench","<span style=\"color:green\">Stench</span>");
+	evm = replace_string(evm,"Sleaze","<span style=\"color:purple\">Sleaze</span>");
+	evm = replace_string(evm,"Prismatic","<span style=\"color:gray\">P</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
+	evm = replace_string(evm,"Elemental","<span style=\"color:gray\">E</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
 
 	return evm;
 
@@ -3295,7 +3296,7 @@ void bakeCharacter() {
 				myTitle = group(titleMatcher, 1);
 			}
 		} else {
-			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+".*?level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
+			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+".{2}?\\s*level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
 			if (find(titleMatcher)) {
 				myTitle = group(titleMatcher, 1);
 			}
