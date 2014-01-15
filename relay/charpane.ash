@@ -658,10 +658,17 @@ string parseMods(string ef) {
 		if((m.contains_text("Stats") && count(s.original) == 3) || (m.contains_text("Elemental") && count(s.original) == 5)) {
 			foreach o in modsort[ key ].original
 				evm = evm.replace_string(o, "");
-			if(length(evm) > 0)
-				evm += ", "+ m +": "+ s.val;
-			else
-				evm = m +": "+ s.val;
+			buffer result;
+			if(length(evm) > 0) {
+				result.append(evm);
+				result.append(", ");
+			}
+			if(m.contains_text("Damage"))
+				result.append(m.replace_string("Elemental", "Prismatic"));
+			else result.append(m);
+			result.append(": ");
+			result.append(s.val);
+			evm = to_string(result);
 		}
 
 	string sold = "";
@@ -670,7 +677,7 @@ string parseMods(string ef) {
 	string ab;
 	
 	//Combine regen modifiers into a single line
-	if (contains_text(evm,"HP regen max:")) {
+	if (contains_text(evm,"HP Regen Max:")) {
 		aa = round(numeric_modifier(ef, "HP Regen Min"));
 		bb = round(numeric_modifier(ef, "HP Regen Max"));
 		if (aa == bb) {
@@ -678,11 +685,11 @@ string parseMods(string ef) {
 		} else {
 			ab = aa+"-"+bb;
 		}
-		sold = "HP regen min: "+aa+", HP regen max: "+bb;
-		snew = "regen "+ab+" HP";
+		sold = "HP Regen Min: "+aa+", HP Regen Max: "+bb;
+		snew = "Regen "+ab+" HP";
 		evm = replace_string(evm,sold,snew);
 	}
-	if (contains_text(evm,"MP regen max:")) {
+	if (contains_text(evm,"MP Regen Max:")) {
 		aa = round(numeric_modifier(ef, "MP Regen Min"));
 		bb = round(numeric_modifier(ef, "MP Regen Max"));
 		if (aa == bb) {
@@ -690,8 +697,8 @@ string parseMods(string ef) {
 		} else {
 			ab = aa+"-"+bb;
 		}
-		sold = "MP regen min: "+aa+", MP regen max: "+bb;
-		snew = "regen "+ab+" MP";
+		sold = "MP Regen Min: "+aa+", MP Regen Max: "+bb;
+		snew = "Regen "+ab+" MP";
 		evm = replace_string(evm,sold,snew);
 	}
 	
@@ -701,8 +708,12 @@ string parseMods(string ef) {
 	while(percent.find())
 		evm = evm.replace_string(percent.group(0), percent.group(1)+percent.group(3)+"%");
 
+	// Drops are percent bonus...
+	matcher drop = create_matcher("\\s*Drop(:\\s*[+-]?\\d+)", evm);
+	while(drop.find())
+		evm = evm.replace_string(drop.group(0), drop.group(1)+"%");
+	
 	//shorten various text
-	evm = replace_string(evm," Drop","");
 	evm = replace_string(evm,"Damage","Dmg");
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
@@ -3256,7 +3267,7 @@ void pickOutfit() {
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
 	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
 		special.addGear("equip antique machete", "antique machete");
-	if(get_property("questL11Pyramid") == "started" && item_amount($item[UV-resistant compass]) > 0)
+	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9] contains get_property("questL11Pyramid") && item_amount($item[UV-resistant compass]) > 0)
 		special.addGear("equip UV-resistant compass", "UV-resistant compass");
 	
 	if(length(special) > 0) {
