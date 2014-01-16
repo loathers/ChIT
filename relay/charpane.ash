@@ -636,20 +636,19 @@ string parseMods(string ef) {
 		string val;
 	} [string] modsort;
 	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
-	# foreach i,j in modparse print("modparse[" + i + "][" + j + "] = " + modparse[i][j]);
 	string key;
 	foreach m in modparse {
 		if($strings[Muscle,Mysticality,Moxie] contains modparse[m][2])
 			key = modparse[m][1]+"Stats"+modparse[m][3];
 		else
-			key = modparse[m][1]+"Elemental"+modparse[m][3];
+			key = modparse[m][1]+"Prismatic"+modparse[m][3];
 		if(!(modsort contains key) || modsort[key].val == modparse[m][4]) {
 			modsort[ key ].original[ modparse[m][0] ] = true;
 			modsort[ key ].val = modparse[m][4];
 		}
 	}
 	foreach m,s in modsort
-		if((m.contains_text("Stats") && count(s.original) == 3) || (m.contains_text("Elemental") && count(s.original) == 5)) {
+		if((m.contains_text("Stats") && count(s.original) == 3) || (m.contains_text("Prismatic") && count(s.original) == 5)) {
 			foreach o in s.original
 				evm = evm.replace_string(o, "");
 			buffer result;
@@ -657,48 +656,32 @@ string parseMods(string ef) {
 				result.append(evm);
 				result.append(", ");
 			}
-			if(m.contains_text("Damage"))
-				result.append(m.replace_string("Elemental", "Prismatic"));
-			else result.append(m);
+			result.append(m);
 			result.append(": ");
 			result.append(s.val);
 			evm = to_string(result);
 		}
-	// May be extra comma at start. bug :(
+	// May be an extra comma left at start. :(
 	evm = replace_all(create_matcher("^\\s*,\\s*", evm), "");
-
-	string sold = "";
-	string snew = "";
-	int aa, bb, cc, dd, ee;
-	string ab;
 	
 	//Combine regen modifiers into a single line
-	if (contains_text(evm,"HP Regen Max:")) {
-		aa = round(numeric_modifier(ef, "HP Regen Min"));
-		bb = round(numeric_modifier(ef, "HP Regen Max"));
-		if (aa == bb) {
-			ab = to_string(aa);
-		} else {
-			ab = aa+"-"+bb;
+	matcher regen = create_matcher("([HM]P Regen )Min: (\\d+), \\1Max: (\\d+)", evm);
+	while(regen.find()) {
+		buffer rnew;
+		rnew.append(regen.group(1));
+		rnew.append(regen.group(2));
+		if(regen.group(2) != regen.group(3)) {
+			rnew.append("-");
+			rnew.append(regen.group(3));
 		}
-		sold = "HP Regen Min: "+aa+", HP Regen Max: "+bb;
-		snew = "Regen "+ab+" HP";
-		evm = replace_string(evm,sold,snew);
-	}
-	if (contains_text(evm,"MP Regen Max:")) {
-		aa = round(numeric_modifier(ef, "MP Regen Min"));
-		bb = round(numeric_modifier(ef, "MP Regen Max"));
-		if (aa == bb) {
-			ab = to_string(aa);
-		} else {
-			ab = aa+"-"+bb;
-		}
-		sold = "MP Regen Min: "+aa+", MP Regen Max: "+bb;
-		snew = "Regen "+ab+" MP";
-		evm = replace_string(evm,sold,snew);
+		evm = evm.replace_string(regen.group(0), rnew);
 	}
 	
-	
+	//Add missing + in front of modifier, for consistency.
+	matcher mplus = create_matcher("([^,:]+:\\s)(\\d+)",evm);
+	while(find(mplus))
+		evm = evm.replace_string(mplus.group(0),mplus.group(1) + "+" + mplus.group(2));
+		
 	// change "percent: XX" to "XX%"
 	matcher percent = create_matcher("((?:,|^)\\s*[^,]*?)(\\s*Percent)(:\\s*[+-]?\\d+)", evm);
 	while(percent.find())
@@ -715,7 +698,6 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Damage","Dmg");
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
-	evm = replace_string(evm,"Absorption","Absorb");
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");
 	evm = replace_string(evm,"Muscle","Mus");
@@ -723,7 +705,6 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Resistance","Res");
 	evm = replace_string(evm,"Familiar","Fam");
 	evm = replace_string(evm,"Maximum","Max");
-	evm = replace_string(evm,"percent","%");
 	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
 	evm = replace_string(evm,"Hot","<span style=\"color:red\">Hot</span>");
@@ -732,7 +713,15 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Stench","<span style=\"color:green\">Stench</span>");
 	evm = replace_string(evm,"Sleaze","<span style=\"color:purple\">Sleaze</span>");
 	evm = replace_string(evm,"Prismatic","<span style=\"color:gray\">P</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
-	evm = replace_string(evm,"Elemental","<span style=\"color:gray\">E</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
+	#evm = replace_string(evm,"Elemental","<span style=\"color:gray\">E</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
+
+
+	# //highlight items and meat
+	# evm = replace_string(evm,"Item","<span style=\"color:fuchsia\">Item</span>");
+	# evm = replace_string(evm,"Meat","<span style=\"color:fuchsia\">Meat</span>");
+	# //highlight ML
+	# evm = replace_string(evm,"ML","<span style=\"color:orange\">ML</span>");
+
 
 	return evm;
 
