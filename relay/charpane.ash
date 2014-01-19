@@ -635,7 +635,7 @@ string parseMods(string ef) {
 		boolean [string] original;
 		string val;
 	} [string] modsort;
-	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
+	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,:]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
 	string key;
 	foreach m in modparse {
 		if($strings[Muscle,Mysticality,Moxie] contains modparse[m][2])
@@ -661,8 +661,6 @@ string parseMods(string ef) {
 			result.append(s.val);
 			evm = to_string(result);
 		}
-	// May be an extra comma left at start. :(
-	evm = replace_all(create_matcher("^\\s*,\\s*", evm), "");
 	
 	//Combine regen modifiers into a single line
 	matcher regen = create_matcher("([HM]P Regen )Min: (\\d+), \\1Max: (\\d+)", evm);
@@ -677,20 +675,41 @@ string parseMods(string ef) {
 		evm = evm.replace_string(regen.group(0), rnew);
 	}
 	
-	//Add missing + in front of modifier, for consistency.
-	matcher mplus = create_matcher("([^,:]+:\\s)(\\d+)",evm);
-	while(find(mplus))
-		evm = evm.replace_string(mplus.group(0),mplus.group(1) + "+" + mplus.group(2));
-		
-	// change "percent: XX" to "XX%"
-	matcher percent = create_matcher("((?:,|^)\\s*[^,]*?)(\\s*Percent)(:\\s*[+-]?\\d+)", evm);
-	while(percent.find())
-		evm = evm.replace_string(percent.group(0), percent.group(1)+percent.group(3)+"%");
-
-	// Drops are percent bonus...
-	matcher drop = create_matcher("\\s*Drop(:\\s*[+-]?\\d+)", evm);
-	while(drop.find())
-		evm = evm.replace_string(drop.group(0), drop.group(1)+"%");
+	// If HP and MP regen are the same...
+	regen = create_matcher("HP Regen ([0-9-]+), MP Regen \\1", evm);
+	if(regen.find())
+		evm = evm.replace_string(regen.group(0), "All Regen "+regen.group(1));
+	
+	//Combine weapon and spell damage bonus
+	matcher elem = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2", evm);
+	while(elem.find()) {
+		buffer enew;
+		enew.append("All ");
+		enew.append(elem.group(1));
+		enew.append("Dmg: ");
+		enew.append(elem.group(2));
+		evm = evm.replace_string(elem.group(0), enew);
+	}
+	
+	// May be an extra comma left at start. :(
+	// Add missing + in front of modifier, for consistency. Then remove colon because it is in the way of legibility
+	// Change " Percent: +XX" and " Drop: +XX" -> "+XX%"
+	buffer e;
+	matcher perplus = create_matcher("(?:(^\\s*,\\s*)|(\\s*Drop|\\s*Percent)?:\\s*(([+-])?\\d+))",evm);
+	while(perplus.find()) {
+		buffer temp;
+		if(perplus.group(1) == "") {		// group(1) would contain extra comma at beginning
+			if(perplus.group(4) == "")		// group(4) would contain + or -
+				temp.append(" +");
+			else temp.append(" ");
+			temp.append(perplus.group(3));	// This does not contain Drop, Percent or the colon.
+			if(perplus.group(2) != "")		// group(2) is Drop or Percent
+				temp.append("%");
+		}
+		perplus.append_replacement(e, temp);
+	}
+	perplus.append_tail(e);
+	evm = e;
 	
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
@@ -704,6 +723,7 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Mysticality","Myst");
 	evm = replace_string(evm,"Resistance","Res");
 	evm = replace_string(evm,"Familiar","Fam");
+	evm = replace_string(evm,"familiar","fam");
 	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
@@ -713,15 +733,12 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Stench","<span style=\"color:green\">Stench</span>");
 	evm = replace_string(evm,"Sleaze","<span style=\"color:purple\">Sleaze</span>");
 	evm = replace_string(evm,"Prismatic","<span style=\"color:gray\">P</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
-	#evm = replace_string(evm,"Elemental","<span style=\"color:gray\">E</span><span style=\"color:red\">le</span><span style=\"color:purple\">me</span><span style=\"color:green\">nt</span><span style=\"color:blue\">al</span>");
-
 
 	# //highlight items and meat
 	# evm = replace_string(evm,"Item","<span style=\"color:fuchsia\">Item</span>");
 	# evm = replace_string(evm,"Meat","<span style=\"color:fuchsia\">Meat</span>");
 	# //highlight ML
 	# evm = replace_string(evm,"ML","<span style=\"color:orange\">ML</span>");
-
 
 	return evm;
 
@@ -3720,7 +3737,7 @@ void bakeTracker() {
 	//Add Tracker for each available quest
 	//G for Guild. S for Sea. F for Familiar. I for Item. M for Miscellaneous 
 	
-	if (get_property("currentBountyItem")!="0") {
+/*	if (get_property("currentBountyItem")!="0") {
 		item bhit = to_item(get_property("currentBountyItem"));
 		result.append("<tr><td>");
 		result.append('Get your <a target="mainpane" href="bhh.php">Bounty</a> from the ');
@@ -3728,7 +3745,7 @@ void bakeTracker() {
 		result.append(to_string(to_item(get_property("currentBountyItem")))+" ("+to_string(item_amount(bhit))+"/"+bhit.bounty_count+")");
 		
 		result.append("</td></tr>");
-	}
+	} */
 	// L1: Open Manor
 	if(get_property("lastManorUnlock").to_int() != my_ascensions()) {
 		result.append("<tr><td>");
