@@ -662,54 +662,63 @@ string parseMods(string ef) {
 			evm = to_string(result);
 		}
 	
-	//Combine regen modifiers into a single line
-	matcher regen = create_matcher("([HM]P Regen )Min: (\\d+), \\1Max: (\\d+)", evm);
-	while(regen.find()) {
-		buffer rnew;
-		rnew.append(regen.group(1));
-		rnew.append(regen.group(2));
-		if(regen.group(2) != regen.group(3)) {
-			rnew.append("-");
-			rnew.append(regen.group(3));
+	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
+	buffer enew;
+	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
+		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
+		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)", evm);
+	while(parse.find()) {
+		parse.append_replacement(enew, "");
+		if(parse.group(1) != "") {
+			enew.append("All ");
+			enew.append(parse.group(1));
+			enew.append("Dmg: ");
+			enew.append(parse.group(2));
+		} else if(parse.group(3) != "") {
+			enew.append(parse.group(3));
+			enew.append(parse.group(4));
+			if(parse.group(4) != parse.group(5)) {
+				enew.append("-");
+				enew.append(parse.group(5));
+			}
+		} else if(parse.group(7) != "") {
+			enew.append("Max HP/MP");
+			enew.append(parse.group(7));
+			enew.append("/");
+			enew.append(parse.group(8));
+			if(parse.group(6) == " Percent") enew.append("%");
 		}
-		evm = evm.replace_string(regen.group(0), rnew);
 	}
-	
-	// If HP and MP regen are the same...
-	regen = create_matcher("HP Regen ([0-9-]+), MP Regen \\1", evm);
-	if(regen.find())
-		evm = evm.replace_string(regen.group(0), "All Regen "+regen.group(1));
-	
-	//Combine weapon and spell damage bonus
-	matcher elem = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2", evm);
-	while(elem.find()) {
-		buffer enew;
-		enew.append("All ");
-		enew.append(elem.group(1));
-		enew.append("Dmg: ");
-		enew.append(elem.group(2));
-		evm = evm.replace_string(elem.group(0), enew);
-	}
+	parse.append_tail(enew);
+	evm = enew;
 	
 	// May be an extra comma left at start. :(
 	// Add missing + in front of modifier, for consistency. Then remove colon because it is in the way of legibility
-	// Change " Percent: +XX" and " Drop: +XX" -> "+XX%"
-	buffer e;
-	matcher perplus = create_matcher("(?:(^\\s*,\\s*)|(\\s*Drop|\\s*Percent)?:\\s*(([+-])?\\d+))",evm);
-	while(perplus.find()) {
-		buffer temp;
-		if(perplus.group(1) == "") {		// group(1) would contain extra comma at beginning
-			if(perplus.group(4) == "")		// group(4) would contain + or -
-				temp.append(" +");
-			else temp.append(" ");
-			temp.append(perplus.group(3));	// This does not contain Drop, Percent or the colon.
-			if(perplus.group(2) != "")		// group(2) is Drop or Percent
-				temp.append("%");
+	// Change " Percent: +XX" and " Drop: +XX" to "+XX%"
+	// If HP and MP regen are the same, combine them
+	enew.set_length(0);
+	parse = create_matcher("^\\s*(,)\\s*"
+		+"|(\\s*Drop|\\s*Percent)?:\\s*(([+-])?\\d+)"
+		+"|(HP Regen ([0-9-]+), MP Regen \\6)", evm);
+	while(parse.find()) {
+		parse.append_replacement(enew, "");
+		if(parse.group(1) == ",") {			// group(1) would contain extra comma at beginning
+			// Delete this: append nothing
+		} else if(parse.group(3) != "") { 	// group(3) is the numeric modifier
+			if(parse.group(4) == "")		// group(4) would contain + or -
+				enew.append(" +");
+			else enew.append(" ");
+			enew.append(parse.group(3));	// This does not contain Drop, Percent or the colon.
+			if(parse.group(2) != "")		// group(2) is Drop or Percent
+				enew.append("%");
+		
+		} else if(parse.group(5) != "") {	// group(5) is the HP&MP combined Regen	
+			enew.append("All Regen ");
+			enew.append(parse.group(6));
 		}
-		perplus.append_replacement(e, temp);
 	}
-	perplus.append_tail(e);
-	evm = e;
+	parse.append_tail(enew);
+	evm = enew;
 	
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
@@ -3737,6 +3746,15 @@ void bakeTracker() {
 	//Add Tracker for each available quest
 	//G for Guild. S for Sea. F for Familiar. I for Item. M for Miscellaneous 
 	
+	string bhit;
+	foreach b in $strings[Easy, Hard, Special] {
+		bhit = get_property("current"+ b +"BountyItem");
+		if(bhit != "") {
+			result.append("<tr><td>");
+			result.append('Your <a target="mainpane" href="bhh.php">Bounty</a> is: <br>');
+			result.append(bhit);
+		}
+	}
 /*	if (get_property("currentBountyItem")!="0") {
 		item bhit = to_item(get_property("currentBountyItem"));
 		result.append("<tr><td>");

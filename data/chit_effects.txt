@@ -51,10 +51,11 @@ Spirit of Garlic	type:"pm", style:"color:green;font-style:italic"
 Spirit of Wormwood	type:"pm", style:"color:grey;font-style:italic"
 
 #Sauceror Buffs
+Antibiotic Saucesphere	type:"sa", alias:"Antibiotic Sauce"
 Elemental Saucesphere	type:"sa", alias:"Elemental Sauce"
-Jalape&ntilde;o Saucesphere	type:"sa", alias:"Jalape&ntilde;o (HP)"
-Jaba&ntilde;ero Saucesphere	type:"sa", alias:"Jaba&ntilde;ero (MP)"
+Jalape&ntilde;o Saucesphere	type:"sa", alias:"Jalape&ntilde;o"
 Scarysauce	type:"sa"
+Blood Sugar Sauce Magic	alias:"Blood Sugar Sauce"
 
 #Disco Bandit Buffs
 Smooth Movements	type:"db"
