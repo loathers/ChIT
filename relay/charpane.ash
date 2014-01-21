@@ -664,7 +664,7 @@ string parseMods(string ef) {
 	
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
 	buffer enew;
-	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
+	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
 		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)", evm);
 	while(parse.find()) {
@@ -684,8 +684,10 @@ string parseMods(string ef) {
 		} else if(parse.group(7) != "") {
 			enew.append("Max HP/MP");
 			enew.append(parse.group(7));
-			enew.append("/");
-			enew.append(parse.group(8));
+			if(parse.group(7) != parse.group(8)) {
+				enew.append("/");
+				enew.append(parse.group(8));
+			}
 			if(parse.group(6) == " Percent") enew.append("%");
 		}
 	}
@@ -723,6 +725,7 @@ string parseMods(string ef) {
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
+	evm = replace_string(evm,"Weapon","Wpn");
 	evm = replace_string(evm,"Damage","Dmg");
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
@@ -778,7 +781,7 @@ buff parseBuff(string source) {
 		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
-		columnTurns = parse.group(6);
+		columnTurns = parse.group(6).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
 		if(parse.group(7) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
