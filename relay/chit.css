@@ -415,6 +415,7 @@ div.progressbar {
 	font-weight:bold;
 }
 
+/* Effects Panel */
 #chit_effects a {
 	text-decoration:none;
 }
@@ -479,6 +480,26 @@ div.progressbar {
 #chit_effects td.right {
 	text-align:right;
 	padding-right:4px;
+}
+
+#chit_effects .efmods {
+	color:gray;
+	font-size:10px;
+}
+#chit_effects .modcold {
+	color:blue
+}
+#chit_effects .modhot {
+	color:red
+}
+#chit_effects .modsleaze {
+	color:purple
+}
+#chit_effects .modspooky {
+	color:gray
+}
+#chit_effects .modstench {
+	color:green
 }
 
 /* chit_picker defines the popup details, use for companion/familiar, MCD, etc. */

@@ -739,18 +739,12 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
-	evm = replace_string(evm,"Hot","<span style=\"color:red\">Hot</span>");
-	evm = replace_string(evm,"Cold","<span style=\"color:blue\">Cold</span>");
-	evm = replace_string(evm,"Spooky","<span style=\"color:gray\">Spooky</span>");
-	evm = replace_string(evm,"Stench","<span style=\"color:green\">Stench</span>");
-	evm = replace_string(evm,"Sleaze","<span style=\"color:purple\">Sleaze</span>");
-	evm = replace_string(evm,"Prismatic","<span style=\"color:gray\">P</span><span style=\"color:red\">ri</span><span style=\"color:purple\">sm</span><span style=\"color:green\">at</span><span style=\"color:blue\">ic</span>");
-
-	# //highlight items and meat
-	# evm = replace_string(evm,"Item","<span style=\"color:fuchsia\">Item</span>");
-	# evm = replace_string(evm,"Meat","<span style=\"color:fuchsia\">Meat</span>");
-	# //highlight ML
-	# evm = replace_string(evm,"ML","<span style=\"color:orange\">ML</span>");
+	evm = replace_string(evm,"Hot","<span class=modhot>Hot</span>");
+	evm = replace_string(evm,"Cold","<span class=modcold>Cold</span>");
+	evm = replace_string(evm,"Spooky","<span class=modspooky>Spooky</span>");
+	evm = replace_string(evm,"Stench","<span class=modstench>Stench</span>");
+	evm = replace_string(evm,"Sleaze","<span class=modsleaze>Sleaze</span>");
+	evm = replace_string(evm,"Prismatic","<span class=modspooky>P</span><span class=modhot>ri</span><span class=modsleaze>sm</span><span class=modstench>at</span><span class=modcold>ic</span>");
 
 	return evm;
 
@@ -872,9 +866,9 @@ buff parseBuff(string source) {
 	//ckb: Add modification details for buffs and effects
 	if(vars["chit.effects.describe"] == "true") {
 		if(length(string_modifier(myBuff.effectName,"Evaluated Modifiers"))>0) {
-			result.append('<br><small style="color:gray">');
+			result.append('<br><span class="efmods">');
 			result.append(parseMods(myBuff.effectName));
-			result.append('</small>');
+			result.append('</span>');
 		}
 	}
 	
@@ -1974,6 +1968,8 @@ void bakeFamiliar() {
 		} else info = "None";
 	} else if(myfam == $familiar[Reanimated Reanimator]) {
 		famname += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
+	} else if(myfam == $familiar[Grim Brother] && source.contains_text("talk</a>)")) {
+		famname += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
 	}
 	
 	// Charges
@@ -3188,11 +3184,11 @@ string fancycurrency(string page) {
 }
 
 void pickOutfit() {
-	string boldit(string o) { return '<div style ="font-weight:600;color:darkred;">'+o+'</div>'; }
 	location loc = my_location();
 	if(loc == $location[none]) // Possibly beccause a fax was used
 		loc = lastLoc;
 	string local(string o) {
+		string boldit(string o) { return '<div style ="font-weight:600;color:darkred;">'+o+'</div>'; }
 		switch(o) {
 		case "Swashbuckling Getup":
 			if($locations[The Obligatory Pirate's Cove, Barrrney's Barrr, The F'c'le] contains loc)
@@ -3323,7 +3319,7 @@ void bakeCharacter() {
 				myTitle = group(titleMatcher, 1);
 			}
 		} else {
-			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+".{2}?\\s*level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
+			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+"(?:.{2}?\\s*level)?\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
 			if (find(titleMatcher)) {
 				myTitle = group(titleMatcher, 1);
 			}
