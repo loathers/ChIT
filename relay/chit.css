@@ -287,15 +287,15 @@ tr.florist :first-line {
 	color:#606060;
 	font-weight:bold;
 	text-align:right;
-	padding:2px;
-	max-width:60px;
+	padding:1px;
+	width:50px;
 }
 #chit_stats tr td.fury {
 	color:red;
 	font-weight:900;
 	text-align:center;
-	padding:2px;
-	max-width:60px;
+	padding:1px;
+	max-width:50px;
 }
 #chit_organs tr td.info {
 	color:#606060;
@@ -317,7 +317,7 @@ tr.florist :first-line {
 }
 #chit_stats tr td.progress, #chit_substats tr td.progress, #chit_organs tr td.progress {
 	width:100%;
-	padding:2px 2px 2px 4px;
+	padding:2px 2px 2px 2px;
 	text-align:right;
 	font-weight:bold;
 	color:#A0A0A0;
