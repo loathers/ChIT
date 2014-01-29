@@ -629,6 +629,14 @@ void pickerFlavour() {
 string parseMods(string ef) {
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
+	buffer enew;
+	
+	// Standardize capitalization
+	matcher uncap = create_matcher("\\b[a-z]", evm);
+	while(uncap.find())
+		uncap.append_replacement(enew, to_upper_case(uncap.group(0)));
+	uncap.append_tail(enew);
+	evm = enew;
 	
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
@@ -663,10 +671,12 @@ string parseMods(string ef) {
 		}
 	
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
-	buffer enew;
-	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )?Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
+	enew.set_length(0);
+	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
-		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)", evm);
+		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)"
+		+"|(?:, *)?Familiar Weight: \\+5"
+		+"|Weapon Damage( Percent)?: ([+-]?\\d+), Spell Damage\\9?: \\10", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
 		if(parse.group(1) != "") {
@@ -689,6 +699,10 @@ string parseMods(string ef) {
 				enew.append(parse.group(8));
 			}
 			if(parse.group(6) == " Percent") enew.append("%");
+		} else if(parse.group(10) != "") {
+			enew.append("All Dmg: ");
+			enew.append(parse.group(10));
+			if(parse.group(9) == " Percent") enew.append("%");
 		}
 	}
 	parse.append_tail(enew);
@@ -727,6 +741,7 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
 	evm = replace_string(evm,"Damage","Dmg");
+	evm = replace_string(evm,"Experience (Familiar)", "Fam xp");
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
 	evm = replace_string(evm,"Monster Level","ML");
@@ -735,7 +750,6 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Mysticality","Myst");
 	evm = replace_string(evm,"Resistance","Res");
 	evm = replace_string(evm,"Familiar","Fam");
-	evm = replace_string(evm,"familiar","fam");
 	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
@@ -968,7 +982,7 @@ void bakeEffects() {
 		total += 1;
 	}
 	
-	// Add Flavour of Nothing
+	// Add Flavour of Nothing for all classes
 	boolean have_flavour() {
 		for i from 167 to 171
 			if(have_effect(to_effect(i)) > 0) return true;
@@ -985,19 +999,33 @@ void bakeEffects() {
 		pickerFlavour();
 		total += 1;
 	}
-	// Add Lack of Iron Palm Intrinsic
-	if(have_effect($effect[Iron Palms]) == 0 && have_skill($skill[Iron Palm Technique]) && my_class() == $class[Seal Clubber]) {
-		intrinsics.append('<tr class="effect">');
-		if(vars["chit.effects.showicons"] == "true" && !isCompact)
-			intrinsics.append('<td class="icon"><img height=20 width=20 src="/images/itemimages/palmtree.gif" onClick=\'javascript:poop("desc_skill.php?whichskill=1025&self=true","skill", 350, 300)\'></td>');
-		intrinsics.append('<td class="info"');
-		if(get_property("relayAddsUpArrowLinks").to_boolean())
-			intrinsics.append(' colspan="2"');
-		intrinsics.append('>Lack of Iron Palms</td><td class="infizero right"><a href="');
-		intrinsics.append(sideCommand("cast Iron Palm Technique"));
-		intrinsics.append('" title="Cast Iron Palms">00</a></td></tr>');
+	
+	// Some 0 mp Intrinsics should have reminders for their specific classe
+	void lack_effect(buffer result, skill sk, effect ef, string short_ef) {
+		if(have_skill(sk) && have_effect(ef) == 0 && my_class() == sk.class) {
+			result.append('<tr class="effect">');
+			if(vars["chit.effects.showicons"] == "true" && !isCompact) {
+				result.append('<td class="icon"><img height=20 width=20 src="/images/');
+				result.append(ef.image.substring(36));
+				result.append('" onClick=\'javascript:poop("desc_skill.php?whichskill=');
+				result.append(to_int(sk));
+				result.append('&self=true","skill", 350, 300)\'></td>');
+			}
+			result.append('<td class="info"');
+			if(get_property("relayAddsUpArrowLinks").to_boolean())
+				result.append(' colspan="2"');
+			result.append('>Lack of ');
+			result.append(short_ef);
+			result.append('</td><td class="infizero right"><a href="');
+			result.append(sideCommand("cast "+sk));
+			result.append('" title="Cast ');
+			result.append(to_string(sk));
+			result.append('">00</a></td></tr>');
+		}
 		total += 1;
 	}
+	intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
+	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[Blood Sugar Sauce Magic], "Blood Sugar");
 
 	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');
@@ -1325,32 +1353,20 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 		
 		if(famitem != $item[none]) {
-			string mod = string_modifier(to_string(famitem), "Evaluated Modifiers");
+			string mod = parseMods(to_string(famitem)); # string_modifier(to_string(famitem), "Evaluated Modifiers");
 			// Effects for Scarecrow and Hatrack
-			matcher m = create_matcher('Familiar Effect: \\"(.*?), cap (.*?)\\"', mod);
+			matcher m = create_matcher('Fam Effect: "(.*?), Cap ([^"]+)"', mod);
 			if(find(m))
-				return replace_string(m.group(1), "x", " x ");
-			// Compute modifier_eval()
-			m = create_matcher('(\\[([^]]+)\\])', mod);
-			while(find(m))
-				mod = mod.replace_string(m.group(1), eval(m.group(2)));
+				return replace_string(m.group(1), "x", "x ");
+			// farming implements from swarm of fire ants
+			m  = create_matcher('"(.*? Dmg, Meat)", Meat Bonus ', mod);
+			if(find(m))
+				mod = mod.replace_string(m.group(0), m.group(1)+" Bonus ");
 			// Remove boring stuff
-			m = create_matcher(',? *(Generic|Softcore Only|Familiar Weight: \\+5| *\\(familiar\\)|Equips On: "[^"]+"|Familiar Effect:|Underwater Familiar)', mod);
-			mod = m.replace_all("");
-			// Collapse Regen info.
-			m = create_matcher('((HP|MP) Regen Min: \\+(\\d+), \\2 Regen Max: \\+(\\d+))', mod);
-			while(find(m))
-				mod = mod.replace_string(m.group(1), m.group(2)+" Regen: "+ave(m.group(3), m.group(4)));
-			// Remove comma abandoned at the beginning
-			m = create_matcher('^ *, *', mod);
-			mod = m.replace_first("");
+			mod = mod.replace_string(' "Adventure Underwater"', ", Underwater");
+			mod = create_matcher(',? *(Generic|Softcore Only|Familiar Weight: \\+5| *\\(Fam\\)|Equips On: "[^"]+"|Fam Effect:|Underwater Fam|")', mod).replace_all("");
 			// Last touch ups
-			mod = mod.replace_string("Familiar Weight", "Weight");
-			mod = mod.replace_string("Experience", "Fam Exp");
-			mod = mod.replace_string("Monster Level", "ML");
-			mod = mod.replace_string("Meat Drop", "Meat");
-			mod = mod.replace_string("Item Drop", "Item");
-			mod = mod.replace_string('"adventure underwater"', "Underwater");
+			mod = mod.replace_string("Fam Weight", "Weight");
 			if(famitem == $item[Snow Suit] && equipped_item($slot[familiar]) != $item[Snow Suit])
 				mod += (length(mod) == 0? "(": " (") + get_property("_carrotNoseDrops")+"/3 carrots)";
 			if(length(mod) > 1)
@@ -1366,7 +1382,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 		string mod = fam_equip(famitem);
 		if(mod == "") return action;
-		return action + "<br /><span style='color:#707070'>" + mod + "<span>";
+		return action + "<br /><span class='efmods'>" + mod + "<span>";
 	}
 
 	void addEquipment(item it, string cmd) {
@@ -3188,7 +3204,7 @@ void pickOutfit() {
 	if(loc == $location[none]) // Possibly beccause a fax was used
 		loc = lastLoc;
 	string local(string o) {
-		string boldit(string o) { return '<div style ="font-weight:600;color:darkred;">'+o+'</div>'; }
+		string boldit(string o) { return '<div style ="font-weight:700;color:darkred;">'+o+'</div>'; }
 		switch(o) {
 		case "Swashbuckling Getup":
 			if($locations[The Obligatory Pirate's Cove, Barrrney's Barrr, The F'c'le] contains loc)
@@ -3259,6 +3275,11 @@ void pickOutfit() {
 		else if(get_property("_hatBeforeKolhs") != "")
 			special.addGear("equip "+get_property("_hatBeforeKolhs")+"; set _hatBeforeKolhs = ", "Restore "+get_property("_hatBeforeKolhs"));
 	}
+	
+	// A Light that Never Goes Out & Half a Purse: Need to be swapped often
+	if(have_effect($effect[Merry Smithsness]) > 0)
+		foreach e in $items[A Light that Never Goes Out, Half a Purse]
+			special.addGear(e);
 		
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
@@ -3279,8 +3300,10 @@ void pickOutfit() {
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
 	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
 		special.addGear("equip antique machete", "antique machete");
-	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9] contains get_property("questL11Pyramid") && item_amount($item[UV-resistant compass]) > 0)
-		special.addGear("equip UV-resistant compass", "UV-resistant compass");
+	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9] contains get_property("questL11Pyramid")) {
+		special.addGear($item[UV-resistant compass]);
+		special.addGear($item[ornate dowsing rod]);
+	}
 	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');

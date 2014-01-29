@@ -482,23 +482,26 @@ div.progressbar {
 	padding-right:4px;
 }
 
+.change .efmods {
+	color:gray;
+}
 #chit_effects .efmods {
 	color:gray;
 	font-size:10px;
 }
-#chit_effects .modcold {
+.efmods .modcold {
 	color:blue
 }
-#chit_effects .modhot {
+.efmods .modhot {
 	color:red
 }
-#chit_effects .modsleaze {
+.efmods .modsleaze {
 	color:purple
 }
-#chit_effects .modspooky {
+.efmods .modspooky {
 	color:gray
 }
-#chit_effects .modstench {
+.efmods .modstench {
 	color:green
 }
 
