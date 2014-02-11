@@ -628,6 +628,8 @@ void pickerFlavour() {
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
 
+	if(ef == "Knob Goblin Perfume") return "";
+
 	string evm = string_modifier(ef,"Evaluated Modifiers");
 	buffer enew;
 	
@@ -675,7 +677,6 @@ string parseMods(string ef) {
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
 		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)"
-		+"|(?:, *)?Familiar Weight: \\+5"
 		+"|Weapon Damage( Percent)?: ([+-]?\\d+), Spell Damage\\9?: \\10", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
@@ -714,7 +715,7 @@ string parseMods(string ef) {
 	// If HP and MP regen are the same, combine them
 	enew.set_length(0);
 	parse = create_matcher("^\\s*(,)\\s*"
-		+"|(\\s*Drop|\\s*Percent)?:\\s*(([+-])?\\d+)"
+		+"|(\\s*Drop|\\s*Percent)?(?<!Limit):\\s*(([+-])?\\d+)"
 		+"|(HP Regen ([0-9-]+), MP Regen \\6)", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
@@ -3203,11 +3204,11 @@ void pickOutfit() {
 	location loc = my_location();
 	if(loc == $location[none]) // Possibly beccause a fax was used
 		loc = lastLoc;
-	string local(string o) {
+	string localize(string o) {
 		string boldit(string o) { return '<div style ="font-weight:700;color:darkred;">'+o+'</div>'; }
 		switch(o) {
 		case "Swashbuckling Getup":
-			if($locations[The Obligatory Pirate's Cove, Barrrney's Barrr, The F'c'le] contains loc)
+			if($locations[The Obligatory Pirate's Cove, Barrrney's Barrr, The F'c'le] contains loc || last_monster() == $monster[booty crab])
 				return boldit(o);
 			break;
 		case "Mining Gear":
@@ -3239,7 +3240,7 @@ void pickOutfit() {
 			if(is_wearing_outfit(o) && o != "Birthday Suit")
 				picker.append('<tr class="pickitem current"><td class="info">' + o + '</td>');
 			else
-				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + local(o) + '</a></td>');
+				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + localize(o) + '</a></td>');
 		}
 		
 	picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
@@ -3278,8 +3279,10 @@ void pickOutfit() {
 	
 	// A Light that Never Goes Out & Half a Purse: Need to be swapped often
 	if(have_effect($effect[Merry Smithsness]) > 0)
-		foreach e in $items[A Light that Never Goes Out, Half a Purse]
-			special.addGear(e);
+		special.addGear($items[A Light that Never Goes Out, Half a Purse]);
+
+	if(get_property("dailyDungeonDone") == "false")
+		special.addGear($item[ring of Detect Boring Doors]);
 		
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")

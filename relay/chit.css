@@ -482,27 +482,26 @@ div.progressbar {
 	padding-right:4px;
 }
 
-.change .efmods {
-	color:gray;
+.efmods {
+	color:#686868; /* slightly darker than modspooky */
 }
 #chit_effects .efmods {
-	color:gray;
 	font-size:10px;
 }
 .efmods .modcold {
-	color:blue
+	color:blue;
 }
 .efmods .modhot {
-	color:red
+	color:red;
 }
 .efmods .modsleaze {
-	color:purple
+	color:purple;
 }
 .efmods .modspooky {
-	color:gray
+	color:#989898; /* slightly lighter than efmods */
 }
 .efmods .modstench {
-	color:green
+	color:green;
 }
 
 /* chit_picker defines the popup details, use for companion/familiar, MCD, etc. */
