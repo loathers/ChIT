@@ -2704,7 +2704,7 @@ void addAud(buffer result) {
 	if(aud.find()) {
 		result.append('<tr>');
 		result.append('<td class="label">Aud</td><td class="info">');
-		result.append(aud.group(1));print("+"+aud.group(1));
+		result.append(aud.group(1));
 		result.append('</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress">');
