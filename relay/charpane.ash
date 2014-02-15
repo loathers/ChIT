@@ -1365,7 +1365,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 				mod = mod.replace_string(m.group(0), m.group(1)+" Bonus ");
 			// Remove boring stuff
 			mod = mod.replace_string(' "Adventure Underwater"', ", Underwater");
-			mod = create_matcher(',? *(Generic|Softcore Only|Familiar Weight: \\+5| *\\(Fam\\)|Equips On: "[^"]+"|Fam Effect:|Underwater Fam|")', mod).replace_all("");
+			mod = create_matcher(',? *(Generic|Softcore Only|Fam Weight \\+5| *\\(Fam\\)|Equips On: "[^"]+"|Fam Effect:|Underwater Fam|")', mod).replace_all("");
 			// Last touch ups
 			mod = mod.replace_string("Fam Weight", "Weight");
 			if(famitem == $item[Snow Suit] && equipped_item($slot[familiar]) != $item[Snow Suit])
@@ -2111,6 +2111,32 @@ void bakeFamiliar() {
 		pickerCompanion(famname, famtype);
 
 		return;
+	} else if(my_path() == "17") {
+		# <a target=mainpane href=main.php?action=motorcycle><img src=/images/adventureimages/bigbike.gif width=100 height=100 border=0 alt="Hermes the Motorcycle" title="Hermes the Motorcycle"></a><br> <b>Hermes</b>
+		matcher motorcycle = create_matcher('(<[^>]+>).*?adventureimages/([^ ]+).*?<b>([^<]+)</b>', source);
+		if(find(motorcycle)) {
+			actortype = motorcycle.group(1);
+			famimage = motorcycle.group(2);
+			famname = motorcycle.group(3);
+			equiptype = "";
+		} else {
+			famimage = "blank.gif";
+			famname = "";
+			actortype = "";
+			equiptype = "<font color=blue size=2><b>Click to Summon a motorcycle</b></font>";
+		}
+		buffer result;
+		result.append('<table id="chit_familiar" class="chit_brick nospace">');
+		result.append('<tr><th colspan="2" title="Motorcycle">'+famname+'</th></tr>');
+		result.append('<tr><td class="Motorcycle" title="My Motorcycle">');
+		result.append(actortype);
+		result.append('<img src="images/adventureimages/' + famimage + '" width=75></a></td>');
+		result.append('<td class="info" style="' + famstyle + '"><a class="chit_launcher" rel="chit_pickerfam" href="#">' + equiptype + '</a></td>');
+		result.append('</tr></table>');
+		
+		chitBricks["familiar"] = result;
+
+		return;
 	}
 
 	//Add final touches to additional info
@@ -2673,6 +2699,22 @@ void addSauce(buffer result) {
 	result.append('</tr>');
 }
 
+void addAud(buffer result) {
+	matcher aud = create_matcher("Aud:</td><td align=left>(<b>[^<]+)</td>", chitSource["stats"]);
+	if(aud.find()) {
+		result.append('<tr>');
+		result.append('<td class="label">Aud</td><td class="info">');
+		result.append(aud.group(1));
+		result.append('</td>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress">');
+			result.append('<div class="progressbox" title="' + my_soulsauce() + ' / 100"><div class="progressbar" style="width:' + my_soulsauce() + '%"></div></div></td>');
+			result.append('</td>');
+		}
+		result.append('</tr>');
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr>');
@@ -3115,8 +3157,10 @@ void bakeStats() {
 		}
 		if(my_fury() > 0 && section.contains_text("muscle"))
 			result.addFury();
-		if(my_soulsauce() > 0 && section.contains_text("myst"))
+		else if(my_soulsauce() > 0 && section.contains_text("myst"))
 			result.addSauce();
+		else if((my_path() == "17" || my_path() == "Avatar of Sneaky Pete") && section.contains_text("moxie"))
+			result.addAud();
 		result.append("</tbody>");
 	}
 
@@ -3350,7 +3394,8 @@ void bakeCharacter() {
 				myTitle = group(titleMatcher, 1);
 			}
 		}
-		if(myTitle == "Avatar of Jarlsberg" || myTitle == "Avatar of St. Sneaky Pete")  // Too long!
+	} else {
+		if(myTitle == "Avatar of Jarlsberg" || myTitle == "Avatar of Sneaky Pete" || myTitle == "Unknown")  // Too long!
 			myTitle = "Avatar";
 	}
 
@@ -3400,6 +3445,8 @@ void bakeCharacter() {
 		myGuild = "campground.php?action=grave";
 	else if(my_path() == "Avatar of Jarlsberg")
 		myGuild = "da.php?place=gate2";
+	else if(my_path() == "17" || my_path() == "Avatar of Sneaky Pete")
+		myGuild = "da.php?place=gate3";
 
 	// LifeStyle suitable for charpane
 	string myLifeStyle() {
@@ -3439,7 +3486,7 @@ void bakeCharacter() {
 		case "Avatar of Jarlsberg": return "Jarlsberg";
 		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
 		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
-		case "Avatar of St. Sneaky Pete": return "Sneaky Pete";
+		case "17": case "Avatar of Sneaky Pete": return "Sneaky Pete";
 		}
 		return my_path();
 	}
@@ -4510,11 +4557,12 @@ boolean parsePage(buffer original) {
 	matcher parse;
 
 	// Familiar: Could be before or after effects block
-	parse = create_matcher("(<p><span class=small><b>Familiar:.+?>none</a>\\)</span>"+  // familiar (none)
-		"|<table width\\=90%.+?Familiar:.+?</table></center>"+  // regular familiar
-		"|<b>Clancy</b>.*?</font></center>"+  // Clancy (Avatar of Boris)
-		"|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\)))"  // (Avatar of Jarlsberg)
-			, source);
+	parse = create_matcher("(<p><span class=small><b>Familiar:.+?>none</a>\\)</span>"  // familiar (none)
+		+ "|<table width\\=90%.+?Familiar:.+?</table></center>"  // regular familiar
+		+ "|<b>Clancy</b>.*?</font></center>"  // Clancy (Avatar of Boris)
+		+ "|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\))"  // (Avatar of Jarlsberg)
+		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // (Avatar of Sneaky Pete)
+		+ ")", source);
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
 		source = parse.replace_first("");
