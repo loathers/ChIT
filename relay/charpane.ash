@@ -2111,7 +2111,7 @@ void bakeFamiliar() {
 		pickerCompanion(famname, famtype);
 
 		return;
-	} else if(my_path() == "17") {
+	} else if(my_path() == "17" || my_path() == "Avatar of Sneaky Pete") {
 		# <a target=mainpane href=main.php?action=motorcycle><img src=/images/adventureimages/bigbike.gif width=100 height=100 border=0 alt="Hermes the Motorcycle" title="Hermes the Motorcycle"></a><br> <b>Hermes</b>
 		matcher motorcycle = create_matcher('(<[^>]+>).*?adventureimages/([^ ]+).*?<b>([^<]+)</b>', source);
 		if(find(motorcycle)) {
