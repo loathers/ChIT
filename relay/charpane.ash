@@ -2700,15 +2700,15 @@ void addSauce(buffer result) {
 }
 
 void addAud(buffer result) {
-	matcher aud = create_matcher("Aud:</td><td align=left>(<b>[^<]+)</td>", chitSource["stats"]);
+	matcher aud = create_matcher("Aud:</td><td align=left>(<b>(\\d+)?[^<]+)</td>", chitSource["stats"]);
 	if(aud.find()) {
 		result.append('<tr>');
 		result.append('<td class="label">Aud</td><td class="info">');
-		result.append(aud.group(1));
+		result.append(aud.group(1));print("+"+aud.group(1));
 		result.append('</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="' + my_soulsauce() + ' / 100"><div class="progressbar" style="width:' + my_soulsauce() + '%"></div></div></td>');
+			result.append('<div class="progressbox" title="' + aud.group(2) + ' / 30"><div class="progressbar" style="width:' + (aud.group(2).to_int() * 3.33) + '%"></div></div></td>');
 			result.append('</td>');
 		}
 		result.append('</tr>');
