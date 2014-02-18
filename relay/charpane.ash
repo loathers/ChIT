@@ -1938,7 +1938,7 @@ void FamPete() {
 		return pref;
 	}
 	string famlink, famimage, famname;
-	matcher motorcycle = create_matcher('(<[^>]+>).*?adventureimages/([^ ]+).*?<b>([^<]+)</b>', chitSource["familiar"]);
+	matcher motorcycle = create_matcher('(<[^>]+>).*?adventureimages/([^ ]+).*?<b>(.+?)</b>', chitSource["familiar"]);
 	if(find(motorcycle)) {
 		famlink = motorcycle.group(1);
 		famimage = motorcycle.group(2);
