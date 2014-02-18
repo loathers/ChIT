@@ -727,7 +727,7 @@ string parseMods(string ef) {
 				enew.append(" +");
 			else enew.append(" ");
 			enew.append(parse.group(4));	// This does not contain Drop, Percent or the colon.
-			if(parse.group(3) != "")		// group is Drop or Percent
+			if(parse.group(2) != "")		// group is Drop or Percent
 				enew.append("%");
 		
 		} else if(parse.group(6) != "") {	// group is the HP&MP combined Regen	
