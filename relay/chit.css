@@ -115,6 +115,8 @@ div.chit_skeleton table.chit_brick {
 	margin-bottom:0px;
 }
 table.chit_brick th {
+	word-wrap:break-word;
+	max-width:200px;
 	text-align:center;
 	vertical-align:middle;
 	background-color:#F0F0F0;
@@ -184,6 +186,11 @@ table.chit_brick tr td.companion  img{
 	height:80px;
 	padding:0px 0px 0px 0px;
 	margin:-5px -5px -5px -5px;
+}
+table.chit_brick tr td.motorcycle  img{
+	text-align:center;
+	height:70px;
+	margin:-3px 0px -9px 0px;
 }
 
 /* section adds the light grey bar above the table row */

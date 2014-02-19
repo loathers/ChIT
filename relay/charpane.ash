@@ -631,13 +631,25 @@ string parseMods(string ef) {
 	if(ef == "Knob Goblin Perfume") return "";
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
-	buffer enew;
+	buffer enew;  // This is used for rebuilding evm with append_replacement()
 	
 	// Standardize capitalization
 	matcher uncap = create_matcher("\\b[a-z]", evm);
 	while(uncap.find())
 		uncap.append_replacement(enew, to_upper_case(uncap.group(0)));
 	uncap.append_tail(enew);
+	evm = enew;
+	
+	// Move parenthesis to the beginning of the modifier
+	enew.set_length(0);
+	matcher paren = create_matcher("(,|^)(.*?)\\((.+?)\\)", evm);
+	while(paren.find()) {
+		paren.append_replacement(enew, paren.group(1));
+		enew.append(paren.group(3));
+		enew.append(" ");
+		enew.append(paren.group(2));
+	}
+	paren.append_tail(enew);
 	evm = enew;
 	
 	// Anything that applies the same modifier to all stats or all elements can be combined
@@ -743,15 +755,15 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
 	evm = replace_string(evm,"Damage","Dmg");
-	evm = replace_string(evm,"Experience (Familiar)", "Fam xp");
-	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Initiative","Init");
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");
 	evm = replace_string(evm,"Muscle","Mus");
 	evm = replace_string(evm,"Mysticality","Myst");
 	evm = replace_string(evm,"Resistance","Res");
+	evm = replace_string(evm,"Familiar Experience","Fam xp");
 	evm = replace_string(evm,"Familiar","Fam");
+	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"Smithsness","Smith");
 	//decorate elemental tags with pretty colors
@@ -1953,7 +1965,7 @@ void FamPete() {
 	result.append('<tr><th colspan="2" title="Motorcycle">');
 	result.append(famname);
 	result.append('</th></tr>');
-	result.append('<tr><td class="Motorcycle" title="');
+	result.append('<tr><td class="motorcycle" title="');
 	foreach pref in $strings[Tires, Gas Tank, Headlight, Cowling, Muffler, Seat] {
 		result.append(pref);
 		result.append(': ');
@@ -1964,7 +1976,7 @@ void FamPete() {
 	result.append(famlink);
 	result.append('<img src="images/adventureimages/');
 	result.append(famimage);
-	result.append('" style="height:70px; margin:-3px 0px -9px 0px"></a></td>');
+	result.append('"></a></td>');
 	result.append('</tr></table>');
 	
 	chitBricks["familiar"] = result;
@@ -1976,7 +1988,7 @@ void bakeFamiliar() {
 	switch(my_path()) {
 	case "Avatar of Boris": FamBoris(); break;
 	case "Avatar of Jarlsberg": FamJarlsberg(); break;
-	case "17": case "Avatar of Sneaky Pete": FamPete(); return;
+	case "Avatar of Sneaky Pete": FamPete(); return;
 	}
 
 	string source = chitSource["familiar"];
@@ -3193,7 +3205,7 @@ void bakeStats() {
 			result.addFury();
 		else if(my_soulsauce() > 0 && section.contains_text("myst"))
 			result.addSauce();
-		else if((my_path() == "17" || my_path() == "Avatar of Sneaky Pete") && section.contains_text("moxie"))
+		else if(my_path() == "Avatar of Sneaky Pete" && section.contains_text("moxie"))
 			result.addAud();
 		result.append("</tbody>");
 	}
@@ -3479,7 +3491,7 @@ void bakeCharacter() {
 		myGuild = "campground.php?action=grave";
 	else if(my_path() == "Avatar of Jarlsberg")
 		myGuild = "da.php?place=gate2";
-	else if(my_path() == "17" || my_path() == "Avatar of Sneaky Pete")
+	else if(my_path() == "Avatar of Sneaky Pete")
 		myGuild = "da.php?place=gate3";
 
 	// LifeStyle suitable for charpane
@@ -3520,7 +3532,7 @@ void bakeCharacter() {
 		case "Avatar of Jarlsberg": return "Jarlsberg";
 		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
 		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
-		case "17": case "Avatar of Sneaky Pete": return "Sneaky Pete";
+		case "Avatar of Sneaky Pete": return "Sneaky Pete";
 		}
 		return my_path();
 	}
