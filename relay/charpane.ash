@@ -504,12 +504,13 @@ string helperSemiRare() {
 	string [location] rewards;
 		rewards[$location[The Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
-		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|21";
+		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|0";
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
-		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|95";
+		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
+		rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
 	if(can_interact()) {
-		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|200";
+		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
 		if(available_amount($item[stone wool]) < 1)
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
@@ -518,7 +519,7 @@ string helperSemiRare() {
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
 	}
-		
+	
 	int semirareCounter = to_int(get_property("semirareCounter"));
 	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
 	string message = semirareCounter == 0? "No semirare so far during this ascension"
@@ -1888,10 +1889,16 @@ void FamBoris() {
 	if(clancyLink != "")
 		result.append('</a>');
 	result.append('</td>');
-	result.append('<td class="info">Clancy'  + info + '</td>');
-	result.append('<td class="icon" title="' + equiptype + '">');
+	result.append('<td class="info">Clancy');
+	result.append(info);
+	result.append('</td>');
+	result.append('<td class="icon" title="');
+	result.append(equiptype);
+	result.append('">');
 	result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
-	result.append('<img src="/images/itemimages/' + equipimage + '">');
+	result.append('<img src="/images/itemimages/' );
+	result.append(equipimage);
+	result.append('">');
 	result.append('</a></td>');
 	result.append('</tr>');
 	
