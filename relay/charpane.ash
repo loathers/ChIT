@@ -508,8 +508,7 @@ string helperSemiRare() {
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
-		rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
-	if(can_interact()) {
+	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
 		if(available_amount($item[stone wool]) < 1)
@@ -518,6 +517,10 @@ string helperSemiRare() {
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
+		if(get_property("questL11Palindome") != "finished") {
+			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
+			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
+		}
 	}
 	
 	int semirareCounter = to_int(get_property("semirareCounter"));
@@ -2879,8 +2882,7 @@ void addMCD(buffer result, boolean bake) {
 		mcdpage = "gnomes.php?place=machine";
 		mcdchange = "gnomes.php?action=changedial&whichlevel=";
 		mcdbusy = "Changing Dial...";
-		if((item_amount($item[bitchin' meatcar]) + item_amount($item[Desert Bus pass]) + item_amount($item[pumpkin carriage]) + item_amount($item[tin lizzie])) == 0
-		 && get_property("questG01Meatcar") != "finished") {
+		if(get_property("lastDesertUnlock").to_int() != my_ascensions()) {
 			mcdSettable = false;			
 			progress = '<span title="The Gnomad camp has not been unlocked yet">No Beach?</span>';
 		}
@@ -3851,7 +3853,7 @@ void bakeTracker() {
 		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
 		//L9: oil peak
 		high.append("<br>Oil Peak: ");
-		high.append(item_report(get_property("oilPeakProgress").to_int() == 0, get_property("oilPeakProgress")+' &mu;B/Hg'));
+		high.append(item_report(get_property("oilPeakProgress").to_float() == 0, get_property("oilPeakProgress")+' &mu;B/Hg'));
 		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
 			high.set_length(0);
 			high.append('<br>Return to <a target="mainpane" href="place.php?whichplace=highlands&action=highlands_dude">High Landlord</a>');
@@ -4670,14 +4672,11 @@ boolean parsePage(buffer original) {
 		return get_property("lastAdventure").to_location();
 	}
 	// Recent Adventures: May or may not be present
-	parse = create_matcher("(<center><font size=2>.+?Last Adventure:.+?</center>)", source);
+	parse = create_matcher('<center><font size=2>.+?Last Adventure:.+?target=mainpane href="[^"]+">([^<]+)</a>.+?</center>', source);
 	if(find(parse)) {
-		chitSource["trail"] = parse.group(1);
+		chitSource["trail"] = parse.group(0);
+		lastLoc = parse.group(1).parseLoc();  // Parse out last location for use by other functions
 		source = parse.replace_first("");
-		// Pull out last adventured location
-		parse = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', chitSource["trail"]);
-		if(find(parse))  // Parse out last location for use by other functions
-			lastLoc = parse.group(2).parseLoc();
 		// Shorten some unreasonablely lengthy locations
 		chitSource["trail"] = chitSource["trail"]
 			.replace_string("The Castle in the Clouds in the Sky", "Giant's Castle")
@@ -4692,7 +4691,7 @@ boolean parsePage(buffer original) {
 			.replace_string("Over Where the Old Tires Are", "Where the Old Tires Are")
 			.replace_string("Out by that Rusted-Out Car", "Rusted-Out Car")
 			.replace_string("Cobb's Knob Menagerie, Level", "Menagerie, Level")		// All three menagerie levels
-			.replace_string('">The', '">'); 										// Remove leading "The " from all locations
+			.replace_string('">The ', '">'); 										// Remove leading "The " from all locations
 	}
 
 	// Old Man's Bathtub Adventure. May or may not be present
