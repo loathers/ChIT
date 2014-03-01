@@ -517,7 +517,7 @@ string helperSemiRare() {
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
-		if(get_property("questL11Palindome") != "finished") {
+		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Nam]) == 0) {
 			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
 		}
@@ -2759,11 +2759,14 @@ void addAud(buffer result) {
 		result.append('</td>');
 		int audience = abs(my_audience());
 		if(to_boolean(vars["chit.stats.showbars"])) {
+			int max_aud = have_equipped($item[Sneaky Pete's leather jacket]) || have_equipped($item[Sneaky Pete's leather jacket (collar popped)])? 50: 30;
 			result.append('<td class="progress">');
 			result.append('<div class="progressbox" title="');
 			result.append(audience);
-			result.append(' / 30"><div class="progressbar" style="width:');
-			result.append(to_string(audience * 3.33));
+			result.append(' / ');
+			result.append(max_aud);
+			result.append('"><div class="progressbar" style="width:');
+			result.append(to_string(audience * 100.0 / max_aud));
 			result.append('%"></div></div></td>');
 			result.append('</td>');
 		}
