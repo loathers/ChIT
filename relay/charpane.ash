@@ -646,7 +646,7 @@ string parseMods(string ef) {
 	
 	// Move parenthesis to the beginning of the modifier
 	enew.set_length(0);
-	matcher paren = create_matcher("(,|^)(.*?)\\((.+?)\\)", evm);
+	matcher paren = create_matcher("(, ?|^)([^,]*?)\\((.+?)\\)", evm);
 	while(paren.find()) {
 		paren.append_replacement(enew, paren.group(1));
 		enew.append(paren.group(3));
@@ -860,6 +860,10 @@ buff parseBuff(string source) {
 		columnTurns = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a>';
 		pickerFlavour();
 	}
+	
+	// Check Mirror picker
+	if($strings[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.effectName)
+		columnTurns = '<a target="mainpane" href="skills.php?pwd='+my_hash()+'&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">&infin;</a>';
 
 	//Add spoiler info
 	if(length(spoiler) > 0)
@@ -1001,12 +1005,12 @@ void bakeEffects() {
 	}
 	
 	// Add Flavour of Nothing for all classes
-	boolean have_flavour() {
+	boolean need_flavour() {
 		for i from 167 to 171
-			if(have_effect(to_effect(i)) > 0) return true;
-		return false;
+			if(have_effect(to_effect(i)) > 0) return false;
+		return true;
 	}
-	if(have_skill($skill[flavour of magic]) && !have_flavour()) {
+	if(have_skill($skill[flavour of magic]) && need_flavour()) {
 		intrinsics.append('<tr class="effect">');
 		if(vars["chit.effects.showicons"] == "true" && !isCompact)
 			intrinsics.append('<td class="icon"><img height=20 width=20 src="/images/itemimages/flavorofmagic.gif" onClick=\'javascript:poop("desc_skill.php?whichskill=3017&self=true","skill", 350, 300)\'></td>');
@@ -1015,6 +1019,25 @@ void bakeEffects() {
 			intrinsics.append(' colspan="2"');
 		intrinsics.append('><a class="chit_launcher" rel="chit_pickerflavour" href="#">Choose a Flavour</a></td><td class="infizero right"><a class="chit_launcher" rel="chit_pickerflavour" href="#">00</a></td></tr>');
 		pickerFlavour();
+		total += 1;
+	}
+
+	// Sneaky Pete should check the mirror and fix his hair
+	boolean need_hairdo() {
+		foreach e in $effects[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk]
+			if(have_effect(e) > 0) return false;
+		return true;
+	}
+	if(have_skill($skill[Check Mirror]) && need_hairdo()) {
+		intrinsics.append('<tr class="effect">');
+		if(vars["chit.effects.showicons"] == "true" && !isCompact)
+			intrinsics.append('<td class="icon"><img height=20 width=20 src="/images/itemimages/bikemirror.gif" onClick=\'javascript:poop("desc_skill.php?whichskill=15017&self=true","skill", 350, 300)\'></td>');
+		intrinsics.append('<td class="info"');
+		if(get_property("relayAddsUpArrowLinks").to_boolean())
+			intrinsics.append(' colspan="2"');
+		intrinsics.append('>Need to Check Mirror</td><td class="infizero right"><a target="mainpane" href="skills.php?pwd=');
+		intrinsics.append(my_hash());
+		intrinsics.append('&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">00</a></td></tr>');
 		total += 1;
 	}
 	
@@ -1383,6 +1406,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			// Remove boring stuff
 			mod = mod.replace_string(' "Adventure Underwater"', ", Underwater");
 			mod = create_matcher(',? *(Generic|Softcore Only|Fam Weight \\+5| *\\(Fam\\)|Equips On: "[^"]+"|Fam Effect:|Underwater Fam|")', mod).replace_all("");
+			// Remove comma abandoned at the beginning
+			mod = create_matcher('^ *, *', mod).replace_first("");
 			// Last touch ups
 			mod = mod.replace_string("Fam Weight", "Weight");
 			if(famitem == $item[Snow Suit] && equipped_item($slot[familiar]) != $item[Snow Suit])
