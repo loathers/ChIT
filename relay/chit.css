@@ -426,7 +426,7 @@ div.progressbar {
 #chit_effects a {
 	text-decoration:none;
 }
-#chit_effects td.shrug a:hover {
+#chit_effects td.shrug a:hover, #chit_effects td.infinity a:hover, #chit_effects td.infizero a:hover {
 	color:red;
 }
 
@@ -459,7 +459,7 @@ div.progressbar {
 	padding:0px 2px;
 	width:25px;
 }
-#chit_effects td.shrug a {
+#chit_effects td.shrug a, #chit_effects td.infinity a, #chit_effects td.infizero a {
 	color:blue;
 }
 #chit_effects td.info {
