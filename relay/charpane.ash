@@ -631,7 +631,7 @@ void pickerFlavour() {
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
-
+#if(ef == "So Fresh and So Clean") ef = "Video... Games?";
 	if(ef == "Knob Goblin Perfume") return "";
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
@@ -692,8 +692,8 @@ string parseMods(string ef) {
 	enew.set_length(0);
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
-		+"|Maximum HP( Percent)?:([^,]+), Maximum MP\\6:([^,]+)"
-		+"|Weapon Damage( Percent)?: ([+-]?\\d+), Spell Damage\\9?: \\10", evm);
+		+"|Maximum HP( Percent|):([^,]+), Maximum MP\\6:([^,]+)"
+		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
 		if(parse.group(1) != "") {
@@ -709,7 +709,7 @@ string parseMods(string ef) {
 				enew.append(parse.group(5));
 			}
 		} else if(parse.group(7) != "") {
-			enew.append("Max HP/MP");
+			enew.append("Max HP/MP:");
 			enew.append(parse.group(7));
 			if(parse.group(7) != parse.group(8)) {
 				enew.append("/");
@@ -770,6 +770,8 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Experience","Exp");
 	evm = replace_string(evm,"Maximum","Max");
 	evm = replace_string(evm,"Smithsness","Smith");
+	evm = replace_string(evm,"Hobo Power","Hobo");
+	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
 	//decorate elemental tags with pretty colors
 	evm = replace_string(evm,"Hot","<span class=modhot>Hot</span>");
 	evm = replace_string(evm,"Cold","<span class=modcold>Cold</span>");
