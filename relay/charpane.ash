@@ -631,8 +631,11 @@ void pickerFlavour() {
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
-#if(ef == "So Fresh and So Clean") ef = "Video... Games?";
-	if(ef == "Knob Goblin Perfume") return "";
+	#if(ef == "So Fresh and So Clean") ef = "Video... Games?";
+	switch(ef) {
+	case "Knob Goblin Perfume": return "";
+	case "Bored With Explosions": return "You're just over them"; // It's funny.
+	}
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
@@ -903,9 +906,10 @@ buff parseBuff(string source) {
 	
 	//ckb: Add modification details for buffs and effects
 	if(vars["chit.effects.describe"] == "true") {
-		if(length(string_modifier(myBuff.effectName,"Evaluated Modifiers"))>0) {
+		string efMod = parseMods(myBuff.effectName);
+		if(length(efMod)>0) {
 			result.append('<br><span class="efmods">');
-			result.append(parseMods(myBuff.effectName));
+			result.append(efMod);
 			result.append('</span>');
 		}
 	}
@@ -3729,9 +3733,14 @@ void bakeQuests() {
 
 	result.append('<tr><th><img src="');
 	result.append(imagePath);
-	result.append('quests.png">');
-	result.append('<a target="mainpane" href="questlog.php">Current Quests</a></th>');
- 	result.append('</tr>');
+	result.append('quests.png"><a target="mainpane" href="questlog.php">Current Quests</a></th></tr>');
+	
+	matcher showAll = create_matcher('<a style="display.+?"showall".+?</a>', source);
+	if(showAll.find()) {
+		result.append('<tr><td>');
+		result.append(showAll.group(0));
+		result.append('</td></tr>');
+	}
 	
 	if(bugbears != "")
 		result.append(bugbears);	
