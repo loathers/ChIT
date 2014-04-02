@@ -2027,8 +2027,8 @@ void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
 	switch(my_path()) {
-	case "Avatar of Boris": FamBoris(); break;
-	case "Avatar of Jarlsberg": FamJarlsberg(); break;
+	case "Avatar of Boris": FamBoris(); return;
+	case "Avatar of Jarlsberg": FamJarlsberg(); return;
 	case "Avatar of Sneaky Pete": FamPete(); return;
 	}
 
