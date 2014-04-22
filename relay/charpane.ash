@@ -4656,6 +4656,7 @@ boolean parsePage(buffer original) {
 		+ "|<b>Clancy</b>.*?</font></center>"  // Clancy (Avatar of Boris)
 		+ "|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\))"  // (Avatar of Jarlsberg)
 		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // (Avatar of Sneaky Pete)
+		+ "|(?<=</table>)</p></center><center>"  // No Terrarium
 		+ ")", source);
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
