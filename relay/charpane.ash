@@ -4656,13 +4656,11 @@ boolean parsePage(buffer original) {
 		+ "|<b>Clancy</b>.*?</font></center>"  // Clancy (Avatar of Boris)
 		+ "|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\))"  // (Avatar of Jarlsberg)
 		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // (Avatar of Sneaky Pete)
-		+ "|(?<=</table>)(?:</p>)?</center><center>(?!<p>)"  // No Terrarium. Special cases ahoy!
 		+ ")", source);
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
 		source = parse.replace_first("");
-	} else
-		vprint("CHIT: Error parsing familiar", "red", -1);
+	}
 	
 	// Parse the beginning of the page
 	parse = create_matcher("(^.+?)(<center id='rollover'.+?</center>)(.*?)(<table align=center><tr><td align=right>Muscle:.*?)((?:<Center>Extreme Meter:|<img src=).*?</table>(?:.*?axelottal.*?</table>)?)", source);
