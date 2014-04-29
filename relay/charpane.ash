@@ -634,7 +634,10 @@ string parseMods(string ef) {
 	#if(ef == "So Fresh and So Clean") ef = "Video... Games?";
 	switch(ef) {
 	case "Knob Goblin Perfume": return "";
-	case "Bored With Explosions": return "You're just over them"; // It's funny.
+	case "Bored With Explosions": 
+		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
+		if(wafe.find()) return wafe.group(1);
+		return "You're just over them"; 
 	}
 
 	string evm = string_modifier(ef,"Evaluated Modifiers");
