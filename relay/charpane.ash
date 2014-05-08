@@ -631,7 +631,7 @@ void pickerFlavour() {
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
-	#if(ef == "So Fresh and So Clean") ef = "Video... Games?";
+	# if(ef == "So Fresh and So Clean") ef = "Video... Games?";
 	switch(ef) {
 	case "Knob Goblin Perfume": return "";
 	case "Bored With Explosions": 
@@ -3394,7 +3394,11 @@ void pickOutfit() {
 		result.append('</a></td></tr>');
 	}
 	void addGear(buffer result, item e) {
-		if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
+		if(to_slot(e) == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
+			result.append('<tr class="pickitem"><td class="info" style="color:gray;font-weight:bold;">');
+			result.append(e);
+			result.append('</td></tr>');
+		} else if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
 			result.addGear("equip " + (e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot()) + " " + e, e);
 	}
 	void addGear(buffer result, boolean [item] list) {
