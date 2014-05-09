@@ -3395,7 +3395,7 @@ void pickOutfit() {
 	}
 	void addGear(buffer result, item e) {
 		if(to_slot(e) == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
-			result.append('<tr class="pickitem"><td class="info" style="color:gray;font-weight:bold;">');
+			result.append('<tr class="pickitem"><td class="info" style="color:#949EA4;font-weight:bold;">');
 			result.append(e);
 			result.append('</td></tr>');
 		} else if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
