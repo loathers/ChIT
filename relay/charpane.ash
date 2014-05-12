@@ -3485,7 +3485,7 @@ void bakeCharacter() {
 				myTitle = group(titleMatcher, 1);
 			}
 		} else {
-			titleMatcher = create_matcher("(?i)<br>(?:(?:level\\s*)?"+my_level()+"(?:.{2}?\\s*level)?\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
+			titleMatcher = create_matcher("(?i)<br>(?:level\\s*"+my_level()+"|"+my_level()+".{2}?\\s*level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
 			if (find(titleMatcher)) {
 				myTitle = group(titleMatcher, 1);
 			}
