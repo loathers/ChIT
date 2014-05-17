@@ -1074,7 +1074,8 @@ void bakeEffects() {
 		}
 		total += 1;
 	}
-	intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
+	if(my_path() != "Slow and Steady") // Will have a more elegant fix for this later
+		intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
 	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[Blood Sugar Sauce Magic], "Blood Sugar");
 
 	if (length(intrinsics) > 0 ) {
