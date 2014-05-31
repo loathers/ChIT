@@ -270,7 +270,9 @@ string helperDanceCard() {
 	result.append('<tr>');
 	result.append('<td class="icon"><img src="images/itemimages/guildapp.gif"></td>');
 	result.append('<td class="location">');
-	result.append('<a href="' + to_url($location[The Haunted Ballroom]) + '" class="visit" target="mainpane">Haunted Ballroom</a>');
+	result.append('<a href="');
+	result.append(to_url($location[The Haunted Ballroom]));
+	result.append('" class="visit" target="mainpane">Haunted Ballroom</a>');
 	result.append('You have a date with Matilda');
 	result.append('</td>');
 	result.append('</tr>');
@@ -466,8 +468,20 @@ string helperWormwood() {
 			musthave = to_effect(target[2]);		
 			if (have_effect(musthave) > 0) {
 				rowdata.append('<tr class="section">');
-				rowdata.append('<td class="icon" title="' + reward[1] + '"><img src="images/itemimages/' + reward[0] + '"></td>');
-				rowdata.append('<td class="location" title="' + reward[1] + '"><a class="visit" target="mainpane" href="' + to_url(zone) + '">' + to_string(zone) + '</a>' + hint + '</td>');
+				rowdata.append('<td class="icon" title="');
+				rowdata.append(reward[1]);
+				rowdata.append('"><img src="images/itemimages/');
+				rowdata.append(reward[0] );
+				rowdata.append('"></td>');
+				rowdata.append('<td class="location" title="');
+				rowdata.append(reward[1]);
+				rowdata.append('"><a class="visit" target="mainpane" href="');
+				rowdata.append(to_url(zone));
+				rowdata.append('">');
+				rowdata.append(to_string(zone));
+				rowdata.append('</a>');
+				rowdata.append(hint);
+				rowdata.append('</td>');
 				rowdata.append('<tr>');
 				rows = rows + 1;
 				addeditems[value] = 1;
@@ -491,12 +505,8 @@ string helperWormwood() {
 }
 
 string helperSemiRare() {
-
 	//Bail if the user doesn't want to see the helper
-	string pref = vars["chit.helpers.semirare"];
-	if (pref != "true") {
-		return "";
-	}
+	if(vars["chit.helpers.semirare"] != "true") return "";
 
 	buffer result;
 
@@ -537,8 +547,20 @@ string helperSemiRare() {
 		if (loc != semirareLocation) {
 			if (my_basestat(my_primestat()) >= to_int(reward[2])) {
 				rowdata.append('<tr class="section">');
-				rowdata.append('<td class="icon" title="' + reward[1] + '"><img src="images/itemimages/' + reward[0] + '"></td>');
-				rowdata.append('<td class="location" title="' + reward[1] + '"><a class="visit" target="mainpane" href="' + to_url(loc) + '">' + to_string(loc) + '</a>' + reward[1] + '</td>');
+				rowdata.append('<td class="icon" title="');
+				rowdata.append(reward[1]);
+				rowdata.append('"><img src="images/itemimages/');
+				rowdata.append(reward[0]);
+				rowdata.append('"></td>');
+				rowdata.append('<td class="location" title="');
+				rowdata.append(reward[1]);
+				rowdata.append('"><a class="visit" target="mainpane" href="');
+				rowdata.append(to_url(loc));
+				rowdata.append('">');
+				rowdata.append(to_string(loc));
+				rowdata.append('</a>');
+				rowdata.append(reward[1]);
+				rowdata.append('</td>');
 				rowdata.append('</tr>');
 				rows = rows + 1;
 			}
@@ -546,20 +568,52 @@ string helperSemiRare() {
 	}
 	
 	//wrap everything up in a pretty table
-	if (rows > 0) {
+	if(rows > 0) {
 		result.append('<table id="chit_semirares" class="chit_brick nospace">');
 		result.append('<tr class="helper"><th colspan="2"><img src="');
 		result.append(imagePath);
 		result.append('helpers.png">Semi-Rares</th></tr>');
-		result.append('<tr>');
-		result.append('<td class="info" colspan="2">' + message + '</td>');
-		result.append('</tr>');
+		result.append('<tr><td class="info" colspan="2">');
+		result.append(message);
+		result.append('</td></tr>');
 		result.append(rowdata);
 		result.append('</table>');		
 		chitTools["helpers"] = "You have some expired counters|helpers.png";
 	}
 	
 	return result;
+}
+
+string helperSpookyraven() {
+	//Bail if the user doesn't want to see the helper
+	if(vars["chit.helpers.spookyraven"] != "true") return "";
+	
+	void addRoom(buffer info, string child) {
+		string room = get_property("nextSpookyraven"+child+"Room");
+		if(room != "none") {
+			info.append('<tr class="section">');
+			info.append('<td class="location"><a class="visit" target="mainpane" href="');
+			info.append(to_url(to_location(room)));
+			info.append('">');
+			info.append(room);
+			info.append('</a><b>');
+			info.append(child);
+			info.append('\'s</b> Next Room</td>');
+			info.append('</tr>');
+		}
+	}
+
+	buffer result;
+	result.append('<table id="chit_spookyraven" class="chit_brick nospace">');
+	result.append('<tr class="helper"><th colspan="2"><img src="');
+	result.append(imagePath);
+	result.append('helpers.png">Spookyraven Lights Out</th></tr>');
+	result.addRoom("Elizabeth");
+	result.addRoom("Stephen");
+	result.append('</table>');		
+	
+	chitTools["helpers"] = "You have some expired counters|helpers.png";
+	return result.to_string();
 }
 
 // Functions for pickers
@@ -992,16 +1046,15 @@ void bakeEffects() {
 		}
 		total += 1;
 		
-		if (currentbuff.effectTurns == 0) {
-			if (currentbuff.effectName == "Fortune Cookie")  {
+		if(currentbuff.effectTurns == 0) {
+			if(currentbuff.effectName == "Fortune Cookie")
 				helpers.append(helperSemiRare());
-			}
-			if (currentbuff.effectName == "Wormwood")  {
+			else if(currentbuff.effectName == "Wormwood")
 				helpers.append(helperWormwood());
-			}
-			if (currentbuff.effectName == "Dance Card")  {
+			else if(currentbuff.effectName == "Dance Card")
 				helpers.append(helperDanceCard());
-			}
+			else if(currentbuff.effectName == "Spookyraven Lights Out")
+				helpers.append(helperSpookyraven());
 		}
 	}
 
@@ -5087,6 +5140,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.wormwood", "stats,spleen");
 	setvar("chit.helpers.dancecard", true);
 	setvar("chit.helpers.semirare", true);
+	setvar("chit.helpers.spookyraven", true);
 	setvar("chit.roof.layout","character,stats");
 	setvar("chit.walls.layout","helpers,thrall,effects");
 	setvar("chit.floor.layout","update,familiar");
