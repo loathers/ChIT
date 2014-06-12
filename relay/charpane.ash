@@ -266,7 +266,9 @@ string helperDanceCard() {
 
 	buffer result;
 	result.append('<table id="chit_matilda" class="chit_brick nospace">');
-	result.append('<tr><th colspan="2">Dance Card</th></tr>');
+	result.append('<tr><th colspan="2"><img src="');
+	result.append(imagePath);
+	result.append('helpers.png">Dance Card</th></tr>');
 	result.append('<tr>');
 	result.append('<td class="icon"><img src="images/itemimages/guildapp.gif"></td>');
 	result.append('<td class="location">');
@@ -492,7 +494,9 @@ string helperWormwood() {
 	//wrap everything up in a pretty table
 	if (rows > 0) {
 		result.append('<table id="chit_wormwood" class="chit_brick nospace">');
-		result.append('<tr class="helper"><th colspan="2">Wormwood</th></tr>');
+		result.append('<tr class="helper"><th colspan="2"><img src="');
+		result.append(imagePath);
+		result.append('helpers.png">Wormwood</th></tr>');
 		result.append(rowdata);
 		result.append('</table>');
 
@@ -607,7 +611,7 @@ string helperSpookyraven() {
 	result.append('<table id="chit_spookyraven" class="chit_brick nospace">');
 	result.append('<tr class="helper"><th colspan="2"><img src="');
 	result.append(imagePath);
-	result.append('helpers.png">Spookyraven Lights Out</th></tr>');
+	result.append('helpers.png"><a target="mainpane" href="place.php?whichplace=manor1">Spookyraven Lights Out</a></th></tr>');
 	result.addRoom("Elizabeth");
 	result.addRoom("Stephen");
 	result.append('</table>');		
@@ -3447,13 +3451,16 @@ void pickOutfit() {
 		result.append(desc);
 		result.append('</a></td></tr>');
 	}
-	void addGear(buffer result, item e) {
+	void addGear(buffer result, item e, string useName) {
 		if(to_slot(e) == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
 			result.append('<tr class="pickitem"><td class="info" style="color:#949EA4;font-weight:bold;">');
 			result.append(e);
 			result.append('</td></tr>');
 		} else if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
-			result.addGear("equip " + (e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot()) + " " + e, e);
+			result.addGear("equip " + (e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot()) + " " + e, useName);
+	}
+	void addGear(buffer result, item e) {
+		addGear(result, e, to_string(e));
 	}
 	void addGear(buffer result, boolean [item] list) {
 		foreach e in list
@@ -3497,10 +3504,12 @@ void pickOutfit() {
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
 	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
 		special.addGear("equip antique machete", "antique machete");
-	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9] contains get_property("questL11Pyramid")) {
+	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10] contains get_property("questL11Pyramid")) {
 		special.addGear($item[UV-resistant compass]);
 		special.addGear($item[ornate dowsing rod]);
 	}
+	if($strings[started,step1,step2,step3] contains get_property("questL11Manor"))
+		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
 	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
