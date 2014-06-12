@@ -3982,7 +3982,8 @@ void bakeTracker() {
 			result.append(bhit);
 		}
 	}
-/*	if (get_property("currentBountyItem")!="0") {
+	/*
+	if (get_property("currentBountyItem")!="0") {
 		item bhit = to_item(get_property("currentBountyItem"));
 		result.append("<tr><td>");
 		result.append('Get your <a target="mainpane" href="bhh.php">Bounty</a> from the ');
@@ -3990,13 +3991,16 @@ void bakeTracker() {
 		result.append(to_string(to_item(get_property("currentBountyItem")))+" ("+to_string(item_amount(bhit))+"/"+bhit.bounty_count+")");
 		
 		result.append("</td></tr>");
-	} */
+	}
+	*/
 	// L1: Open Manor
+	/*
 	if(get_property("lastManorUnlock").to_int() != my_ascensions()) {
 		result.append("<tr><td>");
 		result.append('Open Spookyraven at <a target="mainpane" href="town_right.php">Pantry</a>');
 		result.append("</td></tr>");
 	}
+	*/
 	//L2: get mosquito larva, questL02Larva
 	if(started("questL02Larva")) { 
 		result.append("<tr><td>");
