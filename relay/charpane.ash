@@ -836,6 +836,8 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Smithsness","Smith");
 	evm = replace_string(evm,"Hobo Power","Hobo");
 	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
+	evm = replace_string(evm,"Adventures","Adv");
+	evm = replace_string(evm,"PvP Fights","Fites");
 	//decorate elemental tags with pretty colors
 	evm = replace_string(evm,"Hot","<span class=modhot>Hot</span>");
 	evm = replace_string(evm,"Cold","<span class=modcold>Cold</span>");
@@ -1131,8 +1133,7 @@ void bakeEffects() {
 		}
 		total += 1;
 	}
-	if(my_path() != "Slow and Steady") // Will have a more elegant fix for this later
-		intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
+	intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
 	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[Blood Sugar Sauce Magic], "Blood Sugar");
 
 	if (length(intrinsics) > 0 ) {
@@ -3493,7 +3494,8 @@ void pickOutfit() {
 	if(get_property("questL10Garbage") != "finished")
 		switch(loc) {
 		case $location[The Castle in the Clouds in the Sky (Basement)]:
-			special.addGear($items[titanium assault umbrella, amulet of extreme plot significance]);
+			special.addGear($item[titanium assault umbrella]);
+			special.addGear($item[amulet of extreme plot significance], "amulet of plot significance");
 			break;
 		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
 		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
@@ -3503,12 +3505,11 @@ void pickOutfit() {
 	if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
 	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
-		special.addGear("equip antique machete", "antique machete");
-	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10] contains get_property("questL11Pyramid")) {
-		special.addGear($item[UV-resistant compass]);
-		special.addGear($item[ornate dowsing rod]);
-	}
-	if($strings[started,step1,step2,step3] contains get_property("questL11Manor"))
+		special.addGear($item[antique machete]);
+		#special.addGear("equip antique machete", "antique machete");
+	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10] contains get_property("questL11Pyramid"))
+		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
+	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
 	
 	if(length(special) > 0) {
@@ -4742,7 +4743,7 @@ boolean parsePage(buffer original) {
 		// Header: Includes everything up to and including the body tag
 		chitSource["header"] = parse.group(1);
 		//Rollover: Edited because I want the pop-up to fit the text
-		chitSource["rollover"] = parse.group(2).replace_string('doc("maintenance")', 'poop("doc.php?topic=maintenance", "documentation", 558, 518, "scrollbars=yes,resizable=no")');
+		chitSource["rollover"] = parse.group(2).replace_string('doc("maintenance")', 'poop("doc.php?topic=maintenance", "documentation", 560, 518, "scrollbars=yes,resizable=no")');
 		#matcher test=create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)",chitSource["header"]);if(test.find())chitSource["header"]=chitSource["header"].replace_string(test.group(1),to_string(to_int(test.group(2))+30));
 		//Character: Name/Class/Level etc
 		chitSource["character"] = parse.group(3);
