@@ -3504,10 +3504,10 @@ void pickOutfit() {
 		}
 	if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
-	if(get_property("questL11Worship") == "step3" && item_amount($item[antique machete]) > 0)
+	if($strings[step3, step4] contains get_property("questL11Worship") && item_amount($item[antique machete]) > 0)
 		special.addGear($item[antique machete]);
 		#special.addGear("equip antique machete", "antique machete");
-	if($strings[started,step1,step2,step3,step4,step5,step6,step7,step8,step9,step10] contains get_property("questL11Pyramid"))
+	if(get_property("questL11Desert") == "started")
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
