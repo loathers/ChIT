@@ -92,6 +92,29 @@ string sideCommand(string cmd) {
 	return c;
 }
 
+void bakeUpdate(string thisver, string newver) {
+	buffer result;
+	result.append('<table id="chit_update" class="chit_brick nospace">');
+	result.append('<thead><tr><th colspan="2">Character Info Toolbox</th></tr>');
+	result.append('</thead><tbody><tr><td class="info">');
+	result.append('<p>(Version ');
+	result.append(thisver);
+	result.append(')</p>');
+	result.append('<p>Version ');
+	result.append(newver);
+	result.append(' is now available');
+	result.append('<br>Click <a href="');
+	if(svn_exists("mafiachit")) {
+		result.append(sideCommand('svn update mafiachit'));
+		result.append('" title="SVN Update">here</a> to upgrade from SVN</p>');
+	} else {
+		result.append(sideCommand('svn checkout https://svn.code.sf.net/p/mafiachit/code/'));
+		result.append('" title="SVN Installation">here</a> to install current version from SVN</p>');
+	}
+	result.append('</td></tr></tbody></table>');
+	chitBricks["update"] = result.to_string();		
+}
+
 // checks script version once daily
 // adapted from zlib's check_version() to only print update messages once per day, and only if version checking is enabled by the user
 void checkVersion(string soft, string thisver, int thread) {
@@ -146,18 +169,8 @@ void checkVersion(string soft, string thisver, int thread) {
 	}
 	
 	//Build update brick if required
-	if (!sameornewer(thisver,zv[soft].ver)) {
-		result.append('<table id="chit_update" class="chit_brick nospace">');
-		result.append('<thead><tr><th colspan="2">Character Info Toolbox</th></tr>');
-		result.append('</thead><tbody><tr><td class="info">');
-		result.append('<p>(Version ' + thisver + ')</p>');
-		result.append('<p>Version ' + zv[soft].ver + ' is now available');
-		result.append('<br>Click <a href="' + sideCommand('svn update') + '" title="SVN Update">here</a> to upgrade from SVN</p>');
-		result.append('</td></tr></tbody></table>');
-		chitBricks["update"] = result.to_string();		
-	}
-
-	return;
+	if(!sameornewer(thisver,zv[soft].ver))
+		bakeUpdate(thisver, zv[soft].ver);
 }
 
 /*****************************************************
@@ -1361,7 +1374,6 @@ void bakeTrail() {
 	result.append('<tr><th><a class="visit" target="mainpane" href="' + url + '"><img src="');
 	result.append(imagePath);
 	result.append('trail.png">Last Adventure</a></th></tr>');
-	
 	
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
@@ -5181,9 +5193,7 @@ buffer modifyPage(buffer source) {
 	if(svn_exists("mafiachit")) {
 		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true") {
 			if(!svn_at_head("mafiachit")) {
-				print("Character Info Toolbox has become outdated. Automatically updating from SVN...", "red");
-				cli_execute("svn update mafiachit");
-				print("On ChIT's next invocation it will be up to date.", "green");
+				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
 			}
 			set_property("_chitUpdated", "true");
 		}
