@@ -5194,6 +5194,7 @@ buffer modifyPage(buffer source) {
 		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true") {
 			if(!svn_at_head("mafiachit")) {
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
+				bakeUpdate(svn_info("mafiachit").revision, (svn_info("mafiachit").revision + 1));
 			}
 			set_property("_chitUpdated", "true");
 		}
