@@ -5191,12 +5191,11 @@ buffer modifyPage(buffer source) {
 	
 	//Check for updates (once a day)
 	if(svn_exists("mafiachit")) {
-		if(get_property("_svnUpdated") == "false" && get_property("_chitUpdated") != "true") {
-			if(!svn_at_head("mafiachit")) {
+		if(get_property("_svnUpdated") == "false" && !svn_at_head("mafiachit")) {
+			if(get_property("_chitChecked") != "true")
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
-				bakeUpdate(svn_info("mafiachit").revision, (svn_info("mafiachit").revision + 1));
-			}
-			set_property("_chitUpdated", "true");
+			bakeUpdate(svn_info("mafiachit").revision, (svn_info("mafiachit").revision + 1));
+			set_property("_chitChecked", "true");
 		}
 	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
 	
