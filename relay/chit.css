@@ -490,7 +490,7 @@ div.progressbar {
 }
 
 .efmods {
-	color:#686868; /* slightly darker than modspooky */
+	color:#777777; /* slightly darker than modspooky */
 }
 #chit_effects .efmods {
 	font-size:10px;
@@ -505,7 +505,7 @@ div.progressbar {
 	color:purple;
 }
 .efmods .modspooky {
-	color:#989898; /* slightly lighter than efmods */
+	color:#999999; /* slightly lighter than efmods */
 }
 .efmods .modstench {
 	color:green;
