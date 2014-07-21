@@ -3470,19 +3470,19 @@ void pickOutfit() {
 	}
 	void addGear(buffer result, item e, string useName) {
 		switch(to_slot(e)) {
-		case $slot[off-hand]: // Cannot equip an off-hand item if you are using a 2 handed weapon
-			if(weapon_hands(equipped_item($slot[weapon])) < 2)
-				break;
-			result.append('<tr class="pickitem"><td class="info" style="color:#999999;font-weight:bold;">');
-			result.append(e);
-			result.append('</td></tr>');
-			return;
-		case $slot[weapon]: // have_equipped() won't work because I might have the item in an off-hand slot ALSO.
-			if(equipped_item($slot[weapon]) == e)
+		case $slot[acc1]: case $slot[acc2]: case $slot[acc3]:
+			if(have_equipped(e))
 				return;
 			break;
+		case $slot[off-hand]: // Cannot equip an off-hand item if you are using a 2 handed weapon
+			if(weapon_hands(equipped_item($slot[weapon])) > 1) {
+				result.append('<tr class="pickitem"><td class="info" style="color:#999999;font-weight:bold;">');
+				result.append(e);
+				result.append('</td></tr>');
+				return;
+			}
 		default:
-			if(have_equipped(e))
+			if(equipped_item(to_slot(e)) == e)
 				return;
 		}
 		if(can_equip(e) && available_amount(e) > 0)
@@ -3816,7 +3816,7 @@ void bakeQuests() {
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "statusGalley", 9);
 	}
 	
-	// Interpret readout for Oil Peak. u is B/Hg.
+	// Interpret readout for Oil Peak. u is µB/Hg.
 	string to_slick(float u) {
 		float ml = numeric_modifier("Monster Level");
 		string oil = "cartel";
