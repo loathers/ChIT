@@ -92,15 +92,17 @@ string sideCommand(string cmd) {
 	return c;
 }
 
-void bakeUpdate(string thisver, string newver) {
+void bakeUpdate(string thisver, string prefix, string newver) {
 	buffer result;
 	result.append('<table id="chit_update" class="chit_brick nospace">');
 	result.append('<thead><tr><th colspan="2">Character Info Toolbox</th></tr>');
 	result.append('</thead><tbody><tr><td class="info">');
-	result.append('<p>(Version ');
+	result.append('<p>(');
+	result.append(prefix);
 	result.append(thisver);
 	result.append(')</p>');
-	result.append('<p>Version ');
+	result.append('<p>');
+	result.append(prefix);
 	result.append(newver);
 	result.append(' is now available');
 	result.append('<br>Click <a href="');
@@ -170,7 +172,7 @@ void checkVersion(string soft, string thisver, int thread) {
 	
 	//Build update brick if required
 	if(!sameornewer(thisver,zv[soft].ver))
-		bakeUpdate(thisver, zv[soft].ver);
+		bakeUpdate(thisver, "Version ", zv[soft].ver);
 }
 
 /*****************************************************
@@ -549,6 +551,8 @@ string helperSemiRare() {
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
 		}
 	}
+	if(get_property("grimstoneMaskPath") == "gnome")
+		rewards[$location[Ye Olde Medievale Villagee]] = "leather.gif|3 each: Straw, Leather and Clay|0";
 	
 	int semirareCounter = to_int(get_property("semirareCounter"));
 	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
@@ -3445,7 +3449,7 @@ void pickOutfit() {
 	foreach i,o in get_outfits()
 		if(i != 0) {
 			if(is_wearing_outfit(o) && o != "Birthday Suit")
-				picker.append('<tr class="pickitem current"><td class="info">' + o + '</td>');
+				picker.append('<tr class="pickitem current"><td class="info" style="color:#999999">' + o + '</td>');
 			else
 				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + localize(o) + '</a></td>');
 		}
@@ -3465,11 +3469,23 @@ void pickOutfit() {
 		result.append('</a></td></tr>');
 	}
 	void addGear(buffer result, item e, string useName) {
-		if(to_slot(e) == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
-			result.append('<tr class="pickitem"><td class="info" style="color:#949EA4;font-weight:bold;">');
+		switch(to_slot(e)) {
+		case $slot[off-hand]: // Cannot equip an off-hand item if you are using a 2 handed weapon
+			if(weapon_hands(equipped_item($slot[weapon])) < 2)
+				break;
+			result.append('<tr class="pickitem"><td class="info" style="color:#999999;font-weight:bold;">');
 			result.append(e);
 			result.append('</td></tr>');
-		} else if(!have_equipped(e) && can_equip(e) && available_amount(e) > 0)
+			return;
+		case $slot[weapon]: // have_equipped() won't work because I might have the item in an off-hand slot ALSO.
+			if(equipped_item($slot[weapon]) == e)
+				return;
+			break;
+		default:
+			if(have_equipped(e))
+				return;
+		}
+		if(can_equip(e) && available_amount(e) > 0)
 			result.addGear("equip " + (e.to_slot() == $slot[acc1]? $slot[acc3]: e.to_slot()) + " " + e, useName);
 	}
 	void addGear(buffer result, item e) {
@@ -3491,10 +3507,6 @@ void pickOutfit() {
 			special.addGear("equip "+get_property("_hatBeforeKolhs")+"; set _hatBeforeKolhs = ", "Restore "+get_property("_hatBeforeKolhs"));
 	}
 	
-	// A Light that Never Goes Out & Half a Purse: Need to be swapped often
-	if(have_effect($effect[Merry Smithsness]) > 0)
-		special.addGear($items[A Light that Never Goes Out, Half a Purse]);
-
 	if(get_property("dailyDungeonDone") == "false")
 		special.addGear($item[ring of Detect Boring Doors]);
 		
@@ -3529,6 +3541,42 @@ void pickOutfit() {
 		picker.append(special);
 	}
 	
+	
+	// Special Smithsness section. Sometimes it is helpful to switch them around, like A Light that Never Goes Out or Half a Purse. Or sometimes put mainstat in offhand.
+	if(have_effect($effect[Merry Smithsness]) > 0) {
+		special.set_length(0);
+		
+		void addOffhand(buffer result, item e, string useName) {
+			if(equipped_item($slot[off-hand]) != e && item_amount(e) > 0 && e != $item[none])
+				result.addGear("equip off-hand " + e, useName);
+		}
+		
+		item classSmiths() {
+			switch(my_class()) {
+			case $class[Seal Clubber]: return $item[Meat Tenderizer is Murder];
+			case $class[Turtle Tamer]: return $item[Ouija Board\, Ouija Board];
+			case $class[Pastamancer]: return $item[Hand that Rocks the Ladle];
+			case $class[Sauceror]: return $item[Saucepanic];
+			case $class[Disco Bandit]: return $item[Frankly Mr. Shank];
+			case $class[Accordion Thief]: return $item[Shakespeare's Sister's Accordion];
+			}
+			return $item[none];
+		} item classSmiths = classSmiths();
+		
+		special.addGear($items[A Light that Never Goes Out, Half a Purse, Work is a Four Letter Sword, Sheila Take a Crossbow, Hairpiece On Fire, Vicar's Tutu]);
+		special.addGear($item[Staff of the Headmaster's Victuals], "Staff of the Headmaster");
+		special.addGear(classSmiths);
+		
+		// Put Smithsness weapon in off-hand?
+		if(my_class() != $class[Turtle Tamer] && have_skill($skill[Double-Fisted Skull Smashing]) && equipped_item($slot[off-hand]) != classSmiths && item_amount(classSmiths) > 0)
+			special.addGear("equip off-hand " + classSmiths, "Offhand: Class Weapon");
+		
+		if(length(special) > 0) {
+			picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Swap Smithsness Items</td></tr>');
+			picker.append(special);
+		}
+	}
+
 	
 	picker.addLoader("Getting Dressed");
 	picker.append('</table>');
@@ -3768,7 +3816,7 @@ void bakeQuests() {
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "statusGalley", 9);
 	}
 	
-	// Interpret readout for Oil Peak. u is µB/Hg.
+	// Interpret readout for Oil Peak. u is B/Hg.
 	string to_slick(float u) {
 		float ml = numeric_modifier("Monster Level");
 		string oil = "cartel";
@@ -5194,7 +5242,7 @@ buffer modifyPage(buffer source) {
 		if(get_property("_svnUpdated") == "false" && !svn_at_head("mafiachit")) {
 			if(get_property("_chitChecked") != "true")
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
-			bakeUpdate(svn_info("mafiachit").revision, (svn_info("mafiachit").revision + 1));
+			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
 			set_property("_chitChecked", "true");
 		}
 	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
