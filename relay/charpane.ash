@@ -540,7 +540,7 @@ string helperSemiRare() {
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
-		if(available_amount($item[stone wool]) < 1)
+		if(available_amount($item[stone wool]) < 1 && get_property("questL11Worship") != "finished")
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
@@ -2859,6 +2859,30 @@ void addSauce(buffer result) {
 	result.append('</tr>');
 }
 
+void addHooch(buffer result) {
+	matcher hooch = create_matcher("Hooch:</td><td align=left><b>(\\d+) / (\\d+)</b>", chitSource["stats"]);
+	if(hooch.find()) {
+	int my_hooch = hooch.group(1).to_int();
+	int max_hooch = hooch.group(2).to_int();
+	result.append('<tr>');
+	result.append('<td class="label">Hooch</td><td class="info">');
+	result.append(my_hooch+" / "+max_hooch);
+	result.append('</td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		result.append('<td class="progress">');
+		result.append('<div class="progressbox" title="');
+		result.append(my_hooch);
+		result.append(' / ');
+		result.append(max_hooch);
+		result.append('"><div class="progressbar" style="width:');
+		result.append(to_string(100.0 * my_hooch / max_hooch));
+		result.append('%"></div></div></td>');
+		result.append('</td>');
+	}
+	result.append('</tr>');
+	}
+}
+
 void addAud(buffer result) {
 	matcher parseAud = create_matcher("Aud:</td><td align=left>(.+?)</td>", chitSource["stats"]);
 	if(parseAud.find()) {
@@ -3328,6 +3352,8 @@ void bakeStats() {
 			result.addSauce();
 		else if(my_path() == "Avatar of Sneaky Pete" && section.contains_text("moxie"))
 			result.addAud();
+		if(numeric_modifier("Maximum Hooch") > 0 && section.contains_text(my_primestat().to_string().to_lower_case()))
+			result.addHooch();
 		result.append("</tbody>");
 	}
 
@@ -3416,7 +3442,7 @@ void pickOutfit() {
 	if(loc == $location[none]) // Possibly beccause a fax was used
 		loc = lastLoc;
 	string localize(string o) {
-		string boldit(string o) { return '<div style ="font-weight:700;color:darkred;">'+o+'</div>'; }
+		string boldit(string o) { return '<div style="font-weight:700;color:darkred;">'+o+'</div>'; }
 		switch(o) {
 		case "Swashbuckling Getup":
 			if($locations[The Obligatory Pirate's Cove, Barrrney's Barrr, The F'c'le] contains loc || last_monster() == $monster[booty crab])
@@ -3533,6 +3559,8 @@ void pickOutfit() {
 		#special.addGear("equip antique machete", "antique machete");
 	if(get_property("questL11Desert") == "started")
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
+	if(get_property("questL11Manor") == "step2")
+		special.addGear($item[unstable fulminate]);
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
 	
