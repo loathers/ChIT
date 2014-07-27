@@ -3325,6 +3325,15 @@ void bakeStats() {
 		}
 	}
 	
+	boolean contains_stat(string section) {
+		switch(my_primestat()) {
+		case $stat[muscle]: return section.contains_text("muscle");
+		case $stat[mysticality]: return section.contains_text("myst");
+		case $stat[moxie]: return section.contains_text("moxie");
+		}
+		return section.contains_text("mainstat");
+	}
+	
 	void addSection(string section) {
 		string [int] rows = split_string(section, ",");
 		result.append("<tbody>");
@@ -3352,7 +3361,7 @@ void bakeStats() {
 			result.addSauce();
 		else if(my_path() == "Avatar of Sneaky Pete" && section.contains_text("moxie"))
 			result.addAud();
-		if(numeric_modifier("Maximum Hooch") > 0 && section.contains_text(my_primestat().to_string().to_lower_case()))
+		if(numeric_modifier("Maximum Hooch") > 0 && section.contains_stat())
 			result.addHooch();
 		result.append("</tbody>");
 	}
