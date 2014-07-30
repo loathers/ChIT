@@ -201,12 +201,6 @@ string formatModifier(float f) {
 	return formatModifier(f, 2);
 }
 
-string tostring(stat s) {
-	if(s == $stat[mysticality])
-		return "Myst";
-	return s.to_string();
-}
-
 string formatStats(stat s) {
 	int buffed = my_buffedstat(s);
 	int unbuffed = my_basestat(s);
@@ -774,7 +768,8 @@ string parseMods(string ef) {
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
 		+"|Maximum HP( Percent|):([^,]+), Maximum MP\\6:([^,]+)"
-		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10", evm);
+		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
+		+'|Avatar: "([^"]+)"', evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
 		if(parse.group(1) != "") {
@@ -801,6 +796,8 @@ string parseMods(string ef) {
 			enew.append("All Dmg: ");
 			enew.append(parse.group(10));
 			if(parse.group(9) == " Percent") enew.append("%");
+		} else if(parse.group(11) != "") {
+			enew.append(parse.group(11));
 		}
 	}
 	parse.append_tail(enew);
@@ -2745,7 +2742,9 @@ void bakeModifiers() {
 
 void addStat(buffer result, stat s) {
 	result.append('<tr>');
-	result.append('<td class="label">'+tostring(s)+'</td>');
+	result.append('<td class="label">');
+	result.append(s == $stat[mysticality]? "Myst": to_string(s));
+	result.append('</td>');
 	result.append('<td class="info">' + formatStats(s) + '</td>');
 	if(to_boolean(vars["chit.stats.showbars"]))
 		result.append('<td class="progress">' + progressSubStats(s) + '</td>');
@@ -2862,24 +2861,26 @@ void addSauce(buffer result) {
 void addHooch(buffer result) {
 	matcher hooch = create_matcher("Hooch:</td><td align=left><b>(\\d+) / (\\d+)</b>", chitSource["stats"]);
 	if(hooch.find()) {
-	int my_hooch = hooch.group(1).to_int();
-	int max_hooch = hooch.group(2).to_int();
-	result.append('<tr>');
-	result.append('<td class="label">Hooch</td><td class="info">');
-	result.append(my_hooch+" / "+max_hooch);
-	result.append('</td>');
-	if(to_boolean(vars["chit.stats.showbars"])) {
-		result.append('<td class="progress">');
-		result.append('<div class="progressbox" title="');
+		int my_hooch = hooch.group(1).to_int();
+		int max_hooch = hooch.group(2).to_int();
+		result.append('<tr>');
+		result.append('<td class="label">Hooch</td><td class="info">');
 		result.append(my_hooch);
 		result.append(' / ');
 		result.append(max_hooch);
-		result.append('"><div class="progressbar" style="width:');
-		result.append(to_string(100.0 * my_hooch / max_hooch));
-		result.append('%"></div></div></td>');
 		result.append('</td>');
-	}
-	result.append('</tr>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress">');
+			result.append('<div class="progressbox" title="');
+			result.append(my_hooch);
+			result.append(' / ');
+			result.append(max_hooch);
+			result.append('"><div class="progressbar" style="width:');
+			result.append(to_string(100.0 * my_hooch / max_hooch));
+			result.append('%"></div></div></td>');
+			result.append('</td>');
+		}
+		result.append('</tr>');
 	}
 }
 
@@ -3326,12 +3327,13 @@ void bakeStats() {
 	}
 	
 	boolean contains_stat(string section) {
+		if(section.contains_text("mainstat")) return true;
 		switch(my_primestat()) {
 		case $stat[muscle]: return section.contains_text("muscle");
 		case $stat[mysticality]: return section.contains_text("myst");
 		case $stat[moxie]: return section.contains_text("moxie");
 		}
-		return section.contains_text("mainstat");
+		return false;
 	}
 	
 	void addSection(string section) {
@@ -3355,14 +3357,20 @@ void bakeStats() {
 				default:
 			}
 		}
-		if(my_fury() > 0 && section.contains_text("muscle"))
-			result.addFury();
-		else if(my_soulsauce() > 0 && section.contains_text("myst"))
-			result.addSauce();
-		else if(my_path() == "Avatar of Sneaky Pete" && section.contains_text("moxie"))
-			result.addAud();
-		if(numeric_modifier("Maximum Hooch") > 0 && section.contains_stat())
-			result.addHooch();
+		
+		// Add special stats to the section that contains mainstat
+		if(section.contains_stat()) {
+			if(my_fury() > 0)
+				result.addFury();
+			else if(my_soulsauce() > 0)
+				result.addSauce();
+			else if(my_path() == "Avatar of Sneaky Pete")
+				result.addAud();
+			
+			if(numeric_modifier("Maximum Hooch") > 0)
+				result.addHooch();
+		}
+		
 		result.append("</tbody>");
 	}
 
