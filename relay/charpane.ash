@@ -534,7 +534,7 @@ string helperSemiRare() {
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
-		if(available_amount($item[stone wool]) < 1 && get_property("questL11Worship") != "finished")
+		if(available_amount($item[stone wool]) < 2 && get_property("questL11Worship") != "finished")
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
@@ -1431,6 +1431,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	generic[202]=$item[tiny costume wardrobe];
 	generic[203]=$item[little bitty bathysphere];
 	generic[204]=$item[das boot];
+	generic[205]=$item[miniature life preserver];
 	
 	//Summonable
 	generic[300]=$item[sugar shield];
@@ -2875,6 +2876,23 @@ void addThunder(buffer result) {
 			result.append(thunder.group(1));
 			result.append(' / 100"><div class="progressbar" style="width:');
 			result.append(thunder.group(1));
+			result.append('%"></div></div></td>');
+			result.append('</td>');
+		}
+		result.append('</tr>');
+	}
+	matcher rain = create_matcher("Rain:</td><td align=left><b><font color=black>(\\d+) drops", chitSource["stats"]);
+	if(rain.find()) {
+		result.append('<tr>');
+		result.append('<td class="label">Rain</td><td class="info">');
+		result.append(rain.group(1));
+		result.append('&nbsp;drops</td>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress">');
+			result.append('<div class="progressbox" title="');
+			result.append(rain.group(1));
+			result.append(' / 100"><div class="progressbar" style="width:');
+			result.append(rain.group(1));
 			result.append('%"></div></div></td>');
 			result.append('</td>');
 		}
