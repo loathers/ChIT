@@ -889,7 +889,10 @@ buff parseBuff(string source) {
 		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
-		columnTurns = parse.group(6).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
+		if(get_property("_psychoJarUsed") == "true" && get_campground() contains $item[jar of psychoses (The Crackpot Mystic)] && $strings[Consumed by Anger, Consumed by Doubt, Consumed by Fear, Consumed by Regret] contains myBuff.effectName)
+			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(7)+'</a>';
+		else
+			columnTurns = parse.group(6).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
 		if(parse.group(7) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
@@ -1405,7 +1408,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	buffer picker;
 
 	item [int] generic;
-	//Mr. Store Familiar Equipment
+	// Powerful Generic Familiar Equipment
 	generic[1]=$item[moveable feast];
 	generic[2]=$item[little box of fireworks];
 	generic[3]=$item[plastic pumpkin bucket];
@@ -1414,19 +1417,20 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	generic[6]=$item[mayflower bouquet];
 	generic[7]=$item[miniature gravy-covered maypole];
 	generic[8]=$item[wax lips];
-	generic[9]=$item[tiny costume wardrobe];
 	generic[10]=$item[snow suit];
+	generic[11]=$item[astral pet sweater];
 
-	//Mr. Store Foldables
+	// Mr. Store Foldables
 	generic[100]=$item[flaming familiar doppelg&auml;nger];	//flaming familiar doppelgänger
 	generic[101]=$item[origami &quot;gentlemen's&quot; magazine];	//origami "gentlemen's" magazine
 	generic[102]=$item[Loathing Legion helicopter];
 	
-	//Special items
+	// "Special" items
 	generic[200]=$item[ittah bittah hookah];	
 	generic[201]=$item[li'l businessman kit];
-	generic[202]=$item[little bitty bathysphere];
-	generic[203]=$item[das boot];
+	generic[202]=$item[tiny costume wardrobe];
+	generic[203]=$item[little bitty bathysphere];
+	generic[204]=$item[das boot];
 	
 	//Summonable
 	generic[300]=$item[sugar shield];
@@ -2858,6 +2862,26 @@ void addSauce(buffer result) {
 	result.append('</tr>');
 }
 
+void addThunder(buffer result) {
+	matcher thunder = create_matcher("Thunder:</td><td align=left><b><font color=black>(\\d+) dBs", chitSource["stats"]);
+	if(thunder.find()) {
+		result.append('<tr>');
+		result.append('<td class="label">Thunder</td><td class="info">');
+		result.append(thunder.group(1));
+		result.append(' dBs</td>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress">');
+			result.append('<div class="progressbox" title="');
+			result.append(thunder.group(1));
+			result.append(' / 100"><div class="progressbar" style="width:');
+			result.append(thunder.group(1));
+			result.append('%"></div></div></td>');
+			result.append('</td>');
+		}
+		result.append('</tr>');
+	}
+}
+
 void addHooch(buffer result) {
 	matcher hooch = create_matcher("Hooch:</td><td align=left><b>(\\d+) / (\\d+)</b>", chitSource["stats"]);
 	if(hooch.find()) {
@@ -3367,6 +3391,9 @@ void bakeStats() {
 			else if(my_path() == "Avatar of Sneaky Pete")
 				result.addAud();
 			
+			if(my_path() == "Heavy Rains" || my_path() == "19")
+				result.addThunder();
+			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
 		}
@@ -3576,7 +3603,7 @@ void pickOutfit() {
 		#special.addGear("equip antique machete", "antique machete");
 	if(get_property("questL11Desert") == "started")
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
-	if(get_property("questL11Manor") == "step2")
+	if(get_property("questL11Manor") == "step1")
 		special.addGear($item[unstable fulminate]);
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
