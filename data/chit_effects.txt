@@ -82,6 +82,8 @@ Bee window begin	style:"background-color:#D7D7FF;font-style:italic", image:"beei
 Bee window end	style:"background-color:#D7D7FF;font-style:italic", image:"beeicon.gif"
 Holiday Monster window begin	style:"background-color:#D7FFD7;font-style:italic", image:"corpsetini.gif"
 Holiday Monster window end	style:"background-color:#D7FFD7;font-style:italic", image:"corpsetini.gif"
+Rain Monster window begin	style:"background-color:#D7D7FF;font-style:italic"
+Rain Monster window end	style:"background-color:#D7D7FF;font-style:italic"
 Romantic Monster window begin	style:"background-color:#FFDBDB;font-style:italic", image:"arrow_heart.gif"
 Romantic Monster window end	style:"background-color:#FFDBDB;font-style:italic", image:"arrow_heart.gif"
 Silent Invasion window begin	style:"background-color:#599CFF;color:white;font-style:italic"
