@@ -2863,40 +2863,59 @@ void addSauce(buffer result) {
 	result.append('</tr>');
 }
 
-void addThunder(buffer result) {
-	matcher thunder = create_matcher("Thunder:</td><td align=left><b><font color=black>(\\d+) dBs", chitSource["stats"]);
-	if(thunder.find()) {
+void addRains(buffer result) {
+	matcher weather = create_matcher("Thunder:</td><td align=left><b><font color=black>(\\d+) dBs", chitSource["stats"]);
+	if(weather.find()) {
 		result.append('<tr>');
 		result.append('<td class="label">Thunder</td><td class="info">');
-		result.append(thunder.group(1));
+		result.append(weather.group(1));
 		result.append(' dBs</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress">');
 			result.append('<div class="progressbox" title="');
-			result.append(thunder.group(1));
+			result.append(weather.group(1));
 			result.append(' / 100"><div class="progressbar" style="width:');
-			result.append(thunder.group(1));
+			result.append(weather.group(1));
 			result.append('%"></div></div></td>');
 			result.append('</td>');
 		}
 		result.append('</tr>');
-	}
-	matcher rain = create_matcher("Rain:</td><td align=left><b><font color=black>(\\d+) drops", chitSource["stats"]);
-	if(rain.find()) {
-		result.append('<tr>');
-		result.append('<td class="label">Rain</td><td class="info">');
-		result.append(rain.group(1));
-		result.append('&nbsp;drops</td>');
-		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
-			result.append(rain.group(1));
-			result.append(' / 100"><div class="progressbar" style="width:');
-			result.append(rain.group(1));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
+		// If there was Thunder, there might be Rain
+		weather = create_matcher("Rain:</td><td align=left><b><font color=black>(\\d+) drops", chitSource["stats"]);
+		if(weather.find()) {
+			result.append('<tr>');
+			result.append('<td class="label">Rain</td><td class="info">');
+			result.append(weather.group(1));
+			result.append('&nbsp;drops</td>');
+			if(to_boolean(vars["chit.stats.showbars"])) {
+				result.append('<td class="progress">');
+				result.append('<div class="progressbox" title="');
+				result.append(weather.group(1));
+				result.append(' / 100"><div class="progressbar" style="width:');
+				result.append(weather.group(1));
+				result.append('%"></div></div></td>');
+				result.append('</td>');
+			}
+			result.append('</tr>');
+			// If there was Rain, there might be Lightning
+			weather = create_matcher("Lightning:</td><td align=left><b><font color=black>(\\d+) bolts", chitSource["stats"]);
+			if(weather.find()) {
+				result.append('<tr>');
+				result.append('<td class="label">Lightning</td><td class="info">');
+				result.append(weather.group(1));
+				result.append('&nbsp;bolts</td>');
+				if(to_boolean(vars["chit.stats.showbars"])) {
+					result.append('<td class="progress">');
+					result.append('<div class="progressbox" title="');
+					result.append(weather.group(1));
+					result.append(' / 100"><div class="progressbar" style="width:');
+					result.append(weather.group(1));
+					result.append('%"></div></div></td>');
+					result.append('</td>');
+				}
+				result.append('</tr>');
+			}
 		}
-		result.append('</tr>');
 	}
 }
 
@@ -3410,7 +3429,7 @@ void bakeStats() {
 				result.addAud();
 			
 			if(my_path() == "Heavy Rains" || my_path() == "19")
-				result.addThunder();
+				result.addRains();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
