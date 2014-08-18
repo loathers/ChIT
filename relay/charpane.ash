@@ -2831,8 +2831,7 @@ void addFury(buffer result) {
 	}
 	matcher fury = create_matcher("Fury:.*?<font color[^>]*>(<span[^>]*>)?((\\d+) gal.)", chitSource["stats"]);
 	if(fury.find()) {
-		result.append('<tr>');
-		result.append('<td class="label">');
+		result.append('<tr><td class="label">');
 		result.spanWrap("Fury", fury.group(1));
 		result.append('</td><td class="fury">');
 		result.spanWrap(fury.group(2), fury.group(1));
@@ -2847,76 +2846,60 @@ void addFury(buffer result) {
 }
 
 void addSauce(buffer result) {
-	result.append('<tr>');
-	result.append('<td class="label">Sauce</td><td class="info">');
+	result.append('<tr><td class="label">Sauce</td><td class="info">');
 	result.append(my_soulsauce());
 	result.append('</td>');
 	if(to_boolean(vars["chit.stats.showbars"])) {
-		result.append('<td class="progress">');
-		result.append('<div class="progressbox" title="');
+		result.append('<td class="progress"><div class="progressbox" title="');
 		result.append(my_soulsauce());
 		result.append(' / 100"><div class="progressbar" style="width:');
 		result.append(my_soulsauce());
-		result.append('%"></div></div></td>');
-		result.append('</td>');
+		result.append('%"></div></div></td></td>');
 	}
 	result.append('</tr>');
 }
 
 void addRains(buffer result) {
+	buffer block;
+	
 	// Detect Thunder
 	matcher weather = create_matcher("Thunder:</td><td align=left><b><font color=black>(\\d+) dBs", chitSource["stats"]);
 	if(weather.find()) {
-		result.append('<tr>');
-		result.append('<td class="label">Thunder</td><td class="info">');
-		result.append(weather.group(1));
-		result.append(' dBs</td>');
-		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
-			result.append(weather.group(1));
-			result.append(' / 100"><div class="progressbar" style="width:');
-			result.append(weather.group(1));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
-		}
-		result.append('</tr>');
+		block.append('<div title="Thunder: ');
+		block.append(weather.group(1));
+		block.append(' dBs"><span>');
+		block.append(weather.group(1));
+		block.append('</span><img src="/images/itemimages/echo.gif"></div>');
 	}
+	
 	// Detect Rain
 	weather = create_matcher("Rain:</td><td align=left><b><font color=black>(\\d+) drops", chitSource["stats"]);
 	if(weather.find()) {
-		result.append('<tr>');
-		result.append('<td class="label">Rain</td><td class="info">');
-		result.append(weather.group(1));
-		result.append('&nbsp;drops</td>');
-		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
-			result.append(weather.group(1));
-			result.append(' / 100"><div class="progressbar" style="width:');
-			result.append(weather.group(1));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
-		}
-		result.append('</tr>');
+		block.append('<div title="Rain: ');
+		block.append(weather.group(1));
+		block.append(' drops"><span>');
+		block.append(weather.group(1));
+		block.append('</span><img src="/images/itemimages/familiar31.gif"></div>');
 	}
+	
 	// Detect Lightning
 	weather = create_matcher("Lightning:</td><td align=left><b><font color=black>(\\d+) bolts", chitSource["stats"]);
 	if(weather.find()) {
-		result.append('<tr>');
-		result.append('<td class="label">Lightning</td><td class="info">');
-		result.append(weather.group(1));
-		result.append('&nbsp;bolts</td>');
-		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
-			result.append(weather.group(1));
-			result.append(' / 100"><div class="progressbar" style="width:');
-			result.append(weather.group(1));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
-		}
-		result.append('</tr>');
+		block.append('<div title="Lightning: ');
+		block.append(weather.group(1));
+		block.append(' bolts"><span>');
+		block.append(weather.group(1));
+		block.append('</span><img src="/images/itemimages/lightningrod.gif"></div>');
+	}
+
+	// Add block to results if any of the stats were found
+	if(length(block) > 0) {
+		result.append('<tr><td class="label">Stormy:</td><td class="info"');
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append(' colspan="2"');
+		result.append('><div class="chit_stormy">');
+		result.append(block);
+		result.append('</div><div style="clear:both"></div></td></tr>');
 	}
 }
 
@@ -2925,22 +2908,19 @@ void addHooch(buffer result) {
 	if(hooch.find()) {
 		int my_hooch = hooch.group(1).to_int();
 		int max_hooch = hooch.group(2).to_int();
-		result.append('<tr>');
-		result.append('<td class="label">Hooch</td><td class="info">');
+		result.append('<tr><td class="label">Hooch</td><td class="info">');
 		result.append(my_hooch);
 		result.append(' / ');
 		result.append(max_hooch);
 		result.append('</td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
+			result.append('<td class="progress"><div class="progressbox" title="');
 			result.append(my_hooch);
 			result.append(' / ');
 			result.append(max_hooch);
 			result.append('"><div class="progressbar" style="width:');
 			result.append(to_string(100.0 * my_hooch / max_hooch));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
+			result.append('%"></div></div></td></td>');
 		}
 		result.append('</tr>');
 	}
@@ -2956,15 +2936,13 @@ void addAud(buffer result) {
 		int audience = abs(my_audience());
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			int max_aud = have_equipped($item[Sneaky Pete's leather jacket]) || have_equipped($item[Sneaky Pete's leather jacket (collar popped)])? 50: 30;
-			result.append('<td class="progress">');
-			result.append('<div class="progressbox" title="');
+			result.append('<td class="progress"><div class="progressbox" title="');
 			result.append(audience);
 			result.append(' / ');
 			result.append(max_aud);
 			result.append('"><div class="progressbar" style="width:');
 			result.append(to_string(audience * 100.0 / max_aud));
-			result.append('%"></div></div></td>');
-			result.append('</td>');
+			result.append('%"></div></div></td></td>');
 		}
 		result.append('</tr>');
 	}
@@ -2972,11 +2950,9 @@ void addAud(buffer result) {
 
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
-	result.append('<tr>');
-	result.append('<td class="label">'+organ+'</td>');
+	result.append('<tr><td class="label">'+organ+'</td>');
 	result.append('<td class="info">' + current + ' / ' + limit + '</td>');
-	if(showBars) result.append('<td class="progress">' + progressCustom(current, limit, message(organ, sev), sev, eff) + '</td>');
-	result.append('</tr>');
+	if(showBars) result.append('<td class="progress">' + progressCustom(current, limit, message(organ, sev), sev, eff) + '</td></tr>');
 }
 
 void addStomach(buffer result, boolean showBars) {
@@ -3641,8 +3617,12 @@ void pickOutfit() {
 		#special.addGear("equip antique machete", "antique machete");
 	if(get_property("questL11Desert") == "started")
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
-	if(get_property("questL11Manor") == "step1")
-		special.addGear($item[unstable fulminate]);
+	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2") {
+		if(available_amount($item[bottle of Chateau de Vinegar]) == 1 && available_amount($item[blasting soda]) == 1)
+			special.addGear("create unstable fulminate; equip unstable fulminate", "Create & Equip unstable fulminate");
+		else
+			special.addGear($item[unstable fulminate]);
+	}
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
 	
