@@ -279,6 +279,23 @@ tr.florist :first-line {
 	padding-left:3px;
 }
 
+.chit_stormy {
+	color:blue;
+	font-weight:bold;
+	background-color:#F8F8F8;
+	padding:0px 0px 0px 4px;
+}
+.chit_stormy div span, .chit_stormy div img {
+	float:left;
+	vertical-align:middle;
+	padding-left:6px;
+}
+.chit_stormy div img {
+	max-width:14px;
+	max-height:14px;
+	padding-left:3px;
+}
+
 /* Stats Panel */
 #chit_stats tbody tr:first-child td {
 	border-top:1px solid #F0F0F0;
