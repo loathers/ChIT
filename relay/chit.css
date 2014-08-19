@@ -288,7 +288,7 @@ tr.florist :first-line {
 .chit_stormy div span, .chit_stormy div img {
 	float:left;
 	vertical-align:middle;
-	padding-left:6px;
+	padding-left:8px;
 }
 .chit_stormy div img {
 	max-width:14px;
