@@ -2859,36 +2859,36 @@ void addSauce(buffer result) {
 	result.append('</tr>');
 }
 
-void addRains(buffer result) {
+void addHeavyRains(buffer result) {
 	buffer block;
 	
 	// Detect Thunder
-	matcher weather = create_matcher("Thunder:</td><td align=left><b><font color=black>(\\d+) dBs", chitSource["stats"]);
+	matcher weather = create_matcher("Thunder:</td><td align=left><b><font color=black>((\\d+) dBs?)", chitSource["stats"]);
 	if(weather.find()) {
 		block.append('<div title="Thunder: ');
 		block.append(weather.group(1));
-		block.append(' dBs"><span>');
-		block.append(weather.group(1));
+		block.append('"><span>');
+		block.append(weather.group(2));
 		block.append('</span><img src="/images/itemimages/echo.gif"></div>');
 	}
 	
 	// Detect Rain
-	weather = create_matcher("Rain:</td><td align=left><b><font color=black>(\\d+) drops", chitSource["stats"]);
+	weather = create_matcher("Rain:</td><td align=left><b><font color=black>((\\d+) drops?)", chitSource["stats"]);
 	if(weather.find()) {
 		block.append('<div title="Rain: ');
 		block.append(weather.group(1));
-		block.append(' drops"><span>');
-		block.append(weather.group(1));
+		block.append('"><span>');
+		block.append(weather.group(2));
 		block.append('</span><img src="/images/itemimages/familiar31.gif"></div>');
 	}
 	
 	// Detect Lightning
-	weather = create_matcher("Lightning:</td><td align=left><b><font color=black>(\\d+) bolts", chitSource["stats"]);
+	weather = create_matcher("Lightning:</td><td align=left><b><font color=black>((\\d+) bolts?)", chitSource["stats"]);
 	if(weather.find()) {
 		block.append('<div title="Lightning: ');
 		block.append(weather.group(1));
-		block.append(' bolts"><span>');
-		block.append(weather.group(1));
+		block.append('"><span>');
+		block.append(weather.group(2));
 		block.append('</span><img src="/images/itemimages/lightningrod.gif"></div>');
 	}
 
@@ -3406,7 +3406,7 @@ void bakeStats() {
 				result.addAud();
 			
 			if(my_path() == "Heavy Rains" || my_path() == "19")
-				result.addRains();
+				result.addHeavyRains();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
