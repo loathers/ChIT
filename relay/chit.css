@@ -283,12 +283,12 @@ tr.florist :first-line {
 	color:blue;
 	font-weight:bold;
 	background-color:#F8F8F8;
-	padding:0px 0px 0px 4px;
+	padding:0px 0px 0px 2px;
 }
 .chit_stormy div span, .chit_stormy div img {
 	float:left;
 	vertical-align:middle;
-	padding-left:8px;
+	padding-left:7px;
 }
 .chit_stormy div img {
 	max-width:14px;
