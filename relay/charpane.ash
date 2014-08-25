@@ -2603,7 +2603,7 @@ void bakeToolbar() {
 }
 
 float init_MLpenalty() {
-	float ML = numeric_modifier("Monster Level");
+	float ML = monster_level_adjustment();
 	     if(ML <  21) return 0.0;
 	else if(ML <  41) return   (ML - 20);
 	else if(ML <  61) return 2*(ML - 40) + 20;
@@ -3908,7 +3908,7 @@ void bakeQuests() {
 	
 	// Interpret readout for Oil Peak. u is µB/Hg.
 	string to_slick(float u) {
-		float ml = numeric_modifier("Monster Level");
+		float ml = monster_level_adjustment();
 		string oil = "cartel";
 		float val = 63.4;
 		if(ml < 20) {
