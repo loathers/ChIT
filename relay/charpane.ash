@@ -4515,80 +4515,102 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 	
+
+
+
+	//L11: questL11Desert
+	if(started("questL11Desert")) {
+		result.append("<tr><td>");
+		result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
+		int desertExploration = get_property("desertExploration").to_int();
+		if(desertExploration < 10)
+			result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
+		if(desertExploration < 100) {
+			result.append("Exploration: "+desertExploration+"%<br>");
+			int gnasirProgress = get_property("gnasirProgress").to_int();
+			buffer gnasir;
+			if((gnasirProgress & 4) == 0)
+				gnasir.comma(item_report($item[killing jar]));
+			if((gnasirProgress & 2) == 0)
+				gnasir.comma(item_report($item[can of black paint]));
+			if((gnasirProgress & 1) == 0)
+				gnasir.comma(item_report($item[stone rose]));
+			if((gnasirProgress & 8) == 0) {
+				gnasir.comma(item_report($item[worm-riding manual page], 15));
+				gnasir.comma(item_report($item[drum machine]));
+			} else if((gnasirProgress & 16) == 0) {
+				gnasir.comma(item_report($item[drum machine]));
+				gnasir.comma(item_report($item[worm-riding hooks]));
+				gnasir.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
+				#gnasir.append('<br><a target="mainpane" href="inv_use.php?which=3&whichitem=2328&pwd='+my_hash()+'">Ride the Worm !</a>');
+			}
+			result.append(gnasir);
+		}
+		result.append("</td></tr>");
+
+	}
+
 	//L11: questL11Pyramid
+	if(get_property("questL11Desert")=="finished" && get_property("questL11Pyramid")=="unstarted") {
+		result.append("<tr><td>");
+		result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a>:<br>');
+		result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
+		result.append(item_report($item[ancient amulet], "amulet, "));
+		result.append(item_report($item[Eye of Ed], "Eye of Ed"));
+		result.append("<br>");
+		result.append("</td></tr>");
+
+	}
+	
 	if(started("questL11Pyramid")) {
 		string questL11Pyramid = get_property("questL11Pyramid");
 		result.append("<tr><td>");
-		// Step-by-step
 		switch(questL11Pyramid) {
-		case "started": case "step1": case "step2": case "step3": case "step4": case "step5": case "step6": case "step7": case "step8": case "step9": case "step10":
-			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
-			int desertExploration = get_property("desertExploration").to_int();
-			if(desertExploration < 10)
-				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
-			if(desertExploration < 100) {
-				result.append("Exploration: "+desertExploration+"%<br>");
-				int gnasirProgress = get_property("gnasirProgress").to_int();
-				buffer gnasir;
-				if((gnasirProgress & 4) == 0)
-					gnasir.comma(item_report($item[killing jar]));
-				if((gnasirProgress & 2) == 0)
-					gnasir.comma(item_report($item[can of black paint]));
-				if((gnasirProgress & 1) == 0)
-					gnasir.comma(item_report($item[stone rose]));
-				if((gnasirProgress & 8) == 0) {
-					gnasir.comma(item_report($item[worm-riding manual page], 15));
-					gnasir.comma(item_report($item[drum machine]));
-				} else if((gnasirProgress & 16) == 0) {
-					gnasir.comma(item_report($item[drum machine]));
-					gnasir.comma(item_report($item[worm-riding hooks]));
-					gnasir.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
-					#gnasir.append('<br><a target="mainpane" href="inv_use.php?which=3&whichitem=2328&pwd='+my_hash()+'">Ride the Worm !</a>');
-				}
-				result.append(gnasir);
-			}
+		case "started":
+			result.append('Unlock the <a target="mainpane" href="pyramid.php">Middle Chamber</a><br>');
 			break;
-		// Open the Bottom Chamber of the Pyramid
-		case "step11":
-				result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a><br>');
-				result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
-				result.append(item_report($item[ancient amulet], "amulet, "));
-				result.append(item_report($item[Eye of Ed], "Eye of Ed"));
-				result.append("<br>");
-		case "step12":
-			if(get_property("pyramidBombUsed")=="false") {
-				result.append('Find Ed in the <a target="mainpane" href="pyramid.php">Pyramid</a><br>');
-				result.append(item_report($item[tomb ratchet], "tomb ratchets: "+item_amount($item[tomb ratchet])));
-				result.append("<br>");
-				if(item_amount($item[ancient bomb]) == 0) {
-					boolean token = item_amount($item[ancient bronze token]) > 0;
-					if(!token) {
-						if(get_property("pyramidPosition") != "4")
-							result.append("Turn wheel for ");
-						else result.append('<a target="mainpane" href="pyramid.php">Get</a> ');
-						result.append(item_report(token, "ancient token"));
-						result.append("<br>Wait for ");
-					} else {
-						result.append("Have ");
-						result.append(item_report(token, "ancient token"));
-						if(get_property("pyramidPosition") != "3")
-							result.append("<br>Turn wheel for ");
-						else result.append("<br>Get ");
-					}
-					result.append(item_report($item[ancient bomb]));
-				} else {
-					if(get_property("pyramidPosition") == "1")
-						result.append(item_report(false, "Blow up Lower Chamber now!"));
-					else
-						result.append("Turn wheel to blow up chamber");
-				}
-			} else
-				result.append('<a target="mainpane" href="pyramid.php">Pyramid</a>: Kill Ed');
-
+		case "step1": case "step2":
+			result.append('Unlock the <a target="mainpane" href="pyramid.php">Control Room</a><br>');
+			break;
 		}
+		if(get_property("pyramidBombUsed")=="false") {
+			result.append('Find Ed in the <a target="mainpane" href="pyramid.php">Pyramid</a><br>');
+			result.append(item_report($item[tomb ratchet], "tomb ratchets: "+item_amount($item[tomb ratchet]))+"<br>");
+			result.append(item_report($item[crumbling wooden wheel], "wooden wheels: "+item_amount($item[crumbling wooden wheel])));
+			result.append("<br>");
+			if(item_amount($item[ancient bomb]) == 0) {
+				boolean token = item_amount($item[ancient bronze token]) > 0;
+				if(!token) {
+					if(get_property("pyramidPosition") != "4")
+						result.append("Turn wheel for ");
+					else result.append('<a target="mainpane" href="pyramid.php">Get</a> ');
+					result.append(item_report(token, "ancient token"));
+					result.append("<br>Wait for ");
+				} else {
+					result.append("Have ");
+					result.append(item_report(token, "ancient token"));
+					if(get_property("pyramidPosition") != "3")
+						result.append("<br>Turn wheel for ");
+					else result.append("<br>Get ");
+				}
+				result.append(item_report($item[ancient bomb]));
+			} else {
+				if(get_property("pyramidPosition") == "1")
+					result.append(item_report(false, "Blow up Lower Chamber now!"));
+				else
+					result.append("Turn wheel to blow up chamber");
+			}
+		} else {
+			result.append('<a target="mainpane" href="pyramid.php">Pyramid</a>: Kill Ed');
+		}
+
 		result.append("</td></tr>");
 	}
 
+	
+	
+	
+	
 	//L12: War, questL12War
 	if(started("questL12War")) {
 		result.append("<tr><td>");
