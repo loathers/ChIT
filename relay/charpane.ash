@@ -534,7 +534,7 @@ string helperSemiRare() {
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
-		if(available_amount($item[stone wool]) < 2 && get_property("questL11Worship") != "finished")
+		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && get_property("questL11Worship") != "finished")
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
@@ -3906,7 +3906,7 @@ void bakeQuests() {
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "statusGalley", 9);
 	}
 	
-	// Interpret readout for Oil Peak. u is µB/Hg.
+	// Interpret readout for Oil Peak. u is B/Hg.
 	string to_slick(float u) {
 		float ml = monster_level_adjustment();
 		string oil = "cartel";
@@ -4521,31 +4521,31 @@ void bakeTracker() {
 	//L11: questL11Desert
 	if(started("questL11Desert")) {
 		result.append("<tr><td>");
-		result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
-		int desertExploration = get_property("desertExploration").to_int();
-		if(desertExploration < 10)
-			result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
-		if(desertExploration < 100) {
-			result.append("Exploration: "+desertExploration+"%<br>");
-			int gnasirProgress = get_property("gnasirProgress").to_int();
-			buffer gnasir;
-			if((gnasirProgress & 4) == 0)
-				gnasir.comma(item_report($item[killing jar]));
-			if((gnasirProgress & 2) == 0)
-				gnasir.comma(item_report($item[can of black paint]));
-			if((gnasirProgress & 1) == 0)
-				gnasir.comma(item_report($item[stone rose]));
-			if((gnasirProgress & 8) == 0) {
-				gnasir.comma(item_report($item[worm-riding manual page], 15));
-				gnasir.comma(item_report($item[drum machine]));
-			} else if((gnasirProgress & 16) == 0) {
-				gnasir.comma(item_report($item[drum machine]));
-				gnasir.comma(item_report($item[worm-riding hooks]));
-				gnasir.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
-				#gnasir.append('<br><a target="mainpane" href="inv_use.php?which=3&whichitem=2328&pwd='+my_hash()+'">Ride the Worm !</a>');
+			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
+			int desertExploration = get_property("desertExploration").to_int();
+			if(desertExploration < 10)
+				result.append('Find Gnasir at the <a target="mainpane" href="beach.php">Desert</a><br>');
+			if(desertExploration < 100) {
+				result.append("Exploration: "+desertExploration+"%<br>");
+				int gnasirProgress = get_property("gnasirProgress").to_int();
+				buffer gnasir;
+				if((gnasirProgress & 4) == 0)
+					gnasir.comma(item_report($item[killing jar]));
+				if((gnasirProgress & 2) == 0)
+					gnasir.comma(item_report($item[can of black paint]));
+				if((gnasirProgress & 1) == 0)
+					gnasir.comma(item_report($item[stone rose]));
+				if((gnasirProgress & 8) == 0) {
+					gnasir.comma(item_report($item[worm-riding manual page], 15));
+					gnasir.comma(item_report($item[drum machine]));
+				} else if((gnasirProgress & 16) == 0) {
+					gnasir.comma(item_report($item[drum machine]));
+					gnasir.comma(item_report($item[worm-riding hooks]));
+					gnasir.append('<br><a target="mainpane" href="place.php?whichplace=desertbeach&action=db_pyramid1&pwd='+my_hash()+'">Ride the Worm !</a>');
+					#gnasir.append('<br><a target="mainpane" href="inv_use.php?which=3&whichitem=2328&pwd='+my_hash()+'">Ride the Worm !</a>');
+				}
+				result.append(gnasir);
 			}
-			result.append(gnasir);
-		}
 		result.append("</td></tr>");
 
 	}
@@ -4554,10 +4554,10 @@ void bakeTracker() {
 	if(get_property("questL11Desert")=="finished" && get_property("questL11Pyramid")=="unstarted") {
 		result.append("<tr><td>");
 		result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a>:<br>');
-		result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
-		result.append(item_report($item[ancient amulet], "amulet, "));
-		result.append(item_report($item[Eye of Ed], "Eye of Ed"));
-		result.append("<br>");
+				result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
+				result.append(item_report($item[ancient amulet], "amulet, "));
+				result.append(item_report($item[Eye of Ed], "Eye of Ed"));
+				result.append("<br>");
 		result.append("</td></tr>");
 
 	}
@@ -4573,35 +4573,35 @@ void bakeTracker() {
 			result.append('Unlock the <a target="mainpane" href="pyramid.php">Control Room</a><br>');
 			break;
 		}
-		if(get_property("pyramidBombUsed")=="false") {
-			result.append('Find Ed in the <a target="mainpane" href="pyramid.php">Pyramid</a><br>');
+			if(get_property("pyramidBombUsed")=="false") {
+				result.append('Find Ed in the <a target="mainpane" href="pyramid.php">Pyramid</a><br>');
 			result.append(item_report($item[tomb ratchet], "tomb ratchets: "+item_amount($item[tomb ratchet]))+"<br>");
 			result.append(item_report($item[crumbling wooden wheel], "wooden wheels: "+item_amount($item[crumbling wooden wheel])));
-			result.append("<br>");
-			if(item_amount($item[ancient bomb]) == 0) {
-				boolean token = item_amount($item[ancient bronze token]) > 0;
-				if(!token) {
-					if(get_property("pyramidPosition") != "4")
-						result.append("Turn wheel for ");
-					else result.append('<a target="mainpane" href="pyramid.php">Get</a> ');
-					result.append(item_report(token, "ancient token"));
-					result.append("<br>Wait for ");
+				result.append("<br>");
+				if(item_amount($item[ancient bomb]) == 0) {
+					boolean token = item_amount($item[ancient bronze token]) > 0;
+					if(!token) {
+						if(get_property("pyramidPosition") != "4")
+							result.append("Turn wheel for ");
+						else result.append('<a target="mainpane" href="pyramid.php">Get</a> ');
+						result.append(item_report(token, "ancient token"));
+						result.append("<br>Wait for ");
+					} else {
+						result.append("Have ");
+						result.append(item_report(token, "ancient token"));
+						if(get_property("pyramidPosition") != "3")
+							result.append("<br>Turn wheel for ");
+						else result.append("<br>Get ");
+					}
+					result.append(item_report($item[ancient bomb]));
 				} else {
-					result.append("Have ");
-					result.append(item_report(token, "ancient token"));
-					if(get_property("pyramidPosition") != "3")
-						result.append("<br>Turn wheel for ");
-					else result.append("<br>Get ");
+					if(get_property("pyramidPosition") == "1")
+						result.append(item_report(false, "Blow up Lower Chamber now!"));
+					else
+						result.append("Turn wheel to blow up chamber");
 				}
-				result.append(item_report($item[ancient bomb]));
-			} else {
-				if(get_property("pyramidPosition") == "1")
-					result.append(item_report(false, "Blow up Lower Chamber now!"));
-				else
-					result.append("Turn wheel to blow up chamber");
-			}
 		} else {
-			result.append('<a target="mainpane" href="pyramid.php">Pyramid</a>: Kill Ed');
+				result.append('<a target="mainpane" href="pyramid.php">Pyramid</a>: Kill Ed');
 		}
 
 		result.append("</td></tr>");
