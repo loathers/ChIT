@@ -4413,28 +4413,36 @@ void bakeTracker() {
 	//L11: questL11Palindome
 	if (started("questL11Palindome")) {
 		result.append("<tr><td>");
-		if(get_property("questL11Palindome") == "step4")
-			result.append('<a target="mainpane" href="plains.php">Palindome</a>: Kill Dr. Awkward');
-		else
-			result.append('Seek Dr. Awkward at <a target="mainpane" href="plains.php">Palindome</a>');
+		if(get_property("questL11Palindome") == "step4") {
+			result.append('<a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>: Kill Dr. Awkward');
+		} else {
+			result.append('Seek Dr. Awkward at <a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>');
+		}
 		// pirate fledges found from island.php
-		if(available_amount($item[pirate fledges])==0)
+		if(available_amount($item[pirate fledges])==0) {
 			result.append('<br>Get some <a target="mainpane" href="island.php">pirate fledges</a>');
+		}
 		// get talisman o nam from island.php
-		if(available_amount($item[Talisman o' Nam])==0)
+		if(available_amount($item[Talisman o' Nam])==0) {
 			result.append('<br>Find the <a target="mainpane" href="cove.php">Talisman o Nam</a>');
-		// have items required: photograph of God, hard rock candy, ketchup hound, hard-boiled ostrich egg 
-		if(item_amount($item[&quot;I Love Me, Vol. I&quot;]) == 0) {
+		}
+		if(get_property("questL11Palindome") == "started") {
 			result.append("<br>Obtain: ");
 			result.append(item_report($item[photograph of God]));
 			result.append(", ");
-			result.append(item_report($item[hard rock candy]));
+			result.append(item_report($item[photograph of a red nugget]));
 			result.append(", ");
-			result.append(item_report($item[hard-boiled ostrich egg]));
+			result.append(item_report($item[photograph of a dog]));
 			result.append(", ");
-			result.append(item_report($item[ketchup hound]));
+			result.append(item_report($item[photograph of an ostrich egg]));
+			result.append(", ");
+			result.append(item_report($item[&quot;I Love Me\, Vol. I&quot;]));
 			result.append(", ");
 			result.append(item_report($item[stunt nuts]));
+		}
+		if(get_property("questL11Palindome") == "step1") {
+			result.append("<br>Obtain: ");
+			result.append(item_report($item[&quot;2 Love Me\, Vol. 2&quot;]));
 		}
 		// get wet stunt nut stew, mega gem
 		if (available_amount($item[Mega Gem])==0) {
