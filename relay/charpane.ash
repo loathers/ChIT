@@ -859,6 +859,12 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Stench","<span class=modstench>Stench</span>");
 	evm = replace_string(evm,"Sleaze","<span class=modsleaze>Sleaze</span>");
 	evm = replace_string(evm,"Prismatic","<span class=modspooky>P</span><span class=modhot>ri</span><span class=modsleaze>sm</span><span class=modstench>at</span><span class=modcold>ic</span>");
+	//highlight items and meat
+	evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
+	evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
+	//highlight ML
+	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
+
 
 	return evm;
 
@@ -4399,21 +4405,11 @@ void bakeTracker() {
 		}
 		result.append("</td></tr>");
 	}
-	//lastDustyBottle2271=0
-	//lastDustyBottle2272=0
-	//lastDustyBottle2273=0
-	//lastDustyBottle2274=0
-	//lastDustyBottle2275=0
-	//lastDustyBottle2276=0
-	//lastDustyBottleReset==my_ascensions()
-	//wineCellarProgress=3
-	//cellarLayout=1092
-	//lastCellarReset
 		
 	//L11: questL11Palindome
 	if (started("questL11Palindome")) {
 		result.append("<tr><td>");
-		if(get_property("questL11Palindome") == "step4") {
+		if(get_property("questL11Palindome") == "step5") {
 			result.append('<a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>: Kill Dr. Awkward');
 		} else {
 			result.append('Seek Dr. Awkward at <a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>');
@@ -4875,7 +4871,7 @@ void bakeHeader() {
 	result.replace_string('<html>', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>');
 	
 	//Add CSS to the <head> tag
-	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n</head>');
+	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n<link rel="stylesheet" href="chit_sup.css">\n</head>');
 	
 	//Add JavaScript just before the <body> tag. 
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
