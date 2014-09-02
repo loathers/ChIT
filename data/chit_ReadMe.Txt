@@ -140,8 +140,9 @@ chit.effects.describe: Adds descriptions for each active effect.
           Default: true
 -------------------------------------------------------------------------------------
 chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
-          both: shows two icons, one for changing and the other for executing
-          Default: true
+          bonus: shows two icons, one for changing and the other for executing
+          false: Does not show either
+          Default: true -- shows one icon to change and execute moods
 -------------------------------------------------------------------------------------
 chit.kol.coolimages: Shows or hides KoL's images for Extreme Meter and Zombie Horde
           Default: true
