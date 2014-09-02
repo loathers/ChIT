@@ -4870,8 +4870,8 @@ void bakeHeader() {
 	// Add doctype to escape quirks mode
 	result.replace_string('<html>', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>');
 	
-	//Add CSS to the <head> tag
-	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n</head>');
+	//Add CSS to the <head> tag -- chit_custom.css overrides the default chit.css stylesheet.
+	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n<link rel="stylesheet" href="chit_custom.css">\n</head>');
 	
 	//Add JavaScript just before the <body> tag. 
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
