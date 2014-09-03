@@ -3961,14 +3961,15 @@ void bakeQuests() {
 	result.append('<tr><th><img src="');
 	result.append(imagePath);
 	result.append('quests.png"><a target="mainpane" href="questlog.php">Current Quests</a></th></tr>');
-	
+
 	matcher showAll = create_matcher('<a style="display.+?"showall".+?</a>', source);
 	if(showAll.find()) {
 		result.append('<tr><td>');
 		result.append(showAll.group(0));
 		result.append('</td></tr>');
 	}
-	
+	//fix my syntax highlighting "
+
 	if(bugbears != "")
 		result.append(bugbears);	
 	
@@ -4045,6 +4046,7 @@ void bakeQuests() {
 	chitBricks["quests"] = result;
 	chitTools["quests"] = "Current Quests|quests.png";
 }
+
 
 // Tracker brick created by ckb
 void bakeTracker() {
@@ -4159,6 +4161,43 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 	*/
+	
+	//questM02Artist
+	if(started("questM02Artist")) {
+		result.append("<tr><td>");
+		result.append('Find the <a target="mainpane" href="town_wrong.php">Artists</a> supplies: <br>');
+		result.append(item_report($item[pretentious palette], "Palette")+" (<a target=\"mainpane\" href=\"manor.php\">Pantry</a>)<br>");
+		result.append(item_report($item[pail of pretentious paint], "Paint")+" (<a target=\"mainpane\" href=\"town_wrong.php\">Back Alley</a>)<br>");
+		result.append(item_report($item[pretentious paintbrush], "Paintbrush")+" (<a target=\"mainpane\" href=\"plains.php\">Outskirts</a>)");
+		result.append("</td></tr>");
+	}
+
+	//questM01Untinker
+	if(started("questM01Untinker")) {
+		result.append("<tr><td>");
+		result.append('Find the <a target="mainpane" href="forestvillage.php">Untinkers</a> ');
+		result.append(item_report($item[rusty screwdriver], "screwdriver"));
+		result.append("</td></tr>");
+	}
+
+	//questM20Necklace
+	if(started("questM20Necklace")) {
+		result.append("<tr><td>");
+		result.append("Find ");
+		result.append(item_report($item[Lady Spookyraven's necklace]));
+		result.append(" at the <a target=\"mainpane\" href=\"manor.php\">Manor</a>");
+		result.append("</td></tr>");
+	}
+	
+	//questM21Dance
+	if(started("questM21Dance")) {
+		result.append("<tr><td>");
+		result.append("Find Lady Spookyravens with her dancin supplies:<br>");
+		result.append(item_report($item[Lady Spookyraven's dancing shoes], "dancing shoes")+", ");
+		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+", ");
+		result.append(item_report($item[Lady Spookyraven's powder puff], "powder puff"));
+		result.append("</td></tr>");
+	}
 	// L1: Open Manor
 	/*
 	if(get_property("lastManorUnlock").to_int() != my_ascensions()) {
