@@ -879,6 +879,7 @@ record buff {
 	boolean isIntrinsic;
 };
 
+
 buff parseBuff(string source) {
 	buff myBuff;
 
@@ -889,9 +890,13 @@ buff parseBuff(string source) {
 	string spoiler, style;
 
 	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
-	// The ? stuff at the end is because those arrows are a mafia option that might not be present
+	// The ? stuff at the end is because those arrows are a mafia option that might not be present "
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
+		
+		//ckb: eliminate the heigh and width callout so we can controll it with css instead
+		columnIcon = replace_string(columnIcon,"width=30 height=30","");
+		
 		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
