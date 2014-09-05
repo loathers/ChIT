@@ -4197,10 +4197,10 @@ void bakeTracker() {
 	//questM21Dance
 	if(started("questM21Dance")) {
 		result.append("<tr><td>");
-		result.append("Find Lady Spookyravens with her dancin supplies:<br>");
-		result.append(item_report($item[Lady Spookyraven's dancing shoes], "dancing shoes")+", ");
-		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+", ");
-		result.append(item_report($item[Lady Spookyraven's powder puff], "powder puff"));
+		result.append("Find <a target=\"mainpane\" href=\"place.php?whichplace=manor2\">Lady Spookyravens</a> dancing supplies:<br>");
+		result.append(item_report($item[Lady Spookyraven's dancing shoes], "dancing shoes")+" (Gallery)<br>");
+		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+" (Bedroom)<br>");
+		result.append(item_report($item[Lady Spookyraven's powder puff], "powder puff")+" (Bathroom)");
 		result.append("</td></tr>");
 	}
 	// L1: Open Manor
