@@ -536,7 +536,8 @@ string helperSemiRare() {
 	} else {
 		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && get_property("questL11Worship") != "finished")
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
-		if(!have_outfit("Knob Goblin Elite Guard Uniform") && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
+		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions()
+		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
@@ -879,7 +880,6 @@ record buff {
 	boolean isIntrinsic;
 };
 
-
 buff parseBuff(string source) {
 	buff myBuff;
 
@@ -890,7 +890,7 @@ buff parseBuff(string source) {
 	string spoiler, style;
 
 	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
-	// The ? stuff at the end is because those arrows are a mafia option that might not be present "
+	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
 		
@@ -3628,7 +3628,7 @@ void pickOutfit() {
 		#special.addGear("equip antique machete", "antique machete");
 	if(get_property("questL11Desert") == "started")
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
-	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2") {
+	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2") {
 		if(available_amount($item[bottle of Chateau de Vinegar]) == 1 && available_amount($item[blasting soda]) == 1)
 			special.addGear("create unstable fulminate; equip unstable fulminate", "Create & Equip unstable fulminate");
 		else
@@ -3636,6 +3636,9 @@ void pickOutfit() {
 	}
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
+		
+	if(my_path() == "Heavy Rains")
+		special.addGear($item[pool skimmer]);
 	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
