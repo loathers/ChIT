@@ -4411,44 +4411,66 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
+	
+	
+	
+	
+	
 	//L11: MacGuffin, questL11MacGuffin
 	if (started("questL11MacGuffin")) {
 		result.append("<tr><td>");
 		result.append("Quest for the Holy MacGuffin");
-		if(get_property("questL11MacGuffin")=="started") {
-			if(item_amount($item[black market map]) == 0)
-				result.append('<br>Find the <a target="mainpane" href="woods.php">Black Market</a>');
-			else
-				result.append('<br><a target="mainpane" href="inv_use.php?which=f0&whichitem=2054&pwd='+my_hash()+'">Follow the Black MAP!</a>');
-		}
-		if(get_property("questL11MacGuffin")=="step1" && item_amount($item[your father's MacGuffin diary])==0) {
-			result.append('<br>Get your Father\'s <a target="mainpane" href="shore.php">Diary</a>');
-			result.append("<br>"+item_report($item[forged identification documents]));
-		}
 		result.append("</td></tr>");		
 	}
 	
-	//L11: questL11Manor
-	// Open second floor and ballroom early
-	if(get_property("lastManorUnlock").to_int() == my_ascensions() && item_amount($item[Spookyraven ballroom key]) == 0) {
+	
+	//L11: questL11Black
+	if (started("questL11Black")) {
 		result.append("<tr><td>");
-		if(item_amount($item[Spookyraven library key]) == 0)
-			result.append('Get Library Key at <a target="mainpane" href="manor.php">Billiard Room</a>');
-		else if(get_property("lastSecondFloorUnlock").to_int() != my_ascensions())
-			result.append('Fix stairs at <a target="mainpane" href="manor.php">Library</a>');
-		else
-			result.append('Get Ballroom Key at <a target="mainpane" href="manor2.php">Bedroom</a>');
+			switch(get_property("questL11Black")) {
+			case "started": case "step1": case "step2":
+				result.append('Find the <a target="mainpane" href="woods.php">Black Market</a>');
+				break;
+			case "step3":
+				result.append('<br>Get your Father\'s <a target="mainpane" href="shore.php">Diary</a>');
+				result.append("<br>"+item_report($item[forged identification documents]));
+				break;
+		}
 		result.append("</td></tr>");
 	}
-	// find wines
+		
+		
+		
+	
+	//L11: questL11Manor
 	if (started("questL11Manor")) {
 		result.append("<tr><td>");
-		if(get_property("questL11Manor") == "step2") {
-			result.append('<a target="mainpane" href="manor3.php">Manor Cellar</a>: Kill Spookyraven');
-		} else {
-			result.append('Find wines in the <a target="mainpane" href="manor.php">Manor</a> <a target="mainpane" href="manor3.php">Cellar</a>');
-			if(available_amount($item[Lord Spookyraven's spectacles]) == 0)
-				result.append('Get Spookyravens spectacles from the <a target="mainpane" href="manor2.php">Bedroom</a>');
+			switch(get_property("questL11Manor")) {
+			case "started":
+				result.append('Open the cellar of Spookyraven <a target="mainpane" href="manor2.php">Manor</a> (Ballroom)');
+				break;
+			case "step1": case "step2":
+				result.append('Find Spookyraven in the <a target="mainpane" href="manor3.php">Manor Cellar</a>: ');
+				result.append(item_report($item[Lord Spookyraven's spectacles], "spectacles")+", ");
+				result.append(item_report($item[wine bomb], "wine bomb"));
+				break;
+			case "step3":
+				result.append('<a target="mainpane" href="manor3.php">Manor Cellar</a>: Kill Spookyraven');
+				break;
+			}
+
+		result.append("</td></tr>");
+	}
+		
+	if (started("questL11MacGuffin") && !started("questL11Palindome")) {
+		result.append("<tr><td>");
+		// pirate fledges found from island.php
+		if(available_amount($item[pirate fledges])==0) {
+			result.append('Get some <a target="mainpane" href="island.php">pirate fledges</a>');
+		} else if(available_amount($item[Talisman o' Nam])==0) {
+			result.append('Find the <a target="mainpane" href="cove.php">Talisman o Nam</a>');
+		} else if(available_amount($item[Talisman o' Nam])>0) {
+			result.append('Find the <a target="mainpane" href="plains.php">Palindome</a>');
 		}
 		result.append("</td></tr>");
 	}
@@ -4460,14 +4482,6 @@ void bakeTracker() {
 			result.append('<a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>: Kill Dr. Awkward');
 		} else {
 			result.append('Seek Dr. Awkward at <a target="mainpane" href="place.php?whichplace=palindome">Palindome</a>');
-		}
-		// pirate fledges found from island.php
-		if(available_amount($item[pirate fledges])==0) {
-			result.append('<br>Get some <a target="mainpane" href="island.php">pirate fledges</a>');
-		}
-		// get talisman o nam from island.php
-		if(available_amount($item[Talisman o' Nam])==0) {
-			result.append('<br>Find the <a target="mainpane" href="cove.php">Talisman o Nam</a>');
 		}
 		if(get_property("questL11Palindome") == "started") {
 			result.append("<br>Obtain: ");
@@ -4489,10 +4503,12 @@ void bakeTracker() {
 		}
 		// get wet stunt nut stew, mega gem
 		if (available_amount($item[Mega Gem])==0) {
-			result.append('<br>Get the <a target="mainpane" href="cobbsknob.php?level=2">Mega Gem</a>');
+			result.append('<br>Get the <a target="mainpane" href="place.php?whichplace=palindome">Mega Gem</a>');
 		}
 		result.append("</td></tr>");
 	}
+	
+	
 	
 	if(started("questL11Worship")) {
 		// How many McClusky file pages are present?
@@ -4601,7 +4617,7 @@ void bakeTracker() {
 
 	}
 
-	//L11: questL11Pyramid
+	//L11: questL11Desert
 	if(get_property("questL11Desert")=="finished" && get_property("questL11Pyramid")=="unstarted") {
 		result.append("<tr><td>");
 		result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a>:<br>');
@@ -4613,6 +4629,7 @@ void bakeTracker() {
 
 	}
 	
+	//L11: questL11Pyramid
 	if(started("questL11Pyramid")) {
 		string questL11Pyramid = get_property("questL11Pyramid");
 		result.append("<tr><td>");
