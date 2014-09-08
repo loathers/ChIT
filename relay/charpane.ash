@@ -4158,17 +4158,6 @@ void bakeTracker() {
 			result.append(bhit);
 		}
 	}
-	/*
-	if (get_property("currentBountyItem")!="0") {
-		item bhit = to_item(get_property("currentBountyItem"));
-		result.append("<tr><td>");
-		result.append('Get your <a target="mainpane" href="bhh.php">Bounty</a> from the ');
-		result.append(bhit.bounty+" : ");
-		result.append(to_string(to_item(get_property("currentBountyItem")))+" ("+to_string(item_amount(bhit))+"/"+bhit.bounty_count+")");
-		
-		result.append("</td></tr>");
-	}
-	*/
 	
 	//questM02Artist
 	if(started("questM02Artist")) {
@@ -4183,7 +4172,7 @@ void bakeTracker() {
 	//questM01Untinker
 	if(started("questM01Untinker")) {
 		result.append("<tr><td>");
-		result.append('Find the <a target="mainpane" href="forestvillage.php">Untinkers</a> ');
+		result.append('Find the <a target="mainpane" href="forestvillage.php">Untinker\'s</a> ');
 		result.append(item_report($item[rusty screwdriver], "screwdriver"));
 		result.append("</td></tr>");
 	}
@@ -4202,48 +4191,46 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		result.append("Find <a target=\"mainpane\" href=\"place.php?whichplace=manor2\">Lady Spookyravens</a> dancing supplies:<br>");
 		result.append(item_report($item[Lady Spookyraven's dancing shoes], "dancing shoes")+" (Gallery)<br>");
-		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+" (Bedroom)<br>");
-		result.append(item_report($item[Lady Spookyraven's powder puff], "powder puff")+" (Bathroom)");
+		result.append(item_report($item[Lady Spookyraven's powder puff], "powder puff")+" (Bathroom)<br>");
+		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+" (Bedroom)");
 		result.append("</td></tr>");
 	}
-	// L1: Open Manor
-	/*
-	if(get_property("lastManorUnlock").to_int() != my_ascensions()) {
-		result.append("<tr><td>");
-		result.append('Open Spookyraven at <a target="mainpane" href="town_right.php">Pantry</a>');
-		result.append("</td></tr>");
-	}
-	*/
+
 	//L2: get mosquito larva, questL02Larva
 	if(started("questL02Larva")) { 
 		result.append("<tr><td>");
 		result.append('Find a <a target="mainpane" href="woods.php">mosquito larva</a>');
 		result.append("</td></tr>");
 	}
+	
 	//L3 Typical tavern, questL03Rat
 	if(started("questL03Rat")) { 
 		result.append("<tr><td>");
 		result.append('Clear the <a target="mainpane" href="cellar.php">Typical Tavern</a> rats');
 		result.append("</td></tr>");
 	}
+	
 	//L4: find and defeat the boss bat, questL04Bat
 	if(started("questL04Bat")) { 
 		result.append("<tr><td>");
 		result.append('Find and defeat the <a target="mainpane" href="bathole.php">Boss Bat</a>');
 		result.append("</td></tr>");
 	}
+	
 	//L5: encryption key - item_amount($item[Knob Goblin encryption key]), item_amount($item[Cobb's Knob map])
 	if(item_amount($item[Knob Goblin encryption key]) < 1 && (get_property("questL05Goblin") == "unstarted" || item_amount($item[Cobb's Knob map]) > 0)) {
 		result.append("<tr><td>");
 		result.append('Find encryption key at <a target="mainpane" href="plains.php">Outskirts</a>');
 		result.append("</td></tr>");
 	}
+	
 	//knob king, questL05Goblin
 	if(started("questL05Goblin")) { 
 		result.append("<tr><td>");
 		result.append('Find and defeat the <a target="mainpane" href="cobbsknob.php">Goblin King</a>');
 		result.append("</td></tr>");
 	}
+	
 	//L6: Friars gate, questL06Friar
 	if(started("questL06Friar")) {
 		result.append("<tr><td>");
@@ -4253,6 +4240,7 @@ void bakeTracker() {
 		result.append(item_report($item[dodecagram])+" (Neck)");
 		result.append("</td></tr>");
 	}
+	
 	//L6.5: Steel organ, questM10Azazel
 	if (started("questM10Azazel")) { 
 		result.append("<tr><td>");
@@ -4278,6 +4266,7 @@ void bakeTracker() {
 		result.append(item_report($item[Azazel's tutu]));
 		result.append("</td></tr>");
 	}
+	
 	//L7: crypt, questL07Cyrptic
 	if(started("questL07Cyrptic")) {
 		void evilat(buffer report, string place) {
@@ -4297,14 +4286,6 @@ void bakeTracker() {
 			result.append('999</td></tr><tr><td><span style="color:black">&nbsp;&nbsp;&nbsp;Haert of the Cyrpt</span>');
 		} else {
 			result.append(get_property("cyrptTotalEvilness"));
-/*			result.append('</td></tr><tr><td>');
-			result.evilat("Nook");
-			result.append('<br>');
-			result.evilat("Cranny");
-			result.append('</td><td>');
-			result.evilat("Niche");
-			result.append('<br>');
-			result.evilat("Alcove");*/
 			result.append('</td></tr><tr><td><table><tr><td title="+items">');
 			result.evilat("Nook");
 			result.append('</td><td title="sniff dirty old lihc">');
@@ -4326,10 +4307,10 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
-			result.append("<a target=mainpane href=cove.php>F'c'le </a> Items: ");
-			result.append("<br>&nbsp;&nbsp;"+item_report($item[mizzenmast mop]));
-			result.append("<br>&nbsp;&nbsp;"+item_report($item[ball polish]));
-			result.append("<br>&nbsp;&nbsp;"+item_report($item[rigging shampoo]));
+			result.append("<a target=mainpane href=cove.php>F'c'le</a> Items: ");
+			result.append("<br>"+item_report($item[mizzenmast mop]));
+			result.append("<br>"+item_report($item[ball polish]));
+			result.append("<br>"+item_report($item[rigging shampoo]));
 		} else {
 			int totalInsults = 0;
 			for ii from 1 upto 8
@@ -4380,10 +4361,11 @@ void bakeTracker() {
 			result.append(item_report($item[ninja crampons], "crampons, "));
 			result.append(item_report($item[ninja carabiner], "carabiner"));
 		case "step4":
-			result.append("<br>Ascend the Mist-Shrouded Peak");
+			result.append('<br>Ascend the <a target="mainpane" href="place.php?whichplace=mclargehuge">Mist-Shrouded Peak</a>');
 		}
 		result.append("</td></tr>");
 	}
+	
 	//L9: orc chasm bridge, questL09Topping
 	if(started("questL09Topping")) {
 		result.append('<tr><td>');
@@ -4411,18 +4393,12 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
-	
-	
-	
-	
-	
 	//L11: MacGuffin, questL11MacGuffin
 	if (started("questL11MacGuffin")) {
 		result.append("<tr><td>");
 		result.append("Quest for the Holy MacGuffin");
 		result.append("</td></tr>");		
 	}
-	
 	
 	//L11: questL11Black
 	if (started("questL11Black")) {
@@ -4439,32 +4415,9 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 		
-		
-		
-	
-	//L11: questL11Manor
-	if (started("questL11Manor")) {
+	//Get pirate fledges from island.php
+	if (started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted") {
 		result.append("<tr><td>");
-			switch(get_property("questL11Manor")) {
-			case "started":
-				result.append('Open the cellar of Spookyraven <a target="mainpane" href="manor2.php">Manor</a> (Ballroom)');
-				break;
-			case "step1": case "step2":
-				result.append('Find Spookyraven in the <a target="mainpane" href="manor3.php">Manor Cellar</a>: ');
-				result.append(item_report($item[Lord Spookyraven's spectacles], "spectacles")+", ");
-				result.append(item_report($item[wine bomb], "wine bomb"));
-				break;
-			case "step3":
-				result.append('<a target="mainpane" href="manor3.php">Manor Cellar</a>: Kill Spookyraven');
-				break;
-			}
-
-		result.append("</td></tr>");
-	}
-		
-	if (started("questL11MacGuffin") && !started("questL11Palindome")) {
-		result.append("<tr><td>");
-		// pirate fledges found from island.php
 		if(available_amount($item[pirate fledges])==0) {
 			result.append('Get some <a target="mainpane" href="island.php">pirate fledges</a>');
 		} else if(available_amount($item[Talisman o' Nam])==0) {
@@ -4504,11 +4457,54 @@ void bakeTracker() {
 		// get wet stunt nut stew, mega gem
 		if (available_amount($item[Mega Gem])==0) {
 			result.append('<br>Get the <a target="mainpane" href="place.php?whichplace=palindome">Mega Gem</a>');
+			result.append("<br>");
+			if (available_amount($item[wet stunt nut stew])>0) {
+				result.append(item_report($item[wet stunt nut stew]));
+			} else if (available_amount($item[wet stew])>0) {
+				result.append(item_report($item[stunt nuts]));
+				result.append(", ");
+				result.append(item_report($item[wet stew]));
+			} else {
+				result.append(item_report($item[stunt nuts]));
+				result.append(", ");
+				result.append(item_report($item[bird rib]));
+				result.append(", ");
+				result.append(item_report($item[lion oil]));
+			}
 		}
 		result.append("</td></tr>");
 	}
 	
-	
+	//L11: questL11Manor, assume wine bomb route
+	if (started("questL11Manor")) {
+		result.append("<tr><td>");
+			switch(get_property("questL11Manor")) {
+			case "started":
+				result.append('Open the cellar of Spookyraven <a target="mainpane" href="manor2.php">Manor</a> (Ballroom)');
+				break;
+			case "step1": case "step2":
+				result.append('Find Spookyraven in the <a target="mainpane" href="manor3.php">Manor Cellar</a>: ');
+				if (available_amount($item[Lord Spookyraven's spectacles])==0) {
+					result.append("<br>Find "+item_report($item[Lord Spookyraven's spectacles]));
+				} else if (get_property("spookyravenRecipeUsed")!="with_glasses") {
+					result.append("<br>Equip spectacles, read mortar recipe");
+				} else if (available_amount($item[wine bomb])==0) {
+					if (available_amount($item[unstable fulminate])>0) {
+						result.append("<br>"+item_report($item[wine bomb]));
+					} else {
+						result.append("<br>"+item_report($item[bottle of Chateau de Vinegar]));
+						result.append("<br>"+item_report($item[blasting soda]));
+					}
+				}
+				break;
+			case "step3":
+				result.append('<a target="mainpane" href="manor3.php">Manor Cellar</a>: Kill Spookyraven');
+				break;
+			}
+
+		result.append("</td></tr>");
+	}
+		
 	
 	if(started("questL11Worship")) {
 		// How many McClusky file pages are present?
@@ -4695,16 +4691,19 @@ void bakeTracker() {
 			result.append('<br><a target="mainpane" href="bigisland.php?place=concert">Arena</a> Flyering: ');
 			result.append(item_report(flyers >= 100, to_string(flyers,"%.2f")+'%'));
 		}
+		
 		if(item_amount($item[molybdenum magnet])>0 && get_property("sidequestJunkyardCompleted")=="none" )
 			result.append('<br>Find some tools in the <a target="mainpane" href="bigisland.php?place=junkyard">Junkyard</a>');
+		
 		if(item_amount($item[barrel of gunpowder]) > 0 && get_property("sidequestLighthouseCompleted")=="none" ) {
 			result.append('<br><a target="mainpane" href="bigisland.php?place=lighthouse">SonofaBeach</a> ');
 			result.append(item_report($item[barrel of gunpowder], "barrels", 5));
 		}
-		if ( get_property("sidequestOrchardCompleted")=="none" && (item_amount($item[filthworm hatchling scent gland])>0 || have_effect($effect[Filthworm Larva Stench])>0 || item_amount($item[filthworm drone scent gland])>0 ||have_effect($effect[Filthworm Drone Stench])>0 ||item_amount($item[filthworm royal guard scent gland])>0 ||have_effect($effect[Filthworm Guard Stench])>0) )
-		{
+		
+		if ( get_property("sidequestOrchardCompleted")=="none" && (item_amount($item[filthworm hatchling scent gland])>0 || have_effect($effect[Filthworm Larva Stench])>0 || item_amount($item[filthworm drone scent gland])>0 ||have_effect($effect[Filthworm Drone Stench])>0 ||item_amount($item[filthworm royal guard scent gland])>0 ||have_effect($effect[Filthworm Guard Stench])>0) ) {
 			result.append('<br>Destroy the Filthworms in the <a target="mainpane" href="bigisland.php?place=orchard">Orchard</a>');
 		}
+		
 		if ( to_int(get_property("currentNunneryMeat"))>0 && get_property("sidequestNunsCompleted")=="none" ) {
 			result.append('<br><a target="mainpane" href="bigisland.php?place=nunnery">Nunnery</a> Meat found: '+to_string(to_int(get_property("currentNunneryMeat")),"%,d"));
 		}
@@ -4712,12 +4711,6 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
-	//sidequestArenaCompleted=none
-	//sidequestFarmCompleted=none
-	//sidequestJunkyardCompleted=none
-	//sidequestLighthouseCompleted=none
-	//sidequestNunsCompleted=none
-	//sidequestOrchardCompleted=none
 	
 	//L13: NS, questL13Final
 	// check for lair items, tower items, wand
@@ -4861,7 +4854,7 @@ void bakeTracker() {
 	}
 	
 	
-	//L99: Nemesis stuff
+	//L99: Nemesis stuff ?
 
 
 
@@ -4901,10 +4894,10 @@ void bakeTracker() {
 		biodata[count(biodata)] = new bio("Fantasy Airship", "biodataEngineering", 9);
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "biodataGalley", 9);
 
- mothershipProgress goes from 0 to 3 as levels are cleared.
- statusMedbay (for example) is 0-x (insufficient bodata collected), open (all
- biodata collected and zone accessible), unlocked (biodata collected but zone
- not yet accessible), or cleared (zone has been cleared.
+	 mothershipProgress goes from 0 to 3 as levels are cleared.
+	 statusMedbay (for example) is 0-x (insufficient bodata collected), open (all
+	 biodata collected and zone accessible), unlocked (biodata collected but zone
+	 not yet accessible), or cleared (zone has been cleared.
 	
 	
 	*/
@@ -4918,6 +4911,7 @@ void bakeTracker() {
 	}
 
 }
+
 
 void bakeHeader() {
 
