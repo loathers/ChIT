@@ -4490,10 +4490,10 @@ void bakeTracker() {
 					result.append("<br>Equip spectacles, read mortar recipe");
 				} else if (available_amount($item[wine bomb])==0) {
 					if (available_amount($item[unstable fulminate])>0) {
-						result.append("<br>"+item_report($item[wine bomb]));
+						result.append("<br>"+item_report($item[wine bomb])+" (Boiler Room)");
 					} else {
-						result.append("<br>"+item_report($item[bottle of Chateau de Vinegar]));
-						result.append("<br>"+item_report($item[blasting soda]));
+						result.append("<br>"+item_report($item[bottle of Chateau de Vinegar],"Chateau de Vinegar")+" (Wine Cellar)");
+						result.append("<br>"+item_report($item[blasting soda])+" (Laundry Room)");
 					}
 				}
 				break;
@@ -4821,7 +4821,7 @@ void bakeTracker() {
 			}
 		}
 
-		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg] contains my_path());
+		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains] contains my_path());
 		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
 			if( my_path()=="Bees Hate You" ) {
 				result.append("<br>GMOB: ");
