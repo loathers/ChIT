@@ -534,12 +534,12 @@ string helperSemiRare() {
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
-		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && get_property("questL11Worship") != "finished")
+		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && !($strings[step3, finished] contains get_property("questL11Worship")))
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions()
 		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
-		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist")
+		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist" && ($strings[unstarted, started, step1] contains get_property("questL08Trapper")))
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
 		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Nam]) == 0) {
 			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
@@ -967,6 +967,10 @@ buff parseBuff(string source) {
 	// Fix for blank "On the Trail" problem.
 	if(length(effectAlias) == 0)
 		effectAlias = myBuff.effectName;
+	
+	// Add spoiler info that mafia doesn't provide
+	if(myBuff.effectName.contains_text("Romantic Monster window"))
+		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
 	
 	//Replace effect icons, if enabled
 	string [string] classmap;
@@ -3630,21 +3634,29 @@ void pickOutfit() {
 		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
 	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2") {
 		if(available_amount($item[bottle of Chateau de Vinegar]) == 1 && available_amount($item[blasting soda]) == 1)
-			special.addGear("create unstable fulminate; equip unstable fulminate", "Create & Equip unstable fulminate");
+			special.addGear("create unstable fulminate; equip unstable fulminate", "Cook & Equip unstable fulminate");
 		else
 			special.addGear($item[unstable fulminate]);
 	}
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
 		
-	if(my_path() == "Heavy Rains")
-		special.addGear($item[pool skimmer]);
-	
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
 		picker.append(special);
 	}
 	
+	// Some gear just makes stuff easier
+	if(get_property("kingLiberated") == "false") {
+		special.set_length(0);
+		if(my_path() == "Heavy Rains")
+			special.addGear($item[pool skimmer]);
+		special.addGear($item[Bram's choker]);
+		if(length(special) > 0) {
+			picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Helpful Equipment</td></tr>');
+			picker.append(special);
+		}
+	}
 	
 	// Special Smithsness section. Sometimes it is helpful to switch them around, like A Light that Never Goes Out or Half a Purse. Or sometimes put mainstat in offhand.
 	if(have_effect($effect[Merry Smithsness]) > 0) {
@@ -3774,7 +3786,7 @@ void bakeCharacter() {
 
 	// LifeStyle suitable for charpane
 	string myLifeStyle() {
-		if(get_property("kingLiberated") == true)
+		if(get_property("kingLiberated") == "true")
 			return "Aftercore";
 		else if(in_bad_moon())
 			return "Bad Moon";
@@ -3787,7 +3799,7 @@ void bakeCharacter() {
 
 	// Path title suitable for charpane
 	string myPath() {
-		if(get_property("kingLiberated") == true)
+		if(get_property("kingLiberated") == "true")
 			return "No Restrictions";
 		switch(my_path()) {
 		case "None": return "No Path";
