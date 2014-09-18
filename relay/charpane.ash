@@ -4387,6 +4387,12 @@ void bakeTracker() {
 			result.append('Climb the <a target="mainpane" href="place.php?whichplace=beanstalk">Beanstalk</a>');
 			int numina = item_amount($item[Tissue Paper Immateria])+item_amount($item[Tin Foil Immateria])+item_amount($item[Gauze Immateria])+item_amount($item[Plastic Wrap Immateria]);
 			result.append('<br>Immateria found: '+item_report(numina == 4, to_string(numina)+'/4'));
+			result.append("<br>");
+			result.append(item_report($item[amulet of extreme plot significance], "amulet")+", ");
+			result.append(item_report($item[mohawk wig], "mohawk")+", ");
+			result.append(item_report($item[titanium assault umbrella], "umbrella")+", ");
+			result.append("<br>");
+			result.append(item_report($item[soft green echo eyedrop antidote], "SGEEA")+": "+item_amount($item[soft green echo eyedrop antidote]));
 		} else {
 			result.append('Conquer the <a target="mainpane" href="place.php?whichplace=giantcastle">Giant\'s Castle</a>');
 		}
