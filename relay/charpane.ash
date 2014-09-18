@@ -4956,10 +4956,6 @@ void bakeHeader() {
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
 	
-	// Dunno... I'm not sure why KoLmafia adds these... Removing them is probably a mistake...
-	#result = result.replace_string('<script language="Javascript" src="/basics.js"></script><link rel="stylesheet" href="/basics.css" />', '');
-	result.replace_string('onload="updateSafetyText();" ', '');
-	
 	chitBricks["header"] = result.to_string();
 		
 }
@@ -4996,7 +4992,7 @@ boolean parsePage(buffer original) {
 		chitSource["header"] = parse.group(1);
 		//Rollover: Edited because I want the pop-up to fit the text
 		chitSource["rollover"] = parse.group(2).replace_string('doc("maintenance")', 'poop("doc.php?topic=maintenance", "documentation", 560, 518, "scrollbars=yes,resizable=no")');
-		#matcher test=create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)",chitSource["header"]);if(test.find())chitSource["header"]=chitSource["header"].replace_string(test.group(1),to_string(to_int(test.group(2))+30));
+		# matcher test = create_matcher("rollover \= (\\d+).*?rightnow \= (\\d+)",chitSource["header"]); if(test.find())chitSource["header"]=chitSource["header"].replace_string(test.group(1),to_string(to_int(test.group(2))+120));
 		//Character: Name/Class/Level etc
 		chitSource["character"] = parse.group(3);
 		// Stats: Muscle/Mysticality/Moxie/Fullness/Drunkenness & Fury
