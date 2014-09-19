@@ -4134,13 +4134,17 @@ void bakeTracker() {
 	
 	buffer highlands() {
 		buffer high;
-		high.append("<br>A-boo Peak: ");
+		high.append("<br>A-boo: ");
 		high.append(item_report(get_property("booPeakProgress") == "0", get_property("booPeakProgress")+'% haunted'));
+		if (get_property("booPeakProgress")!="0") {
+			high.append(", "+item_report($item[A-Boo clue]));
+			high.append(" ("+item_amount($item[A-Boo clue])+")");
+		}
 		//L9: twin peak
-		high.append("<br>Twin Peak: "+twinPeak());
+		high.append("<br>Twin: "+twinPeak());
 		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
 		//L9: oil peak
-		high.append("<br>Oil Peak: ");
+		high.append("<br>Oil: ");
 		high.append(item_report(get_property("oilPeakProgress").to_float() == 0, get_property("oilPeakProgress")+' &mu;B/Hg'));
 		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
 			high.set_length(0);
@@ -4386,7 +4390,7 @@ void bakeTracker() {
 		result.append('Cross the <a target="mainpane" href="place.php?whichplace=orc_chasm">Orc Chasm</a>');
 			result.append("<br>Bridge Progress: "+(get_property("lastChasmReset") == my_ascensions()? get_property("chasmBridgeProgress"): "0")+"/30");
 		} else {
-			result.append('Explore the <a target="mainpane" href="place.php?whichplace=highlands">Highlands</a>');
+			result.append('Explore the <a target="mainpane" href="place.php?whichplace=highlands">Highland</a> Peaks');
 			result.append(highlands());
 		}
 		result.append("</td></tr>");
@@ -4456,15 +4460,15 @@ void bakeTracker() {
 		}
 		if(get_property("questL11Palindome") == "started") {
 			result.append("<br>Obtain: ");
-			result.append(item_report($item[photograph of God]));
+			result.append(item_report($item[photograph of God],"photo of God"));
 			result.append(", ");
-			result.append(item_report($item[photograph of a red nugget]));
+			result.append(item_report($item[photograph of a red nugget],"photo of red nugget"));
 			result.append(", ");
-			result.append(item_report($item[photograph of a dog]));
+			result.append(item_report($item[photograph of a dog],"photo of dog"));
 			result.append(", ");
-			result.append(item_report($item[photograph of an ostrich egg]));
+			result.append(item_report($item[photograph of an ostrich egg],"photo of ostrich egg"));
 			result.append(", ");
-			result.append(item_report($item[&quot;I Love Me\, Vol. I&quot;]));
+			result.append(item_report($item[&quot;I Love Me\, Vol. I&quot;],"I Love Me"));
 			result.append(", ");
 			result.append(item_report($item[stunt nuts]));
 		}
@@ -4498,10 +4502,10 @@ void bakeTracker() {
 		result.append("<tr><td>");
 			switch(get_property("questL11Manor")) {
 			case "started":
-				result.append('Open the cellar of Spookyraven <a target="mainpane" href="manor2.php">Manor</a> (Ballroom)');
+				result.append('Open Spookyraven <a target="mainpane" href="manor2.php">Manor</a> cellar (Ballroom)');
 				break;
 			case "step1": case "step2":
-				result.append('Find Spookyraven in the <a target="mainpane" href="manor3.php">Manor Cellar</a>: ');
+				result.append('Find Spookyraven in the <a target="mainpane" href="manor3.php">Cellar</a>: ');
 				if (available_amount($item[Lord Spookyraven's spectacles])==0) {
 					result.append("<br>Find "+item_report($item[Lord Spookyraven's spectacles]));
 				} else if (get_property("spookyravenRecipeUsed")!="with_glasses") {
@@ -4560,21 +4564,25 @@ void bakeTracker() {
 							result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
 							break;
 						case "BowlingAlley":
-							result.append(item_report($item[bowling ball]));
-							result.append(", ");
+							//result.append(item_report($item[bowling ball]));
+							//result.append(", ");
 							result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
 							break;
 						case "Apartment":
-							result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
-							result.append(item_report(false, "Search for Boss<br>"));
+							//result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
+							//result.append(item_report(false, "Search for Boss<br>"));
+							result.append(item_report((have_effect($effect[Thrice-Cursed])>0), "Thrice-Cursed<br>"));
 							break;
 						case "Office":
 							if(available_amount($item[McClusky file (complete)]) > 0)
 								result.append(item_report(false, "Kill Boss!"));
 							else {
 								int f = files();
-								result.append(item_report(f >=5, "McClusky files (" + f + "/5), "));
-								result.append(item_report($item[boring binder clip], "binder clip"));
+								if (f<5) {
+									result.append(item_report(f >=5, "McClusky files (" + f + "/5)"));
+								} else {
+									result.append(item_report($item[boring binder clip], "binder clip"));
+								}
 							}
 							result.append("<br>");
 							break;
