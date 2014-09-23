@@ -44,7 +44,7 @@ Iron Palms	type:"sc"
 #Pastamancer Buffs
 Springy Fusilli	type:"pm"
 Leash of Linguini	type:"pm"
-Spirit of Bacon Grease	type:"pm", style:"color:purple;font-style:italic"
+Spirit of Bacon Grease	type:"pm", style:"color:blueviolet;font-style:italic"
 Spirit of Cayenne	type:"pm", style:"color:red;font-style:italic"
 Spirit of Peppermint	type:"pm", style:"color:blue;font-style:italic"
 Spirit of Garlic	type:"pm", style:"color:green;font-style:italic"

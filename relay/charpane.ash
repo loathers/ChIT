@@ -853,18 +853,19 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
 	evm = replace_string(evm,"Adventures","Adv");
 	evm = replace_string(evm,"PvP Fights","Fites");
-	//decorate elemental tags with pretty colors
-	evm = replace_string(evm,"Hot","<span class=modhot>Hot</span>");
-	evm = replace_string(evm,"Cold","<span class=modcold>Cold</span>");
-	evm = replace_string(evm,"Spooky","<span class=modspooky>Spooky</span>");
-	evm = replace_string(evm,"Stench","<span class=modstench>Stench</span>");
-	evm = replace_string(evm,"Sleaze","<span class=modsleaze>Sleaze</span>");
-	evm = replace_string(evm,"Prismatic","<span class=modspooky>P</span><span class=modhot>ri</span><span class=modsleaze>sm</span><span class=modstench>at</span><span class=modcold>ic</span>");
 	//highlight items and meat
 	evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
 	evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
 	//highlight ML
 	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
+	//decorate elemental tags with pretty colors
+	matcher elemental = create_matcher("(Hot|Cold|Spooky|Stench|Sleaze|Prismatic) (?:Dmg|Res)", evm);
+	if(elemental.find()) {
+		if(elemental.group(1) == "Prismatic")
+			evm = replace_string(evm,"Prismatic","<span class=modspooky>P</span><span class=modhot>ri</span><span class=modsleaze>sm</span><span class=modstench>at</span><span class=modcold>ic</span>");
+		else
+			evm = replace_string(evm, elemental.group(0), "<span class=mod"+elemental.group(1)+">"+elemental.group(0)+"</span>");
+	}
 
 
 	return evm;
@@ -1582,7 +1583,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	void pickEquipment() {
 
 		// First add a decorate link if you are using a Snow Suit
-		if(equipped_item($slot[familiar]) == $item[Snow Suit]) {
+		if(equipped_item($slot[familiar]) == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
 			string suiturl = '<a target=mainpane class="change" href="inventory.php?pwd='+my_hash()+'&action=decorate" title="Decorate your Snow Suit\'s face">';
 			int faceIndex = index_of(chitSource["familiar"], "itemimages/snow");
 			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
@@ -2254,7 +2255,7 @@ void bakeFamiliar() {
 		if (famitem != $item[none]) {
 			equiptype = to_string(famitem);
 			// If using snow suit, find the current face & add carrot drop info
-			if(famitem == $item[Snow Suit]) {
+			if(famitem == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
 				int snowface = index_of(source, "itemimages/snow");
 				equipimage = substring(source, snowface + 11, snowface + 24);
 				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
