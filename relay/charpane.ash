@@ -860,10 +860,12 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
 	//decorate elemental tags with pretty colors
 	matcher elemental = create_matcher("(Hot|Cold|Spooky|Stench|Sleaze|Prismatic) (?:Dmg|Res)", evm);
+	string prismatic = "<span class=modSpooky>P</span><span class=modHot>ri</span><span class=modSleaze>sm</span><span class=modStench>at</span><span class=modCold>ic</span>";
 	if(elemental.find()) {
-		if(elemental.group(1) == "Prismatic")
-			evm = replace_string(evm,"Prismatic","<span class=modspooky>P</span><span class=modhot>ri</span><span class=modsleaze>sm</span><span class=modstench>at</span><span class=modcold>ic</span>");
-		else
+		if(elemental.group(1) == "Prismatic") {
+			evm = replace_string(evm,"Prismatic Res", prismatic+" <span class=modHot>R</span><span class=modStench>e</span><span class=modCold>s</span>");
+			evm = replace_string(evm,"Prismatic Dmg", prismatic+" <span class=modHot>D</span><span class=modSleaze>m</span><span class=modStench>g</span>");
+		} else
 			evm = replace_string(evm, elemental.group(0), "<span class=mod"+elemental.group(1)+">"+elemental.group(0)+"</span>");
 	}
 
@@ -1583,7 +1585,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	void pickEquipment() {
 
 		// First add a decorate link if you are using a Snow Suit
-		if(equipped_item($slot[familiar]) == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
+		if(equipped_item($slot[familiar]) == $item[Snow Suit]) {
 			string suiturl = '<a target=mainpane class="change" href="inventory.php?pwd='+my_hash()+'&action=decorate" title="Decorate your Snow Suit\'s face">';
 			int faceIndex = index_of(chitSource["familiar"], "itemimages/snow");
 			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
@@ -3596,9 +3598,6 @@ void pickOutfit() {
 			result.addGear(e);
 	}
 	
-	// If using Kung Fu Fighting, you might want to empty your hands
-	if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
-		special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
 	// In KOLHS, might want to remove hat
 	if(my_path() == "KOLHS") {
 		if(equipped_item($slot[hat]) != $item[none])
@@ -3614,7 +3613,7 @@ void pickOutfit() {
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		special.addGear($item[continuum transfunctioner]);
 	
-	special.addGear($items[pirate fledges, Talisman o' Nam, black glass]);
+	special.addGear($items[pirate fledges, Talisman o' Nam, black glass, Personal Ventilation Unit]);
 	if(get_property("questL10Garbage") != "finished")
 		switch(loc) {
 		case $location[The Castle in the Clouds in the Sky (Basement)]:
@@ -3650,6 +3649,9 @@ void pickOutfit() {
 	// Some gear just makes stuff easier
 	if(get_property("kingLiberated") == "false") {
 		special.set_length(0);
+		// If using Kung Fu Fighting, you might want to empty your hands
+		if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
+			special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
 		if(my_path() == "Heavy Rains")
 			special.addGear($item[pool skimmer]);
 		special.addGear($item[Bram's choker]);
