@@ -526,6 +526,19 @@ div.progressbar {
 .efmods .modStench {
 	color:green;
 }
+.efmods .modPrismatic {
+	background: -moz-linear-gradient(-45deg,  rgba(255,0,0,1) 0%, rgba(138,43,226,1) 25%, rgba(0,128,0,1) 50%, rgba(0,0,255,1) 100%, rgba(153,153,153,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,0,0,1)), color-stop(25%,rgba(138,43,226,1)), color-stop(50%,rgba(0,128,0,1)), color-stop(100%,rgba(0,0,255,1)), color-stop(100%,rgba(153,153,153,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* IE10+ */
+	background: linear-gradient(135deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0000', endColorstr='#999999',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+	color:transparent;
+	-webkit-background-clip: text;
+	background-clip: text;
+	font-weight:bold;
+}
 
 /* chit_picker defines the popup details, use for companion/familiar, MCD, etc. */
 table.chit_picker {
