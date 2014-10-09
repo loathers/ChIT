@@ -701,7 +701,7 @@ void pickerFlavour() {
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string ef) {
-	# if(ef == "So Fresh and So Clean") ef = "Video... Games?";
+	# if(ef == "Polka of Plenty") ef = "Video... Games?";
 	switch(ef) {
 	case "Knob Goblin Perfume": return "";
 	case "Bored With Explosions": 
@@ -858,20 +858,38 @@ string parseMods(string ef) {
 	evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
 	//highlight ML
 	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
-	//decorate elemental tags with pretty colors
-	matcher elemental = create_matcher("(Hot|Cold|Spooky|Stench|Sleaze|Prismatic) (?:Dmg|Res)", evm);
-	string prismatic = "<span class=modSpooky>P</span><span class=modHot>ri</span><span class=modSleaze>sm</span><span class=modStench>at</span><span class=modCold>ic</span>";
-	if(elemental.find()) {
-		if(elemental.group(1) == "Prismatic") {
-			evm = replace_string(evm,"Prismatic Res", prismatic+" <span class=modHot>R</span><span class=modStench>e</span><span class=modCold>s</span>");
-			evm = replace_string(evm,"Prismatic Dmg", prismatic+" <span class=modHot>D</span><span class=modSleaze>m</span><span class=modStench>g</span>");
-		} else
-			evm = replace_string(evm, elemental.group(0), "<span class=mod"+elemental.group(1)+">"+elemental.group(0)+"</span>");
+	
+	//decorate elemental effects with pretty colors
+	string prismatize(string input) {
+		string [int] prism;
+		prism[0] = "<span class=modHot>";
+		prism[2] = "<span class=modSleaze>";
+		prism[4] = "<span class=modStench>";
+		prism[6] = "<span class=modCold>";
+		prism[8] = "<span class=modSpooky>";
+		buffer output;
+		int i = 0;
+		int last = length(input) - 1;
+		while(i <= last) {
+			output.append(prism[i % 10]);
+			if(i < last)
+				output.append(substring(input, i, i+ 2));
+			else
+				output.append(char_at(input, last));
+			output.append("</span>");
+			i += 2;
+		}
+		return output;
+	}
+	matcher elemental = create_matcher("([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]*)(?:,|$)", evm);
+	while(elemental.find()) {
+		if(elemental.group(2) == "Prismatic")
+			evm = replace_string(evm, elemental.group(1), prismatize(elemental.group(1)));
+		else
+			evm = replace_string(evm, elemental.group(1), "<span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
 	}
 
-
 	return evm;
-
 }
 
 record buff {
