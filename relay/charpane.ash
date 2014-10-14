@@ -862,11 +862,11 @@ string parseMods(string ef) {
 	//decorate elemental effects with pretty colors
 	string prismatize(string input) {
 		string [int] prism;
-		prism[0] = "<span class=modHot>";
-		prism[2] = "<span class=modSleaze>";
-		prism[4] = "<span class=modStench>";
-		prism[6] = "<span class=modCold>";
-		prism[8] = "<span class=modSpooky>";
+			prism[0] = "<span class=modHot>";
+			prism[2] = "<span class=modSleaze>";
+			prism[4] = "<span class=modStench>";
+			prism[6] = "<span class=modCold>";
+			prism[8] = "<span class=modSpooky>";
 		buffer output;
 		int i = 0;
 		int last = length(input) - 1;
@@ -1607,6 +1607,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			string suiturl = '<a target=mainpane class="change" href="inventory.php?pwd='+my_hash()+'&action=decorate" title="Decorate your Snow Suit\'s face">';
 			int faceIndex = index_of(chitSource["familiar"], "itemimages/snow");
 			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
+			if(have_effect($effect[SOME PIGS]) > 0)
+				face = "snowsuit.gif";
 			picker.append('<tr class="pickitem">');
 			picker.append('<td class="fold">' +suiturl+ 'Decorate Snow Suit<br /><span style="color:#707070">Choose a Face</span></a></td>');
 			picker.append('<td class="icon">'+suiturl+'<img src="/images/itemimages/' + face + '"></a></td>');
@@ -2962,6 +2964,46 @@ void addHooch(buffer result) {
 	}
 }
 
+void addCIQuest(buffer result) {
+	boolean active_quest(string prop) { return get_property(prop) == "started" ||  get_property(prop).contains_text("step"); }
+	int current, final;
+	string label;
+	if(active_quest("questESpGore")) {
+		current = get_property("questESpGore") == "step2"? 100: get_property("goreCollected").to_int();
+		final = 100;
+		label = "Gore";
+	} else if(active_quest("questESpJunglePun")) {
+		current = get_property("junglePuns").to_int();
+		final = 11;
+		label = "Puns";
+	} else if(active_quest("questESpSmokes")) {
+		current = item_amount($item[pack of smokes]);
+		final = 10;
+		label = "Smokes";
+	} else if(active_quest("questESpClipper")) {
+		current = get_property("fingernailsClipped").to_int();
+		final = 23;
+		label = "Clippings";
+	} else return;
+	result.append('<tr><td class="label"><a href="place.php?whichplace=airport_spooky&action=airport2_radio" target="mainpane">');
+	result.append(label);
+	result.append('</a></td><td class="info"><a href="place.php?whichplace=airport_spooky&action=airport2_radio" target="mainpane">');
+	result.append(current);
+	result.append(' / ');
+	result.append(final);
+	result.append('</a></td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		result.append('<td class="progress"><div class="progressbox" title="');
+		result.append(current);
+		result.append(' / ');
+		result.append(final);
+		result.append('"><a href="place.php?whichplace=airport_spooky&action=airport2_radio" target="mainpane"><div class="progressbar" style="width:');
+		result.append(to_string(100.0 * current / final));
+		result.append('%"></div></a></div></td></td>');
+	}
+	result.append('</tr>');
+}
+
 void addAud(buffer result) {
 	matcher parseAud = create_matcher("Aud:</td><td align=left>(.+?)</td>", chitSource["stats"]);
 	if(parseAud.find()) {
@@ -3446,6 +3488,8 @@ void bakeStats() {
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
+			
+			result.addCIQuest();
 		}
 		
 		result.append("</tbody>");
