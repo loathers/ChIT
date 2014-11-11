@@ -940,6 +940,28 @@ buff parseBuff(string source) {
 	}
 	string effectAlias = myBuff.effectName;
 	
+	// Add MP or item cost to increase effect
+	matcher howUp = create_matcher("cmd\\=(?:cast 1 (.+?)|(use .+?))&pwd", url_decode(columnArrow));
+	if(howUp.find()) {
+		string upCost;
+		if(howUp.group(1) != "") {
+			skill upSkill = howUp.group(1).to_skill();
+			if(mp_cost(upSkill) > 0)
+				upCost = mp_cost(upSkill)+' mp to cast '+howUp.group(1);
+			else if(soulsauce_cost(upSkill) > 0)
+				upCost = soulsauce_cost(upSkill)+' sauce to cast '+howUp.group(1);
+			else if(thunder_cost(upSkill) > 0)
+				upCost = thunder_cost(upSkill)+' dB to cast '+howUp.group(1);
+			else if(rain_cost(upSkill) > 0)
+				upCost = rain_cost(upSkill)+' drops to cast '+howUp.group(1);
+			else if(lightning_cost(upSkill) > 0)
+				upCost = lightning_cost(upSkill)+' bolts to cast '+howUp.group(1);
+			else upCost = "cast 1 "+upSkill;
+		} else if(howUp.group(2) != "")
+			upCost = howUp.group(2);
+		columnArrow = columnArrow.replace_string('Increase rounds of', upCost+'\nIncrease rounds of');
+	}
+	
 	//Apply any styling/renaming as specified in effects map
 	if(chitEffectsMap contains myBuff.effectName) {
 		matcher pattern = create_matcher('(type|alias|style|href|image):"([^"]*)', chitEffectsMap[myBuff.effectName]);
@@ -2969,19 +2991,23 @@ void addCIQuest(buffer result) {
 	int current, final;
 	string label;
 	if(active_quest("questESpGore")) {
+		if(!have_equipped($item[gore bucket])) return;
 		current = get_property("questESpGore") == "step2"? 100: get_property("goreCollected").to_int();
 		final = 100;
 		label = "Gore";
 	} else if(active_quest("questESpJunglePun")) {
+		if(!have_equipped($item[encrypted micro-cassette recorder])) return;
 		current = get_property("junglePuns").to_int();
 		final = 11;
 		label = "Puns";
 	} else if(active_quest("questESpSmokes")) {
 		current = item_amount($item[pack of smokes]);
+		if(current < 1) return;
 		final = 10;
 		label = "Smokes";
 	} else if(active_quest("questESpClipper")) {
 		current = get_property("fingernailsClipped").to_int();
+		if(current < 1) return;
 		final = 23;
 		label = "Clippings";
 	} else return;
@@ -3620,7 +3646,7 @@ void pickOutfit() {
 		
 	picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
 	foreach i,o in get_custom_outfits()
-		if(i != 0)
+		if(o != " - No Change - ")
 			picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + o + '</a></td>');
 
 	// Special equipment control section
@@ -3675,7 +3701,8 @@ void pickOutfit() {
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		special.addGear($item[continuum transfunctioner]);
 	
-	special.addGear($items[pirate fledges, Talisman o' Nam, black glass, Personal Ventilation Unit]);
+	special.addGear($items[pirate fledges, Talisman o' Nam, black glass, Personal Ventilation Unit, gore bucket]);
+	special.addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder");
 	if(get_property("questL10Garbage") != "finished")
 		switch(loc) {
 		case $location[The Castle in the Clouds in the Sky (Basement)]:
