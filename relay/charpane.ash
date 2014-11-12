@@ -941,7 +941,7 @@ buff parseBuff(string source) {
 	string effectAlias = myBuff.effectName;
 	
 	// Add MP or item cost to increase effect
-	matcher howUp = create_matcher("cmd\\=(?:cast 1 (.+?)|(use .+?))&pwd", url_decode(columnArrow));
+	matcher howUp = create_matcher("cmd\\=(?:cast 1 (.+?)|((?:use|chew) .+?))&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
 		string upCost;
 		if(howUp.group(1) != "") {
@@ -3838,9 +3838,9 @@ void bakeCharacter() {
 	
 	//Outfit
 	string myOutfit = "";
-	matcher outfitMatcher = create_matcher('<center class=tiny>Outfit: (.*?)</center>', source);
+	matcher outfitMatcher = create_matcher('<center class=tiny>Outfit: (.+?onClick\\=\'(outfit\\("(\\d+)"\\);).+?)</center>', source);
 	if (find(outfitMatcher)){
-		myOutfit = "("+ group(outfitMatcher, 1)+")";
+		myOutfit = "("+ outfitMatcher.group(1).replace_string( outfitMatcher.group(2), 'javascript:window.open("desc_outfit.php?whichoutfit='+ outfitMatcher.group(3) +'","","height=200,width=300")' ) +")";
 		int len = length(myName+myOutfit); // 105 is the limit to fit on a line.
 		myOutfit = (len > 103 && len < 110? "<br />": " ") + myOutfit;
 	}
