@@ -941,23 +941,23 @@ buff parseBuff(string source) {
 	string effectAlias = myBuff.effectName;
 	
 	// Add MP or item cost to increase effect
-	matcher howUp = create_matcher("cmd\\=(?:cast 1 (.+?)|((?:use|chew) .+?))&pwd", url_decode(columnArrow));
+	matcher howUp = create_matcher("cmd\\=(cast 1 )?(.+?)&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
 		string upCost;
 		if(howUp.group(1) != "") {
-			skill upSkill = howUp.group(1).to_skill();
+			skill upSkill = howUp.group(2).to_skill();
 			if(mp_cost(upSkill) > 0)
-				upCost = mp_cost(upSkill)+' mp to cast '+howUp.group(1);
+				upCost = mp_cost(upSkill)+' mp to cast '+upSkill;
 			else if(soulsauce_cost(upSkill) > 0)
-				upCost = soulsauce_cost(upSkill)+' sauce to cast '+howUp.group(1);
+				upCost = soulsauce_cost(upSkill)+' sauce to cast '+upSkill;
 			else if(thunder_cost(upSkill) > 0)
-				upCost = thunder_cost(upSkill)+' dB to cast '+howUp.group(1);
+				upCost = thunder_cost(upSkill)+' dB to cast '+upSkill;
 			else if(rain_cost(upSkill) > 0)
-				upCost = rain_cost(upSkill)+' drops to cast '+howUp.group(1);
+				upCost = rain_cost(upSkill)+' drops to cast '+upSkill;
 			else if(lightning_cost(upSkill) > 0)
-				upCost = lightning_cost(upSkill)+' bolts to cast '+howUp.group(1);
+				upCost = lightning_cost(upSkill)+' bolts to cast '+upSkill;
 			else upCost = "cast 1 "+upSkill;
-		} else if(howUp.group(2) != "")
+		} else
 			upCost = howUp.group(2);
 		columnArrow = columnArrow.replace_string('Increase rounds of', upCost+'\nIncrease rounds of');
 	}
