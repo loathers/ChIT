@@ -941,24 +941,24 @@ buff parseBuff(string source) {
 	string effectAlias = myBuff.effectName;
 	
 	// Add MP or item cost to increase effect
-	matcher howUp = create_matcher("cmd\\=(cast 1 )?(.+?)&pwd", url_decode(columnArrow));
+	matcher howUp = create_matcher("cmd\\=((cast 1 )?(.+?))&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
-		string upCost;
-		if(howUp.group(1) != "") {
-			skill upSkill = howUp.group(2).to_skill();
-			if(mp_cost(upSkill) > 0)
-				upCost = mp_cost(upSkill)+' mp to cast '+upSkill;
-			else if(soulsauce_cost(upSkill) > 0)
-				upCost = soulsauce_cost(upSkill)+' sauce to cast '+upSkill;
-			else if(thunder_cost(upSkill) > 0)
-				upCost = thunder_cost(upSkill)+' dB to cast '+upSkill;
-			else if(rain_cost(upSkill) > 0)
-				upCost = rain_cost(upSkill)+' drops to cast '+upSkill;
-			else if(lightning_cost(upSkill) > 0)
-				upCost = lightning_cost(upSkill)+' bolts to cast '+upSkill;
-			else upCost = "cast 1 "+upSkill;
-		} else
-			upCost = howUp.group(2);
+		string upCost = howUp.group(1);
+		if(howUp.group(2) != "") {
+			skill upSkill = howUp.group(3).to_skill();
+			if(have_skill(upSkill)) {
+				if(mp_cost(upSkill) > 0)
+					upCost = mp_cost(upSkill)+' mp to cast '+upSkill;
+				else if(soulsauce_cost(upSkill) > 0)
+					upCost = soulsauce_cost(upSkill)+' sauce to cast '+upSkill;
+				else if(thunder_cost(upSkill) > 0)
+					upCost = thunder_cost(upSkill)+' dB to cast '+upSkill;
+				else if(rain_cost(upSkill) > 0)
+					upCost = rain_cost(upSkill)+' drops to cast '+upSkill;
+				else if(lightning_cost(upSkill) > 0)
+					upCost = lightning_cost(upSkill)+' bolts to cast '+upSkill;
+			} else upCost = "You lack the skill: "+howUp.group(3);
+		}
 		columnArrow = columnArrow.replace_string('Increase rounds of', upCost+'\nIncrease rounds of');
 	}
 	
@@ -1946,10 +1946,12 @@ void pickerThrall() {
 		skill s = t.skill;
 		buffer url;
 		if(t.level == 0) { // If this is a first time summmons, I want to see it in mainpaine!
-			url.append('<a target=mainpane class="change" href="skills.php?action=Skillz&whichskill=');
+			url.append('<a target=mainpane class="change" href="runskillz.php?action=Skillz&whichskill=');
 			url.append(to_int(s));
-			url.append('&skillform=Use+Skill&quantity=1&pwd=');
+			url.append('&pwd=');
 			url.append(my_hash());
+			url.append("&quantity=1&targetplayer=");
+			url.append(my_id());
 		} else {
 			url.append('<a class="change" href="');
 			url.append(sideCommand("cast " + s));
