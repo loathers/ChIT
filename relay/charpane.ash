@@ -2202,6 +2202,9 @@ void bakeFamiliar() {
 			case $familiar[Mad Hatrack]:
 				famimage = "/images/itemimages/hatrack.gif";
 				break;
+			case $familiar[Crimbo Shrub]: // Get rid of that Gollywog look!
+				famimage = imagePath+'crimboshrub.gif';
+				break;
 			case $familiar[Happy Medium]:
 				switch(myfam.image) {
 				case "medium_0.gif":
