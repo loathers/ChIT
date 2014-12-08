@@ -79,6 +79,8 @@ chit.familiar.pants: Comma-separated list of pants to include with a Fancypants 
 chit.familiar.protect: Removes all familiar-switching links from the charpane when you're on a 100% run
           (You have to go to your campsite->terraium to change familiars, or use chat commands)
           Default: false
+chit.familiar.anti-gollywog: Colorize the Crimbo Shrub's image so that it doesn't look like a gollywog
+          Default: true
 -------------------------------------------------------------------------------------
 HELPERS are displayed when certain counters reaches 0. 
 They will present you with a list of relevant adventure locations. 
