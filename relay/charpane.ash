@@ -2203,7 +2203,9 @@ void bakeFamiliar() {
 				famimage = "/images/itemimages/hatrack.gif";
 				break;
 			case $familiar[Crimbo Shrub]: // Get rid of that Gollywog look!
-				famimage = imagePath+'crimboshrub_fxx_ckb.gif';
+				if(to_boolean(vars["chit.familiar.anti-gollywog"]))
+					famimage = imagePath+'crimboshrub_fxx_ckb.gif';
+				else famimage = '/images/itemimages/'+ myfam.image;
 				break;
 			case $familiar[Happy Medium]:
 				switch(myfam.image) {
@@ -5498,6 +5500,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
+	setvar("chit.familiar.anti-gollywog", true);
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
