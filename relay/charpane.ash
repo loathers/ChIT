@@ -530,16 +530,17 @@ string helperSemiRare() {
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|0";
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
-		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
+		if($strings[step4, step5, finished] contains get_property("questL10Garbage"))
+			rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
 		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && !($strings[step3, finished] contains get_property("questL11Worship")))
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
-		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions()
+		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions() && ($strings[step1, step2, finished] contains get_property("questL05Goblin"))
 		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
-		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist" && ($strings[unstarted, started, step1] contains get_property("questL08Trapper")))
+		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist" && ($strings[started, step1] contains get_property("questL08Trapper")))
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
 		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Nam]) == 0) {
 			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
