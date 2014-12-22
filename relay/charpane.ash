@@ -2316,8 +2316,10 @@ void bakeFamiliar() {
 		}
 	}
 
-	// Get Hatrack & Scarecrow info
-	if(myfam == $familiar[Mad Hatrack] || myfam == $familiar[Fancypants Scarecrow]) {
+	// Get familiar specific info
+	switch(myfam) {
+	case $familiar[Mad Hatrack]:
+	case $familiar[Fancypants Scarecrow]:
 		if(famitem != $item[none]) {
 			matcher m = create_matcher('Familiar Effect: \\"(.*?), cap (.*?)\\"', string_modifier(famitem, "Modifiers"));
 			if(find(m)) {
@@ -2328,10 +2330,18 @@ void bakeFamiliar() {
 				}
 			} else info = "Unknown effect";
 		} else info = "None";
-	} else if(myfam == $familiar[Reanimated Reanimator]) {
+		break;
+	case $familiar[Reanimated Reanimator]:
 		famname += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
-	} else if(myfam == $familiar[Grim Brother] && source.contains_text("talk</a>)")) {
-		famname += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
+		break;
+	case $familiar[Grim Brother]:
+		if(source.contains_text(">talk</a>)"))
+			famname += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
+		break;
+	case $familiar[Mini-Crimbot]:
+		if(source.contains_text(">configure</a>)"))
+			famname += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
+		break;
 	}
 	
 	// Charges
