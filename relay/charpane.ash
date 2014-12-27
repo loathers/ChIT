@@ -701,17 +701,7 @@ void pickerFlavour() {
 }
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
-string parseMods(string ef) {
-	# if(ef == "Polka of Plenty") ef = "Video... Games?";
-	switch(ef) {
-	case "Knob Goblin Perfume": return "";
-	case "Bored With Explosions": 
-		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
-		if(wafe.find()) return wafe.group(1);
-		return "You're just over them"; 
-	}
-
-	string evm = string_modifier(ef,"Evaluated Modifiers");
+string parseMods(string evm) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 	
 	// Standardize capitalization
@@ -892,6 +882,17 @@ string parseMods(string ef) {
 
 	return evm;
 }
+string parseEff(string ef) {
+	# if(ef == "Polka of Plenty") ef = "Video... Games?";
+	switch(ef) {
+	case "Knob Goblin Perfume": return "";
+	case "Bored With Explosions": 
+		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
+		if(wafe.find()) return wafe.group(1);
+		return "You're just over them"; 
+	}
+	return string_modifier(ef,"Evaluated Modifiers").parseMods();
+}
 
 record buff {
 	string effectName;
@@ -1045,7 +1046,7 @@ buff parseBuff(string source) {
 	
 	//ckb: Add modification details for buffs and effects
 	if(vars["chit.effects.describe"] == "true") {
-		string efMod = parseMods(myBuff.effectName);
+		string efMod = parseEff(myBuff.effectName);
 		if(length(efMod)>0) {
 			result.append('<br><span class="efmods">');
 			result.append(efMod);
@@ -1539,7 +1540,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 		
 		if(famitem != $item[none]) {
-			string mod = parseMods(to_string(famitem)); # string_modifier(to_string(famitem), "Evaluated Modifiers");
+			string mod = parseMods(string_modifier(famitem,"Evaluated Modifiers"));
 			// Effects for Scarecrow and Hatrack
 			matcher m = create_matcher('Fam Effect: "(.*?), Cap ([^"]+)"', mod);
 			if(find(m))
@@ -2337,6 +2338,14 @@ void bakeFamiliar() {
 	case $familiar[Grim Brother]:
 		if(source.contains_text(">talk</a>)"))
 			famname += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
+		break;
+	case $familiar[Crimbo Shrub]:
+		if(get_property("_shrubDecorated") == "false")
+			famname += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
+		info = parseMods( get_property("shrubTopper")  + ", "
+						+ get_property("shrubLights")  + ", "
+						+ get_property("shrubGarland") + ", "
+						+ get_property("shrubGifts")    );
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))

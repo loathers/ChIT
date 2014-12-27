@@ -511,22 +511,22 @@ div.progressbar {
 #chit_effects .efmods {
 	font-size:10px;
 }
-.efmods .modCold {
+.modCold {
 	color:blue;
 }
-.efmods .modHot {
+.modHot {
 	color:red;
 }
-.efmods .modSleaze {
+.modSleaze {
 	color:blueviolet;
 }
-.efmods .modSpooky {
+.modSpooky {
 	color:#999999; /* slightly lighter than efmods */
 }
-.efmods .modStench {
+.modStench {
 	color:green;
 }
-.efmods .modPrismatic {
+.modPrismatic {
 	background: -moz-linear-gradient(-45deg,  rgba(255,0,0,1) 0%, rgba(138,43,226,1) 25%, rgba(0,128,0,1) 50%, rgba(0,0,255,1) 100%, rgba(153,153,153,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,0,0,1)), color-stop(25%,rgba(138,43,226,1)), color-stop(50%,rgba(0,128,0,1)), color-stop(100%,rgba(0,0,255,1)), color-stop(100%,rgba(153,153,153,1))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* Chrome10+,Safari5.1+ */
