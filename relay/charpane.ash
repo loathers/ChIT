@@ -891,6 +891,7 @@ string parseEff(string ef) {
 		if(wafe.find()) return wafe.group(1);
 		return "You're just over them"; 
 	}
+
 	return string_modifier(ef,"Evaluated Modifiers").parseMods();
 }
 
@@ -2342,10 +2343,12 @@ void bakeFamiliar() {
 	case $familiar[Crimbo Shrub]:
 		if(get_property("_shrubDecorated") == "false")
 			famname += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
-		info = parseMods( get_property("shrubTopper")  + ", "
+		string mods = parseMods( get_property("shrubTopper")  + ", "
 						+ get_property("shrubLights")  + ", "
 						+ get_property("shrubGarland") + ", "
 						+ get_property("shrubGifts")    );
+		if(info != "")
+			info = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
