@@ -2349,6 +2349,7 @@ void bakeFamiliar() {
 						+ get_property("shrubGifts")    );
 		if(info != "")
 			info = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
+		else info = mods;
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
