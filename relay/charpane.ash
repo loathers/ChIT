@@ -4217,6 +4217,22 @@ void bakeTracker() {
 		return item_report(it, to_plural(it), num);
 	}
 
+	string decomods(string ss) {
+		//cap first letter
+		ss = to_upper_case(substring(ss,0,1)) + substring(ss,1);
+		//shorten various text
+		ss = replace_string(ss,"Moxie","Mox");
+		ss = replace_string(ss,"Muscle","Mus");
+		ss = replace_string(ss,"Mysticality","Myst");
+		//decorate elemental tags with pretty colors
+		ss = replace_string(ss,"Hot","<span class=modHot>Hot</span>");
+		ss = replace_string(ss,"Cold","<span class=modCold>Cold</span>");
+		ss = replace_string(ss,"Spooky","<span class=modSpooky>Spooky</span>");
+		ss = replace_string(ss,"Stench","<span class=modStench>Stench</span>");
+		ss = replace_string(ss,"Sleaze","<span class=modSleaze>Sleaze</span>");
+		return (ss);
+	}
+	
 	boolean started(string pref) {
 		return get_property(pref) != "unstarted" && get_property(pref) != "finished";
 	}
@@ -4335,6 +4351,13 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
+	//questG07Myst
+	//Gorgonzola wants you to exorcise a poltersandwich in the Haunted Pantry.	Take the poltersandwich back to Gorgonzola at the League of Chef-Magi.
+	//questG08Moxie
+	//Shifty wants you to lure yourself into the Sleazy Back Alley and steal your own pants.	Take your pants back to Shifty at the Department of Shadowy Arts and Crafts.
+	//questG09Muscle
+	//Gunther wants you to get the biggest sausage you can find in Cobb's Knob.	Take the huge sausage back to Gunther at the Brotherhood of the Smackdown.
+
 	//L2: get mosquito larva, questL02Larva
 	if(started("questL02Larva")) { 
 		result.append("<tr><td>");
@@ -4367,6 +4390,15 @@ void bakeTracker() {
 	if(started("questL05Goblin")) { 
 		result.append("<tr><td>");
 		result.append('Find and defeat the <a target="mainpane" href="cobbsknob.php">Goblin King</a>');
+		result.append("KGE: ");
+		result.append(item_report($item[Knob Goblin elite polearm], "KGE polearm")+", ");
+		result.append(item_report($item[Knob Goblin elite pants], "KGE pants")+", ");
+		result.append(item_report($item[Knob Goblin elite helm], "KGE helm")+", ");
+		result.append(item_report($item[Knob cake]));
+		result.append("<br>Harem: ");
+		result.append(item_report($item[Knob Goblin harem veil], "harem veil")+", ");
+		result.append(item_report($item[Knob Goblin harem pants], "harem pants")+", ");
+		result.append(item_report($item[Knob Goblin perfume], "perfume"));
 		result.append("</td></tr>");
 	}
 	
@@ -4439,10 +4471,9 @@ void bakeTracker() {
 	}
 
 	//L7.5ish: pirates, questM12Pirate
-	//if (get_property("questM12Pirate")!="unstarted" && get_property("questM12Pirate")!="finished") { 
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if(have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges]) == 0) {
+	if(have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
@@ -4542,7 +4573,7 @@ void bakeTracker() {
 	if (started("questL11MacGuffin")) {
 		result.append("<tr><td>");
 		result.append("Quest for the Holy MacGuffin");
-		result.append("</td></tr>");		
+		result.append("</td></tr>");
 	}
 	
 	//L11: questL11Black
@@ -4551,6 +4582,7 @@ void bakeTracker() {
 			switch(get_property("questL11Black")) {
 			case "started": case "step1": case "step2":
 				result.append('Find the <a target="mainpane" href="woods.php">Black Market</a>');
+				result.append(" ("+get_property("blackForestProgress")+"/5)");
 				break;
 			case "step3":
 				result.append('<br>Get your Father\'s <a target="mainpane" href="shore.php">Diary</a>');
@@ -4646,10 +4678,9 @@ void bakeTracker() {
 				result.append('<a target="mainpane" href="manor3.php">Manor Cellar</a>: Kill Spookyraven');
 				break;
 			}
-
 		result.append("</td></tr>");
 	}
-		
+	
 	
 	if(started("questL11Worship")) {
 		// How many McClusky file pages are present?
@@ -4729,7 +4760,6 @@ void bakeTracker() {
 	
 
 
-
 	//L11: questL11Desert
 	if(started("questL11Desert")) {
 		result.append("<tr><td>");
@@ -4765,7 +4795,7 @@ void bakeTracker() {
 	//L11: questL11Desert
 	if(get_property("questL11Desert")=="finished" && get_property("questL11Pyramid")=="unstarted") {
 		result.append("<tr><td>");
-		result.append('Open the <a target="mainpane" href="beach.php?action=woodencity">Pyramid</a>:<br>');
+		result.append('Open the <a target="mainpane" href="beach.php">Pyramid</a>:<br>');
 				result.append(item_report($item[Staff of Fats], "Staff of Fats, "));
 				result.append(item_report($item[ancient amulet], "amulet, "));
 				result.append(item_report($item[Eye of Ed], "Eye of Ed"));
@@ -4819,9 +4849,6 @@ void bakeTracker() {
 
 		result.append("</td></tr>");
 	}
-
-	
-	
 	
 	
 	//L12: War, questL12War
@@ -4859,52 +4886,13 @@ void bakeTracker() {
 		
 		result.append("</td></tr>");
 	}
-
+	
 	
 	//L13: NS, questL13Final
 	// check for lair items, tower items, wand
 	if (started("questL13Final")) {
 		result.append("<tr><td>");
 		result.append('Go defeat the <a target="mainpane" href="lair.php">Naughty Sorceress</a>');
-
-		// telescope data
-		item [string] tscope;
-		//gate items
-		tscope["an armchair"] = $item[pygmy pygment];
-		tscope["a cowardly-looking man"] = $item[wussiness potion];
-		tscope["a banana peel"] = $item[gremlin juice];
-		tscope["a coiled viper"] = $item[adder bladder];
-		tscope["a rose"] = $item[Angry Farmer candy];
-		tscope["a glum teenager"] = $item[thin black candle];
-		tscope["a hedgehog"] = $item[super-spiky hair gel];
-		tscope["a raven"] = $item[Black No. 2];
-		tscope["a smiling man smoking a pipe"] = $item[Mick's IcyVapoHotness Rub];
-		tscope["a mass of bees"] = $item[honeypot];
-		//tower monetsr items
-		tscope["catch a glimpse of a flaming katana"] = $item[frigid ninja stars];
-		tscope["catch a glimpse of a translucent wing"] = $item[spider web];
-		tscope["see a fancy-looking tophat"] = $item[sonar-in-a-biscuit];
-		tscope["see a flash of albumen"] = $item[black pepper];
-		tscope["see a giant white ear"] = $item[pygmy blowgun];
-		tscope["see a huge face made of Meat"] = $item[meat vortex];
-		tscope["see a large cowboy hat"] = $item[chaos butterfly];
-		tscope["see a periscope"] = $item[photoprotoneutron torpedo];
-		tscope["see a slimy eyestalk"] = $item[fancy bath salts];
-		tscope["see a strange shadow"] = $item[inkwell];
-		tscope["see moonlight reflecting off of what appears to be ice"] = $item[hair spray];
-		tscope["see part of a tall wooden frame"] = $item[disease];
-		tscope["see some amber waves of grain"] = $item[bronzed locust];
-		tscope["see some long coattails"] = $item[Knob Goblin firecracker];
-		tscope["see some pipes with steam shooting out of them"] = $item[powdered organs];
-		tscope["see some sort of bronze figure holding a spatula"] = $item[leftovers of indeterminate origin];
-		tscope["see the neck of a huge bass guitar"] = $item[mariachi G-string];
-		tscope["see what appears to be the North Pole"] = $item[NG];
-		tscope["see what looks like a writing desk"] = $item[plot hole];
-		tscope["see the tip of a baseball bat"] = $item[baseball];
-		tscope["see what seems to be a giant cuticle"] = $item[razor-sharp can lid];
-		tscope["see a pair of horns"] = $item[barbed-wire fence];
-		tscope["see a formidable stinger"] = $item[tropical orchid];
-		tscope["see a wooden beam"] = $item[stick of dynamite];
 
 		//Gate item
 		if ( $strings[started, step1] contains get_property("questL13Final")) {
@@ -4916,60 +4904,38 @@ void bakeTracker() {
 				result.append("no current telescope info");
 			}
 			else {
-				result.append("Gate: ");
-				result.append(item_report(tscope[get_property("telescope1")]));
-			}
-		}
-
-		//Entryway items
-		if ( $strings[started, step1] contains get_property("questL13Final") ) {
-			result.append("<br>Entryway: ");
-			result.append(item_report($item[Boris's key]));
-			result.append(", ");
-			result.append(item_report($item[Jarlsberg's key]));
-			result.append(", ");
-			result.append(item_report($item[Sneaky Pete's key]));
-			result.append(", ");
-			result.append(item_report($item[digital key]));
-			result.append(", ");
-			result.append(item_report($item[skeleton key]));
-			if ( !($strings[Avatar of Boris, Way of the Surprising Fist] contains my_path()) ) {
+				result.append("Contests: ");
+				result.append(decomods(get_property("nsChallenge1")));
 				result.append(", ");
-				result.append(item_report($items[star sword, star staff, star crossbow],"star weapon"));
+				result.append(decomods(get_property("nsChallenge2")));
+				result.append("<br>");
+				result.append("Hedges: ");
+				result.append(decomods(get_property("nsChallenge3")));
+				result.append(", ");
+				result.append(decomods(get_property("nsChallenge4")));
+				result.append(", ");
+				result.append(decomods(get_property("nsChallenge5")));
 			}
-			result.append(", ");
-			result.append(item_report($item[star hat]));
-			result.append(", ");
-			result.append(item_report($item[Richard's star key]));
-			result.append(", ");
-			//check for instruments
-			result.append(item_report($items[acoustic guitarrr, heavy metal thunderrr guitarrr, stone banjo, Disco Banjo, Shagadelic Disco Banjo, Seeger's Unstoppable Banjo, Crimbo ukulele, Massive sitar, 4-dimensional guitar, plastic guitar, half-sized guitar, out-of-tune biwa, Zim Merman's guitar, dueling banjo],"stringed instrument"));
-			result.append(", ");
-			result.append(item_report($items[stolen accordion, calavera concertina, Rock and Roll Legend, Squeezebox of the Ages, The Trickster's Trikitixa],"accordion"));
-			result.append(", ");
-			result.append(item_report($items[tambourine, big bass drum, black kettle drum, bone rattle, hippy bongo, jungle drum],"percussion instrument"));
-
 		}
-
-		//telescope items
+		
+		//Entryway items, "nsTowerDoorKeysUsed"
+		if ( $strings[started, step1] contains get_property("questL13Final") ) {
+			boolean key_used(item it) {
+				return contains_text(get_property("nsTowerDoorKeysUsed"),to_string(it));
+			}
+			result.append("<br>Door Keys: ");
+			foreach kk in $items[Boris's key, Jarlsberg's key, Sneaky Pete's key, digital key, skeleton key, Richard's star key] {
+				if (!key_used(kk)) { result.append(item_report(kk)+", "); }
+			}
+		}
+		
 		if($strings[started, step1, step2, step3, step4] contains get_property("questL13Final") ) {
 			result.append("<br>Tower: ");
-			if ( get_property("telescopeUpgrades")=="0" || in_bad_moon()) {
-				result.append("no telescope");
-			}
-			else if (get_property("lastTelescopeReset") != my_ascensions()) {
-				result.append("no current telescope info");
-			}
-			else if ( get_property("telescopeUpgrades").to_int()>=2 ) {
-				for ii from 2 to get_property("telescopeUpgrades").to_int() {
-					result.append(item_report( tscope[get_property("telescope"+ii)] ));
-					if (ii!=1 && ii!=get_property("telescopeUpgrades").to_int()) {
-						result.append(", ");
-					}
-				}
-			}
+			result.append(item_report($item[beehive]));
+			result.append(", ");
+			result.append(item_report($item[electric boning knife], "boning knife"));
 		}
-
+		
 		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains] contains my_path());
 		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
 			if( my_path()=="Bees Hate You" ) {
