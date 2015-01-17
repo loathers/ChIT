@@ -4390,14 +4390,19 @@ void bakeTracker() {
 	if(started("questL05Goblin")) { 
 		result.append("<tr><td>");
 		result.append('Find and defeat the <a target="mainpane" href="cobbsknob.php">Goblin King</a>');
-		result.append("KGE: ");
-		result.append(item_report($item[Knob Goblin elite polearm], "KGE polearm")+", ");
-		result.append(item_report($item[Knob Goblin elite pants], "KGE pants")+", ");
-		result.append(item_report($item[Knob Goblin elite helm], "KGE helm")+", ");
-		result.append(item_report($item[Knob cake]));
+		result.append("<br>KGE: ");
+		result.append(item_report($item[Knob Goblin elite polearm], "polearm"));
+		result.append(", ");
+		result.append(item_report($item[Knob Goblin elite pants], "pants"));
+		result.append(", ");
+		result.append(item_report($item[Knob Goblin elite helm], "helm"));
+		result.append(", ");
+		result.append(item_report($item[Knob cake], "cake"));
 		result.append("<br>Harem: ");
-		result.append(item_report($item[Knob Goblin harem veil], "harem veil")+", ");
-		result.append(item_report($item[Knob Goblin harem pants], "harem pants")+", ");
+		result.append(item_report($item[Knob Goblin harem veil], "veil"));
+		result.append(", ");
+		result.append(item_report($item[Knob Goblin harem pants], "pants"));
+		result.append(", ");
 		result.append(item_report($item[Knob Goblin perfume], "perfume"));
 		result.append("</td></tr>");
 	}
