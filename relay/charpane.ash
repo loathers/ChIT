@@ -4909,7 +4909,7 @@ void bakeTracker() {
 				result.append("no current telescope info");
 			}
 			else {
-				result.append("Contests: ");
+				result.append("Contests: Init, ");
 				result.append(decomods(get_property("nsChallenge1")));
 				result.append(", ");
 				result.append(decomods(get_property("nsChallenge2")));
@@ -4937,6 +4937,8 @@ void bakeTracker() {
 		if($strings[started, step1, step2, step3, step4] contains get_property("questL13Final") ) {
 			result.append("<br>Tower: ");
 			result.append(item_report($item[beehive]));
+			result.append(", ");
+			result.append("Meat: +"+to_string(to_int(meat_drop_modifier()))+"%");
 			result.append(", ");
 			result.append(item_report($item[electric boning knife], "boning knife"));
 		}
