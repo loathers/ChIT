@@ -4338,6 +4338,7 @@ void bakeTracker() {
 		result.append("Find ");
 		result.append(item_report($item[Lady Spookyraven's necklace]));
 		result.append(" at the <a target=\"mainpane\" href=\"manor.php\">Manor</a>");
+		result.append("<br>Writing Desks: "+get_property("writingDesksDefeated")+"/5");
 		result.append("</td></tr>");
 	}
 	
@@ -4351,12 +4352,29 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 
-	//questG07Myst
-	//Gorgonzola wants you to exorcise a poltersandwich in the Haunted Pantry.	Take the poltersandwich back to Gorgonzola at the League of Chef-Magi.
-	//questG08Moxie
-	//Shifty wants you to lure yourself into the Sleazy Back Alley and steal your own pants.	Take your pants back to Shifty at the Department of Shadowy Arts and Crafts.
-	//questG09Muscle
-	//Gunther wants you to get the biggest sausage you can find in Cobb's Knob.	Take the huge sausage back to Gunther at the Brotherhood of the Smackdown.
+	//Gorgonzola wants you to exorcise a poltersandwich in the Haunted Pantry.
+	//Take the poltersandwich back to Gorgonzola at the League of Chef-Magi.
+	if(started("questG07Myst")) {
+		result.append("<tr><td>");
+		result.append('Find a poltersandwich in the <a target="mainpane" href="place.php?whichplace=manor1">Pantry</a>');
+		result.append("</td></tr>");
+	}
+	
+	//Shifty wants you to lure yourself into the Sleazy Back Alley and steal your own pants.
+	//Take your pants back to Shifty at the Department of Shadowy Arts and Crafts.
+	if(started("questG08Moxie")) {
+		result.append("<tr><td>");
+		result.append('Steal you pants in the <a target="mainpane" href="place.php?whichplace=town_wrong">Alley</a>');
+		result.append("</td></tr>");
+	}
+	
+	//Gunther wants you to get the biggest sausage you can find in Cobb's Knob.
+	//Take the huge sausage back to Gunther at the Brotherhood of the Smackdown.
+	if(started("questG09Muscle")) {
+		result.append("<tr><td>");
+		result.append('Find a big sausage in the <a target="mainpane" href="plains.php">Outskirts</a>');
+		result.append("</td></tr>");
+	}
 
 	//L2: get mosquito larva, questL02Larva
 	if(started("questL02Larva")) { 
