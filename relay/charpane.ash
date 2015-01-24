@@ -2347,6 +2347,10 @@ void bakeFamiliar() {
 						+ get_property("shrubLights")  + ", "
 						+ get_property("shrubGarland") + ", "
 						+ get_property("shrubGifts")    );
+		if(get_property("shrubGifts") == "yellow")
+			mods = mods.replace_string(", Yellow", ", <span style='color:#999933'>Yellow</span>");
+		else if(get_property("shrubGifts") == "red")
+			mods = mods.replace_string(", Red", ", <span style='color:#FE2E2E'>Red</span>");
 		if(info != "")
 			info = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
 		else info = mods;
@@ -5566,7 +5570,8 @@ buffer modifyPage(buffer source) {
 		vprint("CHIT: Compact Character Pane not supported", "blue", 1);
 	}
 	
-	if(isCompact || !parsePage(source))
+	// "<body><center><b>Spelunkin'" means that the character is playing the Tales of Spelunkin' minigame.
+	if(isCompact || source.contains_text("<body><center><b>Spelunkin'") || !parsePage(source))
 		return source;
 
 	//Set default values for toolbar icons
