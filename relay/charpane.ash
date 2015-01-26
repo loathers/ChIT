@@ -2167,7 +2167,7 @@ void FamPete() {
 	
 	chitBricks["familiar"] = result;
 }
-		
+
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -2343,17 +2343,22 @@ void bakeFamiliar() {
 	case $familiar[Crimbo Shrub]:
 		if(get_property("_shrubDecorated") == "false")
 			famname += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
-		string mods = parseMods( get_property("shrubTopper")  + ", "
-						+ get_property("shrubLights")  + ", "
-						+ get_property("shrubGarland") + ", "
-						+ get_property("shrubGifts")    );
-		if(get_property("shrubGifts") == "yellow")
-			mods = mods.replace_string(", Yellow", ", <span style='color:#999933'>Yellow</span>");
-		else if(get_property("shrubGifts") == "red")
-			mods = mods.replace_string(", Red", ", <span style='color:#FE2E2E'>Red</span>");
+		buffer mods;
+		foreach shrub in $strings[shrubTopper, shrubLights, shrubGarland, shrubGifts] {
+			string decoration = get_property(shrub);
+			if(length(decoration) > 0) {
+				if(length(mods) > 0)
+					mods.append(", ");
+				mods.append(decoration);
+			}
+		}
 		if(info != "")
-			info = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
-		else info = mods;
+			mods = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
+		info = parseMods(mods);
+		if(get_property("shrubGifts") == "yellow")
+			info = info.replace_string(", Yellow", ", <span style='color:#999933'>Yellow</span>");
+		else if(get_property("shrubGifts") == "red")
+			info = info.replace_string(", Red", ", <span style='color:#FE2E2E'>Red</span>");
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
@@ -5081,6 +5086,21 @@ void bakeHeader() {
 	
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
+	
+	// remove restricted familiars for KoL's familiar picker
+	matcher famfavmatch = create_matcher("(var FAMILIARFAVES = .+?\\];)",result);
+	if (famfavmatch.find()) {
+		string replacefamfavs = "var FAMILIARFAVES = [";
+		matcher singlefamfavmatch = create_matcher("(\\[.+?,(\\d+)\\])",famfavmatch.group(1));
+		while (singlefamfavmatch.find()) if (is_unrestricted(to_familiar(to_int(singlefamfavmatch.group(2))))) {
+			string singlefamfav = singlefamfavmatch.group(1);
+			singlefamfav = replace_string(singlefamfav,"[[","[");
+			replacefamfavs += singlefamfav + ",";
+		}
+		replacefamfavs+="];";
+		replacefamfavs .replace_string("= [[[","= [[");
+		result.replace_string(famfavmatch.group(1),replacefamfavs);
+	}
 	
 	chitBricks["header"] = result.to_string();
 		
