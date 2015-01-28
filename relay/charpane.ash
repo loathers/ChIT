@@ -1,7 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
 import "zlib.ash";
-string chitVersion = "0.8.5";
 
 /************************************************************************************
 CHaracter Info Toolbox
@@ -115,64 +114,6 @@ void bakeUpdate(string thisver, string prefix, string newver) {
 	}
 	result.append('</td></tr></tbody></table>');
 	chitBricks["update"] = result.to_string();		
-}
-
-// checks script version once daily
-// adapted from zlib's check_version() to only print update messages once per day, and only if version checking is enabled by the user
-void checkVersion(string soft, string thisver, int thread) {
-
-	vprint("Running "+soft+" version: "+thisver,"gray",8);
-
-	if (!(vars["chit.checkversion"]=="true")) {
-		return;
-	}
-
-	boolean sameornewer(string local, string server) {
-      if (equals(local,server)) return true;
-      string[int] loc = split_string(local,"\\.");
-      string[int] ser = split_string(server,"\\.");
-      for i from 0 to max(count(loc)-1,count(ser)-1) {
-         if (i+1 > count(loc)) return false; if (i+1 > count(ser)) return true;
-         if (loc[i].to_int() < ser[i].to_int()) return false;
-         if (loc[i].to_int() > ser[i].to_int()) return true;
-      }
-		return local == server;
-	}
-
-	string page; 
-	matcher findver;
-	buffer result;
-
-	record {
-	   string ver;
-	   string vdate;
-	} [string] zv;
-	file_to_map("zversions.txt", zv);
-
-	if (zv[soft].vdate != today_to_string()) {
-		vprint("Checking for updates...",1);
-		page = visit_url("http://kolmafia.us/showthread.php?t="+thread);
-		findver = create_matcher("<b>"+soft+" (.+?)</b>",page);
-		zv[soft].vdate = today_to_string();
-		if (findver.find()) {
-			zv[soft].ver = findver.group(1);
-			vprint("Latest version: " + zv[soft].ver,1);
-			if (sameornewer(thisver,zv[soft].ver)) {
-				vprint("You have a current version of "+soft+".","green",1); 
-			} else {
-				string msg = "<font color=red><b>New Version of "+soft+" Available: "+zv[soft].ver+"</b></font>";
-				msg = msg + '<br>Upgrade from '+thisver+' to '+zv[soft].ver+' with <font color=blue><u>svn update</u></font> command!<br>';
-				vprint_html(msg,1);
-			}
-		} else {
-			vprint("Unable to load current version info.","red",-1); 
-		}
-		map_to_file(zv,"zversions.txt");
-	}
-	
-	//Build update brick if required
-	if(!sameornewer(thisver,zv[soft].ver))
-		bakeUpdate(thisver, "Version ", zv[soft].ver);
 }
 
 /*****************************************************
@@ -5601,14 +5542,14 @@ buffer modifyPage(buffer source) {
 	}
 	
 	//Check for updates (once a day)
-	if(svn_exists("mafiachit")) {
+	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit")) {
 		if(get_property("_svnUpdated") == "false" && !svn_at_head("mafiachit")) {
 			if(get_property("_chitChecked") != "true")
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
 			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
 			set_property("_chitChecked", "true");
 		}
-	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
+	}
 	
 	if(limit_mode() == "spelunky")
 		return source.spelunky();
