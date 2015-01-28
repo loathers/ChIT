@@ -5026,7 +5026,7 @@ void bakeHeader() {
 		string replacefamfavs = "var FAMILIARFAVES = [";
 		matcher singlefamfavmatch = create_matcher('\\[".+?","(.+?)","(.+?)",\\d+\\]',famfavmatch.group(1)); // ["Onegai Marie","Angry Jung Man","jungman",165]
 		while(singlefamfavmatch.find()) {
-			familiar fam = to_familiar(singlefamfavmatch.group(1));
+			familiar fam = to_familiar(replace_string(singlefamfavmatch.group(1),"\\",""));
 			if(is_unrestricted(fam)) {
 				string singlefamfav = singlefamfavmatch.group(0);
 				singlefamfav = singlefamfav.replace_string("[[", "[");
