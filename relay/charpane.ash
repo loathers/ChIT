@@ -924,7 +924,7 @@ buff parseBuff(string source) {
 		myBuff.effectImage = parse.group(3);
 		myBuff.effectName = parse.group(4);
 		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
-		if(get_property("_psychoJarUsed") == "true" && get_campground() contains $item[jar of psychoses (The Crackpot Mystic)] && $strings[Consumed by Anger, Consumed by Doubt, Consumed by Fear, Consumed by Regret] contains myBuff.effectName)
+		if(get_campground() contains $item[jar of psychoses (The Crackpot Mystic)] && $strings[Consumed by Anger, Consumed by Doubt, Consumed by Fear, Consumed by Regret] contains myBuff.effectName)
 			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(7)+'</a>';
 		else
 			columnTurns = parse.group(6).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
@@ -2168,6 +2168,31 @@ void FamPete() {
 	chitBricks["familiar"] = result;
 }
 
+// Set familiar image, including path to image. Some familiar images are purposefully changed, others need to be normalized.
+string familiar_image(familiar f) {
+	switch(f) {
+	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
+	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
+	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
+	
+	case $familiar[Golden Monkey]: return imagePath + 'goldmonkey_darkcodelagsniper.gif';
+	
+	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
+		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
+			return imagePath + 'crimboshrub_fxx_ckb.gif';
+		break;
+	
+	case $familiar[Happy Medium]:
+		switch(f.image) {
+			case "medium_1.gif": return imagePath + 'medium_blue.gif';
+			case "medium_2.gif": return imagePath + 'medium_orange.gif';
+			case "medium_3.gif": return imagePath + 'medium_red.gif';
+		}
+		break;
+	}
+	return '/images/itemimages/' + f.image;
+}
+
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -2193,42 +2218,9 @@ void bakeFamiliar() {
 	if(myfam != $familiar[none]) {
 		famtype = to_string(myfam);
 		actortype = famtype;
-		// Set Familiar image
-		switch(myfam) {
-			case $familiar[Fancypants Scarecrow]:
-				famimage = "/images/itemimages/pantscrow2.gif";
-				famtype = "Fancy Scarecrow"; // Name is too long when there's info added
-				break;
-			case $familiar[Disembodied Hand]:
-				famimage = "/images/itemimages/dishand.gif";
-				break;
-			case $familiar[Mad Hatrack]:
-				famimage = "/images/itemimages/hatrack.gif";
-				break;
-			case $familiar[Crimbo Shrub]: // Get rid of that Gollywog look!
-				if(to_boolean(vars["chit.familiar.anti-gollywog"]))
-					famimage = imagePath+'crimboshrub_fxx_ckb.gif';
-				else famimage = '/images/itemimages/'+ myfam.image;
-				break;
-			case $familiar[Happy Medium]:
-				switch(myfam.image) {
-				case "medium_0.gif":
-					famimage = '/images/itemimages/medium_0.gif';
-					break;
-				case "medium_1.gif":
-					famimage = imagePath+'medium_blue.gif';
-					break;
-				case "medium_2.gif":
-					famimage = imagePath+'medium_orange.gif';
-					break;
-				case "medium_3.gif":
-					famimage = imagePath+'medium_red.gif';
-					break;
-				}
-				break;
-			default:
-				famimage = '/images/itemimages/'+ myfam.image;
-		}
+		if(myfam == $familiar[Fancypants Scarecrow])
+			famtype = "Fancy Scarecrow"; // Name is too long when there's info added
+		famimage =  familiar_image(myfam);
 	}
 	
 	//Get Familiar Name
@@ -5089,17 +5081,22 @@ void bakeHeader() {
 	
 	// remove restricted familiars for KoL's familiar picker
 	matcher famfavmatch = create_matcher("(var FAMILIARFAVES = .+?\\];)",result);
-	if (famfavmatch.find()) {
+	if(famfavmatch.find()) {
 		string replacefamfavs = "var FAMILIARFAVES = [";
-		matcher singlefamfavmatch = create_matcher("(\\[.+?,(\\d+)\\])",famfavmatch.group(1));
-		while (singlefamfavmatch.find()) if (is_unrestricted(to_familiar(to_int(singlefamfavmatch.group(2))))) {
-			string singlefamfav = singlefamfavmatch.group(1);
-			singlefamfav = replace_string(singlefamfav,"[[","[");
-			replacefamfavs += singlefamfav + ",";
+		matcher singlefamfavmatch = create_matcher('\\[".+?","(.+?)","(.+?)",\\d+\\]',famfavmatch.group(1)); // ["Onegai Marie","Angry Jung Man","jungman",165]
+		while(singlefamfavmatch.find()) {
+			familiar fam = to_familiar(singlefamfavmatch.group(1));
+			if(is_unrestricted(fam)) {
+				string singlefamfav = singlefamfavmatch.group(0);
+				singlefamfav = singlefamfav.replace_string("[[", "[");
+				// Attend to familiar images also. (This uses mdofied familiar images!)
+				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), familiar_image(fam));
+				replacefamfavs += singlefamfav + ",";
+			}
 		}
 		replacefamfavs+="];";
 		replacefamfavs .replace_string("= [[[","= [[");
-		result.replace_string(famfavmatch.group(1),replacefamfavs);
+		result.replace_string(famfavmatch.group(0),replacefamfavs);
 	}
 	
 	chitBricks["header"] = result.to_string();
@@ -5523,6 +5520,37 @@ buffer buildHouse() {
 	return house;
 }
 
+buffer spelunky(buffer source) {
+	int index = source.index_of("<center><p><b><font size=2>Effects");
+	if(index < 0) // Try compact charpane
+		index = source.index_of("<hr width=50%><font size=2 color=black>");
+	if(index <0) return source;
+	
+	// Add combat phase information
+	buffer spelunk;
+	spelunk.append("<div class=small><br><b>Non-combat Phase: ");
+	spelunk.append(get_property("spelunkyNextNoncombat"));
+	if(get_property("spelunkyWinCount") != "3") {
+		spelunk.append("</b><br>Encounter in ");
+		spelunk.append(get_property("spelunkyWinCount"));
+		spelunk.append(" /3 wins</div>");
+	} else
+		spelunk.append("</b><br><i>- NOW -</i></div>");
+	source.insert(index, spelunk);
+	
+	// Add Buddy tooltip info
+	if(source.contains_text("title='A Helpful Guy'"))
+		source = source.replace_string("title='A Helpful Guy'", "title='A Helpful Guy\nDelevels by 5-10 at start of all combats'");
+	else if(source.contains_text("title='A Skeleton'"))
+		source = source.replace_string("title='A Skeleton'", "title='A Skeleton\nDeals 9-10 damage every round of combat'");
+	else if(source.contains_text("title='A Damselfly'"))
+		source = source.replace_string("title='A Damselfly'", "title='A Damselfly\nHeals 8-10 HP at the end of all successful combats'");
+	else if(source.contains_text("title='A Resourceful Kid'"))
+		source = source.replace_string("title='A Resourceful Kid'", "title='A Resourceful Kid\n Gives 7 gold at the end of all successful combats\nUnlocks that one Idol NC choice'");
+	
+	return source;
+}
+
 buffer modifyPage(buffer source) {
 	if(source.length() < 6)
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
@@ -5582,16 +5610,18 @@ buffer modifyPage(buffer source) {
 		}
 	} else checkVersion("Character Info Toolbox", chitVersion, 7594);
 	
-	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 ) {
+	if(limit_mode() == "spelunky")
+		return source.spelunky();
+	
+	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 )
 		inValhalla = true;
-	}
+	
 	if( contains_text(source, "<hr width=50%>") ) {
 		isCompact = true;
 		vprint("CHIT: Compact Character Pane not supported", "blue", 1);
 	}
 	
-	// "<body><center><b>Spelunkin'" means that the character is playing the Tales of Spelunkin' minigame.
-	if(isCompact || source.contains_text("<body><center><b>Spelunkin'") || !parsePage(source))
+	if(isCompact || limit_mode() != "" || !parsePage(source))
 		return source;
 
 	//Set default values for toolbar icons

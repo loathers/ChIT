@@ -143,7 +143,8 @@ $(document).ready(function () {
 	
 }); 
 
-// Now for KoLmafia's Familiar Picker, with a small change:
+// Now for KoLmafia's Familiar Picker, with a small change: Familiar change goes through Mafia so that a new familiar item may be automatically equipped
+// Also requires full path information for images, so they can be customized
 var familiarpicklist = (function () {
 var self = {
 	pickdiv: null,
@@ -179,7 +180,7 @@ var self = {
 			if (style == 2)
 				ht +='<li>&middot;<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+'">'+fam[1]+'</a></li>';
 			else if (style == 3)
-				ht +='<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+' (the '+fam[1]+')" style="padding-left: 4px;"><img src="/images/itemimages/'+fam[2]+'.gif" border="1" /></a></li>';
+				ht +='<a href="#" class="picker" rel="'+fam[3]+'" title="'+name+' (the '+fam[1]+')" style="padding-left: 4px;"><img src="'+fam[2]+'" border="1" /></a></li>';
 			else
 				ht +='<li>&middot;<a href="#" class="picker" rel="'+fam[3]+'" title="(the '+fam[1]+')">'+name+'</a></li>';
 		}
