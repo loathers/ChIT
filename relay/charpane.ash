@@ -470,9 +470,10 @@ string helperSemiRare() {
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|0";
 		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
+	if(get_property("lastCastleTopUnlock").to_int() == my_ascensions())
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
-		if($strings[step4, step5, finished] contains get_property("questL10Garbage"))
-			rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
+	if($strings[step4, step5, finished] contains get_property("questL10Garbage"))
+		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
@@ -5471,7 +5472,7 @@ buffer spelunky(buffer source) {
 	buffer spelunk;
 	spelunk.append("<div class=small><br><b>Non-combat Phase: ");
 	spelunk.append(get_property("spelunkyNextNoncombat"));
-	if(get_property("spelunkyWinCount") != "3") {
+	if(get_property("spelunkyWinCount").to_int() > 2) { // This can legitimately go over 3
 		spelunk.append("</b><br>Encounter in ");
 		spelunk.append(get_property("spelunkyWinCount"));
 		spelunk.append(" /3 wins</div>");
