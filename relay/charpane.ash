@@ -5472,7 +5472,7 @@ buffer spelunky(buffer source) {
 	buffer spelunk;
 	spelunk.append("<div class=small><br><b>Non-combat Phase: ");
 	spelunk.append(get_property("spelunkyNextNoncombat"));
-	if(get_property("spelunkyWinCount").to_int() > 2) { // This can legitimately go over 3
+	if(get_property("spelunkyWinCount").to_int() < 3) { // This can legitimately go over 3
 		spelunk.append("</b><br>Encounter in ");
 		spelunk.append(get_property("spelunkyWinCount"));
 		spelunk.append(" /3 wins</div>");
