@@ -4861,7 +4861,7 @@ void bakeTracker() {
 		result.append('Go defeat the <a target="mainpane" href="lair.php">Naughty Sorceress</a>');
 
 		//Gate item
-		if ( $strings[started, step1] contains get_property("questL13Final")) {
+		if ( $strings[started, step1, step2, step3] contains get_property("questL13Final")) {
 			result.append("<br>");
 			if ( get_property("telescopeUpgrades")=="0" || in_bad_moon()) {
 				result.append("no telescope");
@@ -4885,7 +4885,7 @@ void bakeTracker() {
 		}
 		
 		//Entryway items, "nsTowerDoorKeysUsed"
-		if ( $strings[started, step1] contains get_property("questL13Final") ) {
+		if ( $strings[started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
 			boolean key_used(item it) {
 				return contains_text(get_property("nsTowerDoorKeysUsed"),to_string(it));
 			}
@@ -4895,7 +4895,7 @@ void bakeTracker() {
 			}
 		}
 		
-		if($strings[started, step1, step2, step3, step4] contains get_property("questL13Final") ) {
+		if($strings[started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
 			result.append("<br>Tower: ");
 			result.append(item_report($item[beehive]));
 			result.append(", ");
@@ -4916,12 +4916,10 @@ void bakeTracker() {
 			result.append("</td></tr>");
 		}
 	}
-
-
 	
-
+	
 	//questM13Escape, Subject 37
-	if (started("questM13Escape")) {
+	if (started("questM13Escape") && can_interact()) {
 	//if (contains_text(source,"Subject 37")) {
 		result.append("<tr><td>");
 		result.append('Help <a target="mainpane" href="cobbsknob.php?level=3">Subject 37</a> escape');	
@@ -4930,17 +4928,50 @@ void bakeTracker() {
 	
 	
 	//L99: questM15Lol (facsimile dictionary)
-	if (started("questM15Lol") && my_level()>=9) {
+	if (started("questM15Lol") && my_level()>=9 && can_interact()) {
 		result.append("<tr><td>");
 		result.append('Find the 64735 of <a target="mainpane" href="mountains.php">Rof Lm Fao</a>');	
 		result.append("</td></tr>");
 	}
 	
 	
+	//HITS: stars and lines and charts
+	if ( item_amount($item[steam-powered model rocketship])>0 && item_amount($item[Richard's star key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),"Richard's star key") ) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=beanstalk">HITS</a>: ');
+		result.append(item_report($item[star], 8));
+		result.append(", ");
+		result.append(item_report($item[line], 7));
+		result.append(", ");
+		result.append(item_report($item[star chart],"chart"));
+		result.append("</td></tr>");
+	}
+	
+	//Xiblaxian holo-wrist-puter
+	if (have_equipped($item[Xiblaxian holo-wrist-puter])) {
+		int xidrops = get_property("_holoWristDrops").to_int();
+		int xiprog = get_property("_holoWristProgress").to_int();
+		int xinext = 11 + 5*xidrops;
+		result.append("<tr><td>");
+		result.append("<b>Xiblaxian</b> drop: "+xiprog+"/"+xinext);
+		if (xiprog >= xinext) {
+			result.append("<br><span style=color:fuchsia>");
+			result.append("circuitry ("+available_amount($item[Xiblaxian circuitry])+") ");
+			result.append("[indoors]");
+			result.append("<br>");
+			result.append("polymer ("+available_amount($item[Xiblaxian polymer])+") ");
+			result.append("[outdoors]");
+			result.append("<br>");
+			result.append("alloy ("+available_amount($item[Xiblaxian alloy])+") ");
+			result.append("[underground]");
+			result.append("</span>");
+		}
+		result.append("</td></tr>");
+	}
+	
+	
+	
 	//L99: Nemesis stuff ?
-
-
-
 	//Sea quests
 	
 	
