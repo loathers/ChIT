@@ -2110,6 +2110,36 @@ void FamPete() {
 	chitBricks["familiar"] = result;
 }
 
+# <p><font size=2><b>Servant:</b><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane">Bakthenamen the 1 level Cat</a><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane"><img border=0 src="//images.kingdomofloathing.com/itemimages/edserv1.gif" /></a></font></p>
+void FamEd() {
+	string famlink = 'place.php?whichplace=edbase&action=edbase_door';
+	string famimage, famname, equipimage, famweight, info, famtype;
+	matcher servant = create_matcher('mainpane">(Bakthenamen the 1 level Cat)</a>.+? src="([^"]+)"', chitSource["familiar"]);
+	if(find(servant)) {
+		famimage = servant.group(2);
+		famname = "Servant";
+		famtype = servant.group(1);
+	} else {
+		famimage = "blank.gif";
+		famname = "Servant";
+		famtype = "(none)";
+	}
+	buffer result;
+	result.append('<table id="chit_familiar" class="chit_brick nospace">');
+	result.append('<tr><th width="40" style="color:blue">' + famweight + '</th>');
+	result.append('<th><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door" class="familiarpick">' + famname + '</a></th>');
+	result.append('</tr><tr>');
+	result.append('<td class="icon">');
+	result.append('<a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door" class="familiarpick">');
+	result.append('<img src="' + famimage + '">');
+	result.append('</a>');
+	result.append('</td>');
+	result.append('<td class="info">' + famtype + info + '</td>');
+	result.append('</tr></table>');
+	
+	chitBricks["familiar"] = result;
+}
+
 // Set familiar image, including path to image. Some familiar images are purposefully changed, others need to be normalized.
 string familiar_image(familiar f) {
 	switch(f) {
@@ -2142,6 +2172,7 @@ void bakeFamiliar() {
 	case "Avatar of Boris": FamBoris(); return;
 	case "Avatar of Jarlsberg": FamJarlsberg(); return;
 	case "Avatar of Sneaky Pete": FamPete(); return;
+	case "Actually Ed the Undying": FamEd(); return;
 	}
 
 	string source = chitSource["familiar"];
@@ -3782,23 +3813,24 @@ void bakeCharacter() {
 	}
 
 	//Title
-	string myTitle = my_class();
-	if (vars["chit.character.title"] == "true") {
-		matcher titleMatcher = create_matcher("<br>(.*?)<br>(.*?)<", source);
-		if (find(titleMatcher)) {
-			myTitle = group(titleMatcher, 2);
-			if (index_of(myTitle, "(Level ") == 0) {
-				myTitle = group(titleMatcher, 1);
+	string myTitle() {
+		string myTitle = my_class();
+		if(vars["chit.character.title"] == "true") {
+			matcher titleMatcher = create_matcher("<br>(.*?)<br>(.*?)<", source);
+			if(find(titleMatcher)) {
+				myTitle = group(titleMatcher, 2);
+				if(index_of(myTitle, "(Level ") == 0)
+					myTitle = group(titleMatcher, 1);
+			} else {
+				titleMatcher = create_matcher("(?i)<br>(?:level\\s*"+my_level()+"|"+my_level()+".{2}?\\s*level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
+				if(find(titleMatcher))
+					return group(titleMatcher, 1);
 			}
 		} else {
-			titleMatcher = create_matcher("(?i)<br>(?:level\\s*"+my_level()+"|"+my_level()+".{2}?\\s*level\\s*)?([^<]*)", source); // Snip level out of custom title if it is at the beginning. Simple cases only.
-			if (find(titleMatcher)) {
-				myTitle = group(titleMatcher, 1);
-			}
+			if(myTitle == "Avatar of Jarlsberg" || myTitle == "Avatar of Sneaky Pete" || myTitle == "Unknown")  // Too long!
+				return "Avatar";
 		}
-	} else {
-		if(myTitle == "Avatar of Jarlsberg" || myTitle == "Avatar of Sneaky Pete" || myTitle == "Unknown")  // Too long!
-			myTitle = "Avatar";
+		return myTitle;
 	}
 
 	//Avatar
@@ -3819,36 +3851,42 @@ void bakeCharacter() {
 		myOutfit = (len > 103 && len < 110? "<br />": " ") + myOutfit;
 	}
 
-	//Class-spesific stuff
-	string myGuild = "guild.php?guild=";
-	int myMainStats = 0;
-	int mySubStats = 0;
-	switch (my_primestat()) {
+	// SubStats
+	int mySubStats() {
+		switch (my_primestat()) {
 		case $stat[mysticality]:
-			myGuild += "m";
-			myMainStats = my_basestat($stat[mysticality]);
-			mySubStats = my_basestat($stat[submysticality]);
-			break;
+			return my_basestat($stat[submysticality]);
 		case $stat[moxie]:
-			myGuild += "t";
-			myMainStats = my_basestat($stat[moxie]);
-			mySubStats = my_basestat($stat[submoxie]);
-			break;
+			return my_basestat($stat[submoxie]);
 		case $stat[muscle]:
-			myGuild += "f";
-			myMainStats = my_basestat($stat[muscle]);
-			mySubStats = my_basestat($stat[submuscle]);
-			break;
+			return my_basestat($stat[submuscle]);
+		}
+		return 0;
 	}
 	
-	if(my_path() == "Avatar of Boris")
-		myGuild = "da.php?place=gate1";
-	else if(my_path() == "Zombie Slayer")
-		myGuild = "campground.php?action=grave";
-	else if(my_path() == "Avatar of Jarlsberg")
-		myGuild = "da.php?place=gate2";
-	else if(my_path() == "Avatar of Sneaky Pete")
-		myGuild = "da.php?place=gate3";
+	string myGuild() {
+		switch(my_path()) {
+		case "Avatar of Boris":
+			return "da.php?place=gate1";
+		case "Zombie Slayer":
+			return "campground.php?action=grave";
+		case "Avatar of Jarlsberg":
+			return "da.php?place=gate2";
+		case "Avatar of Sneaky Pete":
+			return "da.php?place=gate3";
+		case "Actually Ed the Undying":
+			return "place.php?whichplace=edbase&action=edbase_book";
+		}
+		switch (my_primestat()) {
+			case $stat[mysticality]:
+				return "guild.php?guild=m";
+			case $stat[moxie]:
+				return "guild.php?guild=t";
+			case $stat[muscle]:
+				return "guild.php?guild=f";
+		}
+		return "";
+	}
 
 	// LifeStyle suitable for charpane
 	string myLifeStyle() {
@@ -3889,6 +3927,7 @@ void bakeCharacter() {
 		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
 		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
 		case "Avatar of Sneaky Pete": return "Sneaky Pete";
+		case "Actually Ed the Undying": return "The Undying";
 		}
 		return my_path();
 	}
@@ -3900,7 +3939,7 @@ void bakeCharacter() {
 	if (x==1) lower=9;
 	int upper = (y**4)-(4*y**3)+(14*y**2)-(20*y)+25;
 	int range = upper - lower;
-	int current = mySubStats - lower;
+	int current = mySubStats() - lower;
 	int needed = range - current;
 	float progress = (current * 100.0) / range;
 	
@@ -3930,7 +3969,7 @@ void bakeCharacter() {
 	if(myAvatar != "")
 		result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit"><img src="' + myAvatar + '"></a></td>');
 	pickOutfit();
-	result.append('<td class="label"><a target="mainpane" href="' + myGuild +'" title="Visit your guild">' + myTitle + '</a></td>');
+	result.append('<td class="label"><a target="mainpane" href="' + myGuild() +'" title="Visit your guild">' + myTitle() + '</a></td>');
 	result.append('<td class="level" rowspan="2" style="width:30px;' + councilStyle + '"><a target="mainpane" href="council.php" title="' + councilText + '">' + my_level() + '</a></td>');
 	result.append('</tr>');
 
@@ -5093,8 +5132,9 @@ boolean parsePage(buffer original) {
 	parse = create_matcher("(<p><span class=small><b>Familiar:.+?>none</a>\\)</span>"  // familiar (none)
 		+ "|<table width\\=90%.+?Familiar:.+?</table></center>"  // regular familiar
 		+ "|<b>Clancy</b>.*?</font></center>"  // Clancy (Avatar of Boris)
-		+ "|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\))"  // (Avatar of Jarlsberg)
-		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // (Avatar of Sneaky Pete)
+		+ "|<font size=2><b>Companion:</b>.*?(?:</b></font>|none\\))"  // Avatar of Jarlsberg
+		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // Avatar of Sneaky Pete
+		+ "|<p><font size=2><b>Servant:</b>.*?</p>"  // Ed the Undying
 		+ ")", source);
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
