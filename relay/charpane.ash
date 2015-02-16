@@ -3057,6 +3057,15 @@ void addAud(buffer result) {
 	}
 }
 
+void addKa(buffer result) {
+	result.append('<tr><td class="label">Ka</td><td class="info">');
+	result.append(formatInt(item_amount($item[Ka Coin])));
+	if(to_boolean(vars["chit.stats.showbars"]))
+		result.append('</td><td><div title="Ka Coins" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
+	else
+		result.append('<img title="Ka Coins" style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -3507,14 +3516,22 @@ void bakeStats() {
 		
 		// Add special stats to the section that contains mainstat
 		if(section.contains_stat()) {
-			if(my_fury() > 0)
+			switch(my_class()) {
+			case $class[Seal Clubber]:
 				result.addFury();
-			else if(my_soulsauce() > 0)
+				break;
+			case $class[Sauceror]:
 				result.addSauce();
-			else if(my_path() == "Avatar of Sneaky Pete")
+				break;
+			case $class[Avatar of Sneaky Pete]:
 				result.addAud();
+				break;
+			case $class[Ed]:
+				result.addKa();
+				break;
+			}
 			
-			if(my_path() == "Heavy Rains" || my_path() == "19")
+			if(my_path() == "Heavy Rains")
 				result.addHeavyRains();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
