@@ -2114,7 +2114,7 @@ void FamPete() {
 void FamEd() {
 	string famlink = 'place.php?whichplace=edbase&action=edbase_door';
 	string famimage, famname, equipimage, famweight, info, famtype;
-	matcher servant = create_matcher('mainpane">(Bakthenamen the 1 level Cat)</a>.+? src="([^"]+)"', chitSource["familiar"]);
+	matcher servant = create_matcher('mainpane">(.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
 	if(find(servant)) {
 		famimage = servant.group(2);
 		famname = "Servant";
