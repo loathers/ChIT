@@ -2110,32 +2110,72 @@ void FamPete() {
 	chitBricks["familiar"] = result;
 }
 
+static { string [string] [int] servant;
+	servant["Cat"][1] = "Gives unpleasant gifts";
+	servant["Cat"][7] = "Helps find items";
+	servant["Cat"][14] = "Lowers enemy stats";
+	servant["Belly-Dancer"][1] = "Lowers enemy stats";
+	servant["Belly-Dancer"][7] = "Restores MP";
+	servant["Belly-Dancer"][14] = "Picks pockets";
+	servant["Maid"][1] = "Helps find meat";
+	servant["Maid"][7] = "Attacks enemies";
+	servant["Maid"][14] = "Prevents enemy attacks";
+	servant["Bodyguard"][1] = "Prevents enemy attacks";
+	servant["Bodyguard"][7] = "Attacks enemies";
+	servant["Bodyguard"][14] = "Attacks when guarding";
+	servant["Scribe"][1] = "Improves stat gains";
+	servant["Scribe"][7] = "Improves spell crit";
+	servant["Scribe"][14] = "Improves spell damage";
+	servant["Priest"][1] = "Attacks undead enemies";
+	servant["Priest"][7] = "Improves evocation spells";
+	servant["Priest"][14] = "Improves Ka drops";
+	servant["Assassin"][1] = "Attacks enemies";
+	servant["Assassin"][7] = "Lowers enemy stats";
+	servant["Assassin"][14] = "Staggers enemies";
+}
+
 # <p><font size=2><b>Servant:</b><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane">Bakthenamen the 1 level Cat</a><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane"><img border=0 src="//images.kingdomofloathing.com/itemimages/edserv1.gif" /></a></font></p>
 void FamEd() {
-	string famlink = 'place.php?whichplace=edbase&action=edbase_door';
-	string famimage, famname, equipimage, famweight, info, famtype;
-	matcher servant = create_matcher('mainpane">(.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
-	if(find(servant)) {
-		famimage = servant.group(2);
-		famname = "Servant";
-		famtype = servant.group(1);
-	} else {
-		famimage = "blank.gif";
-		famname = "Servant";
-		famtype = "(none)";
-	}
 	buffer result;
-	result.append('<table id="chit_familiar" class="chit_brick nospace">');
-	result.append('<tr><th width="40" style="color:blue">' + famweight + '</th>');
-	result.append('<th><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door" class="familiarpick">' + famname + '</a></th>');
-	result.append('</tr><tr>');
-	result.append('<td class="icon">');
-	result.append('<a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door" class="familiarpick">');
-	result.append('<img src="' + famimage + '">');
-	result.append('</a>');
-	result.append('</td>');
-	result.append('<td class="info">' + famtype + info + '</td>');
-	result.append('</tr></table>');
+	void bake(string lvl, string name, string type, string img) {
+		result.append('<table id="chit_familiar" class="chit_brick nospace">');
+		result.append('<tr><th title="Servant Level">');
+		if(lvl != "")
+			result.append('Lvl.&nbsp;');
+		result.append(lvl);
+		result.append('</th><th colspan="2" title="Servant"><a title="');
+		result.append(name);
+		result.append('" target=mainpane href="/place.php?whichplace=edbase&action=edbase_door">');
+		result.append(name);
+		if(name != "")
+			result.append(", the ");
+		result.append(type);
+		result.append('</a></th></tr>');
+		
+		result.append('<tr><td class="icon" title="Servant">');
+		result.append('<a class="chit_launcher" rel="chit_pickerservant" href="#">');
+		result.append('<img title="Release thy Servant" src=');
+		result.append(img);
+		result.append('></a></td>');
+		if(lvl != "") {
+			result.append('<td class="info"><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door"><span style="color:blue;font-weight:bold">');
+			foreach i,s in servant[type]
+				if(to_int(lvl) >= i) {
+					result.append(s);
+					result.append('<br>');
+				}
+			result.append('</span></a></td>');
+		} else {
+			result.append('<td class="info"><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door"><span style="color:blue;font-weight:bold">(Click to release<br>a Servant)</span></a></td>');
+		}
+		result.append('</tr></table>');
+	}
+	
+	matcher servant = create_matcher('mainpane">(.+?) the (\\d+) level (.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
+	if(servant.find())
+		bake(servant.group(2), servant.group(1), servant.group(3), servant.group(4));
+	else
+		bake("", "", "No Servant", "/images/itemimages/blank.gif");
 	
 	chitBricks["familiar"] = result;
 }
@@ -2455,7 +2495,7 @@ void bakeThrall() {
 		if(lvl != "")
 			result.append('Lvl.&nbsp;');
 		result.append(lvl);
-		result.append('</th><th colspan="2" title="Pasta Thrall"><a title="');
+		result.append('</th><th title="Pasta Thrall"><a title="');
 		result.append(name);
 		result.append('" class="hand" onClick=\'javascript:window.open("desc_guardian.php","","height=200,width=300")\'>');
 		result.append(type);
@@ -3832,7 +3872,7 @@ void bakeCharacter() {
 	//Title
 	string myTitle() {
 		string myTitle = my_class();
-		if(vars["chit.character.title"] == "true") {
+		if(vars["chit.character.title"] == "true" && my_path() != "Actually Ed the Undying") {
 			matcher titleMatcher = create_matcher("<br>(.*?)<br>(.*?)<", source);
 			if(find(titleMatcher)) {
 				myTitle = group(titleMatcher, 2);
