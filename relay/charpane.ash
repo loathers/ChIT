@@ -2110,28 +2110,28 @@ void FamPete() {
 	chitBricks["familiar"] = result;
 }
 
-static { string [string] [int] servant;
-	servant["Cat"][1] = "Gives unpleasant gifts";
-	servant["Cat"][7] = "Helps find items";
-	servant["Cat"][14] = "Lowers enemy stats";
-	servant["Belly-Dancer"][1] = "Lowers enemy stats";
-	servant["Belly-Dancer"][7] = "Restores MP";
-	servant["Belly-Dancer"][14] = "Picks pockets";
-	servant["Maid"][1] = "Helps find meat";
-	servant["Maid"][7] = "Attacks enemies";
-	servant["Maid"][14] = "Prevents enemy attacks";
-	servant["Bodyguard"][1] = "Prevents enemy attacks";
-	servant["Bodyguard"][7] = "Attacks enemies";
-	servant["Bodyguard"][14] = "Attacks when guarding";
-	servant["Scribe"][1] = "Improves stat gains";
-	servant["Scribe"][7] = "Improves spell crit";
-	servant["Scribe"][14] = "Improves spell damage";
-	servant["Priest"][1] = "Attacks undead enemies";
-	servant["Priest"][7] = "Improves evocation spells";
-	servant["Priest"][14] = "Improves Ka drops";
-	servant["Assassin"][1] = "Attacks enemies";
-	servant["Assassin"][7] = "Lowers enemy stats";
-	servant["Assassin"][14] = "Staggers enemies";
+static { string [string] [int] server;
+	server["Cat"][1] = "Gives unpleasant gifts";
+	server["Cat"][7] = "Helps find items";
+	server["Cat"][14] = "Lowers enemy stats";
+	server["Belly-Dancer"][1] = "Lowers enemy stats";
+	server["Belly-Dancer"][7] = "Restores MP";
+	server["Belly-Dancer"][14] = "Picks pockets";
+	server["Maid"][1] = "Helps find meat";
+	server["Maid"][7] = "Attacks enemies";
+	server["Maid"][14] = "Prevents enemy attacks";
+	server["Bodyguard"][1] = "Prevents enemy attacks";
+	server["Bodyguard"][7] = "Attacks enemies";
+	server["Bodyguard"][14] = "Attacks when guarding";
+	server["Scribe"][1] = "Improves stat gains";
+	server["Scribe"][7] = "Improves spell crit";
+	server["Scribe"][14] = "Improves spell damage";
+	server["Priest"][1] = "Attacks undead enemies";
+	server["Priest"][7] = "Improves evocation spells";
+	server["Priest"][14] = "Improves Ka drops";
+	server["Assassin"][1] = "Attacks enemies";
+	server["Assassin"][7] = "Lowers enemy stats";
+	server["Assassin"][14] = "Staggers enemies";
 }
 
 # <p><font size=2><b>Servant:</b><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane">Bakthenamen the 1 level Cat</a><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane"><img border=0 src="//images.kingdomofloathing.com/itemimages/edserv1.gif" /></a></font></p>
@@ -2159,7 +2159,7 @@ void FamEd() {
 		result.append('></a></td>');
 		if(lvl != "") {
 			result.append('<td class="info"><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door"><span style="color:blue;font-weight:bold">');
-			foreach i,s in servant[type]
+			foreach i,s in server[type]
 				if(to_int(lvl) >= i) {
 					result.append(s);
 					result.append('<br>');
@@ -2171,9 +2171,9 @@ void FamEd() {
 		result.append('</tr></table>');
 	}
 	
-	matcher servant = create_matcher('mainpane">(.+?) the (\\d+) level (.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
-	if(servant.find())
-		bake(servant.group(2), servant.group(1), servant.group(3), servant.group(4));
+	matcher id = create_matcher('mainpane">(.+?) the (\\d+) level (.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
+	if(id.find())
+		bake(id.group(2), id.group(1), id.group(3), id.group(4));
 	else
 		bake("", "", "No Servant", "/images/itemimages/blank.gif");
 	
