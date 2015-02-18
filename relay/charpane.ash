@@ -1,5 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
+since r15441; // Version where Veracity adds servant functions for Actually Ed the Undying
 import "zlib.ash";
 
 /************************************************************************************
@@ -1795,17 +1796,6 @@ void pickerCompanion(string famname, string famtype) {
 		return "blank";
 	}
 	
-	// Made this function because Eggman is one word. This seemed the easiest solution.
-	string to_companion(skill s) {
-		switch(s) {
-		case $skill[Egg Man]: return "the Eggman";
-		case $skill[Radish Horse]: return "the Radish Horse";
-		case $skill[Hippotatomous]: return "the Hippotatomous";
-		case $skill[Cream Puff]: return "the Cream Puff";
-		}
-		return "";
-	}
-	
 	void addCompanion(buffer result, skill s, boolean gotfood) {
 		string hover = "Play with " + s +"<br />";
 		if(gotfood)
@@ -1845,6 +1835,63 @@ void pickerCompanion(string famname, string famtype) {
 	
 	picker.append('</table></div>');
 	chitPickers["equipment"] = picker;
+}
+
+string servant_ability(servant s, int lvl) {
+	switch(lvl) {
+	case 1: return s.level1_ability;
+	case 7: return s.level7_ability;
+	case 14: return s.level14_ability;
+	case 21: return s.level21_ability;
+	}
+	return "";
+}
+
+void pickerServant() {
+	void addServant(buffer result, servant s) {
+		string url = sideCommand("servant " + s);
+		result.append('<tr class="pickitem"><td class="inventory"><a class="change" href="');
+		result.append(url);
+		result.append('"><b>');
+		result.append(s);
+		result.append('</b>');
+		foreach i in $ints[1, 7, 14] {
+			result.append('<br /><span style="color:');
+			if(s.level >= i)
+				result.append('blue');
+			else
+				result.append('gray');
+			result.append('">');
+			result.append(s.servant_ability(i));
+			result.append("</span>");
+		}
+		result.append('</span></a></td><td class="icon"><a class="change" href="');
+		result.append(url);
+		result.append('"><img src="/images/itemimages/');
+		result.append(s.image);
+		result.append('"></a></td></tr>');
+	}
+
+	buffer picker;
+	picker.pickerStart("fam", "Put thy Servant to Work");
+	
+	// Check for all companions
+	picker.addLoader("Summoning Servant...");
+	boolean sad = true;
+	foreach s in $servants[]
+		if(have_servant(s) && my_servant() != s) {
+			picker.addServant(s);
+			sad = false;
+		}
+	if(sad) {
+		if(my_servant() == $servant[none])
+			picker.addSadFace("You haven't yet released any servants to obey your whims.<br /><br />How sad.");
+		else
+			picker.addSadFace("Poor " + my_servant().name + " has no other servants for company.");
+	}
+	
+	picker.append('</table></div>');
+	chitPickers["servants"] = picker;
 }
 
 static { string [thrall] [int] pasta;
@@ -2110,58 +2157,38 @@ void FamPete() {
 	chitBricks["familiar"] = result;
 }
 
-static { string [string] [int] server;
-	server["Cat"][1] = "Gives unpleasant gifts";
-	server["Cat"][7] = "Helps find items";
-	server["Cat"][14] = "Lowers enemy stats";
-	server["Belly-Dancer"][1] = "Lowers enemy stats";
-	server["Belly-Dancer"][7] = "Restores MP";
-	server["Belly-Dancer"][14] = "Picks pockets";
-	server["Maid"][1] = "Helps find meat";
-	server["Maid"][7] = "Attacks enemies";
-	server["Maid"][14] = "Prevents enemy attacks";
-	server["Bodyguard"][1] = "Prevents enemy attacks";
-	server["Bodyguard"][7] = "Attacks enemies";
-	server["Bodyguard"][14] = "Attacks when guarding";
-	server["Scribe"][1] = "Improves stat gains";
-	server["Scribe"][7] = "Improves spell crit";
-	server["Scribe"][14] = "Improves spell damage";
-	server["Priest"][1] = "Attacks undead enemies";
-	server["Priest"][7] = "Improves evocation spells";
-	server["Priest"][14] = "Improves Ka drops";
-	server["Assassin"][1] = "Attacks enemies";
-	server["Assassin"][7] = "Lowers enemy stats";
-	server["Assassin"][14] = "Staggers enemies";
-}
-
 # <p><font size=2><b>Servant:</b><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane">Bakthenamen the 1 level Cat</a><br /><a href="/place.php?whichplace=edbase&action=edbase_door" target="mainpane"><img border=0 src="//images.kingdomofloathing.com/itemimages/edserv1.gif" /></a></font></p>
 void FamEd() {
 	buffer result;
-	void bake(string lvl, string name, string type, string img) {
+	void bake(int lvl, string name, servant type, string img) {
+		if(have_effect($effect[Purr of the Feline]) > 0)
+			lvl += 5;
 		result.append('<table id="chit_familiar" class="chit_brick nospace">');
 		result.append('<tr><th title="Servant Level">');
-		if(lvl != "")
+		if(type != $servant[none]) {
 			result.append('Lvl.&nbsp;');
-		result.append(lvl);
+			result.append(lvl);
+		}
 		result.append('</th><th colspan="2" title="Servant"><a title="');
 		result.append(name);
 		result.append('" target=mainpane href="/place.php?whichplace=edbase&action=edbase_door">');
 		result.append(name);
-		if(name != "")
+		if(type != $servant[none]) {
 			result.append(", the ");
-		result.append(type);
+			result.append(type);
+		}
 		result.append('</a></th></tr>');
 		
 		result.append('<tr><td class="icon" title="Servant">');
-		result.append('<a class="chit_launcher" rel="chit_pickerservant" href="#">');
+		result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
 		result.append('<img title="Release thy Servant" src=');
 		result.append(img);
 		result.append('></a></td>');
-		if(lvl != "") {
-			result.append('<td class="info"><a target=mainpane href="/place.php?whichplace=edbase&action=edbase_door"><span style="color:blue;font-weight:bold">');
-			foreach i,s in server[type]
-				if(to_int(lvl) >= i) {
-					result.append(s);
+		if(type != $servant[none]) {
+			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfam" href="#"><span style="color:blue;font-weight:bold">');
+			foreach i in $ints[1, 7, 14]
+				if(lvl >= i) {
+					result.append(type.servant_ability(i));
 					result.append('<br>');
 				}
 			result.append('</span></a></td>');
@@ -2171,13 +2198,14 @@ void FamEd() {
 		result.append('</tr></table>');
 	}
 	
-	matcher id = create_matcher('mainpane">(.+?) the (\\d+) level (.+?)</a>.+? src="([^"]+)"', chitSource["familiar"]);
+	matcher id = create_matcher('mainpane">.+? src="([^"]+)"', chitSource["familiar"]);
 	if(id.find())
-		bake(id.group(2), id.group(1), id.group(3), id.group(4));
+		bake(my_servant().level, my_servant().name, my_servant(), id.group(1));
 	else
-		bake("", "", "No Servant", "/images/itemimages/blank.gif");
+		bake(0, "No Servant", $servant[none], "/images/itemimages/blank.gif");
 	
 	chitBricks["familiar"] = result;
+	pickerServant();
 }
 
 // Set familiar image, including path to image. Some familiar images are purposefully changed, others need to be normalized.
