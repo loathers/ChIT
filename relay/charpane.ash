@@ -578,29 +578,24 @@ string helperSpookyraven() {
 
 // Functions for pickers
 void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker">');
-	picker.append('<tr><th colspan="2">' + message + '</th></tr>');
+	picker.append('<div id="chit_picker');	
+	picker.append(rel);	
+	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="2">');
+	picker.append(message);
+	picker.append('</th></tr>');
 }
-
 void pickerStart(buffer picker, string rel, string message, string image) {
-	picker.append('<div id="chit_picker' + rel + '" class="chit_skeleton" style="display:none">');	
-	picker.append('<table class="chit_picker"><tr><th colspan="2"><img src="');
-	picker.append(imagePath + image);
-	picker.append('.png">');
-	picker.append(message + '</th></tr>');
+	picker.pickerStart(picker, rel, '<img src="' + imagePath + image + '.png">' + message);
 }
 
 void addLoader(buffer picker, string message) {
-	picker.append('<tr class="pickloader" style="display:none">');
-	picker.append('<td class="info">' + message + '</td>');
-	picker.append('<td class="icon"><img src="/images/itemimages/karma.gif"></td>');
-	picker.append('</tr>');
+	picker.append('<tr class="pickloader" style="display:none"><td class="info">');
+	picker.append(message);
+	picker.append('</td><td class="icon"><img src="/images/itemimages/karma.gif"></td></tr>');
 }
 
 void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone">');
-	picker.append('<td class="info" colspan="2">');
+	picker.append('<tr class="picknone"><td class="info" colspan="2">');
 	picker.append(message);
 	picker.append('</td></tr>');
 }
@@ -1890,7 +1885,11 @@ void pickerServant() {
 			picker.addSadFace("Poor " + my_servant().name + " has no other servants for company.");
 	}
 	
+	// Link to Servant's Quarters
+	picker.append('<tr class="pickitem"><td colspan=2 class="make"><a class="change" style="border-top: 1px solid gray; padding: 4px 0px 4px 0px;" onclick="javascript:location.reload();" target=mainpane href="place.php?whichplace=edbase&action=edbase_door"><b>Go to the Servant\'s Quarters</b></a></td></tr>');
+	
 	picker.append('</table></div>');
+	
 	chitPickers["servants"] = picker;
 }
 
