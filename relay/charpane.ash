@@ -1869,8 +1869,6 @@ void pickerServant() {
 
 	buffer picker;
 	picker.pickerStart("fam", "Put thy Servant to Work");
-	
-	// Check for all companions
 	picker.addLoader("Summoning Servant...");
 	boolean sad = true;
 	foreach s in $servants[]
@@ -1886,7 +1884,7 @@ void pickerServant() {
 	}
 	
 	// Link to Servant's Quarters
-	picker.append('<tr class="pickitem"><td colspan=2 class="make"><a class="change" style="border-top: 1px solid gray; padding: 4px 0px 4px 0px;" onclick="javascript:location.reload();" target=mainpane href="place.php?whichplace=edbase&action=edbase_door"><b>Go to the Servant\'s Quarters</b></a></td></tr>');
+	picker.append('<tr class="pickitem"><td colspan=2 class="make"><a class="change" style="border-top: 1px solid gray; padding: 3px 0px 3px 0px;" onclick="javascript:location.reload();" target=mainpane href="place.php?whichplace=edbase&action=edbase_door"><b>Go to the Servant\'s Quarters</b></a></td></tr>');
 	
 	picker.append('</table></div>');
 	
@@ -5707,8 +5705,16 @@ buffer modifyPage(buffer source) {
 		}
 	}
 	
-	if(limit_mode() == "spelunky")
+	// handle limit modes
+	switch(limit_mode()) {
+	case "":			// Mode is not limited
+	case "edunder":		// Ed's Underworld
+		break;
+	case "spelunky":	// Needs special handling for the Spelunkin' minigame
 		return source.spelunky();
+	default:			// Unknown limit mode could be dangerous
+		return source;
+	}
 	
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 )
 		inValhalla = true;
@@ -5718,7 +5724,7 @@ buffer modifyPage(buffer source) {
 		vprint("CHIT: Compact Character Pane not supported", "blue", 1);
 	}
 	
-	if(isCompact || limit_mode() != "" || !parsePage(source))
+	if(isCompact || !parsePage(source))
 		return source;
 
 	//Set default values for toolbar icons
