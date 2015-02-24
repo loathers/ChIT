@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15441; // Version where Veracity adds servant functions for Actually Ed the Undying
+since r15461; // Version where string_modifier requires type.
 import "zlib.ash";
 
 /************************************************************************************
@@ -830,7 +830,7 @@ string parseEff(string ef) {
 		return "You're just over them"; 
 	}
 
-	return string_modifier(ef,"Evaluated Modifiers").parseMods();
+	return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
 }
 
 record buff {
