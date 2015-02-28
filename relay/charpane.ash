@@ -5071,11 +5071,11 @@ void bakeTracker() {
 	//Xiblaxian holo-wrist-puter
 	if (have_equipped($item[Xiblaxian holo-wrist-puter])) {
 		int xidrops = get_property("_holoWristDrops").to_int();
-		int xiprog = get_property("_holoWristProgress").to_int();
+		int xiprog = get_property("_holoWristProgress").to_int() + 1;
 		int xinext = 11 + 5*xidrops;
 		result.append("<tr><td>");
 		result.append("<b>Xiblaxian</b> drop: "+xiprog+"/"+xinext);
-		if (xiprog >= xinext) {
+		if (xiprog>=xinext) {
 			result.append("<br><span style=color:fuchsia>");
 			result.append("circuitry ("+available_amount($item[Xiblaxian circuitry])+") ");
 			result.append("[indoors]");
