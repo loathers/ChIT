@@ -4402,6 +4402,9 @@ void bakeTracker() {
 		result.append("Find ");
 		result.append(item_report($item[Lady Spookyraven's necklace]));
 		result.append(" at the <a target=\"mainpane\" href=\"manor.php\">Manor</a>");
+		if (available_amount($item[Spookyraven billiards room key])==0) {
+			result.append("<br>Kitchen Drawers: "+get_property("manorDrawerCount")+"/21");
+		}
 		result.append("<br>Writing Desks: "+get_property("writingDesksDefeated")+"/5");
 		result.append("</td></tr>");
 	}
