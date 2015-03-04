@@ -4780,6 +4780,7 @@ void bakeTracker() {
 					return f - 6688;
 			return 0;
 		}
+		int nts = 0;
 		result.append("<tr><td>");
 		switch(get_property("questL11Worship")) {
 		case "started": case "step1": case "step2":
@@ -4797,27 +4798,32 @@ void bakeTracker() {
 					result.append("<br>");
 				} else 
 					result.append(item_report(true, "Done!<br>"));
-				foreach loc in $strings[Hospital, BowlingAlley, Apartment, Office] {
+				foreach loc in $strings[Apartment, Office, Hospital, BowlingAlley] {
 					result.append(loc+": ");
 					int prog = get_property("hidden"+loc+"Progress").to_int();
 					if(prog == 0)
 						result.append(item_report(false, "Explore Shrine<br>"));
 					else if(prog < 7) {
 						switch(loc) {
-						case "Hospital":
-							result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
-							break;
-						case "BowlingAlley":
-							//result.append(item_report($item[bowling ball]));
-							//result.append(", ");
-							result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
-							break;
 						case "Apartment":
 							//result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
 							//result.append(item_report(false, "Search for Boss<br>"));
-							result.append(item_report((have_effect($effect[Thrice-Cursed])>0), "Thrice-Cursed<br>"));
+							nts = $location[The Hidden Apartment Building].turns_spent;
+							if (nts<=9) {
+								result.append(" ["+(nts % 9)+"/9], ");
+							} else {
+								result.append(" ["+(nts % 8)+"/8], ");
+							}
+							result.append(item_report((have_effect($effect[Thrice-Cursed])>0), "Thrice-Cursed"));
+							result.append("<br>");
 							break;
 						case "Office":
+							nts = $location[The Hidden Office Building].turns_spent;
+							if (nts<=6) {
+								result.append(" ["+(nts % 6)+"/6], ");
+							} else {
+								result.append(" ["+(nts % 5)+"/5], ");
+							}
 							if(available_amount($item[McClusky file (complete)]) > 0)
 								result.append(item_report(false, "Kill Boss!"));
 							else {
@@ -4829,6 +4835,14 @@ void bakeTracker() {
 								}
 							}
 							result.append("<br>");
+							break;
+						case "Hospital":
+							result.append(item_report(false, "Surgeonosity ("+to_string(numeric_modifier("surgeonosity"), "%.0f")+"/5)<br>"));
+							break;
+						case "BowlingAlley":
+							//result.append(item_report($item[bowling ball]));
+							//result.append(", ");
+							result.append(item_report(false, "Bowled ("+(prog - 1)+"/5)<br>"));
 							break;
 						}
 					} else if(prog == 7)
@@ -4851,7 +4865,7 @@ void bakeTracker() {
 
 
 	//L11: questL11Desert
-	if(started("questL11Desert")) {
+	if(started("questL11Desert") && my_path()!="Actually Ed the Undying") {
 		result.append("<tr><td>");
 			result.append('Find the pyramid at the <a target="mainpane" href="beach.php">Beach</a><br>');
 			int desertExploration = get_property("desertExploration").to_int();
