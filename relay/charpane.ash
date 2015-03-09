@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15461; // Version where string_modifier requires type.
+since r15559; // KoLmafia now counts Purr of the Feline, so workaround removed.
 import "zlib.ash";
 
 /************************************************************************************
@@ -2158,8 +2158,6 @@ void FamPete() {
 void FamEd() {
 	buffer result;
 	void bake(int lvl, string name, servant type, string img) {
-		if(have_effect($effect[Purr of the Feline]) > 0)
-			lvl += 5;
 		result.append('<table id="chit_familiar" class="chit_brick nospace">');
 		result.append('<tr><th title="Servant Level">');
 		if(type != $servant[none]) {
@@ -3126,7 +3124,7 @@ void addKa(buffer result) {
 	result.append('<tr><td class="label">Ka</td><td class="info">');
 	result.append(formatInt(item_amount($item[Ka Coin])));
 	if(to_boolean(vars["chit.stats.showbars"]))
-		result.append('</td><td><div title="Ka Coins" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
+		result.append('</td><td><div title="Ka Coins" style="float:left"><img style="max-width:14px;padding-left:3px;" onClick="descitem(826932303,0, event);" src="/images/itemimages/kacoin.gif"></td></tr>');
 	else
 		result.append('<img title="Ka Coins" style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
 }
