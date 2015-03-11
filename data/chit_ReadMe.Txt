@@ -109,6 +109,14 @@ chit.helpers.dancecard: Enables or disables the Dance Card helper (triggered whe
 chit.helpers.semirare: Enables or disables the Semi-Rare helper (triggered when the Fortune Cookie counter reaches 0)
           true - enabled (default)
           false - disabled
+
+chit.helpers.spookyraven: Enables or disables information about Lights Out adventures in Spookyraven Manor
+          true - enabled (default)
+          false - disabled
+
+chit.helpers.xiblaxian: Enables or disables the Xiblaxian materials counter when you are wearing a Xiblaxian holo-wrist-puter 
+          true - enabled (default)
+          false - disabled
 -------------------------------------------------------------------------------------
 chit.effects.classicons: Replaces effect icons with class-specific icons
           Comma-separated list of classes to replace
