@@ -4859,9 +4859,9 @@ void bakeTracker() {
 							//result.append(item_report(false, "Search for Boss<br>"));
 							nts = $location[The Hidden Apartment Building].turns_spent;
 							if (nts<=9) {
-								result.append(" ["+(nts % 9)+"/9], ");
+								result.append(" ["+(nts%9)+"/9], ");
 							} else {
-								result.append(" ["+(nts % 8)+"/8], ");
+								result.append(" ["+((nts-9)%8)+"/8], ");
 							}
 							result.append(item_report((have_effect($effect[Thrice-Cursed])>0), "Thrice-Cursed"));
 							result.append("<br>");
@@ -4869,9 +4869,9 @@ void bakeTracker() {
 						case "Office":
 							nts = $location[The Hidden Office Building].turns_spent;
 							if (nts<=6) {
-								result.append(" ["+(nts % 6)+"/6], ");
+								result.append(" ["+(nts%6)+"/6], ");
 							} else {
-								result.append(" ["+(nts % 5)+"/5], ");
+								result.append(" ["+((nts-6)%5)+"/5], ");
 							}
 							if(available_amount($item[McClusky file (complete)]) > 0)
 								result.append(item_report(false, "Kill Boss!"));
@@ -5104,6 +5104,34 @@ void bakeTracker() {
 		}
 	}
 	
+	//HITS: stars and lines and charts
+	if ( item_amount($item[steam-powered model rocketship])>0 && item_amount($item[Richard's star key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),"Richard's star key") ) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=beanstalk">HITS</a>: ');
+		result.append(item_report($item[star], 8));
+		result.append(", ");
+		result.append(item_report($item[line], 7));
+		result.append(", ");
+		result.append(item_report($item[star chart],"chart"));
+		result.append("</td></tr>");
+	}
+	
+	//Daily Dungeon
+	if (!to_boolean(get_property("dailyDungeonDone"))&& get_property("questL13Final")!="finished" ) {
+		int havekeys = available_amount($item[fat loot token]);
+		int needkeys = 3;
+		foreach kk in $items[Boris's key, Jarlsberg's key, Sneaky Pete's key] {
+			havekeys = havekeys + available_amount(kk);
+			needkeys = needkeys - to_int(contains_text(get_property("nsTowerDoorKeysUsed"),to_string(kk)));
+		}
+		if (havekeys<needkeys) {
+			result.append("<tr><td>");
+			result.append("Get ");
+			result.append('<a target="mainpane" href="da.php">Daily Dungeon</a>');
+			result.append(" keys ("+havekeys+"/"+needkeys+")");
+			result.append("</td></tr>");
+		}
+	}
 	
 	//questM13Escape, Subject 37
 	if (started("questM13Escape") && can_interact()) {
@@ -5122,19 +5150,8 @@ void bakeTracker() {
 	}
 	
 	
-	//HITS: stars and lines and charts
-	if ( item_amount($item[steam-powered model rocketship])>0 && item_amount($item[Richard's star key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),"Richard's star key") ) {
-		result.append("<tr><td>");
-		result.append('<a target="mainpane" href="place.php?whichplace=beanstalk">HITS</a>: ');
-		result.append(item_report($item[star], 8));
-		result.append(", ");
-		result.append(item_report($item[line], 7));
-		result.append(", ");
-		result.append(item_report($item[star chart],"chart"));
-		result.append("</td></tr>");
-	}
-	
 	//Xiblaxian holo-wrist-puter
+	/*
 	if (have_equipped($item[Xiblaxian holo-wrist-puter])) {
 		int xidrops = get_property("_holoWristDrops").to_int();
 		int xiprog = get_property("_holoWristProgress").to_int() + 1;
@@ -5155,7 +5172,7 @@ void bakeTracker() {
 		}
 		result.append("</td></tr>");
 	}
-	
+	*/
 	
 	
 	//L99: Nemesis stuff ?
