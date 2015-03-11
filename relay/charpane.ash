@@ -596,10 +596,15 @@ string helperXiblaxian() {
 	result.append('<table id="chit_xibalaxian" class="chit_brick nospace">');
 	result.append('<tr class="effect"');
 	if(countdown == 0)
-		result.append(' style="background-color: #F0F0B0"');
+		result.append(' style="background-color: khaki"');
 	result.append('>');
 	// Icon
-	result.append('<td class="icon"><a target=mainpane href="shop.php?whichshop=5dprinter"><img src="/images/itemimages/holoputer.gif"></a></td>');
+	result.append('<td class="icon"><a ');
+	if(available_amount($item[Xiblaxian 5D printer]) > 0)
+		result.append('target=mainpane href="shop.php?whichshop=5dprinter');
+	else
+		result.append('target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/Xiblaxian_5D_printer');
+	result.append('"><img src="/images/itemimages/holoputer.gif"></a></td>');
 	// Text
 	if(countdown == 0) {
 		result.append('<td class="info" style="text-align:right;">');
