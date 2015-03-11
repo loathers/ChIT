@@ -576,6 +576,52 @@ string helperSpookyraven() {
 	return result.to_string();
 }
 
+string helperXiblaxian() {
+	
+	// turns to next drop - taken from kol wiki - 11, 16, 21...
+	int xidrops = get_property("_holoWristDrops").to_int();
+	int xiprog = get_property("_holoWristProgress").to_int() + 1;
+	int xinext = 11 + 5*xidrops;
+	int countdown = xinext - xiprog;
+
+	int circuit = 3-available_amount($item[xiblaxian circuitry]);
+	int alloy = 1-available_amount($item[xiblaxian alloy]);
+	int polymer = 1-available_amount($item[xiblaxian polymer]);
+	
+	if(countdown == 0 && get_counters("Xiblaxian Material", 0, 0) == "")
+		cli_execute("counters add 0 Xiblaxian Material holoputer.gif");
+
+	// Build a buffer that creates a bar similar to the fortune cookie
+	buffer result;
+	result.append('<table id="chit_xibalaxian" class="chit_brick nospace">');
+	result.append('<tr class="effect"');
+	if(countdown == 0)
+		result.append(' style="background-color: #F0F0B0"');
+	result.append('>');
+	// Icon
+	result.append('<td class="icon"><a target=mainpane href="shop.php?whichshop=5dprinter"><img src="/images/itemimages/holoputer.gif"></a></td>');
+	// Text
+	if(countdown == 0) {
+		result.append('<td class="info" style="text-align:right;">');
+		result.append('Circuit (indoor):<br />Polymer (outdoor):<br />Alloy (under): </td><td class="info">');
+		result.append( available_amount($item[xiblaxian circuitry]));
+		result.append('<br />');
+		result.append(available_amount($item[xiblaxian polymer]));
+		result.append('<br />');
+		result.append(available_amount($item[xiblaxian alloy]));
+		result.append('</td>');
+	} else {
+		result.append('<td class="info">Xiblaxian <br />Wrist-puter</td>');
+		// Counter
+		result.append('<td class="info">' + xiprog + ' /' + xinext + '</td>');
+		result.append('</tr>');
+		result.append('</table>');
+	}
+	
+	chitTools["helpers"] = "You have some expired counters|helpers.png";
+	return result.to_string();
+}
+
 // Functions for pickers
 void pickerStart(buffer picker, string rel, string message) {
 	picker.append('<div id="chit_picker');	
@@ -1079,6 +1125,11 @@ void bakeEffects() {
 				helpers.append(helperSpookyraven());
 		}
 	}
+	
+	// Add helper for Xiblaxian holo-wrist-puter
+	if(vars["chit.helpers.xiblaxian"] != "false" && have_equipped($item[Xiblaxian holo-wrist-puter]))
+		helpers.append(helperXiblaxian());
+
 
 	//Intrinsic Effects
 	rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["intrinsics"]);
@@ -5688,6 +5739,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.dancecard", true);
 	setvar("chit.helpers.semirare", true);
 	setvar("chit.helpers.spookyraven", true);
+	setvar("chit.helpers.xiblaxian", true);
 	setvar("chit.roof.layout","character,stats");
 	setvar("chit.walls.layout","helpers,thrall,effects");
 	setvar("chit.floor.layout","update,familiar");
