@@ -5096,7 +5096,7 @@ void bakeTracker() {
 			result.append(item_report($item[electric boning knife], "boning knife"));
 		}
 		
-		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains] contains my_path());
+		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete] contains my_path());
 		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
 			if( my_path()=="Bees Hate You" ) {
 				result.append("<br>GMOB: ");
@@ -5108,6 +5108,15 @@ void bakeTracker() {
 			result.append("</td></tr>");
 		}
 	}
+	
+	
+	if (started("questL13Warehouse")) {
+		result.append("<tr><td>");
+		result.append('Search the <a target="mainpane" href="tutorial.php">Warehouse</a> ');
+		result.append(": "+get_property("warehouseProgress")+"/40");
+		result.append("</td></tr>");
+	}
+	
 	
 	//HITS: stars and lines and charts
 	if ( item_amount($item[steam-powered model rocketship])>0 && item_amount($item[Richard's star key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),"Richard's star key") ) {
@@ -5122,7 +5131,7 @@ void bakeTracker() {
 	}
 	
 	//Daily Dungeon
-	if (!to_boolean(get_property("dailyDungeonDone"))&& get_property("questL13Final")!="finished" ) {
+	if (!to_boolean(get_property("dailyDungeonDone"))&& get_property("questL13Final")!="finished" && !($strings[Bugbear Invasion, Actually Ed the Undying] contains my_path()) ) {
 		int havekeys = available_amount($item[fat loot token]);
 		int needkeys = 3;
 		foreach kk in $items[Boris's key, Jarlsberg's key, Sneaky Pete's key] {
