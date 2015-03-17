@@ -4504,6 +4504,13 @@ void bakeTracker() {
 		result.append("</td></tr>");
 	}
 	
+	//lastTempleUnlock
+	if(to_int(get_property("lastTempleUnlock"))!=my_ascensions()) { 
+		result.append("<tr><td>");
+		result.append('Unlock the <a target="mainpane" href="woods.php">Hidden Temple</a>');
+		result.append("</td></tr>");
+	}
+	
 	//L3 Typical tavern, questL03Rat
 	if(started("questL03Rat")) { 
 		result.append("<tr><td>");
