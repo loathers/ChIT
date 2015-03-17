@@ -4881,9 +4881,9 @@ void bakeTracker() {
 						case "Office":
 							nts = $location[The Hidden Office Building].turns_spent;
 							if (nts<=6) {
-								result.append(" ["+(nts%6)+"/6], ");
+								result.append(" ["+(nts%5)+"/5], ");
 							} else {
-								result.append(" ["+((nts-6)%5)+"/5], ");
+								result.append(" ["+((nts-5)%4)+"/4], ");
 							}
 							if(available_amount($item[McClusky file (complete)]) > 0)
 								result.append(item_report(false, "Kill Boss!"));
