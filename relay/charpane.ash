@@ -4620,11 +4620,25 @@ void bakeTracker() {
 		}
 		result.append("</td></tr></table></td></tr>");
 	}
-
+	
+	//Check for Island unlock and Swashbuckling Getup
+	if (to_int(get_property("lastIslandUnlock"))!=my_ascensions()) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="beach.php">Find</a> a boat to the Island');
+		result.append("</td></tr>");
+	} else if (!have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
+		result.append("<tr><td>");
+		result.append('Find the <a target="mainpane" href="island.php">Swashbuckling Getup</a>:<br>');
+		result.append(item_report($item[eyepatch])+", ");
+		result.append(item_report($item[swashbuckling pants], "pants")+", ");
+		result.append(item_report($item[stuffed shoulder parrot], "parrot"));
+		result.append("<tr><td>");
+	}
+	
 	//L7.5ish: pirates, questM12Pirate
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if(have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
+	if (have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
 		result.append("<tr><td>");
 		//fcle items mizzenmast mop, ball polish, rigging shampoo
 		if (get_property("questM12Pirate")=="step5") {
