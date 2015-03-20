@@ -4861,7 +4861,7 @@ void bakeTracker() {
 		case "started": case "step1": case "step2":
 			result.append('Search <a target="mainpane" href="woods.php">Temple</a> for Hidden City');
 			break;
-		case "step3":
+		case "step3": case "step4":
 			if(item_amount($item[stone triangle]) < 4) {
 				result.append('Explore <a target="mainpane" href="hiddencity.php">Hidden City</a>:<br>');
 				boolean relocatePygmyJanitor = get_property("relocatePygmyJanitor").to_int() == my_ascensions();
@@ -4931,8 +4931,10 @@ void bakeTracker() {
 					result.append("<br>");
 				} else
 					result.append(item_report(true, "Unlocked<br>"));
-			} else
+			} else {
 				result.append('<a target="mainpane" href="hiddencity.php">Hidden City</a>: Kill the Protector Spectre');
+			}
+			break;
 		}
 		result.append("</td></tr>");
 	}
