@@ -485,7 +485,7 @@ string helperSemiRare() {
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist" && ($strings[started, step1] contains get_property("questL08Trapper")))
 			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
-		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Nam]) == 0) {
+		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Namsilat]) == 0) {
 			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
 		}
@@ -603,7 +603,7 @@ string helperXiblaxian() {
 	if(available_amount($item[Xiblaxian 5D printer]) > 0)
 		result.append('target=mainpane href="shop.php?whichshop=5dprinter');
 	else
-		result.append('target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/Xiblaxian_5D_printer');
+		result.append('target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/Xiblaxian_5D_printer#When_Used');
 	result.append('"><img src="/images/itemimages/holoputer.gif"></a></td>');
 	// Text
 	if(countdown == 0) {
@@ -3842,7 +3842,7 @@ void pickOutfit() {
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		special.addGear($item[continuum transfunctioner]);
 	
-	special.addGear($items[pirate fledges, Talisman o' Nam, black glass, Personal Ventilation Unit, gore bucket]);
+	special.addGear($items[pirate fledges, Talisman o' Namsilat, black glass, Personal Ventilation Unit, gore bucket]);
 	special.addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder");
 	if(get_property("questL10Garbage") != "finished")
 		switch(loc) {
@@ -4762,9 +4762,9 @@ void bakeTracker() {
 		result.append("<tr><td>");
 		if(available_amount($item[pirate fledges])==0) {
 			result.append('Get some <a target="mainpane" href="island.php">pirate fledges</a>');
-		} else if(available_amount($item[Talisman o' Nam])==0) {
+		} else if(available_amount($item[Talisman o' Namsilat])==0) {
 			result.append('Find the <a target="mainpane" href="cove.php">Talisman o Nam</a>');
-		} else if(available_amount($item[Talisman o' Nam])>0) {
+		} else if(available_amount($item[Talisman o' Namsilat])>0) {
 			result.append('Find the <a target="mainpane" href="plains.php">Palindome</a>');
 		}
 		result.append("</td></tr>");
