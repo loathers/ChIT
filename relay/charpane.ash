@@ -588,7 +588,7 @@ string helperXiblaxian() {
 	int alloy = 1-available_amount($item[xiblaxian alloy]);
 	int polymer = 1-available_amount($item[xiblaxian polymer]);
 	
-	if(countdown == 0 && get_counters("Xiblaxian Material", 0, 0) == "")
+	if(countdown == 0 && !can_interact() && get_counters("Xiblaxian Material", 0, 0) == "")
 		cli_execute("counters add 0 Xiblaxian Material holoputer.gif");
 
 	// Build a buffer that creates a bar similar to the fortune cookie
