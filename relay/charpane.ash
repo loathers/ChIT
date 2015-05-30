@@ -3765,34 +3765,25 @@ void pickerGear(slot s) {
   
 	void add_gear_option(string prefix, item it) {
 		any_options = true;
-
-		string command_link = '<a href="' + (it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s)) + '">';
-
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(command_link);
-		picker.append('<img src="/images/itemimages/');
-		if(it != $item[none])
-			picker.append(it.image);
-		else
-			picker.append(equipped_item(s).image);
-		picker.append('" /></a></td><td>');
-		picker.append(command_link);
-		if(it != $item[none]) {
-			picker.append(prefix);
-			picker.append(it);
-		}
-		else {
-			picker.append("Unequip ");
-			picker.append(equipped_item(s));
-		}
-		picker.append('</td></tr>');
+		picker.append('<tr class="pickitem"><td class="icon"><img src="/images/itemimages/');
+		picker.append(it != $item[none] ? it.image : equipped_item(s).image);
+		picker.append('" class="hand" onclick="descitem(');
+		picker.append(it != $item[none] ? it.descid : equipped_item(s).descid);
+		picker.append(',0,event)" /></td><td><a href="');
+		picker.append(it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s));
+		picker.append('">');
+		picker.append(prefix);
+		picker.append(it != $item[none] ? it : equipped_item(s));
+		picker.append('</a></td></tr>');
 	}
 	void add_gear_option(item it) {
 		add_gear_option("", it);
 	}
   
-	if(equipped_item(s) != $item[none])
-		add_gear_option($item[none]);
+	if(equipped_item(s) != $item[none]) {
+		any_options = true;
+		add_gear_option("Unequip ", $item[none]);
+	}
   
 	item it;
 	foreach i,fav in split_string(vars["chit.favgear"], ",") {
