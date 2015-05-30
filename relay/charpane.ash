@@ -3776,13 +3776,9 @@ void pickerGear(slot s) {
 		picker.append(it != $item[none] ? it : equipped_item(s));
 		picker.append('</a></td></tr>');
 	}
-	void add_gear_option(item it) {
-		add_gear_option("", it);
-	}
   
 	if(equipped_item(s) != $item[none]) {
-		any_options = true;
-		add_gear_option("Unequip ", $item[none]);
+		add_gear_option("<span style='font-weight:bold;'>unequip</span> ", $item[none]);
 	}
   
 	item it;
@@ -3793,7 +3789,7 @@ void pickerGear(slot s) {
 			it = to_item(fav);
 		if(it != $item[none] && (it.to_slot() == s || (s == $slot[off-hand] && it.to_slot() == $slot[weapon] && have_skill($skill[double-fisted skull smashing]))) && equipped_item(s) != it) {
 			if(available_amount(it) > 0)
-				add_gear_option(it);
+				add_gear_option("", it);
 			else if(creatable_amount(it) > 0)
 				add_gear_option("<span style='color:red;font-weight:bold;'>create</span> ", it);
 		}
@@ -3832,7 +3828,8 @@ void bakeGear() {
 	result.append('<tr>');
 	foreach s in $slots[ hat, back, shirt, weapon, off-hand ]
 		addSlot(s);
-	result.append('</tr><tr>');
+	if(!to_boolean(vars["chit.size.wide"]))
+		result.append('</tr><tr>');
 	foreach s in $slots[ pants, acc1, acc2, acc3 ]
 		addSlot(s);
 	result.append('</tr>');
@@ -5857,7 +5854,7 @@ buffer modifyPage(buffer source) {
 		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
 	//Set default values for zlib variables
 	setvar("chit.checkversion", true);
-	setvar("chit.disable",false);
+	setvar("chit.disable", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
 	setvar("chit.quests.hide", false);
@@ -5867,11 +5864,12 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.favgear","droll monocle, stinky cheese eye, Hand in Glove, Half a Purse,A Light that Never Goes Out,smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora,Hairpiece on Fire, Pantsgiving, Vicar's Tutu, Astral Shirt, duct tape shirt, Stephen's lab coat");
+	setvar("chit.favgear", "droll monocle, stinky cheese eye, Hand in Glove, Half a Purse,A Light that Never Goes Out,smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora,Hairpiece on Fire, Pantsgiving, Vicar's Tutu, Astral Shirt, duct tape shirt, Stephen's lab coat");
+	setvar("chit.size.wide", false);
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
-	setvar("chit.effects.layout","songs,buffs,intrinsics");
+	setvar("chit.effects.layout", "songs,buffs,intrinsics");
 	setvar("chit.effects.usermap",false);
 	setvar("chit.effects.describe",true);
 	setvar("chit.helpers.wormwood", "stats,spleen");
@@ -5879,14 +5877,14 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.semirare", true);
 	setvar("chit.helpers.spookyraven", true);
 	setvar("chit.helpers.xiblaxian", true);
-	setvar("chit.roof.layout","character,stats");
-	setvar("chit.walls.layout","helpers,thrall,effects");
-	setvar("chit.floor.layout","update,familiar");
-	setvar("chit.stats.showbars",true);
-	setvar("chit.stats.layout","muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
-	setvar("chit.toolbar.layout","trail,quests,modifiers,elements,organs");
-	setvar("chit.toolbar.moods","true");
-	setvar("chit.kol.coolimages",true);
+	setvar("chit.roof.layout", "character,stats");
+	setvar("chit.walls.layout", "helpers,thrall,effects");
+	setvar("chit.floor.layout", "update,familiar");
+	setvar("chit.stats.showbars", true);
+	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
+	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
+	setvar("chit.toolbar.moods", "true");
+	setvar("chit.kol.coolimages", true);
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 1) {
