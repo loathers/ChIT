@@ -3742,6 +3742,18 @@ string fancycurrency(string page) {
 	return page;
 }
 
+item classSmiths() {
+	switch(my_class()) {
+	case $class[Seal Clubber]: return $item[Meat Tenderizer is Murder];
+	case $class[Turtle Tamer]: return $item[Ouija Board\, Ouija Board];
+	case $class[Pastamancer]: return $item[Hand that Rocks the Ladle];
+	case $class[Sauceror]: return $item[Saucepanic];
+	case $class[Disco Bandit]: return $item[Frankly Mr. Shank];
+	case $class[Accordion Thief]: return $item[Shakespeare's Sister's Accordion];
+	}
+	return $item[none];
+}
+
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	buffer picker;
@@ -3749,129 +3761,93 @@ void pickerGear(slot s) {
 	
 	picker.addLoader("Changing " + s + "...");
   
-  boolean any_options = false;
+	boolean any_options = false;
   
-  void add_gear_option(item it, string prefix)
-  {
-    any_options = true;
+	void add_gear_option(string prefix, item it) {
+		any_options = true;
+
+		string command_link = '<a href="' + (it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s)) + '">';
+
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.append(command_link);
+		picker.append('<img src="/images/itemimages/');
+		if(it != $item[none])
+			picker.append(it.image);
+		else
+			picker.append(equipped_item(s).image);
+		picker.append('" /></a></td><td>');
+		picker.append(command_link);
+		if(it != $item[none]) {
+			picker.append(prefix);
+			picker.append(it);
+		}
+		else {
+			picker.append("Unequip ");
+			picker.append(equipped_item(s));
+		}
+		picker.append('</td></tr>');
+	}
+	void add_gear_option(item it) {
+		add_gear_option("", it);
+	}
   
-    string command_link = '<a href="' + (it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s)) + '">';
-    
-    picker.append('<tr class="pickitem"><td class="icon">');
-    picker.append(command_link);
-    picker.append('<img src="/images/itemimages/');
-    if(it != $item[none])
-    {
-      picker.append(it.image);
-    }
-    else
-    {
-      picker.append(equipped_item(s).image);
-    }
-    picker.append('" /></a></td><td>');
-    picker.append(command_link);
-    if(it != $item[none])
-    {
-      picker.append(prefix);
-      picker.append(it);
-    }
-    else
-    {
-      picker.append("Unequip ");
-      picker.append(equipped_item(s));
-    }
-    picker.append('</td></tr>');
-  }
+	if(equipped_item(s) != $item[none])
+		add_gear_option($item[none]);
   
-  void add_gear_option(item it)
-  {
-    add_gear_option(it, "");
-  }
-  
-  if(equipped_item(s) != $item[none])
-    add_gear_option($item[none]);
-  
-  item real_item(string name)
-  {
-    switch(name)
-    {
-      case "smiths": switch(my_class())
-                     {
-                      case $class[seal clubber]: return $item[meat tenderizer is murder];
-                      case $class[turtle tamer]: return $item[ouija board, ouija board];
-                      case $class[pastamancer]: return $item[hand that rocks the ladle];
-                      case $class[sauceror]: return $item[saucepanic];
-                      case $class[disco bandit]: return $item[frankly mr. shank];
-                      case $class[accordion thief]: return $item[Shakespeare's Sister's Accordion];
-                      default: return $item[none];
-                     }
-    }
-    
-    return to_item(name);
-  }
-  
-  foreach i,fav in split_string(vars["chit.favgear"], ",")
-  {
-    item it = real_item(fav);
-    if(it != $item[none] && (it.to_slot() == s || (s == $slot[off-hand] && have_skill($skill[double-fisted skull smashing]))) && equipped_item(s) != it)
-    {
-      if(available_amount(it) > 0)
-      {
-        add_gear_option(it);
-      }
-      else if(creatable_amount(it) > 0)
-      {
-        add_gear_option(it, "CREATE ");
-      }
-    }
-  }
-	
-  if(!any_options)
-  {
-    picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
-  }
-  
+	item it;
+	foreach i,fav in split_string(vars["chit.favgear"], ",") {
+		if(fav == "smiths")
+			it = classSmiths();
+		else
+			it = to_item(fav);
+		if(it != $item[none] && (it.to_slot() == s || (s == $slot[off-hand] && it.to_slot() == $slot[weapon] && have_skill($skill[double-fisted skull smashing]))) && equipped_item(s) != it) {
+			if(available_amount(it) > 0)
+				add_gear_option(it);
+			else if(creatable_amount(it) > 0)
+				add_gear_option("<span style='color:red;font-weight:bold;'>create</span> ", it);
+		}
+	}
+
+	if(!any_options)
+		picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
+
 	picker.append('</table></div>');
 	chitPickers["gear" + s] = picker;
 }
 
 // pickerGear and bakeGear were written by soolar
 void bakeGear() {
-  buffer result;
-  
-  result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
-  result.append('<tr><th class="label" colspan="9"><a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
-  
-  void addSlot(slot s) {
-    item equipped = equipped_item(s);
-    result.append('<td><a class="chit_launcher" rel="chit_pickergear');
-    result.append(s);
-    result.append('" href="#"><img class="chit_gearicon hand" src="/images/itemimages/');
-    if(equipped != $item[none])
-    {
-      result.append(equipped.image);
-    }
-    else
-    {
-      result.append('blank.gif');
-    }
-    result.append('" title="');
-    result.append(s);
-    result.append(': ');
-    result.append(equipped);
-    result.append('"></a></td>');
-    pickerGear(s);
-  }
-  result.append('<tr>');
-  foreach s in $slots[ hat, back, shirt, weapon, off-hand ]
-    addSlot(s);
-  result.append('</tr><tr>');
-  foreach s in $slots[ pants, acc1, acc2, acc3 ]
-    addSlot(s);
-  result.append('</tr>');
-  result.append('</tbody></table>');
-  
-  chitBricks["gear"] = result.to_string();
+	buffer result;
+
+	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
+	result.append('<tr><th class="label" colspan="9"><a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
+
+	void addSlot(slot s) {
+		item equipped = equipped_item(s);
+		result.append('<td><a class="chit_launcher" rel="chit_pickergear');
+		result.append(s);
+		result.append('" href="#"><img class="chit_gearicon hand" src="/images/itemimages/');
+		if(equipped != $item[none])
+			result.append(equipped.image);
+		else
+			result.append('blank.gif');
+		result.append('" title="');
+		result.append(s);
+		result.append(': ');
+		result.append(equipped);
+		result.append('"></a></td>');
+		pickerGear(s);
+	}
+	result.append('<tr>');
+	foreach s in $slots[ hat, back, shirt, weapon, off-hand ]
+		addSlot(s);
+	result.append('</tr><tr>');
+	foreach s in $slots[ pants, acc1, acc2, acc3 ]
+		addSlot(s);
+	result.append('</tr>');
+	result.append('</tbody></table>');
+
+	chitBricks["gear"] = result.to_string();
 }
 
 void pickOutfit() {
@@ -4026,23 +4002,7 @@ void pickOutfit() {
 	// Special Smithsness section. Sometimes it is helpful to switch them around, like A Light that Never Goes Out or Half a Purse. Or sometimes put mainstat in offhand.
 	if(have_effect($effect[Merry Smithsness]) > 0) {
 		special.set_length(0);
-		
-		void addOffhand(buffer result, item e, string useName) {
-			if(equipped_item($slot[off-hand]) != e && item_amount(e) > 0 && e != $item[none])
-				result.addGear("equip off-hand " + e, useName);
-		}
-		
-		item classSmiths() {
-			switch(my_class()) {
-			case $class[Seal Clubber]: return $item[Meat Tenderizer is Murder];
-			case $class[Turtle Tamer]: return $item[Ouija Board\, Ouija Board];
-			case $class[Pastamancer]: return $item[Hand that Rocks the Ladle];
-			case $class[Sauceror]: return $item[Saucepanic];
-			case $class[Disco Bandit]: return $item[Frankly Mr. Shank];
-			case $class[Accordion Thief]: return $item[Shakespeare's Sister's Accordion];
-			}
-			return $item[none];
-		} item classSmiths = classSmiths();
+		item classSmiths = classSmiths();
 		
 		special.addGear($items[A Light that Never Goes Out, Half a Purse, Work is a Four Letter Sword, Sheila Take a Crossbow, Hairpiece On Fire, Vicar's Tutu]);
 		special.addGear($item[Staff of the Headmaster's Victuals], "Staff of the Headmaster");
