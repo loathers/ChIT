@@ -3742,6 +3742,138 @@ string fancycurrency(string page) {
 	return page;
 }
 
+// pickerGear and bakeGear were written by soolar
+void pickerGear(slot s) {
+	buffer picker;
+	picker.pickerStart("gear" + s, "Change " + s);
+	
+	picker.addLoader("Changing " + s + "...");
+  
+  boolean any_options = false;
+  
+  void add_gear_option(item it, string prefix)
+  {
+    any_options = true;
+  
+    string command_link = '<a href="' + (it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s)) + '">';
+    
+    picker.append('<tr class="pickitem"><td class="icon">');
+    picker.append(command_link);
+    picker.append('<img src="/images/itemimages/');
+    if(it != $item[none])
+    {
+      picker.append(it.image);
+    }
+    else
+    {
+      picker.append(equipped_item(s).image);
+    }
+    picker.append('" /></a></td><td>');
+    picker.append(command_link);
+    if(it != $item[none])
+    {
+      picker.append(prefix);
+      picker.append(it);
+    }
+    else
+    {
+      picker.append("Unequip ");
+      picker.append(equipped_item(s));
+    }
+    picker.append('</td></tr>');
+  }
+  
+  void add_gear_option(item it)
+  {
+    add_gear_option(it, "");
+  }
+  
+  if(equipped_item(s) != $item[none])
+    add_gear_option($item[none]);
+  
+  item real_item(string name)
+  {
+    switch(name)
+    {
+      case "smiths": switch(my_class())
+                     {
+                      case $class[seal clubber]: return $item[meat tenderizer is murder];
+                      case $class[turtle tamer]: return $item[ouija board, ouija board];
+                      case $class[pastamancer]: return $item[hand that rocks the ladle];
+                      case $class[sauceror]: return $item[saucepanic];
+                      case $class[disco bandit]: return $item[frankly mr. shank];
+                      case $class[accordion thief]: return $item[Shakespeare's Sister's Accordion];
+                      default: return $item[none];
+                     }
+    }
+    
+    return to_item(name);
+  }
+  
+  foreach i,fav in split_string(vars["chit.favgear"], ",")
+  {
+    item it = real_item(fav);
+    if(it != $item[none] && (it.to_slot() == s || (s == $slot[off-hand] && have_skill($skill[double-fisted skull smashing]))) && equipped_item(s) != it)
+    {
+      if(available_amount(it) > 0)
+      {
+        add_gear_option(it);
+      }
+      else if(creatable_amount(it) > 0)
+      {
+        add_gear_option(it, "CREATE ");
+      }
+    }
+  }
+	
+  if(!any_options)
+  {
+    picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
+  }
+  
+	picker.append('</table></div>');
+	chitPickers["gear" + s] = picker;
+}
+
+// pickerGear and bakeGear were written by soolar
+void bakeGear() {
+  buffer result;
+  
+  result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
+  result.append('<tr><th class="label" colspan="9"><a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
+  
+  void addSlot(slot s) {
+    item equipped = equipped_item(s);
+    result.append('<td><a class="chit_launcher" rel="chit_pickergear');
+    result.append(s);
+    result.append('" href="#"><img class="chit_gearicon hand" src="/images/itemimages/');
+    if(equipped != $item[none])
+    {
+      result.append(equipped.image);
+    }
+    else
+    {
+      result.append('blank.gif');
+    }
+    result.append('" title="');
+    result.append(s);
+    result.append(': ');
+    result.append(equipped);
+    result.append('"></a></td>');
+    pickerGear(s);
+  }
+  result.append('<tr>');
+  foreach s in $slots[ hat, back, shirt, weapon, off-hand ]
+    addSlot(s);
+  result.append('</tr><tr>');
+  foreach s in $slots[ pants, acc1, acc2, acc3 ]
+    addSlot(s);
+  result.append('</tr>');
+  result.append('</tbody></table>');
+  
+  chitBricks["gear"] = result.to_string();
+}
+
 void pickOutfit() {
 	location loc = my_location();
 	if(loc == $location[none]) // Possibly beccause a fax was used
@@ -5602,6 +5734,7 @@ void bakeBricks() {
 						case "elements":	bakeElements();		break;
 						case "tracker":		bakeTracker();		break;
 						case "thrall":		bakeThrall();		break;
+						case "gear":		bakeGear();			break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
@@ -5783,6 +5916,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
+	setvar("chit.favgear","droll monocle, stinky cheese eye, Hand in Glove, Half a Purse,A Light that Never Goes Out,smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora,Hairpiece on Fire, Pantsgiving, Vicar's Tutu, Astral Shirt, duct tape shirt, Stephen's lab coat");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
