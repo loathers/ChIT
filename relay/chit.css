@@ -130,7 +130,7 @@ div.chit_skeleton table.chit_brick th {
 }
 table.chit_brick img.chit_gearicon {
   border:1px solid #D0D0D0;
-  padding:0px;
+  margin:0.5px;
 }
 
 /* location: used for counter checkers locations */

@@ -2,6 +2,8 @@
 var roofOffset = 4;
 var floorOffset = 4;
 
+var activePicker = null;
+
 $(document).ready(function () {
 
 	//Picker Launchers
@@ -22,10 +24,15 @@ $(document).ready(function () {
 				});
 				if ((top + picker.height() + 30) > $(document).height()) {
 					picker.css('top', ($(document).height()-picker.height()-30));
-				} 
-				picker.show();
+				}
+        if(activePicker != null) {
+          activePicker.hide();
+        }
+        picker.show();
+        activePicker = picker;
 			} else {
 				picker.hide();
+        activePicker = null;
 			}
 		}
         return false;
