@@ -3754,6 +3754,66 @@ item classSmiths() {
 	return $item[none];
 }
 
+string [item] questingGear;
+void addQuestingGear() {
+	void addGear(item it, string s) {
+		if(s == "") questingGear[it] = to_string(it);
+		else questingGear[it] = s;
+	}
+	void addGear(boolean [item] list) {
+		foreach it in list
+			addGear(it, "");
+	}
+	void addGear(item it) { addGear(it, ""); }
+	
+	if(get_property("dailyDungeonDone") == "false")
+		addGear($item[ring of Detect Boring Doors]);
+		
+	// Certain quest items need to be equipped to enter locations
+	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
+		addGear($item[continuum transfunctioner]);
+	
+	addGear($items[pirate fledges, Talisman o' Namsilat, Mega Gem, black glass, Personal Ventilation Unit, gore bucket]);
+	addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder");
+	if(get_property("questL10Garbage") != "finished")
+		switch(my_location()) {
+		case $location[The Castle in the Clouds in the Sky (Basement)]:
+			addGear($item[titanium assault umbrella]);
+			addGear($item[amulet of extreme plot significance], "amulet of plot significance");
+			break;
+		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
+		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
+			addGear($item[mohawk wig]);
+			break;
+		}
+	if($strings[step3, step4] contains get_property("questL11Worship") && item_amount($item[antique machete]) > 0)
+		addGear($item[antique machete]);
+	if(get_property("questL11Desert") == "started")
+		addGear($items[UV-resistant compass, ornate dowsing rod]);
+	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2")
+		addGear($item[unstable fulminate]);
+	if($strings[started,step1] contains get_property("questL11Manor"))
+		addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
+	
+	// Some gear just makes stuff easier
+	if(get_property("kingLiberated") == "false") {
+		if(my_path() == "Heavy Rains")
+			addGear($item[pool skimmer]);
+		addGear($item[Bram's choker]);
+	}
+	
+	// Custom favorites
+	foreach i,fav in split_string(vars["chit.favgear"], ",")
+		if(fav == "smiths") {
+			addGear(classSmiths());
+			addGear($items[A Light that Never Goes Out, Half a Purse, Hairpiece On Fire, Vicar's Tutu]);
+			if(my_class() == $class[Turtle Tamer])
+				addGear($items[Work is a Four Letter Sword]);
+			addGear($item[Staff of the Headmaster's Victuals], "Staff of the Headmaster");
+		} else
+			addGear(to_item(fav));
+}
+
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	buffer picker;
@@ -3763,37 +3823,42 @@ void pickerGear(slot s) {
   
 	boolean any_options = false;
   
-	void add_gear_option(string prefix, item it) {
+	void add_gear_option(string prefix, string cmd, item it) {
 		any_options = true;
 		picker.append('<tr class="pickitem"><td class="icon"><img src="/images/itemimages/');
 		picker.append(it != $item[none] ? it.image : equipped_item(s).image);
 		picker.append('" class="hand" onclick="descitem(');
 		picker.append(it != $item[none] ? it.descid : equipped_item(s).descid);
 		picker.append(',0,event)" /></td><td><a href="');
-		picker.append(it != $item[none] ? sideCommand("equip " + s + " " + it) : sideCommand("unequip " + s));
+		picker.append(sideCommand(cmd + s + " " + it));
 		picker.append('">');
 		picker.append(prefix);
 		picker.append(it != $item[none] ? it : equipped_item(s));
 		picker.append('</a></td></tr>');
 	}
+	boolean good_slot(slot s, item it) {
+		slot gear = to_slot(it);
+		if(s == gear) return true;
+		switch(s) {
+		case $slot[off-hand]:
+			return gear == $slot[weapon] && item_type(it) != "chefstaff" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
+		case $slot[acc2]: case $slot[acc3]:
+			return gear == $slot[acc1];
+		}
+		return false;
+	}
   
 	if(equipped_item(s) != $item[none]) {
-		add_gear_option("<span style='font-weight:bold;'>unequip</span> ", $item[none]);
+		add_gear_option("<span style='font-weight:bold;'>unequip</span> ", "unequip ", $item[none]);
 	}
   
-	item it;
-	foreach i,fav in split_string(vars["chit.favgear"], ",") {
-		if(fav == "smiths")
-			it = classSmiths();
-		else
-			it = to_item(fav);
-		if(it != $item[none] && (it.to_slot() == s || (s == $slot[off-hand] && it.to_slot() == $slot[weapon] && have_skill($skill[double-fisted skull smashing]))) && equipped_item(s) != it) {
-			if(available_amount(it) > 0)
-				add_gear_option("", it);
+	foreach it in questingGear
+		if(it != $item[none] && good_slot(s, it) && equipped_item(s) != it) {
+			if(item_amount(it) > 0)
+				add_gear_option("", "equip ", it);
 			else if(creatable_amount(it) > 0)
-				add_gear_option("<span style='color:red;font-weight:bold;'>create</span> ", it);
+				add_gear_option("<span style='color:red;font-weight:bold;'>create</span> ", "create "+ it+ "; equip ", it);
 		}
-	}
 
 	if(!any_options)
 		picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
@@ -3807,11 +3872,14 @@ void bakeGear() {
 	buffer result;
 
 	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="9"><a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
+	result.append('<tr><th class="label"><a class="visit" target="mainpane" href="./inventory.php?which=2"><img src="');
+	result.append(imagePath);
+	result.append('equipment.png">Gear</a></th></tr>');
+
 
 	void addSlot(slot s) {
 		item equipped = equipped_item(s);
-		result.append('<td><a class="chit_launcher" rel="chit_pickergear');
+		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#"><img class="chit_gearicon hand" src="/images/itemimages/');
 		if(equipped != $item[none])
@@ -3822,17 +3890,13 @@ void bakeGear() {
 		result.append(s);
 		result.append(': ');
 		result.append(equipped);
-		result.append('"></a></td>');
+		result.append('"></a></span>');
 		pickerGear(s);
 	}
-	result.append('<tr>');
-	foreach s in $slots[ hat, back, shirt, weapon, off-hand ]
+	result.append('<tr><td>');
+	foreach s in $slots[ hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3 ]
 		addSlot(s);
-	if(!to_boolean(vars["chit.size.wide"]))
-		result.append('</tr><tr>');
-	foreach s in $slots[ pants, acc1, acc2, acc3 ]
-		addSlot(s);
-	result.append('</tr>');
+	result.append('</td></tr>');
 	result.append('</tbody></table>');
 
 	chitBricks["gear"] = result.to_string();
@@ -3930,34 +3994,11 @@ void pickOutfit() {
 		else if(get_property("_hatBeforeKolhs") != "")
 			special.addGear("equip "+get_property("_hatBeforeKolhs")+"; set _hatBeforeKolhs = ", "Restore "+get_property("_hatBeforeKolhs"));
 	}
-	
-	if(get_property("dailyDungeonDone") == "false")
-		special.addGear($item[ring of Detect Boring Doors]);
-		
-	// Certain quest items need to be equipped to enter locations
-	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
-		special.addGear($item[continuum transfunctioner]);
-	
-	special.addGear($items[pirate fledges, Talisman o' Namsilat, black glass, Personal Ventilation Unit, gore bucket]);
-	special.addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder");
-	if(get_property("questL10Garbage") != "finished")
-		switch(loc) {
-		case $location[The Castle in the Clouds in the Sky (Basement)]:
-			special.addGear($item[titanium assault umbrella]);
-			special.addGear($item[amulet of extreme plot significance], "amulet of plot significance");
-			break;
-		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
-		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
-			special.addGear($item[mohawk wig]);
-			break;
-		}
+	foreach it, useName in questingGear
+		special.addGear(it, useName);
+
 	if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 		special.addGear("equip acc3 Talisman o\' Nam;equip acc1 Mega+Gem", "Talisman & Mega Gem");
-	if($strings[step3, step4] contains get_property("questL11Worship") && item_amount($item[antique machete]) > 0)
-		special.addGear($item[antique machete]);
-		#special.addGear("equip antique machete", "antique machete");
-	if(get_property("questL11Desert") == "started")
-		special.addGear($items[UV-resistant compass, ornate dowsing rod]);
 	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2") {
 		if(available_amount($item[bottle of Chateau de Vinegar]) == 1 && available_amount($item[blasting soda]) == 1)
 			special.addGear("create unstable fulminate; equip unstable fulminate", "Cook & Equip unstable fulminate");
@@ -3966,25 +4007,13 @@ void pickOutfit() {
 	}
 	if($strings[started,step1] contains get_property("questL11Manor"))
 		special.addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
-		
-	if(length(special) > 0) {
-		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equip for Quest</td></tr>');
-		picker.append(special);
-	}
-	
-	// Some gear just makes stuff easier
-	if(get_property("kingLiberated") == "false") {
-		special.set_length(0);
 		// If using Kung Fu Fighting, you might want to empty your hands
 		if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
 			special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
-		if(my_path() == "Heavy Rains")
-			special.addGear($item[pool skimmer]);
-		special.addGear($item[Bram's choker]);
-		if(length(special) > 0) {
-			picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Helpful Equipment</td></tr>');
-			picker.append(special);
-		}
+		
+	if(length(special) > 0) {
+		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Helpful Equipment</td></tr>');
+		picker.append(special);
 	}
 	
 	// Special Smithsness section. Sometimes it is helpful to switch them around, like A Light that Never Goes Out or Half a Purse. Or sometimes put mainstat in offhand.
@@ -5652,6 +5681,8 @@ void bakeBricks() {
 
 	bakeHeader();
 	bakeFooter();
+	
+	addQuestingGear();
 
 	// Standardize brick layouts
 	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
@@ -5864,8 +5895,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.favgear", "droll monocle, stinky cheese eye, Hand in Glove, Half a Purse,A Light that Never Goes Out,smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora,Hairpiece on Fire, Pantsgiving, Vicar's Tutu, Astral Shirt, duct tape shirt, Stephen's lab coat");
-	setvar("chit.size.wide", false);
+	setvar("chit.favgear", "droll monocle, stinky cheese eye, smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora, Pantsgiving, Astral Shirt, duct tape shirt, Stephen's lab coat");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
