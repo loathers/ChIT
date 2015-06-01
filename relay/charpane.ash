@@ -4016,26 +4016,6 @@ void pickOutfit() {
 		picker.append(special);
 	}
 	
-	// Special Smithsness section. Sometimes it is helpful to switch them around, like A Light that Never Goes Out or Half a Purse. Or sometimes put mainstat in offhand.
-	if(have_effect($effect[Merry Smithsness]) > 0) {
-		special.set_length(0);
-		item classSmiths = classSmiths();
-		
-		special.addGear($items[A Light that Never Goes Out, Half a Purse, Work is a Four Letter Sword, Sheila Take a Crossbow, Hairpiece On Fire, Vicar's Tutu]);
-		special.addGear($item[Staff of the Headmaster's Victuals], "Staff of the Headmaster");
-		special.addGear(classSmiths);
-		
-		// Put Smithsness weapon in off-hand?
-		if(my_class() != $class[Turtle Tamer] && have_skill($skill[Double-Fisted Skull Smashing]) && equipped_item($slot[off-hand]) != classSmiths && item_amount(classSmiths) > 0)
-			special.addGear("equip off-hand " + classSmiths, "Offhand: Class Weapon");
-		
-		if(length(special) > 0) {
-			picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Swap Smithsness Items</td></tr>');
-			picker.append(special);
-		}
-	}
-
-	
 	picker.addLoader("Getting Dressed");
 	picker.append('</table>');
 	picker.append('</div>');
