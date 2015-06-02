@@ -3852,11 +3852,25 @@ void addFavGear() {
 	
 	switch(my_path())
 	{
+	
 	case "Heavy Rains":
 		addGear($item[pool skimmer], "path");
 		break;
 	case "One Crazy Random Summer":
 		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses, kill screen], "path");
+	}
+	
+	// some handy in-run stuff
+	if((vars["chit.recommendgear"] == "in-run" && get_property("questL13Final") != "finished") || vars["chit.recommendgear"] == "always")
+	{
+		addGear($items[duonoculars,Bram's choker,red shoe,iFlail,rusted-out shootin' iron,
+			Space Trip safety headphones,Xiblaxian stealth cowl,Xiblaxian stealth trousers,
+			camouflage T-shirt,Xiblaxian stealth vest], "-combat");
+		addGear($items[portable cassette player,giant turkey leg,monster bait,HOA zombie eyes,
+			Ass-Stompers of Violence,cod cape,Dungeon Fist gauntlet], "+combat");
+		addGear($items[astral shirt],"stats");
+		addGear($items[Hand in Glove,astral belt,numberwang,badge of authority,smoker's cloak,spiky turtle helmet,
+			Sneaky Pete's leather jacket (collar popped),red shirt,Metal band T-shirt,hipposkin poncho,goth kid t-shirt],"ML");
 	}
 	
 	// manual favorites
@@ -5986,7 +6000,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,Astral Shirt," + 
+	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
 		"Meat Tenderizer is Murder,Ouija Board&comma; Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
 		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.effects.classicons", "none");
@@ -6008,6 +6022,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods", "true");
 	setvar("chit.kol.coolimages", true);
+	setvar("chit.recommendgear", "in-run");
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 2) {
