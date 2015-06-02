@@ -3946,8 +3946,16 @@ void pickerGear(slot s) {
 		add_gear_option("unequip", "unequip ", in_slot, info);
 	}
 	
-	foreach it,info in favGear
+	item [int] sortedGear;
+	foreach it in favGear
 	{
+		sortedGear[sortedGear.count()] = it;
+	}
+	sort sortedGear by favGear[value].reason;
+	
+	foreach i,it in sortedGear
+	{
+		gearInfo info = favGear[it];
 		if(it != $item[none] && good_slot(s, it) && in_slot != it) {
 			if(item_amount(it) > 0)
 				add_gear_option("equip", "equip ", it, info);
