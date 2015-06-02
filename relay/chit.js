@@ -38,9 +38,12 @@ $(document).ready(function () {
         return false;
 	});
 	$(".chit_picker a.change").live("click", function(e) {
-		$(this).closest(".chit_picker").find("tr.pickloader").show();
-		$(this).closest(".chit_picker").find("tr.pickitem").hide();
-		$(this).closest(".chit_picker").find("tr.florist").hide();
+		var caller = $(this);
+		var picker = caller.closest(".chit_picker");
+		var subpicker = caller.attr("rel");
+		picker.find("tr.pickloader" + subpicker).show();
+		picker.find("tr.pickitem").hide();
+		picker.find("tr.florist").hide();
 	});
 	$(".chit_picker a.done").live("click", function(e) {
 		$(this).closest(".chit_skeleton").hide();

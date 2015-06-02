@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15559; // KoLmafia now counts Purr of the Feline, so workaround removed.
+since r15891; // Puck Man and Ms. Puck Man
 import "zlib.ash";
 
 /************************************************************************************
@@ -631,7 +631,7 @@ string helperXiblaxian() {
 void pickerStart(buffer picker, string rel, string message) {
 	picker.append('<div id="chit_picker');	
 	picker.append(rel);	
-	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="2">');
+	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="3">');
 	picker.append(message);
 	picker.append('</th></tr>');
 }
@@ -639,10 +639,16 @@ void pickerStart(buffer picker, string rel, string message, string image) {
 	picker.pickerStart(picker, rel, '<img src="' + imagePath + image + '.png">' + message);
 }
 
-void addLoader(buffer picker, string message) {
-	picker.append('<tr class="pickloader" style="display:none"><td class="info">');
+void addLoader(buffer picker, string message, string subloader) {
+	picker.append('<tr class="pickloader');
+	picker.append(subloader);
+	picker.append('" style="display:none"><td class="info">');
 	picker.append(message);
 	picker.append('</td><td class="icon"><img src="/images/itemimages/karma.gif"></td></tr>');
+}
+
+void addLoader(buffer picker, string message) {
+	addLoader(picker,message,"");
 }
 
 void addSadFace(buffer picker, string message) {
@@ -2448,6 +2454,10 @@ void bakeFamiliar() {
 		if(source.contains_text(">configure</a>)"))
 			famname += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
 		break;
+	case $familiar[Puck Man]:case $familiar[Ms. Puck Man]:
+		famname += ' (<a class="visit" target="mainpane" href="/shop.php?whichshop=mystic">visit mystic</a>)';
+		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels';
+		break;
 	}
 	
 	// Charges
@@ -3742,111 +3752,165 @@ string fancycurrency(string page) {
 	return page;
 }
 
-item classSmiths() {
-	switch(my_class()) {
-	case $class[Seal Clubber]: return $item[Meat Tenderizer is Murder];
-	case $class[Turtle Tamer]: return $item[Ouija Board\, Ouija Board];
-	case $class[Pastamancer]: return $item[Hand that Rocks the Ladle];
-	case $class[Sauceror]: return $item[Saucepanic];
-	case $class[Disco Bandit]: return $item[Frankly Mr. Shank];
-	case $class[Accordion Thief]: return $item[Shakespeare's Sister's Accordion];
+record gearInfo
+{
+	string name;
+	string reason;
+	boolean isFavorite;
+};
+gearInfo [item] favGear;
+
+void addGear(item it, string name, string reason)
+{
+	class gear_class = class_modifier(it,"Class");
+	
+	if((gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))) &&
+		(available_amount(it) + creatable_amount(it) > 0))
+	{
+		gearInfo info;
+		info.name = name;
+		info.reason = reason;
+		info.isFavorite = (reason == "");
+		favGear[it] = info;
 	}
-	return $item[none];
+}
+void addGear(item it, string reason)
+{
+	addGear(it, to_string(it), reason);
+}
+void addGear(item it)
+{
+	addGear(it, "");
+}
+void addGear(boolean [item] list, string reason)
+{
+	foreach it in list
+		addGear(it, reason);
+}
+void addGear(boolean [item] list)
+{
+	addGear(list, "");
 }
 
-string [item] favGear;
-void addFavGear() {
-	void addGear(item it, string s) {
-		if(s == "") favGear[it] = to_string(it);
-		else favGear[it] = s;
-	}
-	void addGear(boolean [item] list) {
-		foreach it in list
-			addGear(it, "");
-	}
-	void addGear(item it) { addGear(it, ""); }
-	
-	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
-	if(get_property("dailyDungeonDone") == "false" &&(can_interact() || total_keys() < 3))
-		addGear($item[ring of Detect Boring Doors]);
-		
+void addFavGear() {	
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
-		addGear($item[continuum transfunctioner]);
-	addGear($items[pirate fledges, Talisman o' Namsilat, Mega Gem, black glass, Personal Ventilation Unit, gore bucket]);
-	addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder");
-	if(get_property("questL10Garbage") != "finished")
-		switch(my_location()) {
-		case $location[The Castle in the Clouds in the Sky (Basement)]:
-			addGear($item[titanium assault umbrella]);
-			addGear($item[amulet of extreme plot significance], "amulet of plot significance");
+		addGear($item[continuum transfunctioner], "quest");
+	addGear($items[pirate fledges, black glass]);
+	if(get_property("questL11Palindome") != "finished")
+	{
+		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
+	}
+	else if(get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
+	{
+		addGear($item[Talisman o' Namsilat], "bounty");
+	}
+	
+	// Ascension specific quest items
+	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
+	if(get_property("dailyDungeonDone") == "false" &&(can_interact() || total_keys() < 3))
+		addGear($item[ring of Detect Boring Doors], "quest");
+	switch(get_property("questL10Garbage"))
+	{
+		// castle basement unlocked, but not cleared
+		case "step7":
+			addGear($item[titanium assault umbrella], "quest");
+			addGear($item[amulet of extreme plot significance], "amulet of plot significance", "quest");
 			break;
-		case $location[The Castle in the Clouds in the Sky (Ground Floor)]:
-		case $location[The Castle in the Clouds in the Sky (Top Floor)]:
-			addGear($item[mohawk wig]);
+		// castle top floor unlocked, but not cleared
+		case "step9":
+			addGear($item[mohawk wig], "quest");
 			break;
-		}
+	}
 	if($strings[step3, step4] contains get_property("questL11Worship")) {
 		if(item_amount($item[antique machete]) > 0)
-			addGear($item[antique machete]);
+			addGear($item[antique machete], "quest");
 		if(get_property("hiddenHospitalProgress") == "1")
-			addGear($items[surgical apron, bloodied surgical dungarees, surgical mask, head mirror, half-size scalpel]);
+			addGear($items[surgical apron, bloodied surgical dungarees, surgical mask, head mirror, half-size scalpel], "quest");
 	}
 	if(get_property("questL11Desert") == "started")
-		addGear($items[UV-resistant compass, ornate dowsing rod]);
-	if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2")
-		addGear($item[unstable fulminate]);
+		addGear($items[UV-resistant compass, ornate dowsing rod], "quest");
+	if($strings[step1,step2,step3] contains get_property("questL11Manor"))
+		addGear($item[unstable fulminate], "quest");
 	if($strings[started, step1] contains get_property("questL11Manor"))
-		addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles");
+		addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles", "quest");
 	
-	if(my_path() == "Heavy Rains")
-		addGear($item[pool skimmer]);
-	else if(my_path() == "One Crazy Random Summer")
-		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses]);
-
-	// Some gear just makes stuff easier
-	if(get_property("kingLiberated") == "false") {
-		addGear($items[Bram's choker, portable cassette player, monster bait, ghost of a necklace]);
+	// Charter zone quest equipment
+	addGear($items[
+		Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker,
+		Personal Ventilation Unit, gore bucket,
+		lube-shoes, Dinsey mascot mask, trash net,
+	], "charter");
+	addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder", "charter");
+	
+	switch(my_path())
+	{
+	case "Heavy Rains":
+		addGear($item[pool skimmer], "path");
+		break;
+	case "One Crazy Random Summer":
+		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses, kill screen], "path");
 	}
 	
-	// Custom favorites
-	foreach i,fav in split_string(vars["chit.favgear"], "\\s*,\\s*")
-		if(fav == "smiths") {
-			addGear(classSmiths());
-			addGear($items[A Light that Never Goes Out, Half a Purse, Hairpiece On Fire, Vicar's Tutu, Hand in Glove]);
-			if(my_class() == $class[Turtle Tamer])
-				addGear($items[Work is a Four Letter Sword]);
-			addGear($item[Staff of the Headmaster's Victuals], "Staff of the Headmaster");
-		} else
-			addGear(to_item(fav));
+	// manual favorites
+	foreach i,fav in split_string(vars["chit.favgear"], "\\s*,\\s*") {
+		addGear(to_item(fav));
+	}
 }
 
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
+	item in_slot = equipped_item(s);
+
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s);
-	
-	picker.addLoader("Changing " + s + "...");
   
 	boolean any_options = false;
   
-	void add_gear_option(string prefix, string cmd, item it) {
+	void add_gear_option(string prefix, string cmd, item it, gearInfo info)
+	{
 		any_options = true;
-		picker.append('<tr class="pickitem"><td class="icon"><img src="/images/itemimages/');
+		
+		string command = sideCommand(cmd + s + " " + it);
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="/images/itemimages/');
 		picker.append(it.image);
 		picker.append('" class="hand" onclick="descitem(');
 		picker.append(it.descid);
-		picker.append(',0,event)" /></td><td><a href="');
-		picker.append(sideCommand(cmd + s + " " + it));
-		picker.append('">');
+		picker.append(',0,event)" /></a></td><td><a class="change" href="');
+		picker.append(command);
+		picker.append('"><span style="font-weight:bold;">');
 		picker.append(prefix);
-		picker.append(it);
+		if(info.reason != "")
+		{
+			picker.append(' (');
+			picker.append(info.reason);
+			picker.append(')');
+		}
+		picker.append('</span> ');
+		picker.append(info.name);
+		picker.append('</a></td><td><a class="change" href="');
+		if(info.isFavorite)
+		{
+			picker.append(sideCommand("chit_removefavorite.ash " + it));
+			picker.append('" rel="delfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_remove_red.png"></a>');
+		}
+		else
+		{
+			picker.append(sideCommand("chit_addfavorite.ash " + it));
+			picker.append('" rel="addfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_add_blue.png"></a>');
+		}
+		picker.append('</a></td></tr>');
+		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
 		# picker.append(parseMods(string_modifier(it,"Evaluated Modifiers")).replace_string(", Single Equip", ""));
 		# picker.append("<span>");
-		picker.append('</a></td></tr>');
 	}
-	boolean good_slot(slot s, item it) {
+	boolean good_slot(slot s, item it)
+	{
 		slot gear = to_slot(it);
 		if(s == gear) return true;
 		switch(s) {
@@ -3858,20 +3922,39 @@ void pickerGear(slot s) {
 		return false;
 	}
   
-	if(equipped_item(s) != $item[none])
-		add_gear_option("<span style='font-weight:bold;'>unequip</span> ", "unequip ", equipped_item(s));
-  
-	foreach it in favGear
-		if(it != $item[none] && good_slot(s, it) && equipped_item(s) != it) {
-			if(item_amount(it) > 0)
-				add_gear_option("", "equip ", it);
-			else if(creatable_amount(it) > 0)
-				add_gear_option("<span style='color:red;font-weight:bold;'>create</span> ", "create "+ it+ "; equip ", it);
+	if(in_slot != $item[none]) {
+		gearInfo info;
+		if(favGear contains in_slot)
+		{
+			gearInfo realInfo = favGear[in_slot];
+			info.name = realInfo.name;
+			info.isFavorite = realInfo.isFavorite;
 		}
-
+		else
+		{
+			info.name = to_string(in_slot);
+			info.isFavorite = false;
+		}
+		info.reason = "";
+		add_gear_option("unequip", "unequip ", in_slot, info);
+	}
+	
+	foreach it,info in favGear
+	{
+		if(it != $item[none] && good_slot(s, it) && in_slot != it) {
+			if(item_amount(it) > 0)
+				add_gear_option("equip", "equip ", it, info);
+			else if(creatable_amount(it) > 0)
+				add_gear_option('<span class="warning-link">create</span>', "create "+ it+ "; equip ", it, info);
+		}
+	}
+	
 	if(!any_options)
 		picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
 
+	picker.addLoader("Changing " + s + "...");
+	picker.addLoader("Adding to favorites...", "addfav");
+	picker.addLoader("Removing from favorites...", "delfav");
 	picker.append('</table></div>');
 	chitPickers["gear" + s] = picker;
 }
@@ -4013,16 +4096,14 @@ void pickOutfit() {
 		if(vars["chit." + layout + ".layout"].contains_text("gear"))
 			noGearBrick = false;
 	if(noGearBrick) {
-		foreach it, useName in favGear
-			special.addGear(it, useName);
+		foreach it, info in favGear
+			special.addGear(it, info.name);
 
 		if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 			special.addGear("equip acc3 Talisman o\' Namsilat;equip acc1 Mega+Gem", "Talisman & Mega Gem");
-		if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2" || get_property("questL11Manor") == "step2") {
+		if(get_property("questL11Manor") == "step1" || get_property("questL11Manor") == "step2") {
 			if(available_amount($item[bottle of Chateau de Vinegar]) == 1 && available_amount($item[blasting soda]) == 1)
 				special.addGear("create unstable fulminate; equip unstable fulminate", "Cook & Equip unstable fulminate");
-			else
-				special.addGear($item[unstable fulminate]);
 		}
 	}
 	
@@ -5678,7 +5759,7 @@ void bakeBricks() {
 	bakeFooter();
 	
 	addFavGear();
-
+	
 	// Standardize brick layouts
 	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
 		vars[layout] = vars[layout].to_lower_case().replace_string(" ", "");
@@ -5890,7 +5971,9 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.favgear", "droll monocle, stinky cheese eye, smiths,hobo code binder, buddy bjorn, The Crown of Ed the Undying,crumpled felt fedora, Pantsgiving, Astral Shirt, duct tape shirt, Stephen's lab coat");
+	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,Astral Shirt," + 
+		"Meat Tenderizer is Murder,Ouija Board&comma; Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
+		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
