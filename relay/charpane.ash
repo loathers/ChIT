@@ -1493,6 +1493,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 	generic[203]=$item[little bitty bathysphere];
 	generic[204]=$item[das boot];
 	generic[205]=$item[miniature life preserver];
+	generic[206]=$item[kill screen];
 	
 	//Summonable
 	generic[300]=$item[sugar shield];
@@ -1538,6 +1539,10 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "Helps collect body parts";
 		case $item[tiny bowler]:
 			return "Lets your familiar bowl";
+		case $item[kill screen]:
+			return "More randomness!";
+		case $item[orange boxing gloves]:case $item[blue pumps]:
+			return "Find more yellow pixels";
 		}
 		
 		if(famitem != $item[none]) {
