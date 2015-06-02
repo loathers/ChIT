@@ -3912,14 +3912,14 @@ void pickerGear(slot s) {
 		picker.append('</a></td><td><a class="change" href="');
 		if(info.isFavorite)
 		{
-			picker.append(sideCommand("chit_removefavorite.ash " + it));
+			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
 			picker.append('" rel="delfav"><img src="');
 			picker.append(imagePath);
 			picker.append('control_remove_red.png"></a>');
 		}
 		else
 		{
-			picker.append(sideCommand("chit_addfavorite.ash " + it));
+			picker.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
 			picker.append('" rel="addfav"><img src="');
 			picker.append(imagePath);
 			picker.append('control_add_blue.png"></a>');
