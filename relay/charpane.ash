@@ -1543,6 +1543,8 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 			return "More randomness!";
 		case $item[orange boxing gloves]:case $item[blue pumps]:
 			return "Find more yellow pixels";
+		case $item[filthy child leash]:
+			return "Passive stench damage";
 		}
 		
 		if(famitem != $item[none]) {
