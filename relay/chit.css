@@ -31,6 +31,12 @@ a:hover {
 	padding:0px;
 	border-spacing:0px;
 }
+a .warning-link {
+	color:red;
+}
+a:hover .warning-link {
+	color:crimson;
+}
 
 #chit_house {
 }
