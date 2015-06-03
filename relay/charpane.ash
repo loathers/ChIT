@@ -2279,7 +2279,10 @@ string familiar_image(familiar f) {
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
 	
-	case $familiar[Golden Monkey]: return imagePath + 'goldmonkey_darkcodelagsniper.gif';
+	case $familiar[Golden Monkey]:
+		if(to_boolean(vars["chit.familiar.monkey-dance"]))
+			return imagePath + 'goldmonkey_darkcodelagsniper.gif';
+		break;
 	
 	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
 		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
@@ -3879,6 +3882,23 @@ void addFavGear() {
 	}
 }
 
+string item_image(item it)
+{
+	switch(it)
+	{
+		case $item[Buddy Bjorn]:
+			if(my_bjorned_familiar() != $familiar[none])
+				return familiar_image(my_bjorned_familiar());
+			break;
+		case $item[Crown of Thrones]:
+			if(my_enthroned_familiar() != $familiar[none])
+				return familiar_image(my_enthroned_familiar());
+			break;
+	}
+
+	return '/images/itemimages/' + it.image;
+}
+
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
@@ -3893,8 +3913,8 @@ void pickerGear(slot s) {
 		any_options = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="/images/itemimages/');
-		picker.append(it.image);
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
+		picker.append(item_image(it));
 		picker.append('" class="hand" onclick="descitem(');
 		picker.append(it.descid);
 		picker.append(',0,event)" /></a></td><td><a class="change" href="');
@@ -4002,9 +4022,9 @@ void bakeGear() {
 		item equipped = equipped_item(s);
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
-		result.append('" href="#"><img class="chit_gearicon hand" src="/images/itemimages/');
+		result.append('" href="#"><img class="chit_gearicon hand" src="');
 		if(equipped != $item[none])
-			result.append(equipped.image);
+			result.append(item_image(equipped));
 		else
 			result.append('blank.gif');
 		result.append('" title="');
@@ -5999,6 +6019,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
+	setvar("chit.familiar.monkey-dance", true);
 	setvar("chit.familiar.anti-gollywog", true);
 	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
 		"Meat Tenderizer is Murder,Ouija Board&comma; Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
