@@ -4024,6 +4024,15 @@ void pickerGear(slot s) {
 			start_option(in_slot, false);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
 			break;
+		case $item[the crown of ed the undying]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=activateedhat">Change decoration (currently ');
+			if(get_property("edPiece") == "")
+				picker.append('none');
+			else
+				picker.append(get_property("edPiece"));
+			picker.append(')</a></td></tr>');
+			break;
 	}
 	
 	if(in_slot != $item[none]) {
