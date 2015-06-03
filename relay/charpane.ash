@@ -2296,6 +2296,52 @@ string familiar_image(familiar f) {
 	return '/images/itemimages/' + f.image;
 }
 
+int checkDrops(string counter_prop, int limit)
+{
+	return limit - to_int(get_property(counter_prop));
+}
+
+int hasDrops(familiar f)
+{
+	switch(f)
+	{
+		case $familiar[gelatinous cubeling]:
+			return 3 - (available_amount($item[eleven-foot pole]) +
+				available_amount($item[ring of detect boring doors]) +
+				available_amount($item[pick-o-matic lockpicks]));
+		// standard x-drops-per-day familiars
+		case $familiar[astral badger]: return checkDrops("_astralDrops",5);
+		case $familiar[green pixie]: return checkDrops("_absintheDrops",5);
+		case $familiar[llama lama]: return checkDrops("_gongDrops",5);
+		case $familiar[baby sandworm]: return checkDrops("_aguaDrops",5);
+		case $familiar[rogue program]: return checkDrops("_tokenDrops",5);
+		case $familiar[li'l xenomorph]: return checkDrops("_transponderDrops",5);
+		case $familiar[bloovian groose]: return checkDrops("_grooseDrops",5);
+		case $familiar[blavious kloop]: return checkDrops("_kloopDrops",5);
+		case $familiar[angry jung man]: return checkDrops("_jungDrops",1);
+		case $familiar[unconscious collective]: return checkDrops("_dreamJarDrops",5);
+		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDrops",1);
+		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDrops",5);
+		case $familiar[galloping grill]: return checkDrops("_hotAshesDrops",5);
+		case $familiar[fist turkey]: return checkDrops("_turkeyBooze",5);
+		case $familiar[golden monkey]: return checkDrops("_powderedGoldDrops",5);
+		case $familiar[adventurous spelunker]: return checkDrops("_spelunkingTalesDrops",1);
+	}
+	
+	return 0;
+}
+
+int hasBjornDrops(familiar f)
+{
+	switch(f)
+	{
+		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDropsCrown",1);
+		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDropsCrown",2);
+	}
+	
+	return 0;
+}
+
 boolean [familiar] favFamiliars;
 void pickerFamiliar(familiar current, string cmd, string display)
 {
@@ -2309,17 +2355,24 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		picker.append('<tr class="pickitem" id="chit_fampickermain"><td>');
 		foreach f in favFamiliars
 		{
-		  if(f != current)
+		  if(f != current && f != my_familiar())
 			{
+				int dropsLeft = (cmd == "familiar" ? hasDrops(f) : hasBjornDrops(f));
 				picker.append('<span><a class="change" href="');
 				picker.append(sideCommand(cmd + ' ' + f));
-				picker.append('"><img class="chit_famicon" src="');
+				picker.append('"><img class="chit_famicon');
+				if(dropsLeft > 0)
+					picker.append(' hasdrops');
+				picker.append('" src="');
 				picker.append(familiar_image(f));
 				picker.append('" title="');
 				picker.append(f.name);
 				picker.append(' (the ');
 				picker.append(f);
-				picker.append(')" /></a></span>');
+				picker.append(')');
+				if(dropsLeft > 0)
+					picker.append(' (' + dropsLeft + ' drop' + (dropsLeft > 1 ? 's' : '') + ' remaining)');
+				picker.append('" /></a></span>');
 			}
 		}
 		picker.append('</td></tr>');
