@@ -143,6 +143,9 @@ img.chit_famicon {
 	border:1px solid #D0D0D0;
 	float:left;
 }
+img.chit_famicon.hasdrops {
+	border-color:blue;
+}
 table.chit_picker tr#chit_fampickermain {
 	background:white;
 }
