@@ -1,7 +1,7 @@
 import "zlib.ash";
 
 void main(string choice, string item_name) {
-print(item_name);
+
 	if(choice == "add") {
 		vars["chit.favgear"] += "," + item_name;
 	} else if(choice == "remove") {
