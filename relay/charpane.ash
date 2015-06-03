@@ -13,6 +13,7 @@ Additional major contributors:
 	AlbinoRhino - Provided invaluable assistance with CSS & Javascript
 	ckb - Created the tracker brick and effect description code
 	bordemstirs - Created the florist brick and moved the frams to make charpane taller
+	soolar - Added the gear brick, and some general tweaks/polish
 
 *************************************************************************************
 Many thanks to:
@@ -1462,7 +1463,7 @@ void bakeTrail() {
 
 }
 
-void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
+void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 
 	int [item] allmystuff = get_inventory();
 	string [item] addeditems;
@@ -1610,7 +1611,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 					cli = "equip familiar "+it;
 					break;
 				case "clancy":
-					hover = "Eequip Clancy with his " + it.to_string();
+					hover = "Equip Clancy with his " + it.to_string();
 					cli = "use "+it;
 					break;
 				default:	
@@ -1741,7 +1742,7 @@ void pickerFamiliar(familiar myfam, item famitem, boolean isFed) {
 		}
 	}
 	
-	picker.pickerStart("fam", "Equip Thy Familiar Well");
+	picker.pickerStart("famgear", "Equip Thy Familiar Well");
 	
 	//Feeding time
 	string [familiar] feedme;
@@ -2129,7 +2130,7 @@ void FamBoris() {
 	result.append('<td class="icon" title="');
 	result.append(equiptype);
 	result.append('">');
-	result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
+	result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
 	result.append('<img src="/images/itemimages/' );
 	result.append(equipimage);
 	result.append('">');
@@ -2140,7 +2141,7 @@ void FamBoris() {
 	chitBricks["familiar"] = result;
 
 	//Add Equipment Picker
-	pickerFamiliar($familiar[none], familiar_equipped_equipment(my_familiar()), false);
+	pickerFamiliarGear($familiar[none], familiar_equipped_equipment(my_familiar()), false);
 }
 
 # <font size=2><b>Companion:</b><br><img src=http://images.kingdomofloathing.com/adventureimages/jarlcomp3.gif width=100 height=100><br><b>Ella</b><br>the Hippotatomous</font><br><font color=blue size=2><b>+3 Stats per Combat</b></font>
@@ -2168,11 +2169,11 @@ void FamJarlsberg() {
 	result.append('</th></tr>');
 	
 	result.append('<tr><td class="companion" title="Playing with this food">');
-	result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
+	result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
 	result.append('<img src="images/adventureimages/' );
 	result.append(famimage);
 	result.append('"></a></td>');
-	result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfam" href="#">');
+	result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
 	result.append(equiptype);
 	result.append('</a></td>');
 	result.append('</tr></table>');
@@ -2244,12 +2245,12 @@ void FamEd() {
 		result.append('</a></th></tr>');
 		
 		result.append('<tr><td class="icon" title="Servant">');
-		result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
+		result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
 		result.append('<img title="Release thy Servant" src=');
 		result.append(img);
 		result.append('></a></td>');
 		if(type != $servant[none]) {
-			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfam" href="#"><span style="color:blue;font-weight:bold">');
+			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfamgear" href="#"><span style="color:blue;font-weight:bold">');
 			foreach i in $ints[1, 7, 14]
 				if(lvl >= i) {
 					result.append(type.servant_ability(i));
@@ -2293,6 +2294,43 @@ string familiar_image(familiar f) {
 		break;
 	}
 	return '/images/itemimages/' + f.image;
+}
+
+boolean [familiar] favFamiliars;
+void pickerFamiliar(familiar current, string cmd, string display)
+{
+	buffer picker;
+	picker.pickerStart(cmd, display);
+  
+	boolean any_options = false;
+	
+	if(count(favFamiliars) > 0)
+	{
+		picker.append('<tr class="pickitem" id="chit_fampickermain"><td>');
+		foreach f in favFamiliars
+		{
+		  if(f != current)
+			{
+				picker.append('<span><a class="change" href="');
+				picker.append(sideCommand(cmd + ' ' + f));
+				picker.append('"><img class="chit_famicon" src="');
+				picker.append(familiar_image(f));
+				picker.append('" title="');
+				picker.append(f.name);
+				picker.append(' (the ');
+				picker.append(f);
+				picker.append(')" /></a></span>');
+			}
+		}
+		picker.append('</td></tr>');
+	}
+	else
+		picker.addSadFace("You have no favorited familiars available. Poor you :(");
+
+	picker.append('<tr class="pickitem"><td><a target=mainpane class="visit done" href="familiar.php">Visit Your Terrarium</a></td></tr>');
+	picker.addLoader("Changing familiar...");
+	picker.append('</table></div>');
+	chitPickers[cmd] = picker;
 }
 
 void bakeFamiliar() {
@@ -2526,7 +2564,7 @@ void bakeFamiliar() {
 	if (protect) {
 		result.append('<img src="' + famimage + '">');
 	} else {
-		result.append('<a target=mainpane href="familiar.php" class="familiarpick">');
+		result.append('<a href="#" class="chit_launcher" rel="chit_pickerfamiliar">');
 		result.append('<img src="' + famimage + '">');
 		result.append('</a>');
 	}
@@ -2544,7 +2582,7 @@ void bakeFamiliar() {
 		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && vars["chit.familiar.showlock"].to_boolean();
 		if(lockable)
 			result.append('<div id="fam_equip">');
-		result.append('<a class="chit_launcher" rel="chit_pickerfam" href="#">');
+		result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
 		result.append('<img title="' + equiptype + '" src="/images/itemimages/' + equipimage + '">');
 		if(lockable) {
 			result.append('<a href="' + sideCommand("ashq lock_familiar_equipment("+ (!is_familiar_equipment_locked()) +")")  +'"><img title="Equipment ');
@@ -2575,9 +2613,10 @@ void bakeFamiliar() {
 
 	//Add Equipment Picker
 	if (myfam != $familiar[none]) {
-		pickerFamiliar(myfam, famitem, isFed);
+		pickerFamiliarGear(myfam, famitem, isFed);
 	}
 	
+	pickerFamiliar(myfam, "familiar", "Change familiar");
 }
 
 void bakeThrall() {
@@ -3875,21 +3914,29 @@ void addFavGear() {
 	}
 }
 
-string item_image(item it)
+string item_image(item it, boolean modify_image)
 {
-	switch(it)
+	if(modify_image)
 	{
-		case $item[Buddy Bjorn]:
-			if(my_bjorned_familiar() != $familiar[none])
-				return familiar_image(my_bjorned_familiar());
-			break;
-		case $item[Crown of Thrones]:
-			if(my_enthroned_familiar() != $familiar[none])
-				return familiar_image(my_enthroned_familiar());
-			break;
+		switch(it)
+		{
+			case $item[Buddy Bjorn]:
+				if(my_bjorned_familiar() != $familiar[none])
+					return familiar_image(my_bjorned_familiar());
+				break;
+			case $item[Crown of Thrones]:
+				if(my_enthroned_familiar() != $familiar[none])
+					return familiar_image(my_enthroned_familiar());
+				break;
+		}
 	}
 
 	return '/images/itemimages/' + it.image;
+}
+
+string item_image(item it)
+{
+	return item_image(it, true);
 }
 
 // pickerGear and bakeGear were written by soolar
@@ -3901,16 +3948,22 @@ void pickerGear(slot s) {
   
 	boolean any_options = false;
   
+	void start_option(item it, boolean modify_image)
+	{
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
+		picker.append(item_image(it, modify_image));
+		picker.append('" class="hand" onclick="descitem(');
+		picker.append(it.descid);
+		picker.append(',0,event)" /></a></td>');
+	}
+	
 	void add_gear_option(string prefix, string cmd, item it, gearInfo info)
 	{
 		any_options = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
-		picker.append(item_image(it));
-		picker.append('" class="hand" onclick="descitem(');
-		picker.append(it.descid);
-		picker.append(',0,event)" /></a></td><td><a class="change" href="');
+		start_option(it, true);
+		picker.append('<td><a class="change" href="');
 		picker.append(command);
 		picker.append('"><span style="font-weight:bold;">');
 		picker.append(prefix);
@@ -3955,7 +4008,24 @@ void pickerGear(slot s) {
 		}
 		return false;
 	}
-  
+	
+	
+	
+	// give configurable gear some love if it's in slot
+	switch(in_slot)
+	{
+		case $item[buddy bjorn]:
+			pickerFamiliar(my_bjorned_familiar(), "bjornify", "Change bjorned buddy :D");
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbjornify" href="#">Pick a buddy to bjornify!</a></td></tr>');
+			break;
+		case $item[crown of thrones]:
+			pickerFamiliar(my_enthroned_familiar(), "enthrone", "Put a familiar on your head :D");
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
+			break;
+	}
+	
 	if(in_slot != $item[none]) {
 		gearInfo info;
 		if(favGear contains in_slot)
@@ -5528,6 +5598,7 @@ void bakeHeader() {
 		while(singlefamfavmatch.find()) {
 			familiar fam = to_familiar(replace_string(singlefamfavmatch.group(1),"\\",""));
 			if(is_unrestricted(fam)) {
+				favFamiliars[fam] = true;
 				string singlefamfav = singlefamfavmatch.group(0);
 				singlefamfav = singlefamfav.replace_string("[[", "[");
 				// Attend to familiar images also. (This uses mdofied familiar images!)
