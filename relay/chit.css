@@ -138,6 +138,14 @@ table.chit_brick img.chit_gearicon {
   border:1px solid #D0D0D0;
   margin:0.5px;
 }
+img.chit_famicon {
+	margin:1px;
+	border:1px solid #D0D0D0;
+	float:left;
+}
+table.chit_picker tr#chit_fampickermain {
+	background:white;
+}
 
 /* location: used for counter checkers locations */
 table.chit_brick tr td.location {
@@ -635,7 +643,7 @@ table.chit_picker tr.pickitem a:hover {
 }
 
 /* Familiar Panel */
-#chit_pickerfam tr:hover td {
+#chit_pickerfamgear tr:hover td {
 	background-color:#F0F0F0;
 }
 
