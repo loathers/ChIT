@@ -2279,11 +2279,6 @@ string familiar_image(familiar f) {
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
 	
-	case $familiar[Golden Monkey]:
-		if(to_boolean(vars["chit.familiar.monkey-dance"]))
-			return imagePath + 'goldmonkey_darkcodelagsniper.gif';
-		break;
-	
 	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
 		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
 			return imagePath + 'crimboshrub_fxx_ckb.gif';
@@ -2464,8 +2459,8 @@ void bakeFamiliar() {
 		if(source.contains_text(">configure</a>)"))
 			famname += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
 		break;
-	case $familiar[Puck Man]:case $familiar[Ms. Puck Man]:
-		famname += ' (<a class="visit" target="mainpane" href="/shop.php?whichshop=mystic">visit mystic</a>)';
+	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
+		famname += ' (<a class="visit" target="mainpane" href="shop.php?whichshop=mystic">mystic</a>)';
 		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
 		break;
 	}
@@ -3853,9 +3848,7 @@ void addFavGear() {
 	], "charter");
 	addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder", "charter");
 	
-	switch(my_path())
-	{
-	
+	switch(my_path()) {
 	case "Heavy Rains":
 		addGear($item[pool skimmer], "path");
 		break;
@@ -3877,7 +3870,7 @@ void addFavGear() {
 	}
 	
 	// manual favorites
-	foreach i,fav in split_string(vars["chit.favgear"], "\\s*,\\s*") {
+	foreach i,fav in split_string(vars["chit.favgear"], "\\s*(?<!\\\\),\\s*") {
 		addGear(to_item(fav));
 	}
 }
@@ -6019,7 +6012,6 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
-	setvar("chit.familiar.monkey-dance", true);
 	setvar("chit.familiar.anti-gollywog", true);
 	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
 		"Meat Tenderizer is Murder,Ouija Board&comma; Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
