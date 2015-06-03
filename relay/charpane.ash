@@ -3871,7 +3871,7 @@ void addFavGear() {
 	
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.favgear"], "\\s*(?<!\\\\),\\s*") {
-		addGear(to_item(fav));
+		addGear(to_item(fav.replace_string("\\,", ",")));
 	}
 }
 
@@ -6014,7 +6014,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
 	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
-		"Meat Tenderizer is Murder,Ouija Board&comma; Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
+		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
 		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
