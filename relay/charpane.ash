@@ -3857,6 +3857,18 @@ record gearInfo
 };
 gearInfo [item] favGear;
 
+gearInfo modifyInfo(item it, gearInfo info)
+{
+	switch(it)
+	{
+		case $item[pantsgiving]:
+			info.name += ' (' + (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes)';
+			break;
+	}
+
+	return info;
+}
+
 void addGear(item it, string name, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
@@ -3868,7 +3880,7 @@ void addGear(item it, string name, string reason)
 		info.name = name;
 		info.reason = reason;
 		info.isFavorite = (reason == "");
-		favGear[it] = info;
+		favGear[it] = modifyInfo(it, info);
 	}
 }
 void addGear(item it, string reason)
@@ -4151,7 +4163,7 @@ void bakeGear() {
 		if(equipped != $item[none])
 			result.append(item_image(equipped));
 		else
-			result.append('blank.gif');
+			result.append('images/itemimages/blank.gif');
 		result.append('" title="');
 		result.append(s);
 		result.append(': ');
