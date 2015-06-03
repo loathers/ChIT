@@ -1,16 +1,16 @@
 import "zlib.ash";
 
 void main(string choice, string item_name) {
-
+print(item_name);
 	if(choice == "add") {
-		vars["chit.favgear"] = (vars["chit.favgear"] + "," + item_name);
+		vars["chit.favgear"] += "," + item_name;
 	} else if(choice == "remove") {
 		string old_favs = vars["chit.favgear"];
 		buffer new_favs;
 		item it = to_item(item_name);
 		boolean add_comma = false;
 		
-		foreach i,fav in split_string(old_favs,",")
+		foreach i,fav in split_string(old_favs,"\\s*(?<!\\\\),\\s*")
 		{
 			if(it != to_item(fav))
 			{
