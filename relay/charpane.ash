@@ -2306,9 +2306,9 @@ int hasDrops(familiar f)
 	switch(f)
 	{
 		case $familiar[gelatinous cubeling]:
-			return 3 - (available_amount($item[eleven-foot pole]) +
-				available_amount($item[ring of detect boring doors]) +
-				available_amount($item[pick-o-matic lockpicks]));
+			return 3 - (min(available_amount($item[eleven-foot pole]),1) +
+				min(available_amount($item[ring of detect boring doors]),1) +
+				min(available_amount($item[pick-o-matic lockpicks]),1));
 		// standard x-drops-per-day familiars
 		case $familiar[astral badger]: return checkDrops("_astralDrops",5);
 		case $familiar[green pixie]: return checkDrops("_absintheDrops",5);
