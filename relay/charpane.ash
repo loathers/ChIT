@@ -2380,7 +2380,12 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	else
 		picker.addSadFace("You have no favorited familiars available. Poor you :(");
 
-	picker.append('<tr class="pickitem"><td><a target=mainpane class="visit done" href="familiar.php">Visit Your Terrarium</a></td></tr>');
+	picker.append('<tr class="pickitem"><td><a target=mainpane class="visit done" href="familiar.php">');
+	if(to_boolean(vars["chit.familiar.terrariumlinklarge"]))
+		picker.append('&nbsp;<br />Visit Your Terrarium<br />&nbsp;');
+	else
+		picker.append('Visit Your Terrarium');
+	picker.append('</a></td></tr>');
 	picker.addLoader("Changing familiar...");
 	picker.append('</table></div>');
 	chitPickers[cmd] = picker;
@@ -6174,6 +6179,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
+	setvar("chit.familiar.terrariumlinklarge", false);
 	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
 		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
 		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
