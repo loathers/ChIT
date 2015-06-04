@@ -3880,8 +3880,8 @@ void addGear(item it, string name, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
 	
-	if((gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))) &&
-		(available_amount(it) + creatable_amount(it) > 0))
+	if(is_unrestricted(it) && can_equip(it) && (available_amount(it) + (pulls_remaining() != 0 ? storage_amount(it) : 0)) > 0 &&
+		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
 		gearInfo info;
 		info.name = name;
@@ -3912,7 +3912,7 @@ void addFavGear() {
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($item[continuum transfunctioner], "quest");
-	addGear($items[pirate fledges, black glass]);
+	addGear($items[pirate fledges, black glass], "quest");
 	if(get_property("questL11Palindome") != "finished")
 	{
 		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
@@ -3964,7 +3964,7 @@ void addFavGear() {
 		addGear($item[pool skimmer], "path");
 		break;
 	case "One Crazy Random Summer":
-		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses, kill screen], "path");
+		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses], "path");
 	}
 	
 	// some handy in-run stuff
@@ -4011,6 +4011,35 @@ string item_image(item it)
 	return item_image(it, true);
 }
 
+int hasDrops(item it)
+{
+	switch(it)
+	{
+		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
+		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
+		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
+	}
+	
+	return 0;
+}
+
+void addGearIcon(buffer result, item it, string title)
+{
+	result.append('<img class="chit_gearicon');
+	if(hasDrops(it) > 0)
+	{
+		result.append(' hasdrops');
+	}
+	result.append('" src="');
+	if(it != $item[none])
+		result.append(item_image(it));
+	else
+		result.append('images/itemimages/blank.gif');
+	result.append('" title="');
+	result.append(title);
+	result.append('" />');
+}
+
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
@@ -4029,8 +4058,41 @@ void pickerGear(slot s) {
 		picker.append(',0,event)" /></a></td>');
 	}
 	
-	void add_gear_option(string prefix, string cmd, item it, gearInfo info)
+	void add_gear_option(item it, gearInfo info)
 	{
+		string prefix;
+		string cmd;
+		
+		if(equipped_item(s) == it)
+		{
+			// it's already equipped, so take it off!
+			prefix = "unequip";
+			cmd = "unequip ";
+		}
+		else if(item_amount(it) > 0)
+		{
+			// can just plain old equip it
+			prefix = "equip";
+			cmd = "equip ";
+		}
+		else if(creatable_amount(it) > 0)
+		{
+			// make it!
+			prefix = '<span class="warning-link">create</span>';
+			cmd = "create "+ it+ "; equip ";
+		}
+		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
+		{
+			prefix = 'pull';
+			if(pulls_remaining() != -1)
+				prefix = '<span class="warning-link">' + prefix + ' (' + pulls_remaining() + ' left)</span>';
+			cmd = "pull " + it + "; equip ";
+		}
+		else
+		{
+			// not actually valid
+			return;
+		}
 		any_options = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
@@ -4129,7 +4191,7 @@ void pickerGear(slot s) {
 			info.isFavorite = false;
 		}
 		info.reason = "";
-		add_gear_option("unequip", "unequip ", in_slot, info);
+		add_gear_option(in_slot, info);
 	}
 	
 	item [int] sortedGear;
@@ -4143,10 +4205,7 @@ void pickerGear(slot s) {
 	{
 		gearInfo info = favGear[it];
 		if(it != $item[none] && good_slot(s, it) && in_slot != it) {
-			if(item_amount(it) > 0)
-				add_gear_option("equip", "equip ", it, info);
-			else if(creatable_amount(it) > 0)
-				add_gear_option('<span class="warning-link">create</span>', "create "+ it+ "; equip ", it, info);
+			add_gear_option(it, info);
 		}
 	}
 	
@@ -4171,25 +4230,11 @@ void bakeGear() {
 
 
 	void addSlot(slot s) {
-		item equipped = equipped_item(s);
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
-		result.append('" href="#"><img class="chit_gearicon');
-		if((equipped == $item[buddy bjorn] && hasBjornDrops(my_bjorned_familiar()) > 0) ||
-			(equipped == $item[crown of thrones] && hasBjornDrops(my_enthroned_familiar()) > 0))
-		{
-			result.append(' hasdrops');
-		}
-		result.append(' hand" src="');
-		if(equipped != $item[none])
-			result.append(item_image(equipped));
-		else
-			result.append('images/itemimages/blank.gif');
-		result.append('" title="');
-		result.append(s);
-		result.append(': ');
-		result.append(equipped);
-		result.append('"></a></span>');
+		result.append('" href="#">');
+		result.addGearIcon(equipped_item(s), s + ": " + equipped_item(s));
+		result.append('</a></span>');
 		pickerGear(s);
 	}
 	result.append('<tr><td>');
