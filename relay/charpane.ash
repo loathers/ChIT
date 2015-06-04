@@ -4169,7 +4169,13 @@ void bakeGear() {
 		item equipped = equipped_item(s);
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
-		result.append('" href="#"><img class="chit_gearicon hand" src="');
+		result.append('" href="#"><img class="chit_gearicon');
+		if((equipped == $item[buddy bjorn] && hasBjornDrops(my_bjorned_familiar()) > 0) ||
+			(equipped == $item[crown of thrones] && hasBjornDrops(my_enthroned_familiar()) > 0))
+		{
+			result.append(' hasdrops');
+		}
+		result.append(' hand" src="');
 		if(equipped != $item[none])
 			result.append(item_image(equipped));
 		else
