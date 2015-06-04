@@ -2570,8 +2570,9 @@ void bakeFamiliar() {
 		charges = "GO";
 		chargeTitle = "Your Boots are charged and ready for some stomping";
 	}
-		
-	string hover = "Visit your terrarium";	
+
+	string hover = "Visit your terrarium";
+	string hover_famicon = "Pick a familiar";
 
 	//Extra goodies for 100% runs
 	boolean protect = false;
@@ -2580,6 +2581,7 @@ void bakeFamiliar() {
 			famstyle = famstyle + "color:green;";
 			if (vars["chit.familiar.protect"] == "true") {
 				hover = "Don't ruin your 100% run!";
+				hover_famicon = hover;
 				protect = true;
 			}
 		} else {
@@ -2613,7 +2615,7 @@ void bakeFamiliar() {
 		result.append('<th width="30" title="' + chargeTitle + '">' + charges + '</th>');
 	}
 	result.append('</tr><tr>');
-	result.append('<td class="icon" title="' + hover + '">');
+	result.append('<td class="icon" title="' + hover_famicon + '">');
 	if (protect) {
 		result.append('<img src="' + famimage + '">');
 	} else {
