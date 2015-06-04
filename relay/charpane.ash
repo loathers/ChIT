@@ -4100,6 +4100,14 @@ void pickerGear(slot s) {
 				picker.append(get_property("edPiece"));
 			picker.append(')</a></td></tr>');
 			break;
+		case $item[jarlsberg's pan]:
+		case $item[jarlsberg's pan (cosmic portal mode)]:
+			item other = (in_slot == $item[jarlsberg's pan] ? $item[jarlsberg's pan (cosmic portal mode)] : $item[jarlsberg's pan]);
+			start_option(other, true);
+			picker.append('<td colspan="2"><a class="change" href="');
+			picker.append(sideCommand("unequip " + in_slot + "; use " + in_slot + "; equip " + other));
+			picker.append('">Shake Pan</a></td>');
+			break;
 	}
 	
 	if(in_slot != $item[none]) {
