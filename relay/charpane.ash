@@ -2551,7 +2551,7 @@ void bakeFamiliar() {
 			famname += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
 		break;
 	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
-		famname += ' (<a class="visit" target="mainpane" href="shop.php?whichshop=mystic">mystic</a>)';
+		famname += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
 		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
 		break;
 	}
