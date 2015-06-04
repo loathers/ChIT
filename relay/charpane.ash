@@ -3856,43 +3856,41 @@ string fancycurrency(string page) {
 	return page;
 }
 
-record gearInfo
-{
-	string name;
-	string reason;
-	boolean isFavorite;
-};
-gearInfo [item] favGear;
+boolean [item] favGear;
+boolean [string] [item] recommendedGear;
 
-gearInfo modifyInfo(item it, gearInfo info)
+string modifyName(item it)
 {
+	string name = to_string(it);
+
 	switch(it)
 	{
 		case $item[pantsgiving]:
-			info.name += ' (' + (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes)';
+			name += ' (' + (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes)';
 			break;
+		case $item[amulet of extreme plot significance]: name = "amulet of plot significance"; break;
+		case $item[encrypted micro-cassette recorder]: name = "micro-cassette recorder"; break;
 	}
 
-	return info;
+	return name;
 }
 
-void addGear(item it, string name, string reason)
+void addGear(item it, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
 	
 	if(is_unrestricted(it) && can_equip(it) && (available_amount(it) + (pulls_remaining() != 0 ? storage_amount(it) : 0)) > 0 &&
 		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
-		gearInfo info;
-		info.name = name;
-		info.reason = reason;
-		info.isFavorite = (reason == "");
-		favGear[it] = modifyInfo(it, info);
+		if(reason == "")
+		{
+			favGear[it] = true;
+		}
+		else
+		{
+			recommendedGear[reason][it] = true;
+		}
 	}
-}
-void addGear(item it, string reason)
-{
-	addGear(it, to_string(it), reason);
 }
 void addGear(item it)
 {
@@ -3930,8 +3928,7 @@ void addFavGear() {
 	{
 		// castle basement unlocked, but not cleared
 		case "step7":
-			addGear($item[titanium assault umbrella], "quest");
-			addGear($item[amulet of extreme plot significance], "amulet of plot significance", "quest");
+			addGear($items[titanium assault umbrella,amulet of extreme plot significance], "quest");
 			break;
 		// castle top floor unlocked, but not cleared
 		case "step9":
@@ -3949,15 +3946,14 @@ void addFavGear() {
 	if($strings[step1,step2,step3] contains get_property("questL11Manor"))
 		addGear($item[unstable fulminate], "quest");
 	if($strings[started, step1] contains get_property("questL11Manor"))
-		addGear($item[Lord Spookyraven's spectacles], "Spookyraven's spectacles", "quest");
+		addGear($item[Lord Spookyraven's spectacles], "quest");
 	
 	// Charter zone quest equipment
 	addGear($items[
 		Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker,
-		Personal Ventilation Unit, gore bucket,
+		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,
 		lube-shoes, Dinsey mascot mask, trash net,
 	], "charter");
-	addGear($item[encrypted micro-cassette recorder], "micro-cassette recorder", "charter");
 	
 	switch(my_path()) {
 	case "Heavy Rains":
@@ -4058,7 +4054,7 @@ void pickerGear(slot s) {
 		picker.append(',0,event)" /></a></td>');
 	}
 	
-	void add_gear_option(item it, gearInfo info)
+	void add_gear_option(item it, string reason)
 	{
 		string prefix;
 		string cmd;
@@ -4095,22 +4091,24 @@ void pickerGear(slot s) {
 		}
 		any_options = true;
 		
+		string name = modifyName(it);
+		
 		string command = sideCommand(cmd + s + " " + it);
 		start_option(it, true);
 		picker.append('<td><a class="change" href="');
 		picker.append(command);
 		picker.append('"><span style="font-weight:bold;">');
 		picker.append(prefix);
-		if(info.reason != "")
+		if(reason != "")
 		{
 			picker.append(' (');
-			picker.append(info.reason);
+			picker.append(reason);
 			picker.append(')');
 		}
 		picker.append('</span> ');
-		picker.append(info.name);
+		picker.append(name);
 		picker.append('</a></td><td><a class="change" href="');
-		if(info.isFavorite)
+		if(favGear contains it)
 		{
 			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
 			picker.append('" rel="delfav"><img src="');
@@ -4178,34 +4176,23 @@ void pickerGear(slot s) {
 	}
 	
 	if(in_slot != $item[none]) {
-		gearInfo info;
-		if(favGear contains in_slot)
-		{
-			gearInfo realInfo = favGear[in_slot];
-			info.name = realInfo.name;
-			info.isFavorite = realInfo.isFavorite;
-		}
-		else
-		{
-			info.name = to_string(in_slot);
-			info.isFavorite = false;
-		}
-		info.reason = "";
-		add_gear_option(in_slot, info);
+		add_gear_option(in_slot, "");
 	}
 	
-	item [int] sortedGear;
 	foreach it in favGear
 	{
-		sortedGear[sortedGear.count()] = it;
-	}
-	sort sortedGear by favGear[value].reason;
-	
-	foreach i,it in sortedGear
-	{
-		gearInfo info = favGear[it];
 		if(it != $item[none] && good_slot(s, it) && in_slot != it) {
-			add_gear_option(it, info);
+			add_gear_option(it, "");
+		}
+	}
+	
+	foreach reason in recommendedGear
+	{
+		foreach it in recommendedGear[reason]
+		{
+			if(it != $item[none] && good_slot(s, it) && in_slot != it) {
+				add_gear_option(it, reason);
+			}
 		}
 	}
 	
@@ -4233,7 +4220,7 @@ void bakeGear() {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addGearIcon(equipped_item(s), s + ": " + equipped_item(s));
+		result.addGearIcon(equipped_item(s), s + ": " + modifyName(equipped_item(s)));
 		result.append('</a></span>');
 		pickerGear(s);
 	}
@@ -4348,8 +4335,11 @@ void pickOutfit() {
 		if(vars["chit." + layout + ".layout"].contains_text("gear"))
 			noGearBrick = false;
 	if(noGearBrick) {
-		foreach it, info in favGear
-			special.addGear(it, info.name);
+		foreach it in favGear
+			special.addGear(it, modifyName(it));
+		foreach reason in recommendedGear
+			foreach it in recommendedGear[reason]
+				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + modifyName(it));
 
 		if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 			special.addGear("equip acc3 Talisman o\' Namsilat;equip acc1 Mega+Gem", "Talisman & Mega Gem");
