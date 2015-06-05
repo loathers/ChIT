@@ -3972,7 +3972,7 @@ void addGear(item it, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
 	
-	if(is_unrestricted(it) && can_equip(it) && (available_amount(it) + (pulls_remaining() != 0 ? storage_amount(it) : 0)) > 0 &&
+	if(is_unrestricted(it) && can_equip(it) && (available_amount(it) + creatable_amount(it) + (pulls_remaining() != 0 ? storage_amount(it) : 0)) > 0 &&
 		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
 		if(reason == "")
@@ -4040,6 +4040,11 @@ void addFavGear() {
 		addGear($item[unstable fulminate], "quest");
 	if($strings[started, step1] contains get_property("questL11Manor"))
 		addGear($item[Lord Spookyraven's spectacles], "quest");
+		
+	if(get_property("questG04Nemesis") == "step1") // Kill Beelzebozo
+		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
+	else if(get_property("questG04Nemesis") == "step14" && my_class() == $class[Turtle Tamer])
+		addGear($item[fouet de tortue-dressage], "quest");
 	
 	// Charter zone quest equipment
 	addGear($items[
