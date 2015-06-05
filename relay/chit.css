@@ -834,3 +834,11 @@ table.chit_picker tr.chit_pickerblock {
 table.chit_picker tr.chit_pickerblock  .chit_icon {
 	float:left;
 }
+
+.chit_flexcontainer {
+	display:flex;
+	flex-wrap:wrap;
+}
+.chit_flexitem {
+	
+}
