@@ -4168,7 +4168,7 @@ void pickerGear(slot s) {
 	
 	void add_favorite_button(item it)
 	{
-		picker.append('<a class="change" href="');
+		picker.append('<a class="change chit_favbutton" href="');
 		if(favGear contains it)
 		{
 			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
@@ -4277,7 +4277,9 @@ void pickerGear(slot s) {
 			picker.append(',0,event)" href="#">');
 			
 			picker.addItemIcon(it,"Click for item description",danger_level);
-			picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;"><a class="change" href="');
+			picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;">');
+			add_favorite_button(it);
+			picker.append('<a class="change" href="');
 			picker.append(command);
 			picker.append('"><span style="font-weight:bold;">');
 			if(danger_level > 0)
