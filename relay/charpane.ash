@@ -4063,28 +4063,28 @@ void pickerGear(slot s) {
 	{
 		int danger_level = 0;
 		string cmd;
-		string prefix;
+		string action_description;
 		
 		if(item_amount(it) > 0)
 		{
 			// can just plain old equip it
-			prefix = "equip ";
+			action_description = "equip ";
 			cmd = "equip ";
 		}
 		else if(creatable_amount(it) > 0)
 		{
 			danger_level = 1;
 			// make it!
-			prefix = "create (can make " + creatable_amount(it) + ") ";
+			action_description = "create (can make " + creatable_amount(it) + ") ";
 			cmd = "create "+ it+ "; equip ";
 		}
 		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
 		{
-			prefix = "pull ";
+			action_description = "pull ";
 			if(pulls_remaining() != -1)
 			{
 				danger_level = 2;
-				prefix += '(' + pulls_remaining() + ' left) ';
+				action_description += '(' + pulls_remaining() + ' left) ';
 			}
 			cmd = "pull " + it + "; equip ";
 		}
@@ -4098,10 +4098,15 @@ void pickerGear(slot s) {
 		string name = modifyName(it);
 		
 		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<span><a class="change" href="');
+		picker.append('<span><a class="change" oncontextmenu="descitem(');
+		picker.append(it.descid);
+		picker.append(',0,event); return false;" href="');
 		picker.append(command);
 		picker.append('">');
-		picker.addGearIcon(it,prefix + modifyName(it),danger_level);
+		
+		string hover = modifyName(it) + '&#013;Left click to ' + action_description + '&#013;Right click for description';
+		
+		picker.addGearIcon(it,hover,danger_level);
 		picker.append('</a></span>');
 		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
@@ -4125,7 +4130,7 @@ void pickerGear(slot s) {
 	void start_option(item it, boolean modify_image)
 	{
 		any_options = true;
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img title="Click for item description" src="');
 		picker.append(item_image(it, modify_image));
 		picker.append('" class="hand" onclick="descitem(');
 		picker.append(it.descid);
