@@ -134,24 +134,6 @@ table.chit_brick th img {
 div.chit_skeleton table.chit_brick th {
 	background-color:#F0F0B0;
 }
-table.chit_brick img.chit_gearicon {
-  border:1px solid #D0D0D0;
-  margin:1px;
-}
-table.chit_brick img.chit_gearicon.hasdrops {
-	border-color:blue;
-}
-img.chit_famicon {
-	margin:1px;
-	border:1px solid #D0D0D0;
-	float:left;
-}
-img.chit_famicon.hasdrops {
-	border-color:blue;
-}
-table.chit_picker tr#chit_fampickermain {
-	background:white;
-}
 
 /* location: used for counter checkers locations */
 table.chit_brick tr td.location {
@@ -830,3 +812,22 @@ img#fam_equip {
 	font-size:12px;
 }
 
+img.chit_icon {
+  border:1px solid #D0D0D0 !important;
+  margin:1px !important;
+}
+img.chit_icon.hasdrops {
+	border-color:blue !important;
+}
+img.chit_icon.warning {
+	border-color:orange !important;
+}
+img.chit_icon.danger {
+	border-color:red !important;
+}
+table.chit_picker tr.chit_pickerblock {
+	background:white;
+}
+table.chit_picker tr.chit_pickerblock  .chit_icon {
+	float:left;
+}

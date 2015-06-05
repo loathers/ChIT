@@ -653,7 +653,7 @@ void addLoader(buffer picker, string message) {
 }
 
 void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone"><td class="info" colspan="2">');
+	picker.append('<tr class="picknone"><td class="info" colspan="3">');
 	picker.append(message);
 	picker.append('</td></tr>');
 }
@@ -2352,7 +2352,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	
 	if(count(favFamiliars) > 0)
 	{
-		picker.append('<tr class="pickitem" id="chit_fampickermain"><td>');
+		picker.append('<tr class="pickitem chit_pickerblock"><td>');
 		foreach f in favFamiliars
 		{
 		  if(f != current && f != my_familiar())
@@ -2360,9 +2360,11 @@ void pickerFamiliar(familiar current, string cmd, string display)
 				int dropsLeft = (cmd == "familiar" ? hasDrops(f) : hasBjornDrops(f));
 				picker.append('<span><a class="change" href="');
 				picker.append(sideCommand(cmd + ' ' + f));
-				picker.append('"><img class="chit_famicon');
+				picker.append('"><img class="chit_icon');
 				if(dropsLeft > 0)
 					picker.append(' hasdrops');
+				if(cmd == "familiar" && to_familiar(vars["is_100_run"]) != $familiar[none] && to_familiar(vars["is_100_run"]) != f)
+					picker.append(' danger');
 				picker.append('" src="');
 				picker.append(familiar_image(f));
 				picker.append('" title="');
@@ -4019,12 +4021,20 @@ int hasDrops(item it)
 	return 0;
 }
 
-void addGearIcon(buffer result, item it, string title)
+void addGearIcon(buffer result, item it, string title, int danger_level)
 {
-	result.append('<img class="chit_gearicon');
+	result.append('<img class="chit_icon');
 	if(hasDrops(it) > 0)
 	{
 		result.append(' hasdrops');
+	}
+	if(danger_level == 1)
+	{
+		result.append(' warning');
+	}
+	else if(danger_level > 1)
+	{
+		result.append(' danger');
 	}
 	result.append('" src="');
 	if(it != $item[none])
@@ -4035,6 +4045,10 @@ void addGearIcon(buffer result, item it, string title)
 	result.append(title);
 	result.append('" />');
 }
+void addGearIcon(buffer result, item it, string title)
+{
+	addGearIcon(result,it,title,0);
+}
 
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
@@ -4044,44 +4058,34 @@ void pickerGear(slot s) {
 	picker.pickerStart("gear" + s, "Change " + s);
   
 	boolean any_options = false;
-  
-	void start_option(item it, boolean modify_image)
-	{
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
-		picker.append(item_image(it, modify_image));
-		picker.append('" class="hand" onclick="descitem(');
-		picker.append(it.descid);
-		picker.append(',0,event)" /></a></td>');
-	}
 	
 	void add_gear_option(item it, string reason)
 	{
-		string prefix;
+		int danger_level = 0;
 		string cmd;
+		string prefix;
 		
-		if(equipped_item(s) == it)
-		{
-			// it's already equipped, so take it off!
-			prefix = "unequip";
-			cmd = "unequip ";
-		}
-		else if(item_amount(it) > 0)
+		if(item_amount(it) > 0)
 		{
 			// can just plain old equip it
-			prefix = "equip";
+			prefix = "equip ";
 			cmd = "equip ";
 		}
 		else if(creatable_amount(it) > 0)
 		{
+			danger_level = 1;
 			// make it!
-			prefix = '<span class="warning-link">create</span>';
+			prefix = "create (can make " + creatable_amount(it) + ") ";
 			cmd = "create "+ it+ "; equip ";
 		}
 		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
 		{
-			prefix = 'pull';
+			prefix = "pull ";
 			if(pulls_remaining() != -1)
-				prefix = '<span class="warning-link">' + prefix + ' (' + pulls_remaining() + ' left)</span>';
+			{
+				danger_level = 2;
+				prefix += '(' + pulls_remaining() + ' left) ';
+			}
 			cmd = "pull " + it + "; equip ";
 		}
 		else
@@ -4094,35 +4098,11 @@ void pickerGear(slot s) {
 		string name = modifyName(it);
 		
 		string command = sideCommand(cmd + s + " " + it);
-		start_option(it, true);
-		picker.append('<td><a class="change" href="');
+		picker.append('<span><a class="change" href="');
 		picker.append(command);
-		picker.append('"><span style="font-weight:bold;">');
-		picker.append(prefix);
-		if(reason != "")
-		{
-			picker.append(' (');
-			picker.append(reason);
-			picker.append(')');
-		}
-		picker.append('</span> ');
-		picker.append(name);
-		picker.append('</a></td><td><a class="change" href="');
-		if(favGear contains it)
-		{
-			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
-			picker.append('" rel="delfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_remove_red.png"></a>');
-		}
-		else
-		{
-			picker.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
-			picker.append('" rel="addfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_add_blue.png"></a>');
-		}
-		picker.append('</a></td></tr>');
+		picker.append('">');
+		picker.addGearIcon(it,prefix + modifyName(it),danger_level);
+		picker.append('</a></span>');
 		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
 		# picker.append(parseMods(string_modifier(it,"Evaluated Modifiers")).replace_string(", Single Equip", ""));
@@ -4141,8 +4121,16 @@ void pickerGear(slot s) {
 		return false;
 	}
 	
-	
-	
+	// for use with custom context suggestions
+	void start_option(item it, boolean modify_image)
+	{
+		any_options = true;
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img src="');
+		picker.append(item_image(it, modify_image));
+		picker.append('" class="hand" onclick="descitem(');
+		picker.append(it.descid);
+		picker.append(',0,event)" /></a></td>');
+	}
 	// give configurable gear some love if it's in slot
 	switch(in_slot)
 	{
@@ -4175,25 +4163,85 @@ void pickerGear(slot s) {
 			break;
 	}
 	
+	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
-		add_gear_option(in_slot, "");
+		start_option(in_slot,true);
+		picker.append('<td><a class="change" href="');
+		picker.append(sideCommand("unequip " + s));
+		picker.append('"><span style="font-weight:bold;">unequip</span> ');
+		picker.append(modifyName(in_slot));
+		picker.append('</a></td><td><a class="change" href="');
+		if(favGear contains in_slot)
+		{
+			picker.append(sideCommand("chit_changeFav.ash (remove, " + in_slot + ")"));
+			picker.append('" rel="delfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_remove_red.png"></a>');
+		}
+		else
+		{
+			picker.append(sideCommand("chit_changeFav.ash (add, " + in_slot + ")"));
+			picker.append('" rel="addfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_add_blue.png"></a>');
+		}
+		picker.append('</td></tr>');
+	}
+	else
+	{
+		picker.append('<tr class="pickitem"><td colspan="3">');
+		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1)
+		{
+			picker.append("You can't equip an off-hand item with a ");
+			picker.append(weapon_hands(equipped_item($slot[weapon])));
+			picker.append("-handed weapon equipped!");
+		}
+		else
+		{
+			picker.append("You don't have a");
+			// gotta get that a/an right
+			string slotStart = to_lower_case(char_at(to_string(s),0));
+			if($strings["a","e","i","o","u"] contains slotStart)
+				picker.append("n");
+			picker.append(" ");
+			picker.append(s);
+			picker.append(" equipped.");
+		}
+		picker.append('</td></tr>');
 	}
 	
-	foreach it in favGear
+	void addGearSection(string name, boolean [item] list)
 	{
-		if(it != $item[none] && good_slot(s, it) && in_slot != it) {
-			add_gear_option(it, "");
+		boolean [item] toDisplay;
+		foreach it in list
+		{
+			int totalAvailable = item_amount(it) + creatable_amount(it);
+			if(pulls_remaining() != 0)
+				totalAvailable += storage_amount(it);
+			if(totalAvailable > 0 && it != $item[none] && good_slot(s, it) && in_slot != it)
+			{
+				toDisplay[it] = true;
+			}
+		}
+		
+		if(toDisplay.count() > 0)
+		{
+			picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+			picker.append(name);
+			picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+			
+			foreach it in toDisplay
+				add_gear_option(it, "");
+			
+			picker.append('</td></tr>');
 		}
 	}
+	
+	addGearSection("favorites", favGear);
 	
 	foreach reason in recommendedGear
 	{
-		foreach it in recommendedGear[reason]
-		{
-			if(it != $item[none] && good_slot(s, it) && in_slot != it) {
-				add_gear_option(it, reason);
-			}
-		}
+		addGearSection(reason, recommendedGear[reason]);
 	}
 	
 	if(!any_options)
