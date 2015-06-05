@@ -4088,28 +4088,30 @@ void pickerGear(slot s) {
 	{
 		int danger_level = 0;
 		string cmd;
-		string action_description;
+		string action = "";
+		string action_description = "";
 		
 		if(item_amount(it) > 0)
 		{
 			// can just plain old equip it
-			action_description = "equip ";
+			action = "equip";
 			cmd = "equip ";
 		}
 		else if(creatable_amount(it) > 0)
 		{
 			danger_level = 1;
 			// make it!
-			action_description = "create (can make " + creatable_amount(it) + ") ";
+			action = "create";
+			action_description = "(up to " + creatable_amount(it) + ")";
 			cmd = "create "+ it+ "; equip ";
 		}
 		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
 		{
-			action_description = "pull ";
+			action = "pull";
 			if(pulls_remaining() != -1)
 			{
 				danger_level = 2;
-				action_description += '(' + pulls_remaining() + ' left) ';
+				action_description += '(' + pulls_remaining() + ' left)';
 			}
 			cmd = "pull " + it + "; equip ";
 		}
@@ -4123,16 +4125,27 @@ void pickerGear(slot s) {
 		string name = modifyName(it);
 		
 		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<span><a class="change" oncontextmenu="descitem(');
+		picker.append('<div class="chit_flexitem" style="order:');
+		picker.append(danger_level);
+		picker.append(';"><a class="done" onclick="descitem(');
 		picker.append(it.descid);
-		picker.append(',0,event); return false;" href="');
+		picker.append(',0,event)" href="#">');
+		
+		picker.addItemIcon(it,"Click for item description",danger_level);
+		picker.append('</a><a class="change" href="');
 		picker.append(command);
-		picker.append('">');
+		picker.append('"><span style="font-weight:bold;">');
+		if(danger_level > 0)
+			picker.append('<span class="warning-link">');
+		picker.append(action);
+		if(danger_level > 0)
+			picker.append('</span>');
+		if(action_description != "")
+			picker.append(' ' + action_description);
+		picker.append('</span><br />');
+		picker.append(modifyName(it));
+		picker.append('</a></div>');
 		
-		string hover = modifyName(it) + '&#013;Left click to ' + action_description + '&#013;Right click for description';
-		
-		picker.addItemIcon(it,hover,danger_level);
-		picker.append('</a></span>');
 		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
 		# picker.append(parseMods(string_modifier(it,"Evaluated Modifiers")).replace_string(", Single Equip", ""));
@@ -4256,12 +4269,12 @@ void pickerGear(slot s) {
 		{
 			picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 			picker.append(name);
-			picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+			picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 			
 			foreach it in toDisplay
 				add_gear_option(it, "");
 			
-			picker.append('</td></tr>');
+			picker.append('</div></td></tr>');
 		}
 	}
 	
