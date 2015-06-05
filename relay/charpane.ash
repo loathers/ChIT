@@ -8,6 +8,7 @@ CHaracter Info Toolbox
 A character pane relay override script
 By Chez up to v 0.6.0
 Everything after that by Bale
+As of r241 on SVN, some revisions also by soolar
 
 Additional major contributors:
 	AlbinoRhino - Provided invaluable assistance with CSS & Javascript
@@ -4087,7 +4088,7 @@ void addFavGear() {
 	}
 	
 	// some handy in-run stuff
-	if((vars["chit.recommendgear"] == "in-run" && get_property("questL13Final") != "finished") || vars["chit.recommendgear"] == "always")
+	if((vars["chit.gear.recommend"] == "in-run" && get_property("questL13Final") != "finished") || vars["chit.gear.recommend"] == "always")
 	{
 		addGear($items[duonoculars,Bram's choker,red shoe,iFlail,rusted-out shootin' iron,
 			Space Trip safety headphones,Xiblaxian stealth cowl,Xiblaxian stealth trousers,
@@ -6405,7 +6406,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods", "true");
 	setvar("chit.kol.coolimages", true);
-	setvar("chit.recommendgear", "in-run");
+	setvar("chit.gear.recommend", "in-run");
 	setvar("chit.gear.pull", true);
 	setvar("chit.gear.layout", "default");
 	
