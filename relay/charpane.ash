@@ -4130,14 +4130,14 @@ void pickerGear(slot s) {
 		string name = modifyName(it);
 		
 		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<div class="chit_flexitem" style="order:');
+		picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
 		picker.append(danger_level);
-		picker.append(';"><a class="done" onclick="descitem(');
+		picker.append(';"><div class="chit_flexitem"><a class="done" onclick="descitem(');
 		picker.append(it.descid);
 		picker.append(',0,event)" href="#">');
 		
 		picker.addItemIcon(it,"Click for item description",danger_level);
-		picker.append('</a><a class="change" href="');
+		picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;"><a class="change" href="');
 		picker.append(command);
 		picker.append('"><span style="font-weight:bold;">');
 		if(danger_level > 0)
@@ -4147,9 +4147,9 @@ void pickerGear(slot s) {
 			picker.append('</span>');
 		if(action_description != "")
 			picker.append(' ' + action_description);
-		picker.append('</span><br />');
-		picker.append(modifyName(it));
-		picker.append('</a></div>');
+		picker.append('</span> ');
+		picker.append(name);
+		picker.append('</a></div></div>');
 		
 		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
