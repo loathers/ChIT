@@ -3968,7 +3968,7 @@ string modifyName(item it)
 	return name;
 }
 
-int chit_available(item it)
+int chit_available(item it, boolean generous)
 {
 	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
 	if(pulls_remaining() == -1)
@@ -3979,18 +3979,28 @@ int chit_available(item it)
 	{
 		available += min(pulls_remaining(), storage_amount(it));
 	}
+	if(generous)
+	{
+		available += equipped_amount(it);
+	}
 	
 	return available;
+}
+
+int chit_available(item it)
+{
+	return chit_available(it, false);
 }
 
 void addGear(item it, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
+	boolean isFav = (reason == "");
 	
-	if(is_unrestricted(it) && can_equip(it) && chit_available(it) > 0 &&
+	if(is_unrestricted(it) && can_equip(it) && chit_available(it, isFav) > 0 &&
 		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
-		if(reason == "")
+		if(isFav)
 		{
 			favGear[it] = true;
 		}
@@ -4156,6 +4166,25 @@ void pickerGear(slot s) {
 			break;
 	}
 	
+	void add_favorite_button(item it)
+	{
+		picker.append('<a class="change" href="');
+		if(favGear contains it)
+		{
+			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
+			picker.append('" rel="delfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_remove_red.png"></a>');
+		}
+		else
+		{
+			picker.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
+			picker.append('" rel="addfav"><img src="');
+			picker.append(imagePath);
+			picker.append('control_add_blue.png"></a>');
+		}
+	}
+	
 	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
 		start_option(in_slot,true);
@@ -4163,21 +4192,8 @@ void pickerGear(slot s) {
 		picker.append(sideCommand("unequip " + s));
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
 		picker.append(modifyName(in_slot));
-		picker.append('</a></td><td><a class="change" href="');
-		if(favGear contains in_slot)
-		{
-			picker.append(sideCommand("chit_changeFav.ash (remove, " + in_slot + ")"));
-			picker.append('" rel="delfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_remove_red.png"></a>');
-		}
-		else
-		{
-			picker.append(sideCommand("chit_changeFav.ash (add, " + in_slot + ")"));
-			picker.append('" rel="addfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_add_blue.png"></a>');
-		}
+		picker.append('</a></td><td>');
+		add_favorite_button(in_slot);
 		picker.append('</td></tr>');
 	}
 	else
@@ -4202,6 +4218,8 @@ void pickerGear(slot s) {
 		}
 		picker.append('</td></tr>');
 	}
+	
+	boolean [item] displayedItems;
 	
 	void add_gear_option(item it, string reason)
 	{
@@ -4245,12 +4263,13 @@ void pickerGear(slot s) {
 			return;
 		}
 		any_options = true;
+		displayedItems[it] = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
 		
 		switch(to_string(vars["chit.gear.layout"]))
 		{
-		default:
+		case "experimental":
 			picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
 			picker.append(danger_level);
 			picker.append(';"><div class="chit_flexitem"><a class="done" onclick="descitem(');
@@ -4271,6 +4290,34 @@ void pickerGear(slot s) {
 			picker.append('</span> ');
 			picker.append(modifyName(it));
 			picker.append('</a></div></div>');
+			break;
+			
+		default:
+			picker.append('<tr class="pickitem"><td class="icon"><a class="done" onclick="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event)" href="#">');
+			picker.addItemIcon(it,"Click for item description",danger_level);
+			picker.append('</a></td><td><a class="change" href="');
+			picker.append(command);
+			picker.append('"><span style="font-weight:bold;">');
+			if(danger_level > 0)
+				picker.append('<span class="warning-link">');
+			picker.append(action);
+			if(danger_level > 0)
+				picker.append('</span>');
+			if(action_description != "")
+				picker.append(' ' + action_description);
+			picker.append('</span> ');
+			picker.append(modifyName(it));
+			if(reason != "favorites")
+			{
+				picker.append(' (');
+				picker.append(reason);
+				picker.append(')');
+			}
+			picker.append('</a></td><td>');
+			add_favorite_button(it);
+			picker.append('</td></tr>');
 		}
 	}
 	
@@ -4281,7 +4328,8 @@ void pickerGear(slot s) {
 		{
 			if(it != $item[none] && good_slot(s, it) && in_slot != it)
 			{
-				toDisplay[it] = true;
+				if(!(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
+					toDisplay[it] = true;
 			}
 		}
 		
@@ -4289,18 +4337,25 @@ void pickerGear(slot s) {
 		{
 			switch(to_string(vars["chit.gear.layout"]))
 			{
-			default:
+			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				picker.append(name);
 				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+				break;
+				
+			default:
 			}
+			
 			foreach it in toDisplay
-				add_gear_option(it, "");
+				add_gear_option(it, name);
 			
 			switch(to_string(vars["chit.gear.layout"]))
 			{
-			default:
+			case "experimental":
 				picker.append('</div></td></tr>');
+				break;
+			
+			default:
 			}
 		}
 	}
