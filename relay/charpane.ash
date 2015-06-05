@@ -3972,7 +3972,17 @@ void addGear(item it, string reason)
 {
 	class gear_class = class_modifier(it,"Class");
 	
-	if(is_unrestricted(it) && can_equip(it) && (available_amount(it) + creatable_amount(it) + (pulls_remaining() != 0 ? storage_amount(it) : 0)) > 0 &&
+	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
+	if(pulls_remaining() == -1)
+	{
+		available += storage_amount(it);
+	}
+	else if(pulls_remaining() > 0 && to_boolean(vars["chit.gear.pull"]))
+	{
+		available += max(pulls_remaining(), storage_amount(it));
+	}
+	
+	if(is_unrestricted(it) && can_equip(it) && available > 0 &&
 		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
 		if(reason == "")
@@ -4101,6 +4111,11 @@ void pickerGear(slot s) {
 			// can just plain old equip it
 			action = "equip";
 			cmd = "equip ";
+		}
+		else if(closet_amount(it) > 0)
+		{
+			action = "uncloset";
+			cmd = "closet take " + it + "; equip ";
 		}
 		else if(creatable_amount(it) > 0)
 		{
@@ -6330,6 +6345,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.toolbar.moods", "true");
 	setvar("chit.kol.coolimages", true);
 	setvar("chit.recommendgear", "in-run");
+	setvar("chit.gear.pull", true);
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 2) {
