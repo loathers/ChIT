@@ -3968,10 +3968,8 @@ string modifyName(item it)
 	return name;
 }
 
-void addGear(item it, string reason)
+int chit_available(item it)
 {
-	class gear_class = class_modifier(it,"Class");
-	
 	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
 	if(pulls_remaining() == -1)
 	{
@@ -3979,10 +3977,17 @@ void addGear(item it, string reason)
 	}
 	else if(pulls_remaining() > 0 && to_boolean(vars["chit.gear.pull"]))
 	{
-		available += max(pulls_remaining(), storage_amount(it));
+		available += min(pulls_remaining(), storage_amount(it));
 	}
 	
-	if(is_unrestricted(it) && can_equip(it) && available > 0 &&
+	return available;
+}
+
+void addGear(item it, string reason)
+{
+	class gear_class = class_modifier(it,"Class");
+	
+	if(is_unrestricted(it) && can_equip(it) && chit_available(it) > 0 &&
 		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
 		if(reason == "")
@@ -4096,81 +4101,7 @@ void pickerGear(slot s) {
 
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s);
-  
-	boolean any_options = false;
 	
-	void add_gear_option(item it, string reason)
-	{
-		int danger_level = 0;
-		string cmd;
-		string action = "";
-		string action_description = "";
-		
-		if(item_amount(it) > 0)
-		{
-			// can just plain old equip it
-			action = "equip";
-			cmd = "equip ";
-		}
-		else if(closet_amount(it) > 0)
-		{
-			action = "uncloset";
-			cmd = "closet take " + it + "; equip ";
-		}
-		else if(creatable_amount(it) > 0)
-		{
-			danger_level = 1;
-			// make it!
-			action = "create";
-			action_description = "(up to " + creatable_amount(it) + ")";
-			cmd = "create "+ it+ "; equip ";
-		}
-		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
-		{
-			action = "pull";
-			if(pulls_remaining() != -1)
-			{
-				danger_level = 2;
-				action_description += '(' + pulls_remaining() + ' left)';
-			}
-			cmd = "pull " + it + "; equip ";
-		}
-		else
-		{
-			// not actually valid
-			return;
-		}
-		any_options = true;
-		
-		string name = modifyName(it);
-		
-		string command = sideCommand(cmd + s + " " + it);
-		picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
-		picker.append(danger_level);
-		picker.append(';"><div class="chit_flexitem"><a class="done" onclick="descitem(');
-		picker.append(it.descid);
-		picker.append(',0,event)" href="#">');
-		
-		picker.addItemIcon(it,"Click for item description",danger_level);
-		picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;"><a class="change" href="');
-		picker.append(command);
-		picker.append('"><span style="font-weight:bold;">');
-		if(danger_level > 0)
-			picker.append('<span class="warning-link">');
-		picker.append(action);
-		if(danger_level > 0)
-			picker.append('</span>');
-		if(action_description != "")
-			picker.append(' ' + action_description);
-		picker.append('</span> ');
-		picker.append(name);
-		picker.append('</a></div></div>');
-		
-		# picker.append(it);
-		# picker.append("<br /><span class='efmods'>");
-		# picker.append(parseMods(string_modifier(it,"Evaluated Modifiers")).replace_string(", Single Equip", ""));
-		# picker.append("<span>");
-	}
 	boolean good_slot(slot s, item it)
 	{
 		slot gear = to_slot(it);
@@ -4184,6 +4115,7 @@ void pickerGear(slot s) {
 		return false;
 	}
 	
+	boolean any_options = false;
 	// for use with custom context suggestions
 	void start_option(item it, boolean modify_image)
 	{
@@ -4271,15 +4203,83 @@ void pickerGear(slot s) {
 		picker.append('</td></tr>');
 	}
 	
-	void addGearSection(string name, boolean [item] list)
+	void add_gear_option(item it, string reason)
+	{
+		int danger_level = 0;
+		string cmd;
+		string action = "";
+		string action_description = "";
+		
+		if(item_amount(it) > 0)
+		{
+			// can just plain old equip it
+			action = "equip";
+			cmd = "equip ";
+		}
+		else if(closet_amount(it) > 0)
+		{
+			action = "uncloset";
+			cmd = "closet take " + it + "; equip ";
+		}
+		else if(creatable_amount(it) > 0)
+		{
+			danger_level = 1;
+			// make it!
+			action = "create";
+			action_description = "(up to " + creatable_amount(it) + ")";
+			cmd = "create "+ it+ "; equip ";
+		}
+		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
+		{
+			action = "pull";
+			if(pulls_remaining() != -1)
+			{
+				danger_level = 2;
+				action_description += '(' + pulls_remaining() + ' left)';
+			}
+			cmd = "pull " + it + "; equip ";
+		}
+		else
+		{
+			// not actually valid
+			return;
+		}
+		any_options = true;
+		
+		string command = sideCommand(cmd + s + " " + it);
+		
+		switch(to_string(vars["chit.gear.layout"]))
+		{
+		default:
+			picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
+			picker.append(danger_level);
+			picker.append(';"><div class="chit_flexitem"><a class="done" onclick="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event)" href="#">');
+			
+			picker.addItemIcon(it,"Click for item description",danger_level);
+			picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;"><a class="change" href="');
+			picker.append(command);
+			picker.append('"><span style="font-weight:bold;">');
+			if(danger_level > 0)
+				picker.append('<span class="warning-link">');
+			picker.append(action);
+			if(danger_level > 0)
+				picker.append('</span>');
+			if(action_description != "")
+				picker.append(' ' + action_description);
+			picker.append('</span> ');
+			picker.append(modifyName(it));
+			picker.append('</a></div></div>');
+		}
+	}
+	
+	void add_gear_section(string name, boolean [item] list)
 	{
 		boolean [item] toDisplay;
 		foreach it in list
 		{
-			int totalAvailable = item_amount(it) + creatable_amount(it);
-			if(pulls_remaining() != 0)
-				totalAvailable += storage_amount(it);
-			if(totalAvailable > 0 && it != $item[none] && good_slot(s, it) && in_slot != it)
+			if(it != $item[none] && good_slot(s, it) && in_slot != it)
 			{
 				toDisplay[it] = true;
 			}
@@ -4287,22 +4287,29 @@ void pickerGear(slot s) {
 		
 		if(toDisplay.count() > 0)
 		{
-			picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-			picker.append(name);
-			picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
-			
+			switch(to_string(vars["chit.gear.layout"]))
+			{
+			default:
+				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+				picker.append(name);
+				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+			}
 			foreach it in toDisplay
 				add_gear_option(it, "");
 			
-			picker.append('</div></td></tr>');
+			switch(to_string(vars["chit.gear.layout"]))
+			{
+			default:
+				picker.append('</div></td></tr>');
+			}
 		}
 	}
 	
-	addGearSection("favorites", favGear);
+	add_gear_section("favorites", favGear);
 	
 	foreach reason in recommendedGear
 	{
-		addGearSection(reason, recommendedGear[reason]);
+		add_gear_section(reason, recommendedGear[reason]);
 	}
 	
 	if(!any_options)
@@ -6346,6 +6353,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.kol.coolimages", true);
 	setvar("chit.recommendgear", "in-run");
 	setvar("chit.gear.pull", true);
+	setvar("chit.gear.layout", "default");
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 2) {
