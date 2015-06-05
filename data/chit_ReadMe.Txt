@@ -1,5 +1,6 @@
 CHaracter Info Toolbox: A character pane relay override script
 By Chez up to v 0.6.0, All revisions after that by Bale
+As of r241 on SVN, some revisions also by soolar
 
 CHIT allows you to customize the layout of your charpane (Let's call it your House).
 Your house consists of 4 separate areas:
@@ -12,6 +13,7 @@ Inside each area you can place any of the following "bricks":
    character:  Basic character information (name, class, paths, level, meat, turns etc) (Not available in toolbar)
    stats:      A whole bunch of pretty progress bars. (stats/consumption/hp/mp etc) (Not available in toolbar)
    familiar:   Familiar information, with a built-in equipment changer thingy (Not available in toolbar)
+	 gear:       Displays all your currently equipped items, and allows you to pick from favorites/suggestion by clicking a slot.
    trail:      Recent adventures
    quests:     Quest nudges (when available)
    tracker:    Detailed ascension related quest information
@@ -81,6 +83,27 @@ chit.familiar.protect: Removes all familiar-switching links from the charpane wh
           Default: false
 chit.familiar.anti-gollywog: Colorize the Crimbo Shrub's image so that it doesn't look like a gollywog
           Default: true
+-------------------------------------------------------------------------------------
+chit.gear.favorites: Comma-separated list of equipment that you have set as a personal favorite.
+          You can change this all you should need to via the gear picker, so you shouldn't NEED to edit this one manually.
+          Default: Just some random items I like.
+
+chit.gear.layout: The layout to use for the gear picker.
+          Options include:
+					 default - The standard layout
+					 experimental - WIP layout that should eventually become default, but might occasionally be a bit janky
+					Default: default
+					
+chit.gear.pull: Whether or not the gear picker should recommend pullable items when in-run
+          Default: true
+					
+chit.gear.recommend: Whether or not to recommend some generally useful/QoL gear in the picker
+          Regardless of value, the gear picker will always recommend items in some specific quest contexts
+					Options include:
+					 in-run: Only shows extra gear while in run
+					 always: Shows extra gear in aftercore too
+					 never:  Does not show any gear outside of favorites and very specific quest items
+					Default: in-run
 -------------------------------------------------------------------------------------
 HELPERS are displayed when certain counters reaches 0. 
 They will present you with a list of relevant adventure locations. 
