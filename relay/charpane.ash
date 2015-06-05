@@ -4100,7 +4100,7 @@ void addFavGear() {
 	}
 	
 	// manual favorites
-	foreach i,fav in split_string(vars["chit.favgear"], "\\s*(?<!\\\\),\\s*") {
+	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
 		addGear(to_item(fav.replace_string("\\,", ",")));
 	}
 }
@@ -6386,9 +6386,6 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
-		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
-		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
@@ -6411,6 +6408,21 @@ buffer modifyPage(buffer source) {
 	setvar("chit.recommendgear", "in-run");
 	setvar("chit.gear.pull", true);
 	setvar("chit.gear.layout", "default");
+	
+	// chit.favgear was renamed to chit.gear.favorites because that fit way better.
+	// preserve it. Might get rid of this eventually.
+	if(vars["chit.favgear"] != "")
+	{
+		setvar("chit.gear.favorites", vars["chit.favgear"]);
+		remove vars["chit.favgear"];
+		updatevars();
+	}
+	else
+	{
+		setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
+			"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
+			"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
+	}
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 2) {
