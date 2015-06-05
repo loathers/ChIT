@@ -842,3 +842,10 @@ table.chit_picker tr.chit_pickerblock  .chit_icon {
 .chit_flexitem {
 	
 }
+
+.chit_favbutton {
+	vertical-align:middle;
+}
+.chit_favbutton img {
+	float:left;
+}
