@@ -819,6 +819,9 @@ img.chit_icon {
 img.chit_icon.hasdrops {
 	border-color:blue !important;
 }
+img.chit_icon.good {
+	border-color:green !important;
+}
 img.chit_icon.warning {
 	border-color:orange !important;
 }

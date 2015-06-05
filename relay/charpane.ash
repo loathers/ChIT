@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15891; // Puck Man and Ms. Puck Man
+since r15902; // favorite_familiars()
 import "zlib.ash";
 
 /************************************************************************************
@@ -2342,20 +2342,105 @@ int hasBjornDrops(familiar f)
 	return 0;
 }
 
-boolean [familiar] favFamiliars;
+int hasDrops(item it)
+{
+	switch(it)
+	{
+		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
+		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
+		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
+	}
+	
+	return 0;
+}
+
+string item_image(item it, boolean modify_image)
+{
+	if(it == $item[none])
+		return '/images/itemimages/blank.gif';
+
+	if(modify_image)
+	{
+		switch(it)
+		{
+			case $item[Buddy Bjorn]:
+				if(my_bjorned_familiar() != $familiar[none])
+					return familiar_image(my_bjorned_familiar());
+				break;
+			case $item[Crown of Thrones]:
+				if(my_enthroned_familiar() != $familiar[none])
+					return familiar_image(my_enthroned_familiar());
+				break;
+		}
+	}
+
+	return '/images/itemimages/' + it.image;
+}
+
+string item_image(item it)
+{
+	return item_image(it, true);
+}
+
+void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image)
+{
+	result.append('<img class="chit_icon');
+	if(hasDrops(it) > 0)
+	{
+		result.append(' hasdrops');
+	}
+	if(danger_level == 1)
+	{
+		result.append(' warning');
+	}
+	else if(danger_level > 1)
+	{
+		result.append(' danger');
+	}
+	else if(danger_level < 0)
+	{
+		result.append(' good');
+	}
+	result.append('" src="');
+	result.append(item_image(it, modify_image));
+	result.append('" title="');
+	result.append(title);
+	result.append('" />');
+}
+void addItemIcon(buffer result, item it, string title, int danger_level)
+{
+	addItemIcon(result,it,title,danger_level,true);
+}
+void addItemIcon(buffer result, item it, string title)
+{
+	addItemIcon(result,it,title,0);
+}
+
 void pickerFamiliar(familiar current, string cmd, string display)
 {
+	familiar is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
+	// if this isn't the main familiar picker we don't care about 100% runs
+	if(cmd != "familiar")
+		is100 = $familiar[none];
+
 	buffer picker;
 	picker.pickerStart(cmd, display);
-  
-	boolean any_options = false;
 	
-	if(count(favFamiliars) > 0)
+	if(is100 != $familiar[none])
 	{
-		picker.append('<tr class="pickitem chit_pickerblock"><td>');
-		foreach f in favFamiliars
+		picker.append('<tr class="pickitem"><td colspan="3">Careful, you are currently in a 100% run with ');
+		picker.append(is100.name);
+		picker.append(', your ');
+		picker.append(is100);
+		picker.append('</td></tr>');
+	}
+  
+	if(favorite_familiars().count() > 0)
+	{
+		picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
+		foreach f in favorite_familiars()
 		{
-		  if(f != current && f != my_familiar())
+			if(f != current && f != my_familiar())
 			{
 				int dropsLeft = (cmd == "familiar" ? hasDrops(f) : hasBjornDrops(f));
 				picker.append('<span><a class="change" href="');
@@ -2363,8 +2448,13 @@ void pickerFamiliar(familiar current, string cmd, string display)
 				picker.append('"><img class="chit_icon');
 				if(dropsLeft > 0)
 					picker.append(' hasdrops');
-				if(cmd == "familiar" && to_familiar(vars["is_100_run"]) != $familiar[none] && to_familiar(vars["is_100_run"]) != f)
-					picker.append(' danger');
+				if(is100 != $familiar[none])
+				{
+					if(is100 != f)
+						picker.append(' danger');
+					else
+						picker.append(' good');
+				}
 				picker.append('" src="');
 				picker.append(familiar_image(f));
 				picker.append('" title="');
@@ -2379,14 +2469,14 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		}
 		picker.append('</td></tr>');
 	}
-	else
-		picker.addSadFace("You have no favorited familiars available. Poor you :(");
 
-	picker.append('<tr class="pickitem"><td><a target=mainpane class="visit done" href="familiar.php">');
-	if(to_boolean(vars["chit.familiar.terrariumlinklarge"]))
-		picker.append('&nbsp;<br />Visit Your Terrarium<br />&nbsp;');
-	else
-		picker.append('Visit Your Terrarium');
+	int danger_level = 0;
+	if(is100 != $familiar[none])
+		danger_level = (is100 == current) ? 2 : -1;
+	picker.append('<tr class="pickitem"><td class="icon"><a target=mainpane class="visit done" href="familiar.php">');
+	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium", danger_level);
+	picker.append('</a></td><td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');
+	picker.append('Visit Your Terrarium');
 	picker.append('</a></td></tr>');
 	picker.addLoader("Changing familiar...");
 	picker.append('</table></div>');
@@ -2583,8 +2673,9 @@ void bakeFamiliar() {
 
 	//Extra goodies for 100% runs
 	boolean protect = false;
-	if (to_familiar(vars["is_100_run"]) != $familiar[none]) {
-		if (myfam == to_familiar(vars["is_100_run"])) {
+	familiar is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
+	if (is100 != $familiar[none]) {
+		if (myfam == is100) {
 			famstyle = famstyle + "color:green;";
 			if (vars["chit.familiar.protect"] == "true") {
 				hover = "Don't ruin your 100% run!";
@@ -3984,72 +4075,6 @@ void addFavGear() {
 	}
 }
 
-string item_image(item it, boolean modify_image)
-{
-	if(modify_image)
-	{
-		switch(it)
-		{
-			case $item[Buddy Bjorn]:
-				if(my_bjorned_familiar() != $familiar[none])
-					return familiar_image(my_bjorned_familiar());
-				break;
-			case $item[Crown of Thrones]:
-				if(my_enthroned_familiar() != $familiar[none])
-					return familiar_image(my_enthroned_familiar());
-				break;
-		}
-	}
-
-	return '/images/itemimages/' + it.image;
-}
-
-string item_image(item it)
-{
-	return item_image(it, true);
-}
-
-int hasDrops(item it)
-{
-	switch(it)
-	{
-		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
-		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
-		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
-	}
-	
-	return 0;
-}
-
-void addGearIcon(buffer result, item it, string title, int danger_level)
-{
-	result.append('<img class="chit_icon');
-	if(hasDrops(it) > 0)
-	{
-		result.append(' hasdrops');
-	}
-	if(danger_level == 1)
-	{
-		result.append(' warning');
-	}
-	else if(danger_level > 1)
-	{
-		result.append(' danger');
-	}
-	result.append('" src="');
-	if(it != $item[none])
-		result.append(item_image(it));
-	else
-		result.append('images/itemimages/blank.gif');
-	result.append('" title="');
-	result.append(title);
-	result.append('" />');
-}
-void addGearIcon(buffer result, item it, string title)
-{
-	addGearIcon(result,it,title,0);
-}
-
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
@@ -4106,7 +4131,7 @@ void pickerGear(slot s) {
 		
 		string hover = modifyName(it) + '&#013;Left click to ' + action_description + '&#013;Right click for description';
 		
-		picker.addGearIcon(it,hover,danger_level);
+		picker.addItemIcon(it,hover,danger_level);
 		picker.append('</a></span>');
 		# picker.append(it);
 		# picker.append("<br /><span class='efmods'>");
@@ -4130,11 +4155,9 @@ void pickerGear(slot s) {
 	void start_option(item it, boolean modify_image)
 	{
 		any_options = true;
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#"><img title="Click for item description" src="');
-		picker.append(item_image(it, modify_image));
-		picker.append('" class="hand" onclick="descitem(');
-		picker.append(it.descid);
-		picker.append(',0,event)" /></a></td>');
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" onclick="descitem(' + it.descid + ',0,event)">');
+		picker.addItemIcon(it, "Click for item description", 0, modify_image);
+		picker.append('</a></td>');
 	}
 	// give configurable gear some love if it's in slot
 	switch(in_slot)
@@ -4273,7 +4296,7 @@ void bakeGear() {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addGearIcon(equipped_item(s), s + ": " + modifyName(equipped_item(s)));
+		result.addItemIcon(equipped_item(s), s + ": " + modifyName(equipped_item(s)));
 		result.append('</a></span>');
 		pickerGear(s);
 	}
@@ -5781,7 +5804,6 @@ void bakeHeader() {
 		while(singlefamfavmatch.find()) {
 			familiar fam = to_familiar(replace_string(singlefamfavmatch.group(1),"\\",""));
 			if(is_unrestricted(fam)) {
-				favFamiliars[fam] = true;
 				string singlefamfav = singlefamfavmatch.group(0);
 				singlefamfav = singlefamfav.replace_string("[[", "[");
 				// Attend to familiar images also. (This uses mdofied familiar images!)
@@ -6267,7 +6289,6 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.familiar.terrariumlinklarge", false);
 	setvar("chit.favgear", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
 		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
 		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
