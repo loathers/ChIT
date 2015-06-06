@@ -91,6 +91,7 @@ chit.gear.favorites: Comma-separated list of equipment that you have set as a pe
 chit.gear.layout: The layout to use for the gear picker.
           Options include:
 					 default - The standard layout
+					 minimal - only shows gear icons. left click to equip/make/pull/whatever, right click for description popup.
 					 experimental - WIP layout that should eventually become default, but might occasionally be a bit janky
 					Default: default
 					
