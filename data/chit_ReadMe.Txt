@@ -96,7 +96,11 @@ chit.gear.layout: The layout to use for the gear picker.
 					Default: default
 					
 chit.gear.pull: Whether or not the gear picker should recommend pullable items when in-run
-          Default: true
+          Options include:
+					 anything - always suggest pulling
+					 favorites - only suggest pulling for favorites
+					 nothing - never suggest pulling
+          Default: favorites
 					
 chit.gear.recommend: Whether or not to recommend some generally useful/QoL gear in the picker
           Regardless of value, the gear picker will always recommend items in some specific quest contexts
