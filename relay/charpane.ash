@@ -4288,11 +4288,21 @@ void pickerGear(slot s) {
 			picker.append(action);
 			if(danger_level > 0)
 				picker.append('</span>');
-			if(action_description != "")
-				picker.append(' ' + action_description);
+			picker.append(' ');
+			picker.append(action_description);
 			picker.append('</span> ');
 			picker.append(modifyName(it));
 			picker.append('</a></div></div>');
+			break;
+			
+		case "minimal":
+			picker.append('<span><a class="change" oncontextmenu="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event); return false;" href="');
+			picker.append(command);
+			picker.append('">');
+			picker.addItemIcon(it,modifyName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+			picker.append('</a></span>');
 			break;
 			
 		default:
@@ -4308,8 +4318,8 @@ void pickerGear(slot s) {
 			picker.append(action);
 			if(danger_level > 0)
 				picker.append('</span>');
-			if(action_description != "")
-				picker.append(' ' + action_description);
+			picker.append(' ');
+			picker.append(action_description);
 			picker.append('</span> ');
 			picker.append(modifyName(it));
 			if(reason != "favorites")
@@ -4346,6 +4356,12 @@ void pickerGear(slot s) {
 				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 				
+			case "minimal":
+				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+				picker.append(name);
+				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				break;
+				
 			default:
 			}
 			
@@ -4356,6 +4372,10 @@ void pickerGear(slot s) {
 			{
 			case "experimental":
 				picker.append('</div></td></tr>');
+				break;
+				
+			case "minimal":
+				picker.append('</td></tr>');
 				break;
 			
 			default:
