@@ -3976,7 +3976,7 @@ int chit_available(item it, boolean generous)
 	{
 		available += storage_amount(it);
 	}
-	else if(pulls_remaining() > 0 && to_boolean(vars["chit.gear.pull"]))
+	else if(pulls_remaining() > 0 && (vars["chit.gear.pull"] == "anything" || (generous && vars["chit.gear.pull"] != "nothing")))
 	{
 		available += min(pulls_remaining(), storage_amount(it));
 	}
@@ -6427,7 +6427,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.toolbar.moods", "true");
 	setvar("chit.kol.coolimages", true);
 	setvar("chit.gear.recommend", "in-run");
-	setvar("chit.gear.pull", true);
+	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
 	
 	// chit.favgear was renamed to chit.gear.favorites because that fit way better.
