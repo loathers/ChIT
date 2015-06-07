@@ -3972,6 +3972,11 @@ string modifyName(item it)
 int chit_available(item it, boolean generous)
 {
 	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
+	if(available == 0 && boolean_modifier(it, "Free Pull"))
+	{
+		available += available_amount(it);
+	}
+	
 	if(pulls_remaining() == -1)
 	{
 		available += storage_amount(it);
@@ -4257,6 +4262,11 @@ void pickerGear(slot s) {
 				action_description += '(' + pulls_remaining() + ' left)';
 			}
 			cmd = "pull " + it + "; equip ";
+		}
+		else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0)
+		{
+			action = "free pull";
+			cmd = "equip ";
 		}
 		else
 		{
