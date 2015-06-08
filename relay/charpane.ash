@@ -4031,10 +4031,19 @@ void addGear(boolean [item] list)
 }
 
 void addFavGear() {	
+	boolean aftercore = (get_property("questL13Final") == "finished");
+
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($item[continuum transfunctioner], "quest");
-	addGear($items[pirate fledges, black glass], "quest");
+	if(get_property("questM12Pirate") != "finished" && !aftercore)
+		addGear($item[pirate fledges], "quest");
+	else if(get_property("currentHardBountItem").contains_text("warrrrrt"))
+		addGear($item[pirate fledges], "bounty");
+	
+	if(get_property("questS02Monkee") != "finished")
+		addGear($items[black glass], "quest");
+		
 	if(get_property("questL11Palindome") != "finished")
 	{
 		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
@@ -4046,7 +4055,7 @@ void addFavGear() {
 	
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
-	if(get_property("dailyDungeonDone") == "false" &&(can_interact() || total_keys() < 3))
+	if(!aftercore && get_property("dailyDungeonDone") == "false" && total_keys() < 3)
 		addGear($item[ring of Detect Boring Doors], "quest");
 	switch(get_property("questL10Garbage"))
 	{
@@ -4086,14 +4095,15 @@ void addFavGear() {
 	
 	switch(my_path()) {
 	case "Heavy Rains":
-		addGear($item[pool skimmer], "path");
+		addGear($items[pool skimmer, thor's pliers], "path");
 		break;
 	case "One Crazy Random Summer":
 		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses], "path");
+		break;
 	}
 	
 	// some handy in-run stuff
-	if((vars["chit.gear.recommend"] == "in-run" && get_property("questL13Final") != "finished") || vars["chit.gear.recommend"] == "always")
+	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always")
 	{
 		addGear($items[duonoculars,Bram's choker,red shoe,iFlail,rusted-out shootin' iron,
 			Space Trip safety headphones,Xiblaxian stealth cowl,Xiblaxian stealth trousers,
