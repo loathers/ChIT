@@ -4041,7 +4041,7 @@ void addFavGear() {
 	else if(get_property("currentHardBountItem").contains_text("warrrrrt"))
 		addGear($item[pirate fledges], "bounty");
 	
-	if(get_property("questS02Monkee") != "finished")
+	if(get_property("questS02Monkees") != "finished")
 		addGear($items[black glass], "quest");
 		
 	if(get_property("questL11Palindome") != "finished")
