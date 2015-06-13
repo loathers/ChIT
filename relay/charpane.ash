@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15902; // favorite_familiars()
+since r15935; // Change to Nemesis Quest. Tracking step1+ are now step5+
 import "zlib.ash";
 
 /************************************************************************************
@@ -3004,7 +3004,7 @@ void bakeToolbar() {
 					result.append('"><img src="');
 					result.append(imagePath);
 					result.append(toolprops[1]);
-					result.append('"></a></li>');				
+					result.append('"></a></li>');
 				}
 			}
 		}	
@@ -4153,13 +4153,21 @@ void addFavGear() {
 	if($strings[started, step1] contains get_property("questL11Manor"))
 		addGear($item[Lord Spookyraven's spectacles], "quest");
 		
-	string nemesis = get_property("questG04Nemesis");
-	if(nemesis == "step1") // Kill Beelzebozo
+
+	// Nemesis Quest
+	switch(get_property("questG04Nemesis")) {
+	case "step5":  // Kill Beelzebozo
 		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
-	if(nemesis == "step4")
-		addGear($items[Hammer of Smiting,Chelonian Morningstar,Greek Pasta Spoon of Peril,17-alarm Saucepan,Shagadelic Disco Banjo,Squeezebox of the Ages], "quest");
-	if(get_property("questG04Nemesis") == "step14" && my_class() == $class[Turtle Tamer])
-		addGear($item[fouet de tortue-dressage], "quest");
+
+		break;
+	case "step8":	// Fight Nemesis in The Dark and Dank and Sinister Cave
+	case "step20":	// Fight Nemesis on Secret Tropical Island Volcano Lair
+		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages]);
+		break;
+	case "step18":
+		addGear($items[fouet de tortue-dressage, spaghetti cult robe], "quest");
+		break;
+	}
 	
 	// Charter zone quest equipment
 	addGear($items[
@@ -4188,6 +4196,7 @@ void addFavGear() {
 		addGear($items[astral shirt],"stats");
 		addGear($items[Hand in Glove,astral belt,numberwang,badge of authority,smoker's cloak,spiky turtle helmet,
 			Sneaky Pete's leather jacket (collar popped),red shirt,Metal band T-shirt,hipposkin poncho,goth kid t-shirt],"ML");
+		addGear($item[World's Best Adventurer sash], "Wow");
 	}
 	
 	// manual favorites
