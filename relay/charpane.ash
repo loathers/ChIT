@@ -2350,6 +2350,9 @@ int hasDrops(item it)
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
 		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
 		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
+		// not exactly drops per se, but it's still beneficial to have these on until you max the counter
+		case $item[stinky cheese eye]: case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
+			return max(100 - to_int(get_property("_stinkyCheeseCount")), 0);
 	}
 	
 	return 0;
@@ -2417,6 +2420,51 @@ void addItemIcon(buffer result, item it, string title)
 	addItemIcon(result,it,title,0);
 }
 
+// isBjorn also applies for the crown, just for the sake of a shorter name
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
+{
+	familiar is100 = $familiar[none];
+	if(!isBjorn)
+	{
+		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
+	}
+
+	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
+	result.append('<img class="chit_icon');
+	if(dropsLeft > 0)
+		result.append(' hasdrops');
+	if(is100 != $familiar[none])
+	{
+		if(is100 != f)
+			result.append(' danger');
+		else
+			result.append(' good');
+	}
+	result.append('" src="');
+	result.append(familiar_image(f));
+	if(title)
+	{
+		result.append('" title="');
+		result.append(f.name);
+		result.append(' (the ');
+		result.append(f);
+		result.append(')');
+		if(dropsLeft > 0)
+			result.append(' (' + dropsLeft + ' drop' + (dropsLeft > 1 ? 's' : '') + ' remaining)');
+	}
+	result.append('" />');
+}
+
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn)
+{
+	addFamiliarIcon(result, f, isBjorn, true);
+}
+
+void addFamiliarIcon(buffer result, familiar f)
+{
+	addFamiliarIcon(result, f, false);
+}
+
 void pickerFamiliar(familiar current, string cmd, string display)
 {
 	familiar is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
@@ -2443,29 +2491,11 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		{
 			if(f != current && f != my_familiar())
 			{
-				int dropsLeft = (cmd == "familiar" ? hasDrops(f) : hasBjornDrops(f));
 				picker.append('<span><a class="change" href="');
 				picker.append(sideCommand(cmd + ' ' + f));
-				picker.append('"><img class="chit_icon');
-				if(dropsLeft > 0)
-					picker.append(' hasdrops');
-				if(is100 != $familiar[none])
-				{
-					if(is100 != f)
-						picker.append(' danger');
-					else
-						picker.append(' good');
-				}
-				picker.append('" src="');
-				picker.append(familiar_image(f));
-				picker.append('" title="');
-				picker.append(f.name);
-				picker.append(' (the ');
-				picker.append(f);
-				picker.append(')');
-				if(dropsLeft > 0)
-					picker.append(' (' + dropsLeft + ' drop' + (dropsLeft > 1 ? 's' : '') + ' remaining)');
-				picker.append('" /></a></span>');
+				picker.append('">');
+				picker.addFamiliarIcon(f, cmd != "familiar");
+				picker.append('</a></span>');
 			}
 		}
 		picker.append('</td></tr>');
@@ -2498,7 +2528,6 @@ void bakeFamiliar() {
 
 	string famname = "Familiar";
 	string famtype = '<a target=mainpane href="familiar.php" class="familiarpick">(None)</a>';
-	string famimage = "/images/itemimages/blank.gif";
 	string equipimage = "blank.gif";
 	string equiptype, actortype, famweight, info, famstyle, charges, chargeTitle;
 	boolean isFed = false;
@@ -2512,7 +2541,6 @@ void bakeFamiliar() {
 		actortype = famtype;
 		if(myfam == $familiar[Fancypants Scarecrow])
 			famtype = "Fancy Scarecrow"; // Name is too long when there's info added
-		famimage =  familiar_image(myfam);
 	}
 	
 	//Get Familiar Name
@@ -2716,10 +2744,10 @@ void bakeFamiliar() {
 	result.append('</tr><tr>');
 	result.append('<td class="icon" title="' + hover_famicon + '">');
 	if (protect) {
-		result.append('<img src="' + famimage + '">');
+		result.addFamiliarIcon(myfam, false, false);
 	} else {
 		result.append('<a href="#" class="chit_launcher" rel="chit_pickerfamiliar">');
-		result.append('<img src="' + famimage + '">');
+		result.addFamiliarIcon(myfam, false, false);
 		result.append('</a>');
 	}
 	result.append('</td>');
@@ -3956,20 +3984,35 @@ boolean [string] [item] recommendedGear;
 string modifyName(item it)
 {
 	string name = to_string(it);
+	string notes = "";
 
 	switch(it)
 	{
 		case $item[pantsgiving]:
-			name += ' (' + (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes)';
+			notes = (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes';
 			break;
 		case $item[amulet of extreme plot significance]: name = "amulet of plot significance"; break;
 		case $item[encrypted micro-cassette recorder]: name = "micro-cassette recorder"; break;
+		case $item[stinky cheese eye]:
+			if(!to_boolean(get_property("_stinkyCheeseBanisherUsed")))
+				notes = "banish available, ";
+			// no break intentionally
+		case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
+			notes += to_int(get_property("_stinkyCheeseCount")) + '/100';
+			break;
+	}
+	
+	if(notes != "")
+	{
+		name += " (" + notes + ")";
 	}
 
 	return name;
 }
 
-int chit_available(item it, boolean generous)
+int foldable_amount(item it, boolean generous);
+
+int chit_available(item it, boolean generous, boolean foldcheck)
 {
 	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
 	if(available == 0 && boolean_modifier(it, "Free Pull"))
@@ -3990,12 +4033,41 @@ int chit_available(item it, boolean generous)
 		available += equipped_amount(it);
 	}
 	
+	if(foldcheck)
+	{
+		available += foldable_amount(it, generous);
+	}
+	
 	return available;
+}
+
+int chit_available(item it, boolean generous)
+{
+	return chit_available(it, generous, true);
 }
 
 int chit_available(item it)
 {
 	return chit_available(it, false);
+}
+
+int foldable_amount(item it, boolean generous)
+{
+	int amount = 0;
+	foreach foldable, i in get_related(it, "fold")
+	{
+		if(foldable != it)
+		{
+			amount += chit_available(foldable, generous, false);
+		}
+	}
+	
+	return amount;
+}
+
+int foldable_amount(item it)
+{
+	return foldable_amount(it, false);
 }
 
 void addGear(item it, string reason)
@@ -4081,9 +4153,12 @@ void addFavGear() {
 	if($strings[started, step1] contains get_property("questL11Manor"))
 		addGear($item[Lord Spookyraven's spectacles], "quest");
 		
-	if(get_property("questG04Nemesis") == "step1") // Kill Beelzebozo
+	string nemesis = get_property("questG04Nemesis");
+	if(nemesis == "step1") // Kill Beelzebozo
 		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
-	else if(get_property("questG04Nemesis") == "step14" && my_class() == $class[Turtle Tamer])
+	if(nemesis == "step4")
+		addGear($items[Hammer of Smiting,Chelonian Morningstar,Greek Pasta Spoon of Peril,17-alarm Saucepan,Shagadelic Disco Banjo,Squeezebox of the Ages], "quest");
+	if(get_property("questG04Nemesis") == "step14" && my_class() == $class[Turtle Tamer])
 		addGear($item[fouet de tortue-dressage], "quest");
 	
 	// Charter zone quest equipment
@@ -4278,9 +4353,14 @@ void pickerGear(slot s) {
 			action = "free pull";
 			cmd = "equip ";
 		}
+		else if(foldable_amount(it) > 0)
+		{
+			action = "fold";
+			cmd = "fold " + it + "; equip ";
+		}
 		else
 		{
-			// not actually valid
+			// no options were found, give up
 			return;
 		}
 		any_options = true;
