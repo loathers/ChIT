@@ -2353,6 +2353,9 @@ int hasDrops(item it)
 		// not exactly drops per se, but it's still beneficial to have these on until you max the counter
 		case $item[stinky cheese eye]: case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
 			return max(100 - to_int(get_property("_stinkyCheeseCount")), 0);
+		// also not exactly drops per se, but... yep
+		case $item[bone abacus]:
+			return max(1000 - to_int(get_property("boneAbacusVictories")), 0);
 	}
 	
 	return 0;
@@ -4000,6 +4003,8 @@ string modifyName(item it)
 		case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
 			notes += to_int(get_property("_stinkyCheeseCount")) + '/100';
 			break;
+		case $item[bone abacus]:
+			notes += get_property("boneAbacusVictories") + "/1000";
 	}
 	
 	if(notes != "")
