@@ -4269,6 +4269,10 @@ void pickerGear(slot s) {
 			picker.append(sideCommand("unequip " + in_slot + "; use " + in_slot + "; equip " + other));
 			picker.append('">Shake Pan</a></td>');
 			break;
+		case $item[over-the-shoulder Folder Holder]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=useholder">Manage your folders.</a></td></tr>');
+			break;
 	}
 	
 	void add_favorite_button(item it)
