@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15935; // Change to Nemesis Quest. Tracking step1+ are now step5+
+since r15959; // Familiar drop info easily accessible!
 import "zlib.ash";
 
 /************************************************************************************
@@ -2304,32 +2304,14 @@ int checkDrops(string counter_prop, int limit)
 
 int hasDrops(familiar f)
 {
-	switch(f)
+	if(f == $familiar[gelatinous cubeling])
 	{
-		case $familiar[gelatinous cubeling]:
-			return 3 - (min(available_amount($item[eleven-foot pole]),1) +
-				min(available_amount($item[ring of detect boring doors]),1) +
-				min(available_amount($item[pick-o-matic lockpicks]),1));
-		// standard x-drops-per-day familiars
-		case $familiar[astral badger]: return checkDrops("_astralDrops",5);
-		case $familiar[green pixie]: return checkDrops("_absintheDrops",5);
-		case $familiar[llama lama]: return checkDrops("_gongDrops",5);
-		case $familiar[baby sandworm]: return checkDrops("_aguaDrops",5);
-		case $familiar[rogue program]: return checkDrops("_tokenDrops",5);
-		case $familiar[li'l xenomorph]: return checkDrops("_transponderDrops",5);
-		case $familiar[bloovian groose]: return checkDrops("_grooseDrops",5);
-		case $familiar[blavious kloop]: return checkDrops("_kloopDrops",5);
-		case $familiar[angry jung man]: return checkDrops("_jungDrops",1);
-		case $familiar[unconscious collective]: return checkDrops("_dreamJarDrops",5);
-		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDrops",1);
-		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDrops",5);
-		case $familiar[galloping grill]: return checkDrops("_hotAshesDrops",5);
-		case $familiar[fist turkey]: return checkDrops("_turkeyBooze",5);
-		case $familiar[golden monkey]: return checkDrops("_powderedGoldDrops",5);
-		case $familiar[adventurous spelunker]: return checkDrops("_spelunkingTalesDrops",1);
+		return 3 - (min(available_amount($item[eleven-foot pole]),1) +
+			min(available_amount($item[ring of detect boring doors]),1) +
+			min(available_amount($item[pick-o-matic lockpicks]),1));
 	}
 	
-	return 0;
+	return f.drops_limit - f.drops_today;
 }
 
 int hasBjornDrops(familiar f)
@@ -2452,8 +2434,13 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
 		result.append(' (the ');
 		result.append(f);
 		result.append(')');
+		string dropName = f.drop_name;
+		if(dropName == "")
+			dropName = "drop";
+		if(dropsLeft > 1 && dropName.char_at(dropName.length() - 1) != "s")
+			dropName += "s";
 		if(dropsLeft > 0)
-			result.append(' (' + dropsLeft + ' drop' + (dropsLeft > 1 ? 's' : '') + ' remaining)');
+			result.append(' (' + dropsLeft + ' ' + dropName + ' remaining)');
 	}
 	result.append('" />');
 }
