@@ -3241,7 +3241,7 @@ void addFury(buffer result) {
 		}
 	}
 	matcher fury = create_matcher("Fury:.*?<font color[^>]*>(<span[^>]*>)?((\\d+) gal.)", chitSource["stats"]);
-	if(fury.find()) {
+	if(fury.find() && my_maxfury() > 0) {
 		result.append('<tr><td class="label">');
 		result.spanWrap("Fury", fury.group(1));
 		result.append('</td><td class="fury">');
