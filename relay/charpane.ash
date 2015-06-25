@@ -2522,6 +2522,7 @@ void bakeFamiliar() {
 	string equiptype, actortype, famweight, info, famstyle, charges, chargeTitle;
 	boolean isFed = false;
 	string weight_title = "Buffed Weight";
+	string name_followup = "";
 	
 	familiar myfam = my_familiar();
 	item famitem = $item[none];
@@ -2636,15 +2637,15 @@ void bakeFamiliar() {
 		} else info = "None";
 		break;
 	case $familiar[Reanimated Reanimator]:
-		famname += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
+		name_followup += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
 		break;
 	case $familiar[Grim Brother]:
 		if(source.contains_text(">talk</a>)"))
-			famname += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
+			name_followup += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
 		break;
 	case $familiar[Crimbo Shrub]:
 		if(get_property("_shrubDecorated") == "false")
-			famname += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
+			name_followup += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
 		buffer mods;
 		foreach shrub in $strings[shrubTopper, shrubLights, shrubGarland, shrubGifts] {
 			string decoration = get_property(shrub);
@@ -2664,12 +2665,11 @@ void bakeFamiliar() {
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
-			famname += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
+			name_followup += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
 		break;
 	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
-		famname += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
-		if(get_revision() < 15961)
-			info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels, ' + to_string(item_amount($item[Power Pill])) + ' power pills' + (info != "" ? ", " : "") + info;
+		name_followup += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
+		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
 		break;
 	}
 	
@@ -2723,10 +2723,11 @@ void bakeFamiliar() {
 	result.append('<th width="40" title="'+ weight_title +'" style="color:blue">' + famweight + '</th>');
 	
 	if (protect) {
-		result.append('<th title="' + hover + '">' + famname + '</th>');
+		result.append('<th title="' + hover + '">' + famname);
 	} else {
-		result.append('<th><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famname + '</a></th>');
+		result.append('<th><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famname + '</a>');
 	}
+	result.append(name_followup + '</th>');
 	if (charges == "") {
 		result.append('<th width="30">&nbsp;</th>');
 	} else {
