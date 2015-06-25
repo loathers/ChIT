@@ -4068,8 +4068,9 @@ void addGear(item it, string reason)
 	class gear_class = class_modifier(it,"Class");
 	boolean isFav = (reason == "");
 	
-	if(is_unrestricted(it) && can_equip(it) && chit_available(it, isFav) > 0 &&
-		(gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
+	if(is_unrestricted(it) && can_equip(it) && chit_available(it, isFav) > 0
+		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
+		&& (gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
 		if(isFav)
 		{
