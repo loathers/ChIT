@@ -6298,6 +6298,38 @@ void bakeValhalla() {
 
 }
 
+// bakeRecipes written by soolar
+void bakeRecipes()
+{
+	buffer result;
+	
+	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
+	result.append('<tr><th class="label" colspan="3"><a class="visit" target="mainpane" href="./inventory.php?which=2"><img src="');
+	result.append(imagePath);
+	result.append('recipes.png">Recipes</a></th></tr><tr style="font-weight:bold;"><td>Item</td><td>On Hand</td><td>Creatable</td></tr>');
+	
+	foreach it in $items[Golden Light,Louder Than Bomb,Handsome Devil] // will eventually set this up to load from a saved list
+	{
+		if (item_amount(it) + creatable_amount(it) > 0)
+		{
+			result.append('<tr><td><a class="done" href="');
+			result.append(sideCommand("make 1 " + it));
+			result.append('">');
+			result.append(it);
+			result.append('</a></td><td>');
+			result.append(item_amount(it));
+			result.append('</td><td>');
+			result.append(creatable_amount(it));
+			result.append('</td></tr>');
+		}
+	}
+	
+	result.append('</tbody></table>');
+	
+	chitBricks["recipes"] = result;
+	chitTools["recipes"] = "Recipes|recipes.png";
+}
+
 void bakeBricks() {
 
 	bakeHeader();
@@ -6335,6 +6367,7 @@ void bakeBricks() {
 						case "tracker":		bakeTracker();		break;
 						case "thrall":		bakeThrall();		break;
 						case "gear":		bakeGear();			break;
+						case "recipes":		bakeRecipes();	break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
@@ -6443,6 +6476,7 @@ buffer buildCloset() {
 			case "tracker":
 			case "update":
 			case "gear":
+			case "recipes":
 				if ((chitBricks contains brick) && (chitBricks[brick] != "")) {
 					result.append('<div id="chit_tool' + brick + '" class="chit_skeleton" style="display:none">');
 					result.append(chitBricks[brick]);
