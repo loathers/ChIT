@@ -4533,6 +4533,7 @@ void bakeGear() {
 	result.append('</tbody></table>');
 
 	chitBricks["gear"] = result.to_string();
+	chitTools["gear"] = "Gear|equipment.png";
 }
 
 void pickOutfit() {
