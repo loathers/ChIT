@@ -6442,6 +6442,7 @@ buffer buildCloset() {
 			case "elements":
 			case "tracker":
 			case "update":
+			case "gear":
 				if ((chitBricks contains brick) && (chitBricks[brick] != "")) {
 					result.append('<div id="chit_tool' + brick + '" class="chit_skeleton" style="display:none">');
 					result.append(chitBricks[brick]);
