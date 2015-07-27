@@ -5585,7 +5585,6 @@ void bakeTracker() {
 					return f - 6688;
 			return 0;
 		}
-		int nts = 0;
 		result.append("<tr><td>");
 		switch(get_property("questL11Worship")) {
 		case "started": case "step1": case "step2":
@@ -5613,22 +5612,10 @@ void bakeTracker() {
 						case "Apartment":
 							//result.append(item_report(get_property("relocatePygmyLawyer").to_int() == my_ascensions(), "relocate Lawyers, "));
 							//result.append(item_report(false, "Search for Boss<br>"));
-							nts = $location[The Hidden Apartment Building].turns_spent;
-							if (nts<=9) {
-								result.append(" ["+(nts%9)+"/9], ");
-							} else {
-								result.append(" ["+((nts-9)%8)+"/8], ");
-							}
 							result.append(item_report((have_effect($effect[Thrice-Cursed])>0), "Thrice-Cursed"));
 							result.append("<br>");
 							break;
 						case "Office":
-							nts = $location[The Hidden Office Building].turns_spent;
-							if (nts<=6) {
-								result.append(" ["+(nts%5)+"/5], ");
-							} else {
-								result.append(" ["+((nts-5)%4)+"/4], ");
-							}
 							if(available_amount($item[McClusky file (complete)]) > 0)
 								result.append(item_report(false, "Kill Boss!"));
 							else {
