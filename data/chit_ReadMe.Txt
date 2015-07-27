@@ -190,7 +190,7 @@ chit.disable: If this is set true, then chit will be disabled
 -------------------------------------------------------------------------------------
 chit.checkversion: Automatically check for new versions once a day
           Must be enabled for the "update" brick to work
-          Default: true
+          Default: false
 
 *************************************************************************************
 Chez offers many thanks to:

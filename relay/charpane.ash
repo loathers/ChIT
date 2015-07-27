@@ -4135,6 +4135,8 @@ void addFavGear() {
 			addGear($item[mohawk wig], "quest");
 			break;
 	}
+	if(get_property("questL11Black") == "started")
+		addGear($item[blackberry galoshes], "quest");
 	if($strings[step3, step4] contains get_property("questL11Worship")) {
 		if(item_amount($item[antique machete]) > 0)
 			addGear($item[antique machete], "quest");
@@ -4153,11 +4155,10 @@ void addFavGear() {
 	switch(get_property("questG04Nemesis")) {
 	case "step5":  // Kill Beelzebozo
 		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
-
 		break;
 	case "step8":	// Fight Nemesis in The Dark and Dank and Sinister Cave
 	case "step20":	// Fight Nemesis on Secret Tropical Island Volcano Lair
-		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages]);
+		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages], "quest");
 		break;
 	case "step18":
 		addGear($items[fouet de tortue-dressage, spaghetti cult robe], "quest");
@@ -4172,6 +4173,9 @@ void addFavGear() {
 	], "charter");
 	
 	switch(my_path()) {
+	case "KOLHS":
+		addGear($items[Yearbook Club Camera, over-the-shoulder Folder Holder], "path");
+		break;
 	case "Heavy Rains":
 		addGear($items[pool skimmer, thor's pliers], "path");
 		break;
@@ -4229,7 +4233,15 @@ void pickerGear(slot s) {
 		picker.addItemIcon(it, "Click for item description", 0, modify_image);
 		picker.append('</a></td>');
 	}
+	
 	// give configurable gear some love if it's in slot
+	item fold_from(item original) {
+		foreach it in get_related(in_slot, "fold")
+			if(it != in_slot)
+				return it;
+		return $item[none];
+	}
+	string cmd;
 	switch(in_slot)
 	{
 		case $item[buddy bjorn]:
@@ -4252,12 +4264,24 @@ void pickerGear(slot s) {
 			picker.append(')</a></td></tr>');
 			break;
 		case $item[jarlsberg's pan]:
+			cmd = "Shake Portal Open";
 		case $item[jarlsberg's pan (cosmic portal mode)]:
-			item other = (in_slot == $item[jarlsberg's pan] ? $item[jarlsberg's pan (cosmic portal mode)] : $item[jarlsberg's pan]);
+			if(cmd == "") cmd = "Shake Portal Closed";
+		case $item[Boris's Helm]:
+			if(cmd == "") cmd = "Twist Horns Askew";
+		case $item[Boris's Helm (askew)]:
+			if(cmd == "") cmd = "Untwist Horns";
+		case $item[Sneaky Pete's leather jacket]:
+			if(cmd == "") cmd = "Pop Collar Aggressively";
+		case $item[Sneaky Pete's leather jacket (collar popped)]:
+			if(cmd == "") cmd = "Unpop Collar";
+			item other = fold_from(in_slot);
 			start_option(other, true);
 			picker.append('<td colspan="2"><a class="change" href="');
-			picker.append(sideCommand("unequip " + in_slot + "; use " + in_slot + "; equip " + other));
-			picker.append('">Shake Pan</a></td>');
+			picker.append(sideCommand("fold " + other));
+			picker.append('">');
+			picker.append(cmd);
+			picker.append('</a></td>');
 			break;
 		case $item[over-the-shoulder Folder Holder]:
 			start_option(in_slot, true);
@@ -4288,24 +4312,19 @@ void pickerGear(slot s) {
 	if(in_slot != $item[none]) {
 		start_option(in_slot,true);
 		picker.append('<td><a class="change" href="');
-		picker.append(sideCommand("unequip " + s));
+		picker.append(sideCommand("unequip " + s + "; set _chitUnequip_" + s + " = " + in_slot));
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
 		picker.append(modifyName(in_slot));
 		picker.append('</a></td><td>');
 		add_favorite_button(in_slot);
 		picker.append('</td></tr>');
-	}
-	else
-	{
+	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
-		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1)
-		{
+		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
 			picker.append("You can't equip an off-hand item with a ");
 			picker.append(weapon_hands(equipped_item($slot[weapon])));
 			picker.append("-handed weapon equipped!");
-		}
-		else
-		{
+		} else {
 			picker.append("You don't have a");
 			// gotta get that a/an right
 			string slotStart = to_lower_case(char_at(to_string(s),0));
@@ -4314,6 +4333,17 @@ void pickerGear(slot s) {
 			picker.append(" ");
 			picker.append(s);
 			picker.append(" equipped.");
+			item requip = get_property("_chitUnequip_" + s).to_item();
+			if(requip != $item[none]) {
+				start_option(requip,true);
+				picker.append('<td><a class="change" href="');
+				picker.append(sideCommand("equip " + requip));
+				picker.append('"><span style="font-weight:bold;">re-equip</span> ');
+				picker.append(modifyName(requip));
+				picker.append('</a></td><td>');
+				add_favorite_button(requip);
+				picker.append('</td></tr>');
+			}
 		}
 		picker.append('</td></tr>');
 	}
@@ -6493,7 +6523,7 @@ buffer modifyPage(buffer source) {
 	if(vars["chit.disable"]=="true")
 		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
 	//Set default values for zlib variables
-	setvar("chit.checkversion", true);
+	setvar("chit.checkversion", false);
 	setvar("chit.disable", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
