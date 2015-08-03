@@ -4264,7 +4264,7 @@ void pickerGear(slot s) {
 			picker.append(')</a></td></tr>');
 			break;
 		case $item[jarlsberg's pan]:
-			cmd = "Shake Portal Open";
+			              cmd = "Shake Portal Open";
 		case $item[jarlsberg's pan (cosmic portal mode)]:
 			if(cmd == "") cmd = "Shake Portal Closed";
 		case $item[Boris's Helm]:
@@ -4333,8 +4333,17 @@ void pickerGear(slot s) {
 			picker.append(" ");
 			picker.append(s);
 			picker.append(" equipped.");
-			item requip = get_property("_chitUnequip_" + s).to_item();
+			item unequip() {
+				item unequip = get_property("_chitUnequip_" + s).to_item();
+				if(favGear contains unequip)
+					return $item[none];
+				foreach reason, rec in recommendedGear
+					if(rec == unequip) return $item[none];
+				return unequip;
+			}
+			item requip = unequip();
 			if(requip != $item[none]) {
+				picker.append('<br />');
 				start_option(requip,true);
 				picker.append('<td><a class="change" href="');
 				picker.append(sideCommand("equip " + requip));
@@ -4342,7 +4351,6 @@ void pickerGear(slot s) {
 				picker.append(modifyName(requip));
 				picker.append('</a></td><td>');
 				add_favorite_button(requip);
-				picker.append('</td></tr>');
 			}
 		}
 		picker.append('</td></tr>');
