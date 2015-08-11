@@ -1939,7 +1939,7 @@ void pickerServant() {
 	}
 
 	buffer picker;
-	picker.pickerStart("fam", "Put thy Servant to Work");
+	picker.pickerStart("servant", "Put thy Servant to Work");
 	picker.addLoader("Summoning Servant...");
 	boolean sad = true;
 	foreach s in $servants[]
@@ -2246,12 +2246,12 @@ void FamEd() {
 		result.append('</a></th></tr>');
 		
 		result.append('<tr><td class="icon" title="Servant">');
-		result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
+		result.append('<a class="chit_launcher" rel="chit_pickerservant" href="#">');
 		result.append('<img title="Release thy Servant" src=');
 		result.append(img);
 		result.append('></a></td>');
 		if(type != $servant[none]) {
-			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfamgear" href="#"><span style="color:blue;font-weight:bold">');
+			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerservant" href="#"><span style="color:blue;font-weight:bold">');
 			foreach i in $ints[1, 7, 14]
 				if(lvl >= i) {
 					result.append(type.servant_ability(i));
@@ -4171,6 +4171,8 @@ void addFavGear() {
 		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,
 		lube-shoes, Dinsey mascot mask, trash net,
 	], "charter");
+	if(get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true")
+		addGear($items[smooth velvet pants, smooth velvet shirt, smooth velvet hat, smooth velvet pocket square, smooth velvet socks, smooth velvet hanky], "charter");
 	
 	switch(my_path()) {
 	case "KOLHS":
@@ -4557,6 +4559,10 @@ void bakeGear() {
 
 
 	void addSlot(slot s) {
+		if(s == $slot[shirt] && !have_skill($skill[Torso Awaregness])) {
+			result.append('<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Torso Unawaregness"></span>');
+			return;
+		}
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
