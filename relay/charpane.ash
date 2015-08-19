@@ -4157,10 +4157,10 @@ void addFavGear() {
 		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
 		break;
 	case "step8":	// Fight Nemesis in The Dark and Dank and Sinister Cave
-	case "step20":	// Fight Nemesis on Secret Tropical Island Volcano Lair
+	case "step27":	// Fight Nemesis on Secret Tropical Island Volcano Lair
 		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages], "quest");
 		break;
-	case "step18":
+	case "step25":
 		addGear($items[fouet de tortue-dressage, spaghetti cult robe], "quest");
 		break;
 	}
@@ -4177,6 +4177,9 @@ void addFavGear() {
 	switch(my_path()) {
 	case "KOLHS":
 		addGear($items[Yearbook Club Camera, over-the-shoulder Folder Holder], "path");
+		break;
+	case "Actually Ed the Undying":
+		addGear($items[The Crown of Ed the Undying, 7961, obsidian nutcracker], "path");
 		break;
 	case "Heavy Rains":
 		addGear($items[pool skimmer, thor's pliers], "path");
