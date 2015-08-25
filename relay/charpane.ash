@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r15959; // Familiar drop info easily accessible!
+since r16242; // effect desc_to_effect(string)
 import "zlib.ash";
 
 /************************************************************************************
@@ -879,20 +879,22 @@ string parseMods(string evm) {
 
 	return evm;
 }
-string parseEff(string ef) {
-	# if(ef == "Polka of Plenty") ef = "Video... Games?";
+string parseEff(effect ef) {
+	# if(ef == $effect[Polka of Plenty]) ef = $effect[Video... Games?];
 	switch(ef) {
-	case "Knob Goblin Perfume": return "";
-	case "Bored With Explosions": 
+	case $effect[Knob Goblin Perfume]: return "";
+	case $effect[Bored With Explosions]: 
 		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
 		if(wafe.find()) return wafe.group(1);
 		return "You're just over them"; 
 	}
 
-	return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
+	# return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
+	return string_modifier(ef,"Evaluated Modifiers").parseMods();
 }
 
 record buff {
+	effect eff;
 	string effectName;
 	string effectHTML;
 	string effectImage;
@@ -910,7 +912,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*).*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)".*?\\("([^"]+)"\\);\'>)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -919,20 +921,21 @@ buff parseBuff(string source) {
 		columnIcon = replace_string(columnIcon,"width=30 height=30","");
 		
 		myBuff.effectImage = parse.group(3);
-		myBuff.effectName = parse.group(4);
-		spoiler = parse.group(5);		// This appears for "Form of...Bird!" and "On the Trail"
+		myBuff.eff = parse.group(4).desc_to_effect();
+		myBuff.effectName = parse.group(5);
+		spoiler = parse.group(6);		// This appears for "Form of...Bird!" and "On the Trail"
 		if(get_campground() contains $item[jar of psychoses (The Crackpot Mystic)] && $strings[Consumed by Anger, Consumed by Doubt, Consumed by Fear, Consumed by Regret] contains myBuff.effectName)
-			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(7)+'</a>';
+			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(8)+'</a>';
 		else
-			columnTurns = parse.group(6).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
-		if(parse.group(7) == "&infin;") {	// Is it intrinsic?
+			columnTurns = parse.group(7).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
+		if(parse.group(8) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
 		} else
-			myBuff.effectTurns = parse.group(7).to_int();
+			myBuff.effectTurns = parse.group(8).to_int();
 		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
-		if(parse.group(8) != "")
-			columnArrow = parse.group(8).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
+		if(parse.group(9) != "")
+			columnArrow = parse.group(9).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
 		else if(parse.group(1) != "" ) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
@@ -994,14 +997,14 @@ buff parseBuff(string source) {
 	}
 	
 	// Flavour of Magic picker!
-	if($strings[Spirit of Cayenne, Spirit of Peppermint, Spirit of Garlic, Spirit of Wormwood, Spirit of Bacon Grease] contains myBuff.effectName) {
+	if($effects[Spirit of Cayenne, Spirit of Peppermint, Spirit of Garlic, Spirit of Wormwood, Spirit of Bacon Grease] contains myBuff.eff) {
 		columnIcon = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">' + columnIcon + '</a>';
 		columnTurns = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a>';
 		pickerFlavour();
 	}
 	
 	// Check Mirror picker
-	if($strings[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.effectName)
+	if($effects[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.eff)
 		columnTurns = '<a target="mainpane" href="skills.php?pwd='+my_hash()+'&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">&infin;</a>';
 
 	//Add spoiler info
@@ -1044,7 +1047,7 @@ buff parseBuff(string source) {
 	
 	//ckb: Add modification details for buffs and effects
 	if(vars["chit.effects.describe"] == "true") {
-		string efMod = parseEff(myBuff.effectName);
+		string efMod = parseEff(myBuff.eff);
 		if(length(efMod)>0) {
 			result.append('<br><span class="efmods">');
 			result.append(efMod);
@@ -4859,7 +4862,7 @@ void bakeCharacter() {
 	//Level + Council
 	string councilStyle = "";
 	string councilText = "Visit the Council";
-	if(to_int(get_property("lastCouncilVisit")) < my_level() && get_property("kingLiberated") == "false") {
+	if(to_int(get_property("lastCouncilVisit")) < my_level() && my_path() != "Community Service" && get_property("kingLiberated") == "false") {
 		councilStyle = 'background-color:#F0F060';
 		councilText = "The Council wants to see you urgently";		
 	}
