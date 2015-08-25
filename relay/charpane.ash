@@ -912,7 +912,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)".*?eff\\("([^"]+)"\\).*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
