@@ -6510,6 +6510,8 @@ buffer spelunky(buffer source) {
 	int index = source.index_of("<center><p><b><font size=2>Effects");
 	if(index < 0) // Try compact charpane
 		index = source.index_of("<hr width=50%><font size=2 color=black>");
+	if(index < 0) // apathetic mood (Feature by Hellno)
+		index = source.index_of("</center><center><font size=1>[<a href=\"charpane.php\">refresh</a>]</font>");
 	if(index <0) return source;
 	
 	// Add combat phase information
