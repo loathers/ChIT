@@ -2838,6 +2838,23 @@ void bakeThrall() {
 	pickerThrall();
 }
 
+void bakeVYKEA() {
+	if(chitSource contains "vykea") {
+		buffer result;
+		matcher VYKEA = create_matcher("VYKEA Companion</b></font><br><font size=2>(<b>[^<]+</b> the level \\d+ [^<]+)<br><img src=(http://images\.kingdomofloathing\.com[^.]+).gif", chitSource["vykea"]);
+		if(find(VYKEA)) {
+			result.append('<table id="chit_VYKEA" class="chit_brick nospace">');
+			# result.append('<tr><th colspan=2 title="VYKEA Companion">VYKEA Companion</th></tr>');
+			result.append('<tr class="effect"><td class="vykea"><img title="VYKEA Companion" src="');
+			result.append(VYKEA.group(2));
+			result.append('.gif"></td><td class="info"><b>VYKEA Companion</b></p>');
+			result.append(VYKEA.group(1));
+			result.append('</td></tr></table>');
+			chitBricks["vykea"] = result;
+		}
+	}
+}
+
 string currentMood() {
 	matcher pattern = create_matcher(">mood (.*?)</a>", chitSource["mood"]);
 	if(find(pattern))
@@ -4185,7 +4202,7 @@ void addFavGear() {
 		addGear($items[The Crown of Ed the Undying, 7961, obsidian nutcracker], "path");
 		break;
 	case "Heavy Rains":
-		addGear($items[pool skimmer, thor's pliers], "path");
+		addGear($items[pool skimmer, lightning rod, thunder down underwear, famous blue raincoat, thor's pliers], "path");
 		break;
 	case "One Crazy Random Summer":
 		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses], "path");
@@ -6128,6 +6145,11 @@ boolean parsePage(buffer original) {
 		// delete all matches
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error parsing start of charpane", "red", -1);
+	
+	// Find VYKEA companion
+	parse = create_matcher("<font size=2><b>VYKEA Companion</b>.+?<p>", source);
+	if(find(parse))
+		chitSource["vykea"] = parse.group(0);
 
 	//Footer: Includes everything after the close body tag
 	parse = create_matcher("(</body></html>.*)", source);
@@ -6372,6 +6394,7 @@ void bakeBricks() {
 						case "tracker":		bakeTracker();		break;
 						case "thrall":		bakeThrall();		break;
 						case "gear":		bakeGear();			break;
+						case "vykea":		bakeVYKEA();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
@@ -6568,7 +6591,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.spookyraven", true);
 	setvar("chit.helpers.xiblaxian", true);
 	setvar("chit.roof.layout", "character,stats,gear");
-	setvar("chit.walls.layout", "helpers,thrall,effects");
+	setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
 	setvar("chit.floor.layout", "update,familiar");
 	setvar("chit.stats.showbars", true);
 	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
@@ -6578,33 +6601,20 @@ buffer modifyPage(buffer source) {
 	setvar("chit.gear.recommend", "in-run");
 	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
-	
-	// chit.favgear was renamed to chit.gear.favorites because that fit way better.
-	// preserve it. Might get rid of this eventually.
-	if(vars["chit.favgear"] != "")
-	{
-		setvar("chit.gear.favorites", vars["chit.favgear"]);
-		remove vars["chit.favgear"];
-		updatevars();
-	}
-	else
-	{
-		setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
-			"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
-			"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
-	}
+	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
+		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
+		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	
 	// Check var version.
-	if(get_property("chitVarVer").to_int() < 2) {
-		// New gear brick is really nifty so I want everyone to have a chance to see it!
-		boolean noGearBrick = true;
-		foreach layout in $strings[roof, walls, floor, toolbar]
-			if(vars["chit." + layout + ".layout"].contains_text("gear"))
-				noGearBrick = false;
-		if(noGearBrick)
-			vars["chit.roof.layout"] += ",gear";
-		updatevars();
-		set_property("chitVarVer", "2");
+	if(get_property("chitVarVer").to_int() < 3) {
+		if(!vars["chit.walls.layout"].contains_text("vykea")) {
+			if(vars["chit.walls.layout"].contains_text("effects"))
+				vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("effects", "vykea,effects");
+			else 
+				vars["chit.roof.layout"] += ",gear";
+			updatevars();
+		}
+		set_property("chitVarVer", "3");
 	}
 	
 	//Check for updates (once a day)
