@@ -18,6 +18,8 @@ Inside each area you can place any of the following "bricks":
    quests:     Quest nudges (when available)
    tracker:    Detailed ascension related quest information
    helpers:    Adventure helpers (described in more detail below)
+   thrall:     Displays current Pasta Thrall, if you are a Pastamancer
+   vykea:      Displays current VYKEA companion, if you have one
    effects:    List of current effects (Not available in toolbar)
    organs:     similar to stats, but only shows spleen, stomach and liver (more useful when used in the toolbar)
    substats:   similar to stats, but only shows muscle,myst and moxie (more useful when used in the toolbar)
@@ -29,10 +31,10 @@ So how do you design and build your own house? Easy. Simply place your bricks in
 All of the preferences below can be found in /data/vars_yourname.txt
 -------------------------------------------------------------------------------------
 chit.roof.layout: Comma-separated list of bricks to place in your roof
-          Default: character,stats
+          Default: character,stats,gear
 
 chit.walls.layout: Comma-separated list of bricks to place in your walls
-          Default: helpers,effects
+          Default: helpers,thrall,vykea,effects
 
 chit.floor.layout: Comma-separated list of bricks to place in your floor
           Default: update,familiar

@@ -197,6 +197,11 @@ table.chit_brick tr td.motorcycle  img{
 	height:70px;
 	margin:-3px 0px -9px 0px;
 }
+table.chit_brick tr td.vykea  img{
+	border:0px;
+	padding:0px 0px 10px 0px;
+	max-width:50px;
+}
 
 /* section adds the light grey bar above the table row */
 table.chit_brick tr.section td {
