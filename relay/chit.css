@@ -200,7 +200,7 @@ table.chit_brick tr td.motorcycle  img{
 table.chit_brick tr td.vykea  img{
 	border:0px;
 	padding:0px 0px 10px 0px;
-	max-width:50px;
+	max-width:40px;
 }
 
 /* section adds the light grey bar above the table row */
@@ -820,6 +820,9 @@ img#fam_equip {
 img.chit_icon {
   border:1px solid #D0D0D0 !important;
   margin:1px !important;
+}
+img.chit_icon.alldrops {
+	border-color:#B300FF !important;
 }
 img.chit_icon.hasdrops {
 	border-color:blue !important;

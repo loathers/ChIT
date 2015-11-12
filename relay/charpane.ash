@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r16242; // effect desc_to_effect(string)
+since r16462; // Tracking for Walford's bucket
 import "zlib.ash";
 
 /************************************************************************************
@@ -698,7 +698,7 @@ void pickerFlavour() {
 }
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
-string parseMods(string evm) {
+string parseMods(string evm, boolean span) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 	
 	// Standardize capitalization
@@ -842,8 +842,10 @@ string parseMods(string evm) {
 	evm = replace_string(evm,"Adventures","Adv");
 	evm = replace_string(evm,"PvP Fights","Fites");
 	//highlight items and meat
-	evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
-	evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
+	if(span) {
+		evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
+		evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
+	}
 	//highlight ML
 	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
 	
@@ -869,17 +871,21 @@ string parseMods(string evm) {
 		}
 		return output;
 	}
-	matcher elemental = create_matcher("([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]*)(?:,|$)", evm);
-	while(elemental.find()) {
-		if(elemental.group(2) == "Prismatic")
-			evm = replace_string(evm, elemental.group(1), prismatize(elemental.group(1)));
-		else
-			evm = replace_string(evm, elemental.group(1), "<span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
+	if(span) {
+		matcher elemental = create_matcher("([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]*)(?:,|$)", evm);
+		while(elemental.find()) {
+			if(elemental.group(2) == "Prismatic")
+				evm = replace_string(evm, elemental.group(1), prismatize(elemental.group(1)));
+			else
+				evm = replace_string(evm, elemental.group(1), "<span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
+		}
 	}
 
 	return evm;
 }
-string parseEff(effect ef) {
+string parseMods(string evm) { return parseMods(evm, true); }
+
+string parseEff(effect ef, boolean span) {
 	# if(ef == $effect[Polka of Plenty]) ef = $effect[Video... Games?];
 	switch(ef) {
 	case $effect[Knob Goblin Perfume]: return "";
@@ -890,8 +896,9 @@ string parseEff(effect ef) {
 	}
 
 	# return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
-	return string_modifier(ef,"Evaluated Modifiers").parseMods();
+	return string_modifier(ef,"Evaluated Modifiers").parseMods(span);
 }
+string parseEff(effect ef) { return parseEff(ef, true); }
 
 record buff {
 	effect eff;
@@ -1036,6 +1043,14 @@ buff parseBuff(string source) {
 	result.append('<tr class="effect"');
 	if(length(style) > 0)
 		result.append(' style="' + style + '"');
+	if(!to_boolean(vars["chit.effects.describe"])) {
+		string efMod = parseEff(myBuff.eff, false);
+		if(length(efMod)>0) {
+			result.append(' title="');
+			result.append(efMod);
+			result.append('"');
+		}
+	}
 	result.append('>');
 	if(showIcons) 
 		result.append('<td class="icon">' + columnIcon + '</td>');
@@ -1046,7 +1061,7 @@ buff parseBuff(string source) {
 	result.append(effectAlias);
 	
 	//ckb: Add modification details for buffs and effects
-	if(vars["chit.effects.describe"] == "true") {
+	if(to_boolean(vars["chit.effects.describe"])) {
 		string efMod = parseEff(myBuff.eff);
 		if(length(efMod)>0) {
 			result.append('<br><span class="efmods">');
@@ -2408,6 +2423,19 @@ void addItemIcon(buffer result, item it, string title)
 	addItemIcon(result,it,title,0);
 }
 
+boolean need_drop(familiar f) {
+	if(!can_interact())
+		switch(f) {
+		case $familiar[Grimstone Golem]:
+			return available_amount($item[grimstone mask]) + available_amount($item[ornate dowsing rod]) == 0;
+		case $familiar[Angry Jung Man]:
+			return available_amount($item[psychoanalytic jar])
+				+ available_amount($item[jar of psychoses (The Crackpot Mystic)])
+				+ available_amount($item[digital key]) == 0;
+		}
+	return true;
+}
+
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
 {
@@ -2419,8 +2447,12 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
 	result.append('<img class="chit_icon');
-	if(dropsLeft > 0)
-		result.append(' hasdrops');
+	if(dropsLeft > 0) {
+		if(f.drops_today == 0 && need_drop(f))
+			result.append(' alldrops');
+		else
+			result.append(' hasdrops');
+	}
 	if(is100 != $familiar[none])
 	{
 		if(is100 != f)
@@ -2841,7 +2873,7 @@ void bakeThrall() {
 void bakeVYKEA() {
 	if(chitSource contains "vykea") {
 		buffer result;
-		matcher VYKEA = create_matcher("VYKEA Companion</b></font><br><font size=2>(<b>[^<]+</b> the level \\d+ [^<]+)<br><img src=(http://images\.kingdomofloathing\.com[^.]+).gif", chitSource["vykea"]);
+		matcher VYKEA = create_matcher("VYKEA Companion</b></font><br><font size=2>(<b>[^<]+</b> the level \\d+ )[^<]+<br><img src=(http://images\.kingdomofloathing\.com[^.]+).gif", chitSource["vykea"]);
 		if(find(VYKEA)) {
 			result.append('<table id="chit_VYKEA" class="chit_brick nospace">');
 			# result.append('<tr><th colspan=2 title="VYKEA Companion">VYKEA Companion</th></tr>');
@@ -2849,6 +2881,9 @@ void bakeVYKEA() {
 			result.append(VYKEA.group(2));
 			result.append('.gif"></td><td class="info"><b>VYKEA Companion</b></p>');
 			result.append(VYKEA.group(1));
+			result.append(get_property("_VYKEACompanionRune")); // Mafia tracks runes even though KoL does not display them
+			result.append(" ");
+			result.append(get_property("_VYKEACompanionType"));
 			result.append('</td></tr></table>');
 			chitBricks["vykea"] = result;
 		}
@@ -3397,9 +3432,29 @@ void addCIQuest(buffer result) {
 		result.append(final);
 		result.append('"><a href="place.php?whichplace=airport_spooky&action=airport2_radio" target="mainpane"><div class="progressbar" style="width:');
 		result.append(to_string(100.0 * current / final));
-		result.append('%"></div></a></div></td></td>');
+		result.append('%"></div></a></div></td>');
 	}
 	result.append('</tr>');
+}
+
+void addWalfordBucket(buffer result) {
+	if(have_equipped($item[Walford's bucket]) || to_boolean(get_property("_walfordQuestStartedToday"))) {
+		int current = get_property("walfordBucketProgress").to_int();
+		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">Walford</a></td>');
+		result.append('<td class="info"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
+		result.append(current);
+		result.append(' % </a></td>');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress"><div class="progressbox" title="');
+			result.append(current);
+			result.append('% full of ');
+			result.append(get_property("walfordBucketItem"));
+			result.append('"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane"><div class="progressbar" style="width:');
+			result.append(current);
+			result.append('%"></div></a></div></td>');
+		}
+		result.append('</tr>');
+	}
 }
 
 void addAud(buffer result) {
@@ -3905,6 +3960,7 @@ void bakeStats() {
 				result.addHooch();
 			
 			result.addCIQuest();
+			result.addWalfordBucket();
 		}
 		
 		result.append("</tbody>");
@@ -4123,7 +4179,7 @@ void addFavGear() {
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($item[continuum transfunctioner], "quest");
-	if(get_property("questM12Pirate") != "finished" && !aftercore)
+	if(get_property("questL11Palindome") == "unstarted" && !aftercore)
 		addGear($item[pirate fledges], "quest");
 	else if(get_property("currentHardBountItem").contains_text("warrrrrt"))
 		addGear($item[pirate fledges], "bounty");
@@ -4189,10 +4245,12 @@ void addFavGear() {
 	addGear($items[
 		Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker,
 		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,
-		lube-shoes, Dinsey mascot mask, trash net,
+		lube-shoes, Dinsey mascot mask, trash net
 	], "charter");
-	if(get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true")
+	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
 		addGear($items[smooth velvet pants, smooth velvet shirt, smooth velvet hat, smooth velvet pocket square, smooth velvet socks, smooth velvet hanky], "charter");
+	if(get_property("coldAirportAlways") == "true" || get_property("_coldAirportToday") == "true")
+		addGear($items[bellhop's hat, Walford's bucket], "charter");
 	
 	switch(my_path()) {
 	case "KOLHS":
@@ -4221,6 +4279,8 @@ void addFavGear() {
 		addGear($items[Hand in Glove,astral belt,numberwang,badge of authority,smoker's cloak,spiky turtle helmet,
 			Sneaky Pete's leather jacket (collar popped),red shirt,Metal band T-shirt,hipposkin poncho,goth kid t-shirt],"ML");
 		addGear($item[World's Best Adventurer sash], "Wow");
+		addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
+			astral mask, astral pet sweater]); // You must have taken this for a reason
 	}
 	
 	// manual favorites
@@ -4356,7 +4416,10 @@ void pickerGear(slot s) {
 			if($strings["a","e","i","o","u"] contains slotStart)
 				picker.append("n");
 			picker.append(" ");
-			picker.append(s);
+			if(s == $slot[back])
+				picker.append("cloak");
+			else
+				picker.append(s);
 			picker.append(" equipped.");
 			item unequip() {
 				item unequip = get_property("_chitUnequip_" + s).to_item();
@@ -4505,22 +4568,15 @@ void pickerGear(slot s) {
 		}
 	}
 	
-	void add_gear_section(string name, boolean [item] list)
-	{
+	void add_gear_section(string name, boolean [item] list) {
 		boolean [item] toDisplay;
 		foreach it in list
-		{
-			if(it != $item[none] && good_slot(s, it) && in_slot != it)
-			{
-				if(!(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
+			if(it != $item[none] && good_slot(s, it) && in_slot != it
+				&& !(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
 					toDisplay[it] = true;
-			}
-		}
 		
 		if(toDisplay.count() > 0)
-		{
-			switch(to_string(vars["chit.gear.layout"]))
-			{
+			switch(to_string(vars["chit.gear.layout"])) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				picker.append(name);
@@ -4532,15 +4588,12 @@ void pickerGear(slot s) {
 				picker.append(name);
 				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
 				break;
-				
-			default:
 			}
 			
 			foreach it in toDisplay
 				add_gear_option(it, name);
 			
-			switch(to_string(vars["chit.gear.layout"]))
-			{
+			switch(to_string(vars["chit.gear.layout"])) {
 			case "experimental":
 				picker.append('</div></td></tr>');
 				break;
@@ -4548,21 +4601,28 @@ void pickerGear(slot s) {
 			case "minimal":
 				picker.append('</td></tr>');
 				break;
-			
-			default:
 			}
-		}
 	}
 	
 	add_gear_section("favorites", favGear);
 	
 	foreach reason in recommendedGear
-	{
 		add_gear_section(reason, recommendedGear[reason]);
-	}
 	
-	if(!any_options)
-		picker.addSadFace("You have no favorited gear available for this slot. Poor you :(");
+	// If there are no available recommended items in an empty slot, recomment what is available.
+	if(!any_options) {
+		item [int] avail;
+		foreach it in get_inventory()
+			if(can_equip(it) && good_slot(s, it))
+				avail[ count(avail) ] = it;
+
+		if(count(avail) > 0) {
+			sort avail by -get_power(value);
+			for x from 0 to min(count(avail) - 1, 11)
+				add_gear_option(avail[x], "favorites");
+		} else // Nothing to recommend?
+			picker.addSadFace("You have nothing available for this slot. Poor you :(");
+	}
 
 	picker.addLoader("Changing " + s + "...");
 	picker.addLoader("Adding to favorites...", "addfav");
