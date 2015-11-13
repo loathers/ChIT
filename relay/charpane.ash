@@ -841,13 +841,12 @@ string parseMods(string evm, boolean span) {
 	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
 	evm = replace_string(evm,"Adventures","Adv");
 	evm = replace_string(evm,"PvP Fights","Fites");
-	//highlight items and meat
+	//highlight items, meat & ML
 	if(span) {
 		evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
 		evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
+		evm = replace_string(evm,"ML","<span class=modml>ML</span>");
 	}
-	//highlight ML
-	evm = replace_string(evm,"ML","<span class=modml>ML</span>");
 	
 	//decorate elemental effects with pretty colors
 	string prismatize(string input) {
