@@ -4248,8 +4248,11 @@ void addFavGear() {
 	], "charter");
 	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
 		addGear($items[smooth velvet pants, smooth velvet shirt, smooth velvet hat, smooth velvet pocket square, smooth velvet socks, smooth velvet hanky], "charter");
-	if(get_property("coldAirportAlways") == "true" || get_property("_coldAirportToday") == "true")
+	if(get_property("coldAirportAlways") == "true" || get_property("_coldAirportToday") == "true") {
 		addGear($items[bellhop's hat, Walford's bucket], "charter");
+		if(get_property("walfordBucketItem") == "bolts")
+			addGear($item[VYKEA hex key], "charter");
+	}
 	
 	switch(my_path()) {
 	case "KOLHS":
@@ -6677,8 +6680,10 @@ buffer modifyPage(buffer source) {
 	}
 	
 	//Check for updates (once a day)
-	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit")) {
-		if(get_property("_svnUpdated") == "false" && !svn_at_head("mafiachit")) {
+	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit") && get_property("_svnUpdated") == "false") {
+		if(get_property("_chitSVNatHead").length() == 0)
+			set_property("_chitSVNatHead", svn_at_head("mafiachit"));
+		if(get_property("_chitSVNatHead") == "false") {
 			if(get_property("_chitChecked") != "true")
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
 			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
