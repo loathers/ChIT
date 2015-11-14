@@ -109,7 +109,7 @@ void bakeUpdate(string thisver, string prefix, string newver) {
 	result.append(' is now available');
 	result.append('<br>Click <a href="');
 	if(svn_exists("mafiachit")) {
-		result.append(sideCommand('svn update mafiachit'));
+		result.append(sideCommand('svn update mafiachit; set _chitSVNatHead = true;'));
 		result.append('" title="SVN Update">here</a> to upgrade from SVN</p>');
 	} else {
 		result.append(sideCommand('svn checkout https://svn.code.sf.net/p/mafiachit/code/'));
