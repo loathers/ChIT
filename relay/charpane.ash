@@ -3439,8 +3439,14 @@ void addCIQuest(buffer result) {
 void addWalfordBucket(buffer result) {
 	if(have_equipped($item[Walford's bucket]) || to_boolean(get_property("questECoBucket") != "unstarted")) {
 		int current = get_property("walfordBucketProgress").to_int();
-		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">Walford</a></td>');
-		result.append('<td class="info"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
+		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
+		if(current == 100)
+			result.append('<span style=color:green>Walford</span>');
+		else if (!have_equipped($item[Walford's bucket])) {
+			result.append('<span style=color:red>Walford</span>');
+		else
+			result.append('Walford');
+		result.append('</a></td><td class="info"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
 		result.append(current);
 		result.append(' % </a></td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
