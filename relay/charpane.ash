@@ -3437,7 +3437,7 @@ void addCIQuest(buffer result) {
 }
 
 void addWalfordBucket(buffer result) {
-	if(have_equipped($item[Walford's bucket]) || to_boolean(get_property("_walfordQuestStartedToday"))) {
+	if(have_equipped($item[Walford's bucket]) || to_boolean(get_property("questECoBucket") != "unstarted")) {
 		int current = get_property("walfordBucketProgress").to_int();
 		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">Walford</a></td>');
 		result.append('<td class="info"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
