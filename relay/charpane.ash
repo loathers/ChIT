@@ -3442,7 +3442,7 @@ void addWalfordBucket(buffer result) {
 		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
 		if(current == 100)
 			result.append('<span style=color:green>Walford</span>');
-		else if (!have_equipped($item[Walford's bucket])) {
+		else if (!have_equipped($item[Walford's bucket]))
 			result.append('<span style=color:red>Walford</span>');
 		else
 			result.append('Walford');
