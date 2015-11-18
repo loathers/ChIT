@@ -2431,6 +2431,7 @@ boolean need_drop(familiar f) {
 			return available_amount($item[psychoanalytic jar])
 				+ available_amount($item[jar of psychoses (The Crackpot Mystic)])
 				+ available_amount($item[digital key]) == 0;
+		case $familiar[Gelatinous Cubeling]: return in_hardcore();
 		}
 	return true;
 }
@@ -3437,7 +3438,7 @@ void addCIQuest(buffer result) {
 }
 
 void addWalfordBucket(buffer result) {
-	if(have_equipped($item[Walford's bucket]) || to_boolean(get_property("questECoBucket") != "unstarted")) {
+	if(have_equipped($item[Walford's bucket]) || get_property("questECoBucket") != "unstarted") {
 		int current = get_property("walfordBucketProgress").to_int();
 		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
 		if(current == 100)
@@ -4321,7 +4322,7 @@ void pickerGear(slot s) {
 	// for use with custom context suggestions
 	void start_option(item it, boolean modify_image)
 	{
-		any_options = true;
+		# any_options = true;
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" onclick="descitem(' + it.descid + ',0,event)">');
 		picker.addItemIcon(it, "Click for item description", 0, modify_image);
 		picker.append('</a></td>');
@@ -4405,7 +4406,7 @@ void pickerGear(slot s) {
 	if(in_slot != $item[none]) {
 		start_option(in_slot,true);
 		picker.append('<td><a class="change" href="');
-		picker.append(sideCommand("unequip " + s + "; set _chitUnequip_" + s + " = " + in_slot));
+		picker.append(sideCommand("unequip " + s));
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
 		picker.append(modifyName(in_slot));
 		picker.append('</a></td><td>');
@@ -4418,36 +4419,22 @@ void pickerGear(slot s) {
 			picker.append(weapon_hands(equipped_item($slot[weapon])));
 			picker.append("-handed weapon equipped!");
 		} else {
-			picker.append("You don't have a");
+			picker.append("You don't have ");
 			// gotta get that a/an right
-			string slotStart = to_lower_case(char_at(to_string(s),0));
-			if($strings["a","e","i","o","u"] contains slotStart)
-				picker.append("n");
-			picker.append(" ");
-			if(s == $slot[back])
-				picker.append("cloak");
-			else
+			switch(s) {
+			case $slot[back]:  // back doesn't sound like gear
+				picker.append("a cloak");
+				break;
+			default:
+				picker.append("a");
+				string slotStart = to_lower_case(char_at(to_string(s),0));
+				if($strings[a,e,i,o,u] contains slotStart)
+					picker.append("n");
+				picker.append(" ");
+			case $slot[pants]: // Don't put article in front of pants so skip to here.
 				picker.append(s);
+			}
 			picker.append(" equipped.");
-			item unequip() {
-				item unequip = get_property("_chitUnequip_" + s).to_item();
-				if(favGear contains unequip)
-					return $item[none];
-				foreach reason, rec in recommendedGear
-					if(rec == unequip) return $item[none];
-				return unequip;
-			}
-			item requip = unequip();
-			if(requip != $item[none]) {
-				picker.append('<br />');
-				start_option(requip,true);
-				picker.append('<td><a class="change" href="');
-				picker.append(sideCommand("equip " + requip));
-				picker.append('"><span style="font-weight:bold;">re-equip</span> ');
-				picker.append(modifyName(requip));
-				picker.append('</a></td><td>');
-				add_favorite_button(requip);
-			}
 		}
 		picker.append('</td></tr>');
 	}
@@ -4583,14 +4570,13 @@ void pickerGear(slot s) {
 				&& !(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
 					toDisplay[it] = true;
 		
-		if(toDisplay.count() > 0)
+		if(toDisplay.count() > 0) {
 			switch(to_string(vars["chit.gear.layout"])) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				picker.append(name);
 				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
-				
 			case "minimal":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				picker.append(name);
@@ -4605,11 +4591,11 @@ void pickerGear(slot s) {
 			case "experimental":
 				picker.append('</div></td></tr>');
 				break;
-				
 			case "minimal":
 				picker.append('</td></tr>');
 				break;
 			}
+		}
 	}
 	
 	add_gear_section("favorites", favGear);
@@ -4617,20 +4603,49 @@ void pickerGear(slot s) {
 	foreach reason in recommendedGear
 		add_gear_section(reason, recommendedGear[reason]);
 	
-	// If there are no available recommended items in an empty slot, recomment what is available.
-	if(!any_options) {
+	// Find some best gear to recommend
+	void add_inventory_section() {
 		item [int] avail;
 		foreach it in get_inventory()
-			if(can_equip(it) && good_slot(s, it))
+			if(can_equip(it) && good_slot(s, it) && !(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
-
-		if(count(avail) > 0) {
+		
+		if(avail.count() > 0) {
 			sort avail by -get_power(value);
-			for x from 0 to min(count(avail) - 1, 11)
-				add_gear_option(avail[x], "favorites");
-		} else // Nothing to recommend?
-			picker.addSadFace("You have nothing available for this slot. Poor you :(");
+			
+			switch(to_string(vars["chit.gear.layout"])) {
+			case "experimental":
+				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr>');
+				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+				break;
+			case "minimal":
+				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				break;
+			}
+			
+			// If this is the only section, show no title. Otherwise it is "inventory"
+			string name = any_options? "inventory": "favorites";
+			
+			// For miniaml, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 3 additional items
+			int amount = to_string(vars["chit.gear.layout"]) == "minimal"? 11
+				: any_options? 2: 11;
+			for x from 0 to min(count(avail) - 1, amount)
+				add_gear_option(avail[x], name);
+			
+			switch(to_string(vars["chit.gear.layout"])) {
+			case "experimental":
+				picker.append('</div></td></tr>');
+				break;
+			case "minimal":
+				picker.append('</td></tr>');
+				break;
+			}
+		}
 	}
+	
+	add_inventory_section(); // Last chance to find something in inventory to display
+	if(!any_options)
+		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else") + " available for this slot. Poor you :(");
 
 	picker.addLoader("Changing " + s + "...");
 	picker.addLoader("Adding to favorites...", "addfav");
