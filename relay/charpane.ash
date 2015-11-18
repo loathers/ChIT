@@ -4607,7 +4607,7 @@ void pickerGear(slot s) {
 	void add_inventory_section() {
 		item [int] avail;
 		foreach it in get_inventory()
-			if(can_equip(it) && good_slot(s, it) && !(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
+			if(can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
 		
 		if(avail.count() > 0) {
