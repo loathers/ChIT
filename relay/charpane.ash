@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r16462; // Tracking for Walford's bucket
+since r16484; // VYYKEA Companion support
 import "zlib.ash";
 
 /************************************************************************************
@@ -2871,22 +2871,17 @@ void bakeThrall() {
 }
 
 void bakeVYKEA() {
-	if(chitSource contains "vykea") {
+	vykea v = my_vykea_companion();
+	if(v != $vykea[none]) {
+	# if(chitSource contains "vykea") {
 		buffer result;
-		matcher VYKEA = create_matcher("VYKEA Companion</b></font><br><font size=2>(<b>[^<]+</b> the level \\d+ )[^<]+<br><img src=(http://images\.kingdomofloathing\.com[^.]+).gif", chitSource["vykea"]);
-		if(find(VYKEA)) {
-			result.append('<table id="chit_VYKEA" class="chit_brick nospace">');
-			# result.append('<tr><th colspan=2 title="VYKEA Companion">VYKEA Companion</th></tr>');
-			result.append('<tr class="effect"><td class="vykea"><img title="VYKEA Companion" src="');
-			result.append(VYKEA.group(2));
-			result.append('.gif"></td><td class="info"><b>VYKEA Companion</b></p>');
-			result.append(VYKEA.group(1));
-			result.append(get_property("_VYKEACompanionRune")); // Mafia tracks runes even though KoL does not display them
-			result.append(" ");
-			result.append(get_property("_VYKEACompanionType"));
-			result.append('</td></tr></table>');
-			chitBricks["vykea"] = result;
-		}
+		result.append('<table id="chit_VYKEA" class="chit_brick nospace">');
+		result.append('<tr class="effect"><td class="vykea"><img title="VYKEA Companion" src="images/adventureimages/');
+		result.append(v.image);
+		result.append('"></td><td class="info"><b>VYKEA Companion</b><p style="margin-top:5px;"><b>');
+		result.append(replace_string(to_string(v), ", t", "</b>, t"));
+		result.append('</td></tr></table>');
+		chitBricks["vykea"] = result;
 	}
 }
 
@@ -3440,7 +3435,11 @@ void addCIQuest(buffer result) {
 void addWalfordBucket(buffer result) {
 	if(have_equipped($item[Walford's bucket]) || get_property("questECoBucket") != "unstarted") {
 		int current = get_property("walfordBucketProgress").to_int();
-		result.append('<tr><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
+		result.append('<tr title="');
+		result.append(current);
+		result.append('% full of ');
+		result.append(get_property("walfordBucketItem"));
+		result.append('"><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
 		if(current == 100)
 			result.append('<span style=color:green>Walford</span>');
 		else if (!have_equipped($item[Walford's bucket]))
@@ -3451,11 +3450,7 @@ void addWalfordBucket(buffer result) {
 		result.append(current);
 		result.append(' % </a></td>');
 		if(to_boolean(vars["chit.stats.showbars"])) {
-			result.append('<td class="progress"><div class="progressbox" title="');
-			result.append(current);
-			result.append('% full of ');
-			result.append(get_property("walfordBucketItem"));
-			result.append('"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane"><div class="progressbar" style="width:');
+			result.append('<td class="progress"><div class="progressbox"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane"><div class="progressbar" style="width:');
 			result.append(current);
 			result.append('%"></div></a></div></td>');
 		}
@@ -6229,11 +6224,6 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error parsing start of charpane", "red", -1);
 	
-	// Find VYKEA companion
-	parse = create_matcher("<font size=2><b>VYKEA Companion</b>.+?<p>", source);
-	if(find(parse))
-		chitSource["vykea"] = parse.group(0);
-
 	//Footer: Includes everything after the close body tag
 	parse = create_matcher("(</body></html>.*)", source);
 	if(find(parse)) {
