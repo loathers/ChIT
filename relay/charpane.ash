@@ -16,6 +16,9 @@ Additional major contributors:
 	bordemstirs - Created the florist brick and moved the frams to make charpane taller
 	soolar - Added the gear brick, and some general tweaks/polish
 
+For Help and Documentation, you will find that in your KoLmafia/data directory:
+	/data/chit_ReadMe.txt
+
 *************************************************************************************
 Many thanks to:
 	Zarqon, for his zlib library
@@ -2871,14 +2874,26 @@ void bakeThrall() {
 }
 
 void bakeVYKEA() {
+	string img_margin() {
+		switch(get_property("_VYKEACompanionType")) {
+		case "couch":
+		case "dishrack":
+			return 'top:-20';
+		case "dresser":
+		case "bookshelf":
+			return 'top:-10';
+		case "ceiling fan":
+			return 'bottom:-20';
+		}
+		return 'top:0';
+	}
 	vykea v = my_vykea_companion();
 	if(v != $vykea[none]) {
-	# if(chitSource contains "vykea") {
 		buffer result;
 		result.append('<table id="chit_VYKEA" class="chit_brick nospace">');
-		result.append('<tr class="effect"><td class="vykea"><img title="VYKEA Companion" src="images/adventureimages/');
+		result.append('<tr class="effect"><td class="vykea" style="overflow:hidden;"><img title="VYKEA Companion" src="images/adventureimages/');
 		result.append(v.image);
-		result.append('"></td><td class="info"><b>VYKEA Companion</b><p style="margin-top:5px;"><b>');
+		result.append('" style="margin-'+img_margin()+'px; border:0" /></td><td class="info"><b>VYKEA Companion</b><p style="margin-top:2px; margin-bottom:0px"><b>');
 		result.append(replace_string(to_string(v), ", t", "</b>, t"));
 		result.append('</td></tr></table>');
 		chitBricks["vykea"] = result;
@@ -3440,7 +3455,7 @@ void addWalfordBucket(buffer result) {
 		result.append('% full of ');
 		result.append(get_property("walfordBucketItem"));
 		result.append('"><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
-		if(current == 100)
+		if(current >= 100)
 			result.append('<span style=color:green>Walford</span>');
 		else if (!have_equipped($item[Walford's bucket]))
 			result.append('<span style=color:red>Walford</span>');
@@ -4189,20 +4204,15 @@ void addFavGear() {
 		addGear($items[black glass], "quest");
 		
 	if(get_property("questL11Palindome") != "finished")
-	{
 		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
-	}
 	else if(get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
-	{
 		addGear($item[Talisman o' Namsilat], "bounty");
-	}
 	
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
 	if(!aftercore && get_property("dailyDungeonDone") == "false" && total_keys() < 3)
 		addGear($item[ring of Detect Boring Doors], "quest");
-	switch(get_property("questL10Garbage"))
-	{
+	switch(get_property("questL10Garbage")) {
 		// castle basement unlocked, but not cleared
 		case "step7":
 			addGear($items[titanium assault umbrella,amulet of extreme plot significance], "quest");
@@ -4238,6 +4248,7 @@ void addFavGear() {
 		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages], "quest");
 		break;
 	case "step25":
+	case "step26":
 		addGear($items[fouet de tortue-dressage, spaghetti cult robe], "quest");
 		break;
 	}
@@ -4272,8 +4283,7 @@ void addFavGear() {
 	}
 	
 	// some handy in-run stuff
-	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always")
-	{
+	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always") {
 		addGear($items[duonoculars,Bram's choker,red shoe,iFlail,rusted-out shootin' iron,
 			Space Trip safety headphones,Xiblaxian stealth cowl,Xiblaxian stealth trousers,
 			camouflage T-shirt,Xiblaxian stealth vest], "-combat");
@@ -4286,6 +4296,9 @@ void addFavGear() {
 		addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
 			astral mask, astral pet sweater]); // You must have taken this for a reason
 	}
+	
+	if(my_inebriety() > inebriety_limit())
+		addGear($item[Drunkula's wineglass], "drunk");
 	
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
