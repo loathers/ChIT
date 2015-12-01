@@ -4673,7 +4673,7 @@ void bakeGear() {
 
 
 	void addSlot(slot s) {
-		if(s == $slot[shirt] && !have_skill($skill[Torso Awaregness])) {
+		if(s == $slot[shirt] && !(have_skill($skill[Torso Awaregness]) || have_skill($skill[Best Dressed]))) {
 			result.append('<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Torso Unawaregness"></span>');
 			return;
 		}
