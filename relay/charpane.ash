@@ -2709,6 +2709,9 @@ void bakeFamiliar() {
 		name_followup += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
 		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
 		break;
+	case $familiar[Machine Elf]:
+		name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
+		break;
 	}
 	
 	// Charges
@@ -4256,7 +4259,7 @@ void addFavGear() {
 	// Charter zone quest equipment
 	addGear($items[
 		Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker,
-		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,
+		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,GPS-tracking wristwatch,
 		lube-shoes, Dinsey mascot mask, trash net
 	], "charter");
 	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
@@ -4265,6 +4268,8 @@ void addFavGear() {
 		addGear($items[bellhop's hat, Walford's bucket], "charter");
 		if(get_property("walfordBucketItem") == "bolts")
 			addGear($item[VYKEA hex key], "charter");
+		else if(get_property("walfordBucketItem") == "blood")
+			addGear($item[remorseless knife], "charter");
 	}
 	
 	switch(my_path()) {
@@ -4296,6 +4301,9 @@ void addFavGear() {
 		addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
 			astral mask, astral pet sweater]); // You must have taken this for a reason
 	}
+	
+	// Welcome to Crimbo 2015!
+	addGear($items[bouquet of all-natural free-range flowers, stack of communist leaflets], "Crimbo");
 	
 	if(my_inebriety() > inebriety_limit())
 		addGear($item[Drunkula's wineglass], "drunk");
@@ -4858,12 +4866,11 @@ void bakeCharacter() {
 	}
 
 	//Avatar
-	string myAvatar = "";
-	if (vars["chit.character.avatar"] != "false") {
-		matcher avatarMatcher = create_matcher('<img src="(.*?)" width=60 height=100 border=0>', source);
-		if (find(avatarMatcher)){
-			myAvatar = group(avatarMatcher, 1);
-		}
+	string myAvatar;
+	if(vars["chit.character.avatar"] != "false") {
+		matcher avatarMatcher = create_matcher('(<script.+?)<a class=\'([^\']+).+?("><img.+?</a>)', source);
+		if(avatarMatcher.find())
+			myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
 	}
 	
 	//Outfit
@@ -4991,7 +4998,8 @@ void bakeCharacter() {
 	
 	result.append('<tr>');
 	if(myAvatar != "")
-		result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit"><img src="' + myAvatar + '"></a></td>');
+		result.append('<td rowspan="4" class="avatar">' + myAvatar + '</td>');
+		# result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit">' + myAvatar + '</a></td>');
 	pickOutfit();
 	result.append('<td class="label"><a target="mainpane" href="' + myGuild() +'" title="Visit your guild">' + myTitle() + '</a></td>');
 	result.append('<td class="level" rowspan="2" style="width:30px;' + councilStyle + '"><a target="mainpane" href="council.php" title="' + councilText + '">' + my_level() + '</a></td>');
@@ -6275,6 +6283,7 @@ boolean parsePage(buffer original) {
 		chitSource["trail"] = chitSource["trail"]
 			.replace_string("The Castle in the Clouds in the Sky", "Giant's Castle")
 			.replace_string(" Floor)", ")")  										// End of Castle
+			.replace_string("McMillicancuddy's Farm", "Farm") 						// McMillicancuddy's aftercore location
 			.replace_string("McMillicancuddy", "Farm") 								// McMillicancuddy's various farm locations
 			.replace_string("Haunted Wine Cellar", "Wine Cellar")
 			.replace_string("The Enormous Greater-Than Sign", "Greater-Than Sign")
