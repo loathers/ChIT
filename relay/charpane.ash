@@ -1902,7 +1902,7 @@ void pickerCompanion(string famname, string famtype) {
 	}
 
 	buffer picker;
-	picker.pickerStart("fam", "Summon thy Companion");
+	picker.pickerStart("companion", "Summon thy Companion");
 	
 	// Check for all companions
 	picker.addLoader("Summoning Companion...");
@@ -2190,11 +2190,11 @@ void FamJarlsberg() {
 	result.append('</th></tr>');
 	
 	result.append('<tr><td class="companion" title="Playing with this food">');
-	result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
+	result.append('<a class="chit_launcher" rel="chit_pickercompanion" href="#">');
 	result.append('<img src="images/adventureimages/' );
 	result.append(famimage);
 	result.append('"></a></td>');
-	result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
+	result.append('<td class="info"><a class="chit_launcher" rel="chit_pickercompanion" href="#">');
 	result.append(equiptype);
 	result.append('</a></td>');
 	result.append('</tr></table>');
