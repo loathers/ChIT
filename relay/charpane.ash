@@ -4317,6 +4317,7 @@ void addFavGear() {
 // pickerGear and bakeGear were written by soolar
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
+	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
 
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s);
@@ -4339,7 +4340,9 @@ void pickerGear(slot s) {
 	void start_option(item it, boolean modify_image)
 	{
 		# any_options = true;
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" onclick="descitem(' + it.descid + ',0,event)">');
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
 		picker.addItemIcon(it, "Click for item description", 0, modify_image);
 		picker.append('</a></td>');
 	}
@@ -4352,8 +4355,7 @@ void pickerGear(slot s) {
 		return $item[none];
 	}
 	string cmd;
-	switch(in_slot)
-	{
+	switch(in_slot) {
 		case $item[buddy bjorn]:
 			pickerFamiliar(my_bjorned_familiar(), "bjornify", "Change bjorned buddy :D");
 			start_option(in_slot, false);
@@ -4399,18 +4401,14 @@ void pickerGear(slot s) {
 			break;
 	}
 	
-	void add_favorite_button(item it)
-	{
+	void add_favorite_button(item it) {
 		picker.append('<a class="change chit_favbutton" href="');
-		if(favGear contains it)
-		{
+		if(favGear contains it) {
 			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
 			picker.append('" rel="delfav"><img src="');
 			picker.append(imagePath);
 			picker.append('control_remove_red.png"></a>');
-		}
-		else
-		{
+		} else {
 			picker.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
 			picker.append('" rel="addfav"><img src="');
 			picker.append(imagePath);
@@ -4434,6 +4432,7 @@ void pickerGear(slot s) {
 			picker.append("You can't equip an off-hand item with a ");
 			picker.append(weapon_hands(equipped_item($slot[weapon])));
 			picker.append("-handed weapon equipped!");
+			take_action = false;
 		} else {
 			picker.append("You don't have ");
 			// gotta get that a/an right
@@ -4457,77 +4456,66 @@ void pickerGear(slot s) {
 	
 	boolean [item] displayedItems;
 	
-	void add_gear_option(item it, string reason)
-	{
+	void add_gear_option(item it, string reason) {
 		int danger_level = 0;
 		string cmd;
 		string action = "";
 		string action_description = "";
 		
-		if(item_amount(it) > 0)
-		{
-			// can just plain old equip it
+		if(!take_action) {
+			// Leave action and cmd blank.
+		} else if(item_amount(it) > 0) { // can just plain old equip it
 			action = "equip";
 			cmd = "equip ";
-		}
-		else if(closet_amount(it) > 0)
-		{
+		} else if(closet_amount(it) > 0) {
 			action = "uncloset";
 			cmd = "closet take " + it + "; equip ";
-		}
-		else if(creatable_amount(it) > 0)
-		{
+		} else if(creatable_amount(it) > 0) {
 			danger_level = 1;
 			// make it!
 			action = "create";
 			action_description = "(up to " + creatable_amount(it) + ")";
 			cmd = "create "+ it+ "; equip ";
-		}
-		else if(storage_amount(it) > 0 && pulls_remaining() != 0)
-		{
+		} else if(storage_amount(it) > 0 && pulls_remaining() != 0) {
 			action = "pull";
-			if(pulls_remaining() != -1)
-			{
+			if(pulls_remaining() != -1) {
 				danger_level = 2;
 				action_description += '(' + pulls_remaining() + ' left)';
 			}
 			cmd = "pull " + it + "; equip ";
-		}
-		else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0)
-		{
+		} else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0) {
 			action = "free pull";
 			cmd = "equip ";
-		}
-		else if(foldable_amount(it) > 0)
-		{
+		} else if(foldable_amount(it) > 0) {
 			action = "fold";
 			cmd = "fold " + it + "; equip ";
-		}
-		else
-		{
-			// no options were found, give up
+		} else // no options were found, give up
 			return;
-		}
+		
 		any_options = true;
 		displayedItems[it] = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
 		
-		switch(to_string(vars["chit.gear.layout"]))
-		{
+		switch(to_string(vars["chit.gear.layout"])) {
 		case "experimental":
 			picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
 			picker.append(danger_level);
-			picker.append(';"><div class="chit_flexitem"><a class="done" onclick="descitem(');
+			picker.append(';"><div class="chit_flexitem"><a class="done" oncontextmenu="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event); return false;" onclick="descitem(');
 			picker.append(it.descid);
 			picker.append(',0,event)" href="#">');
 			
 			picker.addItemIcon(it,"Click for item description",danger_level);
 			picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;">');
 			add_favorite_button(it);
-			picker.append('<a class="change" href="');
-			picker.append(command);
-			picker.append('"><span style="font-weight:bold;">');
+			if(take_action) {
+				picker.append('<a class="change" href="');
+				picker.append(command);
+				picker.append('">');
+			}
+			picker.append('<span style="font-weight:bold;">');
 			if(danger_level > 0)
 				picker.append('<span class="warning-link">');
 			picker.append(action);
@@ -4537,27 +4525,49 @@ void pickerGear(slot s) {
 			picker.append(action_description);
 			picker.append('</span> ');
 			picker.append(modifyName(it));
-			picker.append('</a></div></div>');
+			if(take_action)
+				picker.append('</a>');
+			picker.append('</div></div>');
 			break;
 			
 		case "minimal":
-			picker.append('<span><a class="change" oncontextmenu="descitem(');
+			picker.append('<span><a class="');
+			if(take_action)
+				picker.append('change');
+			else
+				picker.append('icon');
+			picker.append('" oncontextmenu="descitem(');
 			picker.append(it.descid);
-			picker.append(',0,event); return false;" href="');
-			picker.append(command);
-			picker.append('">');
-			picker.addItemIcon(it,modifyName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
-			picker.append('</a></span>');
+			picker.append(',0,event); return false;"');
+			if(take_action) {
+				picker.append(' href="');
+				picker.append(command);
+				picker.append('"');
+			}
+			picker.append('>');
+			if(take_action)
+				picker.addItemIcon(it,modifyName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+			else
+				picker.addItemIcon(it,'&#013;Right click for description',danger_level);
+			if(take_action)
+				picker.append('</a>');
+			picker.append('</span>');
 			break;
 			
 		default:
-			picker.append('<tr class="pickitem"><td class="icon"><a class="done" onclick="descitem(');
+			picker.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event); return false;" onclick="descitem(');
 			picker.append(it.descid);
 			picker.append(',0,event)" href="#">');
 			picker.addItemIcon(it,"Click for item description",danger_level);
-			picker.append('</a></td><td><a class="change" href="');
-			picker.append(command);
-			picker.append('"><span style="font-weight:bold;">');
+			picker.append('</a></td><td>');
+			if(take_action) {
+				picker.append('<a class="change" href="');
+				picker.append(command);
+				picker.append('">');
+			}
+			picker.append('<span style="font-weight:bold;">');
 			if(danger_level > 0)
 				picker.append('<span class="warning-link">');
 			picker.append(action);
@@ -4567,13 +4577,14 @@ void pickerGear(slot s) {
 			picker.append(action_description);
 			picker.append('</span> ');
 			picker.append(modifyName(it));
-			if(reason != "favorites")
-			{
+			if(reason != "favorites") {
 				picker.append(' (');
 				picker.append(reason);
 				picker.append(')');
 			}
-			picker.append('</a></td><td>');
+			if(take_action)
+				picker.append('</a>');
+			picker.append('</td><td>');
 			add_favorite_button(it);
 			picker.append('</td></tr>');
 		}
@@ -4681,9 +4692,20 @@ void bakeGear() {
 
 
 	void addSlot(slot s) {
-		if(s == $slot[shirt] && !(have_skill($skill[Torso Awaregness]) || have_skill($skill[Best Dressed]))) {
-			result.append('<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Torso Unawaregness"></span>');
-			return;
+		switch(s) {
+		case $slot[shirt]:
+			if(!have_skill($skill[Torso Awaregness]) && !have_skill($skill[Best Dressed])) {
+				result.append('<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Torso Unawaregness"></span>');
+				return;
+			}
+			break;
+		case $slot[off-hand]:
+			if(weapon_hands(equipped_item($slot[weapon])) > 1) {
+				result.append('<span><a class="chit_launcher" rel="chit_pickergearoff-hand" href="#"><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Not enough hands"></a></span>');
+				pickerGear(s);
+				return;
+			}
+			break;
 		}
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
