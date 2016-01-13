@@ -1490,35 +1490,17 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	string [item] addeditems;
 	buffer picker;
 
-	item [int] generic;
-	// Powerful Generic Familiar Equipment
-	generic[1]=$item[moveable feast];
-	generic[2]=$item[little box of fireworks];
-	generic[3]=$item[plastic pumpkin bucket];
-	generic[4]=$item[lucky tam o'shanter];
-	generic[5]=$item[lucky tam o'shatner];
-	generic[6]=$item[mayflower bouquet];
-	generic[7]=$item[miniature gravy-covered maypole];
-	generic[8]=$item[wax lips];
-	generic[10]=$item[snow suit];
-	generic[11]=$item[astral pet sweater];
-
-	// Mr. Store Foldables
-	generic[100]=$item[flaming familiar doppelg&auml;nger];	//flaming familiar doppelgänger
-	generic[101]=$item[origami &quot;gentlemen's&quot; magazine];	//origami "gentlemen's" magazine
-	generic[102]=$item[Loathing Legion helicopter];
-	
-	// "Special" items
-	generic[200]=$item[ittah bittah hookah];	
-	generic[201]=$item[li'l businessman kit];
-	generic[202]=$item[tiny costume wardrobe];
-	generic[203]=$item[little bitty bathysphere];
-	generic[204]=$item[das boot];
-	generic[205]=$item[miniature life preserver];
-	generic[206]=$item[kill screen];
-	
-	//Summonable
-	generic[300]=$item[sugar shield];
+	// All generic Familiar Equipment, including Mr. Store Foldables and summonables
+	static {
+		item [int] generic;
+		foreach it in $items[]
+			if(it.item_type() == "familiar equipment" && string_modifier(it, "Modifiers").contains_text("Generic")) {
+				if(count(get_related(it, "fold")) > 0)
+					generic[ count(generic) + 1000 ] = it; 	// Separate foldables from the rest for later reference
+				else
+					generic[ count(generic) ] = it;
+			}
+	}
 	
 	string fam_equip(item famitem) {
 		string ave(string l, string h) {
@@ -1639,12 +1621,23 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 					hover = "Equip " + it.to_string();
 					cli = "equip familiar "+it;
 			}
-			picker.append('<tr class="pickitem">');
-			picker.append('<td class="' + cmd + '"><a class="change" href="' + sideCommand(cli) + '" title="' 
-			  + hover + '">' + fam_equip(action, it) + '</a></td>');
-			picker.append('<td class="icon"><a class="change" href="' + sideCommand(cli) + '" title="' 
-			  + hover + '"><img src="/images/itemimages/' + it.image + '"></a></td>');
-			picker.append('</tr>');
+			picker.append('<tr class="pickitem"><td class="');
+			picker.append(cmd);
+			picker.append('"><a class="change" href="');
+			picker.append(sideCommand(cli));
+			picker.append('" title="');
+			picker.append(hover);
+			picker.append('">');
+			picker.append(fam_equip(action, it));
+			picker.append('</a></td><td class="icon"><a class="change" oncontextmenu="descitem(');
+			picker.append(it.descid);
+			picker.append(',0,event); return false;" href="');
+			picker.append(sideCommand(cli));
+			picker.append('" title="');
+			picker.append(hover);
+			picker.append('&#013;Right click for description"><img src="/images/itemimages/');
+			picker.append(it.image);
+			picker.append('"></a></td></tr>');
 			addeditems[it] = to_string(it);
 		}
 	}
@@ -1663,10 +1656,13 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
 			if(have_effect($effect[SOME PIGS]) > 0)
 				face = "snowsuit.gif";
-			picker.append('<tr class="pickitem">');
-			picker.append('<td class="fold">' +suiturl+ 'Decorate Snow Suit<br /><span style="color:#707070">Choose a Face</span></a></td>');
-			picker.append('<td class="icon">'+suiturl+'<img src="/images/itemimages/' + face + '"></a></td>');
-			picker.append('</tr>');
+			picker.append('<tr class="pickitem"><td class="fold">');
+			picker.append(suiturl);
+			picker.append('Decorate Snow Suit<br /><span style="color:#707070">Choose a Face</span></a></td><td class="icon">');
+			picker.append(suiturl);
+			picker.append('<img src="/images/itemimages/');
+			picker.append(face);
+			picker.append('"></a></td></tr>');
 		}
 	
 		//Most common equipment for current familiar
@@ -1683,7 +1679,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				}
 			}
 		}
-		if (havecommon) {
+		if(havecommon) {
 			addEquipment(common, "inventory");
 			foreach foldable in get_related(common, "fold") {
 				addEquipment(foldable, "fold");
@@ -1696,7 +1692,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				addEquipment(piece, "inventory");
 			} else if (available_amount(piece) > 0 ) {
 				addEquipment(piece, "retrieve");
-			} else if (n==100 || n==101 || n==102) {
+			} else if (n > 999) {
 				foreach foldable in get_related(piece, "fold") {
 					if (available_amount(foldable) > 0 ) {
 						addEquipment(piece, "fold");
@@ -2391,37 +2387,28 @@ string item_image(item it)
 	return item_image(it, true);
 }
 
-void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image)
-{
+void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image) {
 	result.append('<img class="chit_icon');
 	if(hasDrops(it) > 0)
-	{
 		result.append(' hasdrops');
-	}
+		
 	if(danger_level == 1)
-	{
 		result.append(' warning');
-	}
 	else if(danger_level > 1)
-	{
 		result.append(' danger');
-	}
 	else if(danger_level < 0)
-	{
 		result.append(' good');
-	}
+	
 	result.append('" src="');
 	result.append(item_image(it, modify_image));
 	result.append('" title="');
 	result.append(title);
 	result.append('" />');
 }
-void addItemIcon(buffer result, item it, string title, int danger_level)
-{
+void addItemIcon(buffer result, item it, string title, int danger_level) {
 	addItemIcon(result,it,title,danger_level,true);
 }
-void addItemIcon(buffer result, item it, string title)
-{
+void addItemIcon(buffer result, item it, string title) {
 	addItemIcon(result,it,title,0);
 }
 
@@ -2710,7 +2697,8 @@ void bakeFamiliar() {
 		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
 		break;
 	case $familiar[Machine Elf]:
-		name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
+		if(myFam.drops_today < 5)
+			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
 		break;
 	}
 	
@@ -4322,23 +4310,20 @@ void pickerGear(slot s) {
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s);
 	
-	boolean good_slot(slot s, item it)
-	{
-		slot gear = to_slot(it);
-		if(s == gear) return true;
+	boolean good_slot(slot s, item it) {
+		if(to_slot(it) == s) return true;
 		switch(s) {
 		case $slot[off-hand]:
-			return gear == $slot[weapon] && item_type(it) != "chefstaff" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
+			return to_slot(it) == $slot[weapon] && item_type(it) != "chefstaff" && item_type(it) != "accordion" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
 		case $slot[acc2]: case $slot[acc3]:
-			return gear == $slot[acc1];
+			return to_slot(it) == $slot[acc1];
 		}
 		return false;
 	}
 	
 	boolean any_options = false;
 	// for use with custom context suggestions
-	void start_option(item it, boolean modify_image)
-	{
+	void start_option(item it, boolean modify_image) {
 		# any_options = true;
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
 			picker.append(it.descid);
@@ -4497,7 +4482,7 @@ void pickerGear(slot s) {
 		
 		string command = sideCommand(cmd + s + " " + it);
 		
-		switch(to_string(vars["chit.gear.layout"])) {
+		switch(vars["chit.gear.layout"]) {
 		case "experimental":
 			picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
 			picker.append(danger_level);
@@ -4594,11 +4579,11 @@ void pickerGear(slot s) {
 		boolean [item] toDisplay;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
-				&& !(to_string(vars["chit.gear.layout"]) == "default" && displayedItems contains it))
+				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 					toDisplay[it] = true;
 		
 		if(toDisplay.count() > 0) {
-			switch(to_string(vars["chit.gear.layout"])) {
+			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				picker.append(name);
@@ -4614,7 +4599,7 @@ void pickerGear(slot s) {
 			foreach it in toDisplay
 				add_gear_option(it, name);
 			
-			switch(to_string(vars["chit.gear.layout"])) {
+			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('</div></td></tr>');
 				break;
@@ -4630,6 +4615,56 @@ void pickerGear(slot s) {
 	foreach reason in recommendedGear
 		add_gear_section(reason, recommendedGear[reason]);
 	
+	// Which gear is more desirable?
+	int gear_weight(item it) {
+		float weight;
+		
+		switch(item_type(it)) {
+		case "chefstaff":
+			weight = numeric_modifier(it, "Spell Damage Percent") *1.3;
+			break;
+		case "accessory":
+			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 1)
+				+ (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 6;
+			break;
+		case "club":
+			if(my_class() == $class[Seal Clubber])
+				weight = get_power(it) * (weapon_hands(it) == 1? 3: 2);
+			else weight = get_power(it);
+			break;
+		case "shield":
+			if(my_class() == $class[Turtle Tamer])
+				weight = get_power(it) * 2;
+			else weight = get_power(it) * 1.4;
+			break;
+		case "accordion":
+			if(my_class() == $class[Accordion Thief])
+				weight = get_power(it) * (weapon_hands(it) == 1? 3: 2);
+			else weight = get_power(it);
+			break;
+		default:
+			weight = get_power(it);
+		}
+		
+		switch(my_primestat()) {
+		case $stat[Muscle]:
+			if(weapon_type(it) == $stat[Moxie])
+				weight *= 0.5;
+			weight += (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) / 2;
+			break;
+		case $stat[Mysticality]:
+			weight += numeric_modifier(it, "Spell Damage") * 3 + numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
+			break;
+		case $stat[Moxie]:
+			if(weapon_type(it) != $stat[Moxie] && !(have_skill($skill[Tricky Knifework]) && item_type(it) == "knife"))
+				weight *= 0.5;
+			weight += numeric_modifier(it, "Moxie") * 3 + numeric_modifier(it, "Moxie Percent");
+			break;
+		}
+		
+		return weight;
+	}
+	
 	// Find some best gear to recommend
 	void add_inventory_section() {
 		item [int] avail;
@@ -4637,10 +4672,10 @@ void pickerGear(slot s) {
 			if(can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
 		
-		if(avail.count() > 0) {
-			sort avail by -get_power(value);
+		if(count(avail) > 0) {
+			sort avail by -gear_weight(value);
 			
-			switch(to_string(vars["chit.gear.layout"])) {
+			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr>');
 				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
@@ -4653,13 +4688,13 @@ void pickerGear(slot s) {
 			// If this is the only section, show no title. Otherwise it is "inventory"
 			string name = any_options? "inventory": "favorites";
 			
-			// For miniaml, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 3 additional items
-			int amount = to_string(vars["chit.gear.layout"]) == "minimal"? 11
-				: any_options? 2: 11;
+			// For miniaml, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
+			int amount = vars["chit.gear.layout"] == "minimal"? 11
+				: any_options? 4: 11;
 			for x from 0 to min(count(avail) - 1, amount)
 				add_gear_option(avail[x], name);
 			
-			switch(to_string(vars["chit.gear.layout"])) {
+			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('</div></td></tr>');
 				break;
@@ -4672,7 +4707,7 @@ void pickerGear(slot s) {
 	
 	add_inventory_section(); // Last chance to find something in inventory to display
 	if(!any_options)
-		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else") + " available for this slot. Poor you :(");
+		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else") + " available. Poor you :(");
 
 	picker.addLoader("Changing " + s + "...");
 	picker.addLoader("Adding to favorites...", "addfav");
