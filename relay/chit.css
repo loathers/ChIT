@@ -779,6 +779,16 @@ img#fam_equip {
 	padding:0px 0px 0px 0px;
 }
 
+.walford_done{
+	color:green;
+}
+.walford_nobucket {
+	color:red;
+}
+span.walford_noquest {
+	color:red;
+}
+
 /* Fancy Currency by DeadNed (#1909053) 
    Not curently being used, but maybe... if I put in some time */
 #chit_currency ul {

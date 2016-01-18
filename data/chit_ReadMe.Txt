@@ -13,7 +13,7 @@ Inside each area you can place any of the following "bricks":
    character:  Basic character information (name, class, paths, level, meat, turns etc) (Not available in toolbar)
    stats:      A whole bunch of pretty progress bars. (stats/consumption/hp/mp etc) (Not available in toolbar)
    familiar:   Familiar information, with a built-in equipment changer thingy (Not available in toolbar)
-	 gear:       Displays all your currently equipped items, and allows you to pick from favorites/suggestion by clicking a slot.
+   gear:       Displays all your currently equipped items, and allows you to pick from favorites/suggestion by clicking a slot.
    trail:      Recent adventures
    quests:     Quest nudges (when available)
    tracker:    Detailed ascension related quest information
