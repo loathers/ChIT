@@ -3442,14 +3442,19 @@ void addWalfordBucket(buffer result) {
 	if(have_equipped($item[Walford's bucket]) || get_property("questECoBucket") != "unstarted") {
 		int current = get_property("walfordBucketProgress").to_int();
 		result.append('<tr title="');
-		result.append(current);
-		result.append('% full of ');
-		result.append(get_property("walfordBucketItem"));
+		if(get_property("walfordBucketItem") != "") {
+			result.append(current);
+			result.append('% full of ');
+			result.append(get_property("walfordBucketItem"));
+		} else
+			result.append("Select something to put in the bucket");
 		result.append('"><td class="label"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
 		if(current >= 100)
-			result.append('<span style=color:green>Walford</span>');
-		else if (!have_equipped($item[Walford's bucket]))
-			result.append('<span style=color:red>Walford</span>');
+			result.append('<span class="walford_done">Walford</span>');
+		else if(!have_equipped($item[Walford's bucket]))
+			result.append('<span class="walford_nobucket">Walford</span>');
+		else if(get_property("questECoBucket") == "unstarted" || get_property("walfordBucketItem") == "")
+			result.append('<span class="walford_noquest">Walford</span>');
 		else
 			result.append('Walford');
 		result.append('</a></td><td class="info"><a href="place.php?whichplace=airport_cold&action=glac_walrus" target="mainpane">');
