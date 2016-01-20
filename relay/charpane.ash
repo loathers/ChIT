@@ -3758,6 +3758,9 @@ void addTrail(buffer result) {
 	
 }
 
+// Pre-definition
+void addGear(buffer results);
+
 void bakeStats() {
 
 	string health = chitSource["health"]; 
@@ -3944,6 +3947,7 @@ void bakeStats() {
 				case "axel": 	addAxel(); 			break;
 				case "mcd": 	result.addMCD(); 	break;
 				case "trail": 	result.addTrail();	break;
+				case "gear": 	result.addGear();	break;
 				default:
 			}
 		}
@@ -4626,7 +4630,7 @@ void pickerGear(slot s) {
 		
 		switch(item_type(it)) {
 		case "chefstaff":
-			weight = numeric_modifier(it, "Spell Damage Percent") *1.3;
+			weight = numeric_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
 			break;
 		case "accessory":
 			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 1)
@@ -4651,19 +4655,28 @@ void pickerGear(slot s) {
 			weight = get_power(it);
 		}
 		
+		// Tired of seeing the antique gear on top. For stuff like that, let's halve base power or whatever is computed in it's place.
+		if(string_modifier(it, "Modifiers").contains_text("Breakable"))
+			weight *= 0.5;
+		
 		switch(my_primestat()) {
 		case $stat[Muscle]:
 			if(weapon_type(it) == $stat[Moxie])
 				weight *= 0.5;
 			weight += (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) / 2;
+			weight += numeric_modifier(it, "Muscle") * 2;
+			weight += numeric_modifier(it, "Muscle Percent") * my_basestat($stat[Muscle]) / 50;
 			break;
 		case $stat[Mysticality]:
-			weight += numeric_modifier(it, "Spell Damage") * 3 + numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
+			weight += numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
+			weight += numeric_modifier(it, "Spell Damage") * 3;
+			weight += numeric_modifier(it, "Spell Damage Percent");
 			break;
 		case $stat[Moxie]:
 			if(weapon_type(it) != $stat[Moxie] && !(have_skill($skill[Tricky Knifework]) && item_type(it) == "knife"))
 				weight *= 0.5;
-			weight += numeric_modifier(it, "Moxie") * 3 + numeric_modifier(it, "Moxie Percent");
+			weight += numeric_modifier(it, "Moxie") * 3;
+			weight += numeric_modifier(it, "Moxie Percent") * my_basestat($stat[Moxie]) / 33.3;
 			break;
 		}
 		
@@ -4721,16 +4734,8 @@ void pickerGear(slot s) {
 	chitPickers["gear" + s] = picker;
 }
 
-// pickerGear and bakeGear were written by soolar
-void bakeGear() {
-	buffer result;
-
-	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label"><a class="visit" target="mainpane" href="./inventory.php?which=2"><img src="');
-	result.append(imagePath);
-	result.append('equipment.png">Gear</a></th></tr>');
-
-
+// Part of gear block that can be included in stats for a smaller footprint
+void addGear(buffer result) {
 	void addSlot(slot s) {
 		switch(s) {
 		case $slot[shirt]:
@@ -4754,10 +4759,24 @@ void bakeGear() {
 		result.append('</a></span>');
 		pickerGear(s);
 	}
-	result.append('<tr><td>');
+	
+	result.append('<tr><td colspan="3">');
 	foreach s in $slots[ hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3 ]
 		addSlot(s);
 	result.append('</td></tr>');
+}
+
+// pickerGear and bakeGear were written by soolar
+void bakeGear() {
+	buffer result;
+
+	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
+	result.append('<tr><th class="label"><a class="visit" target="mainpane" href="./inventory.php?which=2"><img src="');
+	result.append(imagePath);
+	result.append('equipment.png">Gear</a></th></tr>');
+	
+	result.addGear();
+
 	result.append('</tbody></table>');
 
 	chitBricks["gear"] = result.to_string();
