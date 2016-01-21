@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r16484; // VYYKEA Companion support
+since r16624; // Machine Elf fights and snowglobe support both
 import "zlib.ash";
 
 /************************************************************************************
@@ -2694,11 +2694,12 @@ void bakeFamiliar() {
 		break;
 	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
 		name_followup += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
-		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels' + (info != "" ? ", " : "") + info;
+		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels, ' + info;
 		break;
 	case $familiar[Machine Elf]:
-		if(myFam.drops_today < 5)
+		if(myFam.fights_today < myFam.fights_limit)
 			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
+		info = myFam.fights_today + '/' + myFam.fights_limit + '&nbsp;fights, ' + info + '&nbsp;globes';
 		break;
 	}
 	
