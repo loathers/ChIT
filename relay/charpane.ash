@@ -2699,7 +2699,7 @@ void bakeFamiliar() {
 	case $familiar[Machine Elf]:
 		if(myFam.fights_today < myFam.fights_limit)
 			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
-		info = myFam.fights_today + '/' + myFam.fights_limit + '&nbsp;fights, ' + info + '&nbsp;globes';
+		info = myFam.fights_today + '/' + myFam.fights_limit + '&nbsp;adv, ' + info + '&nbsp;globes';
 		break;
 	}
 	
