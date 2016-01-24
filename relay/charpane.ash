@@ -5067,33 +5067,55 @@ void bakeCharacter() {
 
 	// Character name and outfit name
 	result.append('<tr>');
-	result.append('<th colspan="'+ (myAvatar == ""? "2": "3") +'">');
+	result.append('<th colspan="');
+	result.append(myAvatar == ""? "2": "3");
+	result.append('">');
 	// If there's no avatar, place Outfit switcher here
 	if(vars["chit.character.avatar"] == "false") {
 		result.append('<div style="float:left"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit"><img src="');
 		result.append(imagePath);
 		result.append('select_outfit.png"></a></div>');
 	}
-	result.append('<a target="mainpane" href="charsheet.php">' + myName + '</a>' + myOutfit + '</th>');
- 	result.append('</tr>');
+	result.append('<a target="mainpane" href="charsheet.php">');
+	result.append(myName);
+	result.append('</a>');
+	result.append(myOutfit);
+	if(get_clan_name() != vars["chit.clan.home"]) {
+		result.append('<br /><span style="font-weight:normal">');
+		result.append(get_clan_name());
+		result.append('</span>');
+	}
+	result.append('</th></tr>');
 	
 	result.append('<tr>');
-	if(myAvatar != "")
-		result.append('<td rowspan="4" class="avatar">' + myAvatar + '</td>');
+	if(myAvatar != "") {
+		result.append('<td rowspan="4" class="avatar">');
+		result.append(myAvatar);
+		result.append('</td>');
 		# result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit">' + myAvatar + '</a></td>');
+	}
 	pickOutfit();
-	result.append('<td class="label"><a target="mainpane" href="' + myGuild() +'" title="Visit your guild">' + myTitle() + '</a></td>');
-	result.append('<td class="level" rowspan="2" style="width:30px;' + councilStyle + '"><a target="mainpane" href="council.php" title="' + councilText + '">' + my_level() + '</a></td>');
-	result.append('</tr>');
+	result.append('<td class="label"><a target="mainpane" href="');
+	result.append(myGuild());
+	result.append('" title="Visit your guild">');
+	result.append(myTitle());
+	result.append('</a></td><td class="level" rowspan="2" style="width:30px;');
+	result.append(councilStyle);
+	result.append('"><a target="mainpane" href="council.php" title="');
+	result.append(councilText);
+	result.append('">');
+	result.append(my_level());
+	result.append('</a></td></tr>');
 
-	result.append('<tr>');
-	result.append('<td class="info">' + myPath() + '</td>');
-	result.append('</tr>');
+	result.append('<tr><td class="info">');
+	result.append(myPath());
+	result.append('</td></tr>');
 	
 	// 30x30:	hp.gif		meat.gif		hourglass.gif		swords.gif
 	// 20x20:	slimhp.gif	slimmeat.gif	slimhourglass.gif	slimpvp.gif
-	result.append('<tr>');
-	result.append('<td class="info">' + myLifeStyle() + '</td>');
+	result.append('<tr><td class="info">');
+	result.append(myLifeStyle());
+	result.append('</td>');
 	if(hippy_stone_broken() && index_of(chitSource["health"], "peevpee.php") > 0) {
 		matcher fites = create_matcher("PvP Fights Remaining.+?black>(\\d+)</span>", chitSource["health"]);
 		if(fites.find())
@@ -5115,11 +5137,18 @@ void bakeCharacter() {
 	result.append('</div><div style="clear:both"></div></td>');
 	result.append('</tr>');
 
-	if (index_of(source, "<table title=") > -1) {
-		result.append('<tr>');
-		result.append('<td class="progress" colspan="3" title="' + (my_level() ** 2 + 4 - my_basestat(my_primestat())) + " " + my_primestat().to_lower_case() + " until level "+ (my_level() + 1) + '\n (' + formatInt(needed) + ' substats needed)" >');
-		result.append('<div class="progressbar" style="width:' + progress + '%"></div></td>');
-		result.append('</tr>');
+	if(index_of(source, "<table title=") > -1) {
+		result.append('<tr><td class="progress" colspan="3" title="');
+		result.append( to_string(my_level() ** 2 + 4 - my_basestat(my_primestat())) );
+		result.append(' ');
+		result.append(my_primestat().to_lower_case());
+		result.append(' until level ');
+		result.append(to_string(my_level() + 1));
+		result.append('\n (');
+		result.append(formatInt(needed));
+		result.append(' substats needed)" ><div class="progressbar" style="width:');
+		result.append(progress);
+		result.append('%"></div></td></tr>');
 	}	
 	result.append('</table>');
 		
@@ -6748,6 +6777,8 @@ buffer modifyPage(buffer source) {
 	setvar("chit.disable", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
+	# setvar("chit.clan.display", false);
+	setvar("chit.clan.home", get_clan_name());
 	setvar("chit.quests.hide", false);
 	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
 	setvar("chit.familiar.pants", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts");
@@ -6766,6 +6797,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.helpers.semirare", true);
 	setvar("chit.helpers.spookyraven", true);
 	setvar("chit.helpers.xiblaxian", true);
+	setvar("chit.kol.coolimages", true);
 	setvar("chit.roof.layout", "character,stats,gear");
 	setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
 	setvar("chit.floor.layout", "update,familiar");
@@ -6773,13 +6805,12 @@ buffer modifyPage(buffer source) {
 	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods", "true");
-	setvar("chit.kol.coolimages", true);
 	setvar("chit.gear.recommend", "in-run");
 	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
-	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving," + 
-		"Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals," +
-		"Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
+	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,"
+		+ "Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals,"
+		+ "Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 3) {
