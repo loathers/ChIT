@@ -6778,7 +6778,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
 	# setvar("chit.clan.display", false);
-	setvar("chit.clan.home", get_clan_name());
+	setvar("chit.clan.home", "");
 	setvar("chit.quests.hide", false);
 	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
 	setvar("chit.familiar.pants", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts");
