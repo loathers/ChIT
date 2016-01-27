@@ -5080,7 +5080,7 @@ void bakeCharacter() {
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
-	if(get_clan_name() != vars["chit.clan.home"]) {
+	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.home"] == "away" || get_clan_name() != vars["chit.clan.home"])) {
 		result.append('<br /><span style="font-weight:normal">');
 		result.append(get_clan_name());
 		result.append('</span>');
@@ -6740,7 +6740,7 @@ buffer spelunky(buffer source) {
 		index = source.index_of("<hr width=50%><font size=2 color=black>");
 	if(index < 0) // apathetic mood (Feature by Hellno)
 		index = source.index_of("</center><center><font size=1>[<a href=\"charpane.php\">refresh</a>]</font>");
-	if(index <0) return source;
+	if(index < 0) return source;
 	
 	// Add combat phase information
 	buffer spelunk;
@@ -6777,7 +6777,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.disable", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
-	# setvar("chit.clan.display", false);
+	setvar("chit.clan.display", "on"); // Valid values are on,off,away
 	setvar("chit.clan.home", "");
 	setvar("chit.quests.hide", false);
 	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
