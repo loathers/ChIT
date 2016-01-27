@@ -6777,7 +6777,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.disable", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
-	setvar("chit.clan.display", "on"); // Valid values are on,off,away
+	setvar("chit.clan.display", "off"); // Valid values are on,off,away
 	setvar("chit.clan.home", "");
 	setvar("chit.quests.hide", false);
 	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
