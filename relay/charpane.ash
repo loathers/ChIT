@@ -2313,27 +2313,24 @@ string familiar_image(familiar f) {
 	return '/images/itemimages/' + f.image;
 }
 
-int checkDrops(string counter_prop, int limit)
-{
+int checkDrops(string counter_prop, int limit) {
 	return limit - to_int(get_property(counter_prop));
 }
 
-int hasDrops(familiar f)
-{
-	if(f == $familiar[gelatinous cubeling])
-	{
+int hasDrops(familiar f) {
+	if(f == $familiar[gelatinous cubeling]) {
 		return 3 - (min(available_amount($item[eleven-foot pole]),1) +
 			min(available_amount($item[ring of detect boring doors]),1) +
 			min(available_amount($item[pick-o-matic lockpicks]),1));
 	}
+	if(f.fights_limit > 0)
+		return f.drops_limit - f.drops_today + f.fights_limit - f.fights_today;
 	
 	return f.drops_limit - f.drops_today;
 }
 
-int hasBjornDrops(familiar f)
-{
-	switch(f)
-	{
+int hasBjornDrops(familiar f) {
+	switch(f) {
 		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDropsCrown",1);
 		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDropsCrown",2);
 	}
@@ -2341,10 +2338,8 @@ int hasBjornDrops(familiar f)
 	return 0;
 }
 
-int hasDrops(item it)
-{
-	switch(it)
-	{
+int hasDrops(item it) {
+	switch(it) {
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
 		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
 		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
@@ -2427,24 +2422,19 @@ boolean need_drop(familiar f) {
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
-{
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
-	{
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
-	}
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
 	result.append('<img class="chit_icon');
 	if(dropsLeft > 0) {
-		if(f.drops_today == 0 && need_drop(f))
+		if(f.drops_today == 0 && need_drop(f) || (f.fights_limit > 0 && f.fights_today < f.fights_limit))
 			result.append(' alldrops');
 		else
 			result.append(' hasdrops');
-	}
-	if(is100 != $familiar[none])
-	{
+	} if(is100 != $familiar[none]) {
 		if(is100 != f)
 			result.append(' danger');
 		else
@@ -2452,8 +2442,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
 	}
 	result.append('" src="');
 	result.append(familiar_image(f));
-	if(title)
-	{
+	if(title) {
 		result.append('" title="');
 		result.append(f.name);
 		result.append(' (the ');
@@ -2470,13 +2459,11 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title)
 	result.append('" />');
 }
 
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn)
-{
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
 	addFamiliarIcon(result, f, isBjorn, true);
 }
 
-void addFamiliarIcon(buffer result, familiar f)
-{
+void addFamiliarIcon(buffer result, familiar f) {
 	addFamiliarIcon(result, f, false);
 }
 
@@ -4633,8 +4620,8 @@ void pickerGear(slot s) {
 			weight = numeric_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
 			break;
 		case "accessory":
-			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 1)
-				+ (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 6;
+			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 0)
+				+ (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 5;
 			break;
 		case "club":
 			if(my_class() == $class[Seal Clubber])
@@ -4655,6 +4642,10 @@ void pickerGear(slot s) {
 			weight = get_power(it);
 		}
 		
+		// This is for Thor's Pliers, but if anything else has this, then it is deserved.
+		if(string_modifier(it, "Modifiers").contains_text("Attacks Can't Miss"))
+			weight *= 1.6;
+		
 		// Tired of seeing the antique gear on top. For stuff like that, let's halve base power or whatever is computed in it's place.
 		if(string_modifier(it, "Modifiers").contains_text("Breakable"))
 			weight *= 0.5;
@@ -4663,12 +4654,12 @@ void pickerGear(slot s) {
 		case $stat[Muscle]:
 			if(weapon_type(it) == $stat[Moxie])
 				weight *= 0.5;
-			weight += (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) / 2;
+			weight += numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
 			weight += numeric_modifier(it, "Muscle") * 2;
 			weight += numeric_modifier(it, "Muscle Percent") * my_basestat($stat[Muscle]) / 50;
 			break;
 		case $stat[Mysticality]:
-			weight += numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
+			weight += (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 2;
 			weight += numeric_modifier(it, "Spell Damage") * 3;
 			weight += numeric_modifier(it, "Spell Damage Percent");
 			break;
@@ -4679,7 +4670,7 @@ void pickerGear(slot s) {
 			weight += numeric_modifier(it, "Moxie Percent") * my_basestat($stat[Moxie]) / 33.3;
 			break;
 		}
-		
+
 		return weight;
 	}
 	
@@ -5080,7 +5071,7 @@ void bakeCharacter() {
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
-	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.home"] == "away" || get_clan_name() != vars["chit.clan.home"])) {
+	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.home"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
 		result.append('<br /><span style="font-weight:normal">');
 		result.append(get_clan_name());
 		result.append('</span>');
@@ -6843,9 +6834,16 @@ buffer modifyPage(buffer source) {
 		break;
 	case "spelunky":	// Needs special handling for the Spelunkin' minigame
 		return source.spelunky();
+	case "batman":		// Bat-folk mini-game
+		if(!source.contains_text("<b>You're Batfellow</b>"))
+			break;
 	default:			// Unknown limit mode could be dangerous
 		return source;
 	}
+	
+	// KoL still has a bug where it doesn't always detect limit mode for batman
+	if(source.contains_text("<b>You're Batfellow</b>"))
+		return source;
 	
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 )
 		inValhalla = true;
