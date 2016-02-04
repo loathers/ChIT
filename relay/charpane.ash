@@ -5071,7 +5071,7 @@ void bakeCharacter() {
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
-	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.home"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
+	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.display"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
 		result.append('<br /><span style="font-weight:normal">');
 		result.append(get_clan_name());
 		result.append('</span>');
