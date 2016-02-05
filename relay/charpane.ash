@@ -608,7 +608,7 @@ string helperXiblaxian() {
 	if(available_amount($item[Xiblaxian 5D printer]) > 0)
 		result.append('target=mainpane href="shop.php?whichshop=5dprinter');
 	else
-		result.append('target=mainpane href="chit_xiblaxian.php'); #'target=_blank href="http://kol.coldfront.net/thekolwiki/index.php/Xiblaxian_5D_printer#When_Used'
+		result.append('target=mainpane href="chit_xiblaxian.php');
 	result.append('"><img src="/images/itemimages/holoputer.gif"></a></td>');
 	// Text
 	if(countdown == 0) {
