@@ -602,14 +602,8 @@ string helperXiblaxian() {
 	result.append('<tr class="effect"');
 	if(countdown == 0)
 		result.append(' style="background-color: khaki"');
-	result.append('>');
 	// Icon
-	result.append('<td class="icon"><a ');
-	if(available_amount($item[Xiblaxian 5D printer]) > 0)
-		result.append('target=mainpane href="shop.php?whichshop=5dprinter');
-	else
-		result.append('target=mainpane href="chit_xiblaxian.php');
-	result.append('"><img src="/images/itemimages/holoputer.gif"></a></td>');
+	result.append('><td class="icon"><a target=mainpane href="chit_xiblaxian.php"><img src="/images/itemimages/holoputer.gif"></a></td>');
 	// Text
 	if(countdown == 0) {
 		result.append('<td class="info" style="text-align:right;">');
