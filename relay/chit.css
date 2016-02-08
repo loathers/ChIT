@@ -41,32 +41,24 @@ a:hover .warning-link {
 #chit_house {
 }
 #chit_roof {
-	position:absolute;
 	overflow-x:hidden;
 	overflow-y:auto;
-	margin:0px;
-	top:4px;
-	left:4px;
-	right:4px
+	margin:2px 2px -2px 2px;
 }
 #chit_walls {
 	border-top:1px solid #E0E0E0;
 	border-bottom:1px solid #E0E0E0;
-	margin:0px;
-	left:4px;
-	right:4px;
-	position:absolute;
+	margin:-2px 2px 0px 2px;
 	overflow-x:hidden;
 	overflow-y:auto;
+	position:fixed;
 }
 #chit_floor {
-	position:absolute;
+	position:fixed;
 	overflow-x:hidden;
 	overflow-y:auto;
-	margin:0px;
-	left:4px;
-	right:4px;
-	bottom:4px
+	margin:-2px 2px 2px 2px;
+	width:98%;
 }
 #chit_toolbar {
 	border-collapse:separate;
