@@ -52,6 +52,7 @@ a:hover .warning-link {
 	overflow-x:hidden;
 	overflow-y:auto;
 	position:fixed;
+	width:99%;
 }
 #chit_floor {
 	position:fixed;
