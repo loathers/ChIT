@@ -4973,14 +4973,23 @@ void bakeCharacter() {
 			return "da.php?place=gate3";
 		case "Actually Ed the Undying":
 			return "place.php?whichplace=edbase&action=edbase_book";
+		case "Avatar of West of Loathing":
+			switch (my_primestat()) {
+				case $stat[muscle]:
+					return "inv_use.php?which=f-1&whichitem=8955&pwd="+my_hash();
+				case $stat[mysticality]:
+					return "inv_use.php?which=f-1&whichitem=8956&pwd="+my_hash();
+				case $stat[moxie]:
+					return "inv_use.php?which=f-1&whichitem=8956&pwd="+my_hash();
+			}
 		}
 		switch (my_primestat()) {
+			case $stat[muscle]:
+				return "guild.php?guild=f";
 			case $stat[mysticality]:
 				return "guild.php?guild=m";
 			case $stat[moxie]:
 				return "guild.php?guild=t";
-			case $stat[muscle]:
-				return "guild.php?guild=f";
 		}
 		return "";
 	}
@@ -5025,6 +5034,7 @@ void bakeCharacter() {
 		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
 		case "Avatar of Sneaky Pete": return "Sneaky Pete";
 		case "Actually Ed the Undying": return "The Undying";
+		case "Avatar of West of Loathing": return "West of Loathing";
 		}
 		return my_path();
 	}
