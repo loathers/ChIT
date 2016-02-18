@@ -4962,36 +4962,32 @@ void bakeCharacter() {
 	}
 	
 	string myGuild() {
-		switch(my_path()) {
-		case "Avatar of Boris":
+		switch(my_class()) {
+		case $class[Seal Clubber]:
+		case $class[Turtle Tamer]:
+			return "guild.php?guild=m";
+		case $class[Disco Bandit]:
+		case $class[Accordion Thief]:
+			return "guild.php?guild=t";
+		case $class[Pastamancer]:
+		case $class[Sauceror]:
+			return "guild.php?guild=f";
+		case $class[Avatar of Boris]:
 			return "da.php?place=gate1";
-		case "Zombie Slayer":
+		case $class[Zombie Master]:
 			return "campground.php?action=grave";
-		case "Avatar of Jarlsberg":
+		case $class[Avatar of Jarlsberg]:
 			return "da.php?place=gate2";
-		case "Avatar of Sneaky Pete":
+		case $class[Avatar of Sneaky Pete]:
 			return "da.php?place=gate3";
-		case "Actually Ed the Undying":
+		case $class[Ed]:
 			return "place.php?whichplace=edbase&action=edbase_book";
-		case "Avatar of West of Loathing":
-			switch (my_primestat()) {
-				case $stat[muscle]:
-					return "inv_use.php?which=f-1&whichitem=8955&pwd="+my_hash();
-				case $stat[mysticality]:
-					return "inv_use.php?which=f-1&whichitem=8956&pwd="+my_hash();
-				case $stat[moxie]:
-					return "inv_use.php?which=f-1&whichitem=8956&pwd="+my_hash();
-			}
+		case $class[Cow Puncher]:
+		case $class[Beanslinger]:
+		case $class[Snake Oiler]:
+			return "chit_WestGuild.php";
 		}
-		switch (my_primestat()) {
-			case $stat[muscle]:
-				return "guild.php?guild=f";
-			case $stat[mysticality]:
-				return "guild.php?guild=m";
-			case $stat[moxie]:
-				return "guild.php?guild=t";
-		}
-		return "";
+		return "town.php";
 	}
 
 	// LifeStyle suitable for charpane
