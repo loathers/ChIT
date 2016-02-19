@@ -21,11 +21,11 @@ void westGuild() {
 				guild.append(b.descid);
 				guild.append(')"><b>');
 				guild.append(b);
-				guild.append('</b></a></td><td class=study><a href="inv_use.php?pwd=');
+				guild.append('</b></a></td><td class=study>[<a href="inv_use.php?pwd=');
 				guild.append(my_hash());
 				guild.append('&which=3&whichitem=');
 				guild.append(to_int(b));
-				guild.append('">[study skills</a>]</td></tr>');
+				guild.append('">study skills</a>]</td></tr>');
 			}
 		
 		guild.append('</table><p></center></td></tr></table></center></td></tr></table></center></body></html>');
