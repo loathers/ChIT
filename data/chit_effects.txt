@@ -75,6 +75,7 @@ Gristlesphere	type:"aoj"
 Chocolatesphere	type:"aoj"
 
 #Counters
+Dance Card	style:"background-color:khaki"
 Fortune Cookie	style:"background-color:khaki"
 Semirare window begin	alias:"SR range start"
 Semirare window end	alias:"SR range end"
@@ -91,7 +92,8 @@ Silent Invasion window end	style:"background-color:#599CFF;color:white;font-styl
 Spookyraven Lights Out	style:"background-color:#599CFF;color:white;font-style:italic"
 Taco Elf window begin	alias:"( Taco Elf window", style:"color:#007C29;font-style:italic;font-weight:bold", image:"taco.gif"
 Taco Elf window end	alias:"Taco Elf window )", style:"color:#007C29;font-style:italic;font-weight:bold", image:"taco.gif"
-Dance Card	style:"background-color:khaki"
+WoL Monster window begin	alias:"( Western wanderer", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
+WoL Monster window end	alias:"Western wanderer )", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
 
 #He-Boulder Major Rays
 Everything Looks Blue	style:"color:blue"
