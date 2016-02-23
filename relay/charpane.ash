@@ -4263,25 +4263,42 @@ void addFavGear() {
 	case "One Crazy Random Summer":
 		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses], "path");
 		break;
+	case "Avatar of West of Loathing":
+		addGear($items[Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos and Chickpeas, Hellfire Spicy Beans, Frigid Northern Beans, World's Blackest-Eyed Peas, 
+			Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans], "beans");
+		break;
 	}
 	
 	// some handy in-run stuff
 	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always") {
-		addGear($items[duonoculars,Bram's choker,red shoe,iFlail,rusted-out shootin' iron,
-			Space Trip safety headphones,Xiblaxian stealth cowl,Xiblaxian stealth trousers,
-			camouflage T-shirt,Xiblaxian stealth vest], "-combat");
-		addGear($items[portable cassette player,giant turkey leg,monster bait,HOA zombie eyes,
-			Ass-Stompers of Violence,cod cape,Dungeon Fist gauntlet], "+combat");
-		addGear($items[astral shirt],"stats");
-		addGear($items[Hand in Glove,astral belt,numberwang,badge of authority,smoker's cloak,spiky turtle helmet,
-			Sneaky Pete's leather jacket (collar popped),red shirt,Metal band T-shirt,hipposkin poncho,goth kid t-shirt],"ML");
+		
+		// Find varous stuff instead of hardcoding lists
+		static {
+			boolean [string, item] ascendGear;
+			foreach it in $items[] {
+				if(numeric_modifier(it, "Monster Level") >= 10)
+					ascendGear["ML", it] = true;
+				if(numeric_modifier(it, "Combat Rate") == 0) { // Get most common stuff done with one check instead of two
+				} else if(numeric_modifier(it, "Combat Rate") < 0)
+					ascendGear["-combat", it] = true;
+				else // Only non-combat gear is left
+					ascendGear["+combat", it] = true;
+				if(numeric_modifier(it, "Experience") > 0 || numeric_modifier(it, my_primestat()+ " Experience") > 0)
+					ascendGear["exp", it] = true;
+				if(numeric_modifier(it, "Spooky Damage") > 1 && numeric_modifier(it, "Stench Damage") > 1 && numeric_modifier(it, "Hot Damage") > 1 && numeric_modifier(it, "Cold Damage") > 1 && numeric_modifier(it, "Sleaze Damage") > 1)
+					ascendGear["prismatic", it] = true; // Prismatic Damage +2 or better
+				if(numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance") >= 10)
+					ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
+			}
+		}
+		foreach type in ascendGear
+			addGear(ascendGear[type], type);
+		
 		addGear($item[World's Best Adventurer sash], "Wow");
 		addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
-			astral mask, astral pet sweater]); // You must have taken this for a reason
+			astral mask, astral pet sweater, astral shirt], "astral"); // You must have taken this for a reason
+		
 	}
-	
-	// Welcome to Crimbo 2015!
-	addGear($items[bouquet of all-natural free-range flowers, stack of communist leaflets], "Crimbo");
 	
 	if(my_inebriety() > inebriety_limit())
 		addGear($item[Drunkula's wineglass], "drunk");
