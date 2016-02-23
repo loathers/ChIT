@@ -474,12 +474,14 @@ string helperSemiRare() {
 	string [location] rewards;
 		rewards[$location[The Sleazy Back Alley]] = "wine.gif|Distilled fotified wine (3)|0";
 		rewards[$location[The Haunted Pantry]] = "pie.gif|Tasty tart (3)|0";
+		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|0";
-		rewards[$location[The Valley of Rof L'm Fao]] = "scroll2.gif|Fight Bad ASCII Art|68";
+	if($strings[step1, step2, finished] contains get_property("questL05Goblin"))
+		rewards[$location[Cobb's Knob Harem]] = "vial.gif|scented massage oil (3)|20";
 	if(get_property("lastCastleTopUnlock").to_int() == my_ascensions())
 		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
-	if($strings[step4, step5, finished] contains get_property("questL10Garbage"))
-		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
+	if(get_property("grimstoneMaskPath") == "gnome")
+		rewards[$location[Ye Olde Medievale Villagee]] = "leather.gif|3 each: Straw, Leather and Clay|0";
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
 	} else {
@@ -495,8 +497,6 @@ string helperSemiRare() {
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
 		}
 	}
-	if(get_property("grimstoneMaskPath") == "gnome")
-		rewards[$location[Ye Olde Medievale Villagee]] = "leather.gif|3 each: Straw, Leather and Clay|0";
 	
 	int semirareCounter = to_int(get_property("semirareCounter"));
 	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
