@@ -1113,12 +1113,12 @@ void bakeEffects() {
 	boolean showSongs = contains_text(layout,"songs");
 	
 	//Load effects map
-	string mapfile = "chit_effects.txt";
-	if (vars["chit.effects.usermap"] == "true") {
-		mapfile = "chit_effects_" + my_name() + ".txt";
-	}
-	if (!file_to_map(mapfile, chitEffectsMap)) {
-		vprint("CHIT: Effects map could not be loaded (" + mapfile + ")", "red", 1);
+	static {
+		string mapfile = "chit_effects.txt";
+		if(vars["chit.effects.usermap"] == "true")
+			mapfile = "chit_effects_" + my_name() + ".txt";
+		if(!file_to_map(mapfile, chitEffectsMap))
+			vprint("CHIT: Effects map could not be loaded (" + mapfile + ")", "red", 1);
 	}
 	
 	buff currentbuff;
@@ -4985,10 +4985,10 @@ void bakeCharacter() {
 			return "guild.php?guild=m";
 		case $class[Disco Bandit]:
 		case $class[Accordion Thief]:
-			return "guild.php?guild=t";
+			return "guild.php?guild=f";
 		case $class[Pastamancer]:
 		case $class[Sauceror]:
-			return "guild.php?guild=f";
+			return "guild.php?guild=t";
 		case $class[Avatar of Boris]:
 			return "da.php?place=gate1";
 		case $class[Zombie Master]:
