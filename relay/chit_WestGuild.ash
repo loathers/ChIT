@@ -54,7 +54,7 @@ void westGuild() {
 			guild.append(b);
 			guild.append('</b></a></td><td class=study>[<a href="inv_use.php?pwd=');
 			guild.append(my_hash());
-			guild.append('my_hash&which=3&whichitem=');
+			guild.append('&which=3&whichitem=');
 			guild.append(to_int(b));
 			guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center><table>');
 			guild.append(skill_list(b));
