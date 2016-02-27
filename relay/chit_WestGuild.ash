@@ -1,12 +1,23 @@
 // This is central location for West of Loathing skill books to reside as if there was a single skill teacher for the class.
 
-int count_skills(item book) {
-	int total;
-	int first_skill = (to_int(book) - 8937) * 1000;
+
+int start_points(class awol) {
+	if(awol == $class[Cow Puncher]) return to_int(get_property("awolPointsCowpuncher"));
+	if(awol == $class[Beanslinger]) return to_int(get_property("awolPointsBeanslinger"));
+	return to_int(get_property("awolPointsSnakeoiler"));
+}
+
+int points_left(class awol) {
+	int skills_learned;
+	int first_skill = to_int(awol) * 1000;
 	for s from first_skill to first_skill + 9
 		if(have_skill(to_skill(s)))
-			total += 1;
-	return total;
+			skills_learned += 1;
+	
+	int max_points = start_points(awol);
+	if(my_class() == awol)
+		max_points += my_level() + 1;
+	return max_points - skills_learned;
 }
 
 void westGuild() {
@@ -19,25 +30,34 @@ void westGuild() {
 	guild.append('<tr><td style="padding: 5px; border: 1px solid blue;"><center><table><tr><td><center><br>');
 	guild.append('<table cellspacing=2 cellpadding=0>');
 	
-	foreach b in $items[Tales of the West: Cow Punching, Tales of the West: Beanslinging, Tales of the West: Snake Oiling]
-		if(available_amount(b) > 0) {
+	foreach book in $items[Tales of the West: Cow Punching, Tales of the West: Beanslinging, Tales of the West: Snake Oiling]
+		if(available_amount(book) > 0) {
+			class awol = to_class(to_int(book) - 8937); // The three skill books and the classes they teach are in the same order
 			guild.append('<tr><td><img src="/images/itemimages/');
-			guild.append(b.image);
+			guild.append(book.image);
 			guild.append('" class=hand onClick="javascript:descitem(');
-			guild.append(b.descid);
+			guild.append(book.descid);
 			guild.append(')"></td><td valign=center><a onClick="javascript:descitem(');
-			guild.append(b.descid);
+			guild.append(book.descid);
 			guild.append(')"><b>');
-			guild.append(b);
+			guild.append(book);
 			guild.append('</b></a></td><td class=study>[<a href="inv_use.php?pwd=');
 			guild.append(my_hash());
 			guild.append('&which=3&whichitem=');
-			guild.append(to_int(b));
-			guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center><table>');
-			# guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center>You can learn ');
-			# guild.append(to_int(get_property("cowPuncherPoints")) - count_skills(b))l
-			# guild.append(' more skill from this book right now.<table>');
-			int first_skill = (to_int(b) - 8937) * 1000;
+			guild.append(to_int(book));
+			# guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center><table>');
+			guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center>');
+			int can_learn = points_left(awol);
+			if(can_learn > 0) {
+				guild.append('You can learn ');
+				guild.append(can_learn);
+				guild.append(' more skill');
+				if(can_learn > 1)
+					guild.append('s');
+				guild.append(' from this book right now.');
+			}
+			guild.append('<table>');
+			int first_skill = to_int(awol) * 1000;
 			for s from first_skill to first_skill + 9 {
 				guild.append('<tr><td><img class=hand onClick=\'javascript:poop("desc_skill.php?whichskill=');
 				guild.append(s);
