@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r16624; // Machine Elf fights and snowglobe support both
+since r16754; // Track earned AWoL skill points in awolPointsBeanslinger, awolPointsCowpuncher, and awolPointsSnakeoiler
 import "zlib.ash";
 
 /************************************************************************************
