@@ -77,7 +77,7 @@ string [string] chitSource;
 string [string] chitBricks;
 string [string] chitPickers;
 string [string] chitTools;
-string [string] chitEffectsMap;
+static string [string] chitEffectsMap;
 location lastLoc;
 boolean isCompact = false;
 boolean inValhalla = false;
