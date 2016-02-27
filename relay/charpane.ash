@@ -4982,13 +4982,13 @@ void bakeCharacter() {
 		switch(my_class()) {
 		case $class[Seal Clubber]:
 		case $class[Turtle Tamer]:
-			return "guild.php?guild=m";
+			return "guild.php?guild=f";
 		case $class[Disco Bandit]:
 		case $class[Accordion Thief]:
-			return "guild.php?guild=f";
+			return "guild.php?guild=t";
 		case $class[Pastamancer]:
 		case $class[Sauceror]:
-			return "guild.php?guild=t";
+			return "guild.php?guild=m";
 		case $class[Avatar of Boris]:
 			return "da.php?place=gate1";
 		case $class[Zombie Master]:
