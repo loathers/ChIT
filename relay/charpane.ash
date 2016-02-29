@@ -755,7 +755,9 @@ string parseMods(string evm, boolean span) {
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
 		+"|Maximum HP( Percent|):([^,]+), Maximum MP\\6:([^,]+)"
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
-		+'|Avatar: "([^"]+)"', evm);
+		+'|Avatar: "([^"]+)"'
+		+'|[^ ]* Limit: 0'	// This is mostly for Cowrruption vs Cow Puncher having no limit
+			, evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
 		if(parse.group(1) != "") {

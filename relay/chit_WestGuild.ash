@@ -1,10 +1,10 @@
 // This is central location for West of Loathing skill books to reside as if there was a single skill teacher for the class.
 
 
-int start_points(class awol) {
-	if(awol == $class[Cow Puncher]) return to_int(get_property("awolPointsCowpuncher"));
-	if(awol == $class[Beanslinger]) return to_int(get_property("awolPointsBeanslinger"));
-	return to_int(get_property("awolPointsSnakeoiler"));
+string pointProp(class awol) {
+	if(awol == $class[Cow Puncher]) return "awolPointsCowpuncher";
+	if(awol == $class[Beanslinger]) return "awolPointsBeanslinger";
+	return "awolPointsSnakeoiler";
 }
 
 int points_left(class awol) {
@@ -13,11 +13,18 @@ int points_left(class awol) {
 	for s from first_skill to first_skill + 9
 		if(have_skill(to_skill(s)))
 			skills_learned += 1;
+	if(skills_learned >= 10)
+		return 0;
 	
-	int max_points = start_points(awol);
+	int points = to_int(get_property(pointProp(awol)));
 	if(my_class() == awol)
-		max_points += my_level() + 1;
-	return max_points - skills_learned;
+		points = min(points + my_level() + 1, 10);
+	
+	// If skills_learned > points, then mafia has the wrong number for starting points. Correct this for a class other than current
+	if(skills_learned > points && my_class() != awol)
+		set_property(pointProp(awol), skills_learned);
+	
+	return points - skills_learned;
 }
 
 void westGuild() {
