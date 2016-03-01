@@ -796,12 +796,12 @@ string parseMods(string evm, boolean span) {
 	// Change " Percent: +XX" and " Drop: +XX" to "+XX%"
 	// If HP and MP regen are the same, combine them
 	enew.set_length(0);
-	parse = create_matcher("^\\s*(,)\\s*"
+	parse = create_matcher("^\\s*([,\\s]*)"
 		+"|(\\s*Drop|\\s*Percent([^:]*))?(?<!Limit):\\s*(([+-])?\\d+)"
 		+"|(HP Regen ([0-9-]+), MP Regen \\6)", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
-		if(parse.group(1) == ",") {			// group would contain extra comma at beginning
+		if(parse.group(1).contains_text(",")) {	// group would contain extra comma at beginning
 			// Delete this: append nothing
 		} else if(parse.group(4) != "") { 	// group is the numeric modifier
 			enew.append(parse.group(3));	// group is possible words after "Percent"
@@ -4068,7 +4068,9 @@ string modifyName(item it)
 			notes += to_int(get_property("_stinkyCheeseCount")) + '/100';
 			break;
 		case $item[bone abacus]:
-			notes += get_property("boneAbacusVictories") + "/1000";
+			if(get_property("boneAbacusVictories").to_int() < 1000)
+				notes += get_property("boneAbacusVictories") + "/1000";
+			break;
 	}
 	
 	if(notes != "")
