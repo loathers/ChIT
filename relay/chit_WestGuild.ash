@@ -18,7 +18,7 @@ int points_left(class awol) {
 	
 	int points = to_int(get_property(pointProp(awol)));
 	if(my_class() == awol)
-		points = min(points + my_level() + 1, 10);
+		points = min(max(points, 1) + my_level(), 10);
 	
 	// If skills_learned > points, then mafia has the wrong number for starting points. Correct this for a class other than current
 	if(skills_learned > points && my_class() != awol)
