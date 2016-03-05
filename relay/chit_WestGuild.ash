@@ -20,9 +20,13 @@ int points_left(class awol) {
 	if(my_class() == awol)
 		points = min(max(points, 1) + my_level(), 10);
 	
-	// If skills_learned > points, then mafia has the wrong number for starting points. Correct this for a class other than current
-	if(skills_learned > points && my_class() != awol)
-		set_property(pointProp(awol), skills_learned);
+	// If skills_learned > points, then mafia has the wrong number for starting points.
+	if(skills_learned > points) {
+		if(my_class() == awol)
+			set_property(pointProp(awol), skills_learned - my_level() - 1);
+		else 
+			set_property(pointProp(awol), skills_learned);
+	}
 	
 	return points - skills_learned;
 }
@@ -52,7 +56,6 @@ void westGuild() {
 			guild.append(my_hash());
 			guild.append('&which=3&whichitem=');
 			guild.append(to_int(book));
-			# guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center><table>');
 			guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center>');
 			int can_learn = points_left(awol);
 			if(can_learn > 0) {

@@ -72,7 +72,7 @@ Many thanks to:
 			All future changelogs will be on the SVN and will be much more complete.
 	
 ************************************************************************************/
-	
+
 string [string] chitSource;
 string [string] chitBricks;
 string [string] chitPickers;
@@ -1132,7 +1132,7 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentbuff.effectHTML);
-		} else if (showSongs && $strings[at, aob, aoj] contains currentbuff.effectType) {
+		} else if (showSongs && $strings[at, aob, aoj, awol] contains currentbuff.effectType) {
 			songs.append(currentbuff.effectHTML);
 		} else if(showSongs && to_skill(currentbuff.effectName).expression == true) {
 			expression.append('<tbody class="buffs">');
@@ -1158,8 +1158,7 @@ void bakeEffects() {
 	// Add helper for Xiblaxian holo-wrist-puter
 	if(vars["chit.helpers.xiblaxian"] != "false" && have_equipped($item[Xiblaxian holo-wrist-puter]))
 		helpers.append(helperXiblaxian());
-
-
+	
 	//Intrinsic Effects
 	rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["intrinsics"]);
 	while (find(rowMatcher)){

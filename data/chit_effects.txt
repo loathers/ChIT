@@ -74,6 +74,12 @@ Oilsphere	type:"aoj"
 Gristlesphere	type:"aoj"
 Chocolatesphere	type:"aoj"
 
+#Avatar of West of Loathing Buffs
+Cautious Prowl	type:"awol"
+Prideful Strut	type:"awol"
+Leisurely Amblin'	type:"awol"
+
+
 #Counters
 Dance Card	style:"background-color:khaki"
 Fortune Cookie	style:"background-color:khaki"
