@@ -6175,6 +6175,17 @@ void bakeTracker() {
 		}
 	}
 	
+	//Digital Key
+	if (item_amount($item[digital key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),to_string($item[digital key]))) {
+		int whitepix = item_amount($item[white pixel]) + creatable_amount($item[white pixel]);
+		result.append("<tr><td>");
+		result.append("Get ");
+		result.append('<a target="mainpane" href="woods.php">Digital Key</a>');
+		result.append(" ("+whitepix+"/30 white)");
+		result.append("</td></tr>");
+	}
+	
+	
 	//questM13Escape, Subject 37
 	if (started("questM13Escape") && can_interact()) {
 	//if (contains_text(source,"Subject 37")) {
