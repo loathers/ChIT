@@ -1450,17 +1450,24 @@ void bakeTrail() {
 	//Container
 	string url = "main.php";
 	matcher target = create_matcher('href="(.*?)" target=mainpane>Last Adventure:</a>', source);
-	if (find(target)) {
-		url = group(target, 1);
-	}
-	result.append('<tr><th><a class="visit" target="mainpane" href="' + url + '"><img src="');
+	if(target.find())
+		url = target.group(1);
+	if(url == "place.php?whichplace=town_right" && source.contains_text("Investigating a Plaintive Telegram"))
+		url = "place.php?whichplace=town_right&action=townright_ltt";
+	result.append('<tr><th><a class="visit" target="mainpane" href="');
+	result.append(url);
+	result.append('"><img src="');
 	result.append(imagePath);
 	result.append('trail.png">Last Adventure</a></th></tr>');
 	
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
-	if (find(target)) {
-		result.append('<tr><td class="last"><a class="visit" target="mainpane" href="' + group(target, 1) + '">' + group(target, 2) + '</a></td></tr>');
+	if(target.find()) {
+		result.append('<tr><td class="last"><a class="visit" target="mainpane" href="');
+		result.append(target.group(1));
+		result.append('">');
+		result.append(target.group(2));
+		result.append('</a></td></tr>');
 	}
 	
 	//Other adventures
@@ -1468,7 +1475,11 @@ void bakeTrail() {
 	while (find(others)) {
 		target = create_matcher('target=mainpane href="(.*?)">(.*?)</a>', group(others, 1));
 		if (find(target)) {
-			result.append('<tr><td><a class="visit" target="mainpane" href="' + group(target, 1) + '">' + group(target, 2) + '</a></td></tr>');
+			result.append('<tr><td><a class="visit" target="mainpane" href="');
+			result.append(target.group(1));
+			result.append('">');
+			result.append(target.group(2));
+			result.append('</a></td></tr>');
 		}
 	}
 	
@@ -2317,7 +2328,8 @@ int hasDrops(familiar f) {
 		return 3 - (min(available_amount($item[eleven-foot pole]),1) +
 			min(available_amount($item[ring of detect boring doors]),1) +
 			min(available_amount($item[pick-o-matic lockpicks]),1));
-	}
+	} else if(f == $familiar[Rockin' Robin] && get_property("rockinRobinProgress").to_int() > 24)
+		return 1;
 	if(f.fights_limit > 0)
 		return f.drops_limit - f.drops_today + f.fights_limit - f.fights_today;
 	
@@ -3723,19 +3735,25 @@ void addTrail(buffer result) {
 	//Container
 	string url = "main.php";
 	matcher target = create_matcher('href="(.*?)" target=mainpane>Last Adventure:</a>', source);
-	if (find(target)) {
-		url = group(target, 1);
-	}
-	result.append('<tr>');
-	result.append('<td class="label"><a class="visit" target="mainpane" href="' + url + '">Last</a></td>');
+	if(target.find())
+		url = target.group(1);
+	if(url == "place.php?whichplace=town_right" && source.contains_text("Investigating a Plaintive Telegram"))
+		url = "place.php?whichplace=town_right&action=townright_ltt";
+		
+	result.append('<tr><td class="label"><a class="visit" target="mainpane" href="');
+	result.append(url);
+	result.append('">Last</a></td>');
 	
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">\\s*(.*?)</a><br></font>', source);
-	if (find(target)) {
-		result.append('<td class="info" style="display:block;" colspan="2"><a class="visit" target="mainpane" href="' + group(target, 1) + '">' + group(target, 2) + '</a></td>');
-	} else {
+	if(target.find()) {
+		result.append('<td class="info" colspan="2" style="display:block;"><a class="visit" target="mainpane" href="');
+		result.append(target.group(1));
+		result.append('">');
+		result.append(target.group(2));
+		result.append('</a></td>');
+	} else
 		result.append('<td class="info" colspan="2">(None)</td>');
-	}
 	result.append('</tr>');
 	
 }
@@ -4465,7 +4483,7 @@ void pickerGear(slot s) {
 		} else if(closet_amount(it) > 0) {
 			action = "uncloset";
 			cmd = "closet take " + it + "; equip ";
-		} else if(creatable_amount(it) > 0) {
+		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none]) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
 			danger_level = 1;
 			// make it!
 			action = "create";
@@ -4625,6 +4643,24 @@ void pickerGear(slot s) {
 	foreach reason in recommendedGear
 		add_gear_section(reason, recommendedGear[reason]);
 	
+	float mod_val(item it, string mod) {
+		switch(it) {
+		case $item[your cowboy boots]:
+			return equipped_item($slot[bootskin]).numeric_modifier(mod)
+				+ equipped_item($slot[bootspur]).numeric_modifier(mod);
+		case $item[over-the-shoulder Folder Holder]:
+			float modtot;
+			foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
+				modtot += equipped_item(sl).numeric_modifier(mod);
+			return modtot;
+		}
+		return numeric_modifier(it, mod);
+	}
+	float mod_val(item it, string mod, int weight) {
+		if(weight == 0) return 0;
+		return mod_val(it, mod) * weight;
+	}
+	
 	// Which gear is more desirable?
 	int gear_weight(item it) {
 		float weight;
@@ -4634,12 +4670,14 @@ void pickerGear(slot s) {
 			weight = numeric_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
 			break;
 		case "accessory":
+			# weight = get_power(it) + mod_val(it, "Item Drop", 6) + mod_val(it, "Monster Level", my_level() < 13? 4: 0)
+				# + (mod_val(it, "MP Regen Max") + mod_val(it, "MP Regen Min")) * 5;
 			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 0)
 				+ (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 5;
 			break;
 		case "club":
 			if(my_class() == $class[Seal Clubber])
-				weight = get_power(it) * (weapon_hands(it) == 1? 3: 2);
+				weight = get_power(it) * 2;
 			else weight = get_power(it);
 			break;
 		case "shield":
@@ -4649,7 +4687,7 @@ void pickerGear(slot s) {
 			break;
 		case "accordion":
 			if(my_class() == $class[Accordion Thief])
-				weight = get_power(it) * (weapon_hands(it) == 1? 3.5: 2);
+				weight = get_power(it) * 2;
 			else weight = get_power(it);
 			break;
 		default:
@@ -4663,6 +4701,8 @@ void pickerGear(slot s) {
 		// Tired of seeing the antique gear on top. For stuff like that, let's halve base power or whatever is computed in it's place.
 		if(string_modifier(it, "Modifiers").contains_text("Breakable"))
 			weight *= 0.5;
+		else if(weapon_hands(it) == 1)
+			weight *= 1.6;
 		
 		switch(my_primestat()) {
 		case $stat[Muscle]:
@@ -4741,6 +4781,7 @@ void pickerGear(slot s) {
 
 // Part of gear block that can be included in stats for a smaller footprint
 void addGear(buffer result) {
+	addFavGear();
 	void addSlot(slot s) {
 		switch(s) {
 		case $slot[shirt]:
@@ -6588,8 +6629,6 @@ void bakeBricks() {
 
 	bakeHeader();
 	bakeFooter();
-	
-	addFavGear();
 	
 	// Standardize brick layouts
 	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
