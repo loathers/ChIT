@@ -7,12 +7,8 @@ string pointProp(class awol) {
 	return "awolPointsSnakeoiler";
 }
 
-int points_left(class awol) {
-	int skills_learned;
+int points_left(class awol, int skills_learned) {
 	int first_skill = to_int(awol) * 1000;
-	for s from first_skill to first_skill + 9
-		if(have_skill(to_skill(s)))
-			skills_learned += 1;
 	if(skills_learned >= 10)
 		return 0;
 	
@@ -44,6 +40,11 @@ void westGuild() {
 	foreach book in $items[Tales of the West: Cow Punching, Tales of the West: Beanslinging, Tales of the West: Snake Oiling]
 		if(available_amount(book) > 0) {
 			class awol = to_class(to_int(book) - 8937); // The three skill books and the classes they teach are in the same order
+			int skills_learned; 
+			int first_skill = to_int(awol) * 1000;
+			for s from first_skill to first_skill + 9
+				if(have_skill(to_skill(s)))
+					skills_learned += 1;
 			guild.append('<tr><td><img src="/images/itemimages/');
 			guild.append(book.image);
 			guild.append('" class=hand onClick="javascript:descitem(');
@@ -52,12 +53,17 @@ void westGuild() {
 			guild.append(book.descid);
 			guild.append(')"><b>');
 			guild.append(book);
-			guild.append('</b></a></td><td class=study>[<a href="inv_use.php?pwd=');
-			guild.append(my_hash());
-			guild.append('&which=3&whichitem=');
-			guild.append(to_int(book));
-			guild.append('">study skills</a>]</td></tr><tr><td>&nbsp;</td><td colspan=2><center>');
-			int can_learn = points_left(awol);
+			guild.append('</b></a></td><td class=study>');
+			if(skills_learned < 10) {
+				guild.append('[<a href="inv_use.php?pwd=');
+				guild.append(my_hash());
+				guild.append('&which=3&whichitem=');
+				guild.append(to_int(book));
+				guild.append('">study skills</a>]');
+			} else
+				guild.append('&nbsp;');
+			guild.append('</td></tr><tr><td>&nbsp;</td><td colspan=2><center>');
+			int can_learn = points_left(awol, skills_learned);
 			if(can_learn > 0) {
 				guild.append('You can learn ');
 				guild.append(can_learn);
@@ -67,7 +73,6 @@ void westGuild() {
 				guild.append(' from this book right now.');
 			}
 			guild.append('<table>');
-			int first_skill = to_int(awol) * 1000;
 			for s from first_skill to first_skill + 9 {
 				guild.append('<tr><td><img class=hand onClick=\'javascript:poop("desc_skill.php?whichskill=');
 				guild.append(s);
