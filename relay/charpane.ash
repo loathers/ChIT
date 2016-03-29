@@ -4483,7 +4483,8 @@ void pickerGear(slot s) {
 		} else if(closet_amount(it) > 0) {
 			action = "uncloset";
 			cmd = "closet take " + it + "; equip ";
-		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none]) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
+		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none] && !(pulls_remaining() == -1 && storage_amount(it) > 0)) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
+			// Also prefer pulls in aftercore
 			danger_level = 1;
 			// make it!
 			action = "create";
