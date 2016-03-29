@@ -4483,26 +4483,25 @@ void pickerGear(slot s) {
 		} else if(closet_amount(it) > 0) {
 			action = "uncloset";
 			cmd = "closet take " + it + "; equip ";
-		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none] && !(pulls_remaining() == -1 && storage_amount(it) > 0)) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
-			// Also prefer pulls in aftercore
-			danger_level = 1;
-			// make it!
-			action = "create";
-			action_description = "(up to " + creatable_amount(it) + ")";
-			cmd = "create "+ it+ "; equip ";
-		} else if(storage_amount(it) > 0 && pulls_remaining() != 0) {
-			action = "pull";
-			if(pulls_remaining() != -1) {
-				danger_level = 2;
-				action_description += '(' + pulls_remaining() + ' left)';
-			}
-			cmd = "pull " + it + "; equip ";
 		} else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0) {
 			action = "free pull";
 			cmd = "equip ";
 		} else if(foldable_amount(it) > 0) {
 			action = "fold";
 			cmd = "fold " + it + "; equip ";
+		} else if(storage_amount(it) > 0 && pulls_remaining() == -1) { // Out of ronin (or in aftercore), prefer pulls to creation
+			action = "pull";
+			cmd = "pull " + it + "; equip ";
+		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none] && !(pulls_remaining() == -1 && storage_amount(it) > 0)) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
+			danger_level = 1;
+			action = "create";
+			action_description = "(up to " + creatable_amount(it) + ")";
+			cmd = "create "+ it+ "; equip ";
+		} else if(storage_amount(it) > 0 && pulls_remaining() > 0) {
+			action = "pull";
+			danger_level = 2;
+			action_description += '(' + pulls_remaining() + ' left)';
+			cmd = "pull " + it + "; equip ";
 		} else // no options were found, give up
 			return;
 		
