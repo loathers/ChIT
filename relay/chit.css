@@ -51,11 +51,11 @@ a:hover .warning-link {
 	margin:-2px 2px 0px 2px;
 	overflow-x:hidden;
 	overflow-y:auto;
-	position:fixed;
+	position:absolute;
 	width:99%;
 }
 #chit_floor {
-	position:fixed;
+	position:absolute;
 	overflow-x:hidden;
 	overflow-y:auto;
 	margin:-2px 2px 2px 2px;

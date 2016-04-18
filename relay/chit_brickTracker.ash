@@ -5,7 +5,7 @@ CHaracter Info Toolbox tracker brick by ckb
 
 
 
-buffer buildTracker(string imagePath) {
+buffer buildTracker() {
 	
 	//useful sub-functions for checking items: yes=green, no=red
 	string item_report(boolean good, string itname) {
