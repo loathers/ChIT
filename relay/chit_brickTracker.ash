@@ -3,8 +3,6 @@ CHaracter Info Toolbox tracker brick by ckb
 ************************************************************************************/
 
 
-
-
 buffer buildTracker() {
 	
 	//useful sub-functions for checking items: yes=green, no=red
@@ -956,5 +954,15 @@ buffer buildTracker() {
 	
 	return result;
 	
+}
+
+void bakeTracker() {
+	buffer result = buildTracker();
+	
+	if(length(result) > 184) { // 184 is the size of an empty table
+		chitBricks["tracker"] = result;
+		chitTools["tracker"] = "Tracker|tracker.png";
+	}
+
 }
 
