@@ -1,5 +1,11 @@
 /************************************************************************************
 CHaracter Info Toolbox tracker brick by ckb
+
+TTD:
+- better consistancy of wording / syntax
+- checks / hints for elem airport quests
+- other quests?
+
 ************************************************************************************/
 
 
@@ -53,6 +59,7 @@ buffer buildTracker() {
 			b.append(", ");
 		b.append(s);
 	}
+	
 	string twinPeak() {
 		int p = get_property("twinPeakProgress").to_int();
 		boolean mystery(int c) { return (p & (1 << c)) == 0; }
@@ -64,28 +71,28 @@ buffer buildTracker() {
 			case "Avatar of Jarlsberg":
 				return my_companion() != "Eggman"? 0: (have_skill($skill[Working Lunch])? 75: 50);
 			}
-				item fameq = familiar_equipped_equipment(my_familiar());
-				int famw = round( familiar_weight(my_familiar()) + weight_adjustment() - numeric_modifier(fameq, "Familiar Weight") ); 
-				return numeric_modifier( my_familiar(), "Item Drop", famw , fameq );
+			item fameq = familiar_equipped_equipment(my_familiar());
+			int famw = round( familiar_weight(my_familiar()) + weight_adjustment() - numeric_modifier(fameq, "Familiar Weight") ); 
+			return numeric_modifier( my_familiar(), "Item Drop", famw , fameq );
 		}
 		float foodDrop() { return round(numeric_modifier("Item Drop") - famBonus() + numeric_modifier("Food Drop")); }
 		buffer need;
 		// Only check for final if first three done
 		if(p < 7) {
-			if(mystery(0)) need.comma(item_report(numeric_modifier("Stench Resistance") >= 4, "4 Stench Resistance"));
-			if(mystery(1)) need.comma(item_report(foodDrop() >= 50, "+50% Food Drop"));
-			if(mystery(2)) need.comma(item_report($item[Jar of Oil], "a Jar of Oil"));
+			if(mystery(0)) need.comma(item_report(numeric_modifier("Stench Resistance") >= 4, "4 Stench Resist"));
+			if(mystery(1)) need.comma(item_report(foodDrop()>=50, "+50% Food Drop"));
+			if(mystery(2)) need.comma(item_report($item[Jar of Oil], "Jar of Oil"));
 		} else if(p == 15)
 			need.append(item_report(true, "Mystery Solved!"));
 		else
-			need.comma(item_report(numeric_modifier("Initiative") >= 40, "+40% Initiative"));
+			need.comma(item_report(numeric_modifier("Initiative") >= 40, "+40% Init"));
 		return need;
 	}
 	
 	buffer highlands() {
 		buffer high;
 		high.append("<br>A-boo: ");
-		high.append(item_report(get_property("booPeakProgress") == "0", get_property("booPeakProgress")+'% haunted'));
+		high.append(item_report(get_property("booPeakProgress")=="0", get_property("booPeakProgress")+"% haunted"));
 		if (get_property("booPeakProgress")!="0") {
 			high.append(", "+item_report($item[A-Boo clue]));
 			high.append(" ("+item_amount($item[A-Boo clue])+")");
@@ -95,15 +102,13 @@ buffer buildTracker() {
 		//check 4 stench res, 50% items (no familiars), jar of oil, 40% init
 		//L9: oil peak
 		high.append("<br>Oil: ");
-		high.append(item_report(get_property("oilPeakProgress").to_float() == 0, get_property("oilPeakProgress")+' &mu;B/Hg'));
+		high.append(item_report(get_property("oilPeakProgress").to_float()==0, get_property("oilPeakProgress")+" &mu;B/Hg"));
 		if(high.contains_text(">0% haunt") && high.contains_text("Solved!") && high.contains_text("0.00")) {
 			high.set_length(0);
 			high.append('<br>Return to <a target="mainpane" href="place.php?whichplace=highlands&action=highlands_dude">High Landlord</a>');
 		}
 		return high;
 	}
-	
-	
 	
 	
 	// Start building our table
@@ -118,8 +123,8 @@ buffer buildTracker() {
 	//G for Guild. S for Sea. F for Familiar. I for Item. M for Miscellaneous 
 	
 	string bhit;
-	foreach b in $strings[Easy, Hard, Special] {
-		bhit = get_property("current"+ b +"BountyItem");
+	foreach bb in $strings[Easy, Hard, Special] {
+		bhit = get_property("current"+bb+"BountyItem");
 		if(bhit != "") {
 			result.append("<tr><td>");
 			result.append('Your <a target="mainpane" href="bhh.php">Bounty</a> is: <br>');
@@ -136,7 +141,7 @@ buffer buildTracker() {
 		result.append(item_report($item[pretentious paintbrush], "Paintbrush")+" (<a target=\"mainpane\" href=\"plains.php\">Outskirts</a>)");
 		result.append("</td></tr>");
 	}
-
+	
 	//questM01Untinker
 	if(started("questM01Untinker")) {
 		result.append("<tr><td>");
@@ -144,7 +149,7 @@ buffer buildTracker() {
 		result.append(item_report($item[rusty screwdriver], "screwdriver"));
 		result.append("</td></tr>");
 	}
-
+	
 	//questM20Necklace
 	if(started("questM20Necklace")) {
 		result.append("<tr><td>");
@@ -153,6 +158,9 @@ buffer buildTracker() {
 		result.append(" at the <a target=\"mainpane\" href=\"manor.php\">Manor</a>");
 		if (available_amount($item[Spookyraven billiards room key])==0) {
 			result.append("<br>Kitchen Drawers: "+get_property("manorDrawerCount")+"/21");
+		}
+		if (available_amount($item[Spookyraven billiards room key])>0) {
+			result.append("<br>Pool skill: "+get_property("poolSkill")+"/18");
 		}
 		result.append("<br>Writing Desks: "+get_property("writingDesksDefeated")+"/5");
 		result.append("</td></tr>");
@@ -167,7 +175,7 @@ buffer buildTracker() {
 		result.append(item_report($item[Lady Spookyraven's finest gown], "finest gown")+" (Bedroom)");
 		result.append("</td></tr>");
 	}
-
+	
 	//Gorgonzola wants you to exorcise a poltersandwich in the Haunted Pantry.
 	//Take the poltersandwich back to Gorgonzola at the League of Chef-Magi.
 	if(started("questG07Myst")) {
@@ -191,7 +199,7 @@ buffer buildTracker() {
 		result.append('Find a big sausage in the <a target="mainpane" href="plains.php">Outskirts</a>');
 		result.append("</td></tr>");
 	}
-
+	
 	//L2: get mosquito larva, questL02Larva
 	if(started("questL02Larva")) { 
 		result.append("<tr><td>");
@@ -362,7 +370,7 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-
+	
 	//L8: trapper: 3 ore, 3 goat cheese, questL08Trapper
 	if(started("questL08Trapper")) {
 		result.append('<tr><td><a target="mainpane" href="place.php?whichplace=mclargehuge">Help the Trapper</a>');
@@ -428,7 +436,7 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-
+	
 	//L11: MacGuffin, questL11MacGuffin
 	if (started("questL11MacGuffin")) {
 		result.append("<tr><td>");
@@ -451,7 +459,7 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-		
+	
 	//Get pirate fledges from island.php
 	if (started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted") {
 		result.append("<tr><td>");
@@ -621,8 +629,8 @@ buffer buildTracker() {
 		result.append("</td></tr>");
 	}
 	
-
-
+	
+	
 	//L11: questL11Desert
 	if(started("questL11Desert") && my_path()!="Actually Ed the Undying") {
 		result.append("<tr><td>");
@@ -652,9 +660,9 @@ buffer buildTracker() {
 				result.append(gnasir);
 			}
 		result.append("</td></tr>");
-
+	
 	}
-
+	
 	//L11: questL11Desert
 	if(get_property("questL11Desert")=="finished" && get_property("questL11Pyramid")=="unstarted") {
 		result.append("<tr><td>");
@@ -664,7 +672,7 @@ buffer buildTracker() {
 				result.append(item_report($item[Eye of Ed], "Eye of Ed"));
 				result.append("<br>");
 		result.append("</td></tr>");
-
+	
 	}
 	
 	//L11: questL11Pyramid
@@ -879,29 +887,6 @@ buffer buildTracker() {
 	}
 	
 	
-	//Xiblaxian holo-wrist-puter
-	/*
-	if (have_equipped($item[Xiblaxian holo-wrist-puter])) {
-		int xidrops = get_property("_holoWristDrops").to_int();
-		int xiprog = get_property("_holoWristProgress").to_int() + 1;
-		int xinext = 11 + 5*xidrops;
-		result.append("<tr><td>");
-		result.append("<b>Xiblaxian</b> drop: "+xiprog+"/"+xinext);
-		if (xiprog>=xinext) {
-			result.append("<br><span style=color:fuchsia>");
-			result.append("circuitry ("+available_amount($item[Xiblaxian circuitry])+") ");
-			result.append("[indoors]");
-			result.append("<br>");
-			result.append("polymer ("+available_amount($item[Xiblaxian polymer])+") ");
-			result.append("[outdoors]");
-			result.append("<br>");
-			result.append("alloy ("+available_amount($item[Xiblaxian alloy])+") ");
-			result.append("[underground]");
-			result.append("</span>");
-		}
-		result.append("</td></tr>");
-	}
-	*/
 	
 	
 	//L99: Nemesis stuff ?
@@ -948,13 +933,336 @@ buffer buildTracker() {
 	
 	
 	*/
-
-
+	
+	
+	
+	
+	//questESlMushStash
+	if (started("questESlMushStash")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc1">Buff Jimmy</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Fun-Guy Mansion</a>');
+		result.append(" Find Buff Jimmy's ");
+		result.append(item_report($item[pencil thin mushroom],"mushrooms",10));
+		result.append("</td></tr>");
+	}
+	//questESlCheeseburger
+	if (started("questESlCheeseburger")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc1">Buff Jimmy</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sloppy Seconds Diner</a>');
+		result.append(" - Get burger ");
+		result.append(item_report(get_property("buffJimmyIngredients")=="15","ingredients: "+get_property("buffJimmyIngredients")+"/15"));
+		if (!have_equipped($item[Paradaisical Cheeseburger recipe])) {
+			result.append("<br><span class=walford_nobucket>Equip Cheeseburger recipe</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESlSalt
+	if (started("questESlSalt")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc1">Buff Jimmy</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sunken Party Yacht</a>');
+		result.append(" - Get sons of sailors ");
+		result.append(item_report($item[salty sailor salt],"sailor salt",50));
+		result.append("</td></tr>");
+	}
+	//questESlAudit
+	if (started("questESlAudit")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc2">Taco Dan</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Fun-Guy Mansion</a>');
+		result.append(" - Find lost ");
+		result.append(item_report($item[Taco Dan's Taco Stand's Taco Receipt],"Receipts",10));
+		if (have_effect($effect[Sleight of Mind])==0) {
+			result.append("<br><span class=walford_nobucket>need <i>Sleight of Mind</i>, use sleight-of-hand mushroom</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESlCocktail
+	if (started("questESlCocktail")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc2">Taco Dan</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sloppy Seconds Diner</a>');
+		result.append(" - Get cocktail ");
+		result.append(item_report(get_property("tacoDanCocktailSauce")=="15","sauce: "+get_property("tacoDanCocktailSauce")+"/15"));
+		if (!have_equipped($item[Taco Dan's Taco Stand Cocktail Sauce Bottle])) {
+			result.append("<br><span class=walford_nobucket>Equip Cocktail Sauce Bottle</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESlFish
+	if (started("questESlFish")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc2">Taco Dan</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sunken Party Yacht</a>');
+		result.append(" - Find taco fish ");
+		result.append(item_report(get_property("tacoDanFishMeat").to_int()>=300,"meat: "+get_property("tacoDanFishMeat")+"/300"));
+		result.append("</td></tr>");
+	}
+	//questESlBacteria
+	if (started("questESlBacteria")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc3">Broden</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Fun-Guy Mansion</a>');
+		result.append(" - Get hot-tub ");
+		result.append(item_report(get_property("brodenBacteria").to_int()>=10,"bacteria: "+get_property("brodenBacteria")+"/10"));
+		//result.append("<br>(+resist all)"); 
+		result.append("</td></tr>");
+	}
+	//questESlSprinkles
+	if (started("questESlSprinkles")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc3">Broden</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sloppy Seconds Diner</a>');
+		result.append(" - Get Sundae ");
+		result.append(item_report(get_property("brodenSprinkles").to_int()>=15,"sprinkles: "+get_property("brodenSprinkles")+"/15"));
+		if (!have_equipped($item[sprinkle shaker])) {
+			result.append("<br><span class=walford_nobucket>Equip sprinkle shaker</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESlDebt
+	if (started("questESlDebt")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze&action=airport1_npc3">Broden</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_sleaze">Sunken Party Yacht</a>');
+		result.append(" - collect drownedbeat debts: ");
+		result.append(item_report($item[bike rental broupon],"broupons",15));
+		result.append("</td></tr>");
+	}
+	
+	
+	//questESpEVE
+	if (started("questESpEVE")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Secret Government Laboratory</a>');
+		result.append(" - Defeat E.V.E., the robot zombie");
+		result.append("</td></tr>");
+	}
+	//questESpJunglePun
+	if (started("questESpJunglePun")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Deep Dark Jungle</a>');
+		result.append(" - Collect ");
+		result.append(item_report(get_property("junglePuns").to_int()>=11,"Jungle Puns: "+get_property("junglePuns")+"/11"));
+		if (!have_equipped($item[encrypted micro-cassette recorder])) {
+			result.append("<br><span class=walford_nobucket>Equip micro-cassette recorder</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESpGore	Gore Tipper
+	if (started("questESpGore")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Secret Government Laboratory</a>');
+		result.append(" - Collect ");
+		result.append(item_report(get_property("goreCollected").to_int()>=100,"Gore: "+get_property("goreCollected")+"/100"));
+		if (!have_equipped($item[gore bucket])) {
+			result.append("<br><span class=walford_nobucket>Equip gore bucket</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questESpClipper
+	if (started("questESpClipper")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Mansion of Dr. Weirdeaux</a>');
+		result.append(" - Collect ");
+		result.append(item_report(get_property("fingernailsClipped").to_int()>=23,"Fingernail Clippings: "+get_property("fingernailsClipped")+"/23"));
+		result.append("</td></tr>");
+	}
+	//questESpFakeMedium
+	if (started("questESpFakeMedium")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Secret Government Laboratory</a>');
+		result.append(" - Get ");
+		result.append(item_report($item[ESP suppression collar]));
+		result.append("</td></tr>");
+	}
+	//questESpSerum
+	if (started("questESpSerum")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Mansion of Dr. Weirdeaux</a>');
+		result.append(" - Get ");
+		result.append(item_report($item[experimental serum P-00],"vials of serum P-00: ",5));
+		result.append("</td></tr>");
+	}
+	//questESpSmokes
+	if (started("questESpSmokes")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Deep Dark Jungle</a>');
+		result.append(" - Get ");
+		result.append(item_report($item[pack of smokes],"pack of smokes: ",10));
+		result.append("</td></tr>");
+	}
+	//questESpOutOfOrder
+	if (started("questESpOutOfOrder")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky&action=airport2_radio">Conspiracy Radio</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_spooky">Deep Dark Jungle</a>');
+		result.append(" - Find ");
+		result.append(item_report($item[Project T. L. B.]));
+		if (!have_equipped($item[GPS-tracking wristwatch])) {
+			result.append("<br><span class=walford_nobucket>Equip GPS-tracking wristwatch</span>");
+		}
+		result.append("</td></tr>");
+	}
+	
+	
+	//questEStFishTrash
+	if (started("questEStFishTrash")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Pirates of the Garbage Barges</a>');
+		result.append(" - Collect ");
+		result.append(item_report(get_property("dinseyFilthLevel").to_int()>=20,"Trash: "+get_property("dinseyFilthLevel")+"/20"));
+		if (!have_equipped($item[trash net])) {
+			result.append("<br><span class=walford_nobucket>Equip trash net</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questEStGiveMeFuel
+	if (started("questEStGiveMeFuel")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Toxic Teacups</a>');
+		result.append(" - Get ");
+		result.append(item_report($item[toxic globule],"toxic globule: ",20));
+		result.append("</td></tr>");
+	}
+	//questEStNastyBears
+	if (started("questEStNastyBears")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Uncle Gator</a>');
+		result.append(" - Remove ");
+		result.append(item_report(get_property("dinseyNastyBearsDefeated").to_int()>=8,"Nasty Bears: "+get_property("dinseyNastyBearsDefeated")+"/8"));
+		result.append("</td></tr>");
+	}
+	//questEStSocialJusticeI
+	if (started("questEStSocialJusticeI")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Pirates of the Garbage Barges</a>');
+		result.append(" - Remove ");
+		result.append(item_report(get_property("dinseySocialJusticeIProgress").to_int()>=15,"Sexism: "+get_property("dinseySocialJusticeIProgress")+"/15"));
+		result.append("</td></tr>");
+	}
+	//questEStSocialJusticeII
+	if (started("questEStSocialJusticeII")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Uncle Gator</a>');
+		result.append(" - Remove ");
+		result.append(item_report(get_property("dinseySocialJusticeIIProgress").to_int()>=15,"Racism: "+get_property("dinseySocialJusticeIIProgress")+"/15"));
+		result.append("</td></tr>");
+	}
+	//questEStSuperLuber
+	if (started("questEStSuperLuber")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Barf Mountain</a>');
+		result.append(" - Lube the Rollercoaster");
+		if (!have_equipped($item[lube-shoes]) && available_amount($item[lube-shoes])>0) {
+			result.append("<br><span class=walford_nobucket>Equip lube-shoes</span>");
+		}
+		result.append("</td></tr>");
+	}
+	//questEStWorkWithFood
+	if (started("questEStWorkWithFood")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Barf Mountain</a>');
+		result.append(" - Feed ");
+		result.append(item_report(get_property("dinseyTouristsFed").to_int()>=30,"Tourists: "+get_property("dinseyTouristsFed")+"/30"));
+		result.append("</td></tr>");
+	}
+	//questEStZippityDooDah
+	if (started("questEStZippityDooDah")) {
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench&action=airport3_kiosk">Dinsey Kiosk</a>');
+		result.append(" - ");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_stench">Toxic Teacups</a>');
+		result.append(" - Have ");
+		result.append(item_report(get_property("dinseyFunProgress").to_int()>=15,"Fun: "+get_property("dinseyFunProgress")+"/15"));
+		if (!have_equipped($item[Dinsey mascot mask])) {
+			result.append("<br><span class=walford_nobucket>Equip mascot mask</span>");
+		}
+		result.append("</td></tr>");
+	}
+	
+	
+	
+	
+	//questECoBucket
+	if (started("questECoBucket")) {
+		int current = get_property("walfordBucketProgress").to_int();
+		string[string] walhint;
+		walhint["balls"] =     '<a target="mainpane" href="place.php?whichplace=airport_cold">VYKEA</a>, +50% Item Drop';
+		walhint["blood"] =     '<a target="mainpane" href="place.php?whichplace=airport_cold">The Glaciest</a>, Bleeding Damage';
+		walhint["bolts"] =     '<a target="mainpane" href="place.php?whichplace=airport_cold">VYKEA</a>, hex key equipped';
+		walhint["chicken"] =   '<a target="mainpane" href="place.php?whichplace=airport_cold">Ice Hotel</a>, +50% Food Drop';
+		walhint["chum"] =      '<a target="mainpane" href="place.php?whichplace=airport_cold">VYKEA</a>, +100% Meat Drop';
+		walhint["ice"] =       '<a target="mainpane" href="place.php?whichplace=airport_cold">The Glaciest</a>, 10 <span class=modCold>Cold</span> Damage';
+		walhint["milk"] =      '<a target="mainpane" href="place.php?whichplace=airport_cold">Ice Hotel</a>, +50% Booze Drop';
+		walhint["moonbeams"] = '<a target="mainpane" href="place.php?whichplace=airport_cold">The Glaciest</a>, No hat';
+		walhint["rain"] =      '<a target="mainpane" href="place.php?whichplace=airport_cold">Ice Hotel</a>, 100 <span class=modHot>Hot</span> Damage';
+		
+		result.append("<tr><td>");
+		result.append('<a target="mainpane" href="place.php?whichplace=airport_cold&action=glac_walrus">Walford</a>');
+		result.append(" needs "+get_property("walfordBucketItem")+": ");
+		if (get_property("walfordBucketProgress").to_int()>=100) {
+			result.append('<span class="walford_done">');
+		} else {
+			result.append('<span class="walford_nobucket">');
+		}
+		result.append(get_property("walfordBucketProgress")+"/100");
+		result.append("</span>");
+		result.append("<br>"+walhint[get_property("walfordBucketItem")]);
+		if (!have_equipped($item[Walford's bucket])) {
+			result.append("<br><span class=walford_nobucket>Equip Walford's bucket</span>");
+		}
+		result.append("</td></tr>");
+	}
+	
+	
+	
+	
+	
 	result.append("</table>");
-	
 	return result;
-	
 }
+
 
 void bakeTracker() {
 	buffer result = buildTracker();
@@ -963,6 +1271,5 @@ void bakeTracker() {
 		chitBricks["tracker"] = result;
 		chitTools["tracker"] = "Tracker|tracker.png";
 	}
-
 }
 
