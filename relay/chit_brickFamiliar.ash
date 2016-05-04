@@ -1083,6 +1083,10 @@ void bakeFamiliar() {
 		if(myFam.fights_today < myFam.fights_limit)
 			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
 		break;
+	case $familiar[Intergnat]:
+		if(item_amount($item[BACON]) > 0)
+			info = '<a class="visit" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>';
+		break;
 	}
 	
 	// Charges

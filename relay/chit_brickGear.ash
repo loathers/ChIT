@@ -1,9 +1,9 @@
-// The first version of the Gear Brick (including pickerGear and bakeGear) was written bysoolar
+// The original version of the Gear Brick (including pickerGear and bakeGear) was written bysoolar
 
 boolean [item] favGear;
 boolean [string] [item] recommendedGear;
 
-string modifyName(item it) {
+string gearName(item it) {
 	string name = to_string(it);
 	string notes = "";
 
@@ -237,6 +237,8 @@ void addFavGear() {
 					ascendGear["prismatic", it] = true; // Prismatic Damage +2 or better
 				if(numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance") >= 10)
 					ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
+				if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
+					ascendGear["today", it] = true;
 			}
 		}
 		foreach type in ascendGear
@@ -361,7 +363,7 @@ void pickerGear(slot s) {
 		picker.append('<td><a class="change" href="');
 		picker.append(sideCommand("unequip " + s));
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
-		picker.append(modifyName(in_slot));
+		picker.append(gearName(in_slot));
 		picker.append('</a></td><td>');
 		add_favorite_button(in_slot);
 		picker.append('</td></tr>');
@@ -418,7 +420,7 @@ void pickerGear(slot s) {
 		} else if(storage_amount(it) > 0 && pulls_remaining() == -1) { // Out of ronin (or in aftercore), prefer pulls to creation
 			action = "pull";
 			cmd = "pull " + it + "; equip ";
-		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none] && !(pulls_remaining() == -1 && storage_amount(it) > 0)) { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
+		} else if(creatable_amount(it) > 0 && it.seller == $coinmaster[none] && !(pulls_remaining() == -1 && storage_amount(it) > 0) && reason != "today") { // Not including purchases from coinmasters (Because of Shrub's Premium Baked Beans)
 			danger_level = 1;
 			action = "create";
 			action_description = "(up to " + creatable_amount(it) + ")";
@@ -463,7 +465,7 @@ void pickerGear(slot s) {
 			picker.append(' ');
 			picker.append(action_description);
 			picker.append('</span> ');
-			picker.append(modifyName(it));
+			picker.append(gearName(it));
 			if(take_action)
 				picker.append('</a>');
 			picker.append('</div></div>');
@@ -485,7 +487,7 @@ void pickerGear(slot s) {
 			}
 			picker.append('>');
 			if(take_action)
-				picker.addItemIcon(it,modifyName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+				picker.addItemIcon(it,gearName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
 			else
 				picker.addItemIcon(it,'&#013;Right click for description',danger_level);
 			if(take_action)
@@ -515,7 +517,7 @@ void pickerGear(slot s) {
 			picker.append(' ');
 			picker.append(action_description);
 			picker.append('</span> ');
-			picker.append(modifyName(it));
+			picker.append(gearName(it));
 			if(reason != "favorites") {
 				picker.append(' (');
 				picker.append(reason);
@@ -727,7 +729,7 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + modifyName(equipped_item(s)));
+		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s)));
 		result.append('</a></span>');
 		pickerGear(s);
 	}
