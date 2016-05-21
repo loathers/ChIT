@@ -164,7 +164,12 @@ buffer buildTracker() {
 			}
 		}
 		if (available_amount($item[Spookyraven billiards room key])>0) {
-			result.append("<br>Pool skill: "+get_property("poolSkill")+"/18");
+		int pool = get_property("poolSkill").to_int()										// Training this run. 
+			+ numeric_modifier("Pool Skill")														// Equipment and effects. 
+			+ min(floor(get_property("poolSharkCount").to_int() ** 0.5 * 2), 10)		// Semirare boost. 
+			+ min(my_inebriety(), 10)																// Liquid courage! 
+			+ min((10 - my_inebriety()) * 2, 0);												// You're seeing double. 
+			result.append("<br>Pool skill: "+pool+"/18");
 		}
 		result.append("<br>Writing Desks: "+get_property("writingDesksDefeated")+"/5");
 		result.append("</td></tr>");
@@ -218,7 +223,7 @@ buffer buildTracker() {
 	if (item_amount($item[Knob Goblin encryption key])<1 && (get_property("questL05Goblin")=="unstarted" || item_amount($item[Cobb's Knob map])>0)) {
 		result.append("<tr><td>");
 		result.append("<a target=mainpane href=\"plains.php\">Outskirts</a>");
-		result.append(" - Find the");
+		result.append(" - Find the ");
 		result.append(ItemReport($item[Knob Goblin encryption key], "KG encryption key"));
 		result.append("</td></tr>");
 	}
@@ -567,7 +572,7 @@ buffer buildTracker() {
 			result.append(" - Get the pirate fledges");
 		} else if (available_amount($item[Talisman o' Namsilat])==0) {
 			result.append("<a target=mainpane href=\"cove.php\">Pirate's Cove</a>");
-			result.append("Find the "+ItemReport($item[Talisman o' Namsilat]));
+			result.append(" - Find the "+ItemReport($item[Talisman o' Namsilat]));
 		} else if (available_amount($item[Talisman o' Namsilat])>0) {
 			result.append("<a target=mainpane href=\"plains.php\">Palindome</a>");
 			result.append(" - Open the Palindome");
@@ -605,7 +610,7 @@ buffer buildTracker() {
 		}
 		// get wet stunt nut stew, mega gem
 		if (available_amount($item[Mega Gem])==0) {
-			result.append("<a target=mainpane href=\"place.php?whichplace=palindome\">Palindome</a>");
+			result.append("<br><a target=mainpane href=\"place.php?whichplace=palindome\">Palindome</a>");
 			result.append(" - Get the Mega Gem");
 			result.append("<br>");
 			if (available_amount($item[wet stunt nut stew])>0) {
@@ -743,9 +748,10 @@ buffer buildTracker() {
 		result.append("<tr><td>");
 			result.append("<a target=mainpane href=\"beach.php\">Beach</a> - Find the Pyramid<br>");
 			int desertExploration = get_property("desertExploration").to_int();
-			if (desertExploration < 10)
+			if (desertExploration < 10) {
 				result.append("<a target=mainpane href=\"beach.php\">Desert</a>");
 				result.append(" - Find Gnasir<br>");
+			}
 			if (desertExploration < 100) {
 				result.append("<a target=mainpane href=\"beach.php\">Desert</a>");
 				result.append(" - Exploration: "+desertExploration+"%<br>");
@@ -798,7 +804,7 @@ buffer buildTracker() {
 			break;
 		}
 		if (get_property("pyramidBombUsed")=="false") {
-			result.append(" - Find Ed<br>");
+			result.append("Find Ed<br>");
 			result.append(ItemReport($item[tomb ratchet], "tomb ratchets: "+item_amount($item[tomb ratchet]))+"<br>");
 			result.append(ItemReport($item[crumbling wooden wheel], "wooden wheels: "+item_amount($item[crumbling wooden wheel])));
 			result.append("<br>");
@@ -1440,11 +1446,33 @@ buffer buildTracker() {
 	
 	
 	
-	
-	
-	
-	
-	
+	//questM26Oracle
+	if (Started("questM26Oracle")) {
+		string[location] loczone;
+		loczone[$location[The Skeleton Store]] = "place.php?whichplace=town_market";
+		loczone[$location[Madness Bakery]] = "place.php?whichplace=town_right";
+		loczone[$location[The Overgrown Lot]] = "place.php?whichplace=town_wrong";
+		loczone[$location[The Batrat and Ratbat Burrow]] = "place.php?whichplace=bathole";
+		loczone[$location[The Haunted Kitchen]] = "place.php?whichplace=manor1";
+		loczone[$location[Cobb's Knob Laboratory]] = "cobbsknob.php?action=tolabs";
+		loczone[$location[Lair of the Ninja Snowmen]] = "place.php?whichplace=mclargehuge";
+		loczone[$location[The VERY Unquiet Garves]] = "place.php?whichplace=cemetery";
+		loczone[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "place.php?whichplace=giantcastle";
+		loczone[$location[The Red Zeppelin]] = "place.php?whichplace=zeppelin";
+		loczone[$location[The Hidden Park]] = "place.php?whichplace=hiddencity";
+		
+		result.append("<tr><td>");
+		result.append("<a target=mainpane href=\"place.php?whichplace=town_wrong&action=townwrong_oracle\">The Oracle</a>");
+		result.append(" - ");
+		result.append("<a target=mainpane href=\"");
+		result.append(loczone[to_location(get_property("sourceOracleTarget"))]);
+		result.append("\">");
+		result.append(get_property("sourceOracleTarget"));
+		result.append("</a>");
+		result.append(" - Find ");
+		result.append(ItemReport($item[no spoon]));
+		result.append("</td></tr>");
+	}
 	
 	
 	
