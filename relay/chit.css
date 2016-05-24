@@ -34,8 +34,14 @@ a:hover {
 a .warning-link {
 	color:red;
 }
-a:hover .warning-link {
+a.warning-link:hover {
 	color:crimson;
+}
+a.blue-link {
+	color:blue;
+}
+a.blue-link:hover {
+	color:red !important;
 }
 
 #chit_house {

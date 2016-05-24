@@ -1084,8 +1084,11 @@ void bakeFamiliar() {
 			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
 		break;
 	case $familiar[Intergnat]:
-		if(item_amount($item[BACON]) > 0)
-			info = '<a class="visit" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>';
+		if(item_amount($item[BACON]) > 0) {
+			if(length(info) > 0)
+				info = ", " + info;
+			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
+		}
 		break;
 	}
 	
