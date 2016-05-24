@@ -1781,6 +1781,17 @@ void addHeavyRains(buffer result) {
 	}
 }
 
+void addEnlightenment(buffer result) {
+	string enlightenment = get_property("sourceEnlightenment");
+	if(enlightenment != "0") {
+		result.append('<tr><td class="label"><a href="place.php?whichplace=manor1&action=manor1_sourcephone_ring" target="mainpane">Enlight</a></td><td class="info"');
+		result.append('><a href="place.php?whichplace=manor1&action=manor1_sourcephone_ring" target="mainpane">');
+		result.append(enlightenment);
+		result.append('</a></td></tr>');
+		#  href="place.php?whichplace=manor1&action=manor1_sourcephone_ring">The Source</a>";
+	}
+}
+
 void addHooch(buffer result) {
 	matcher hooch = create_matcher("Hooch:</td><td align=left><b>(\\d+) / (\\d+)</b>", chitSource["stats"]);
 	if(hooch.find()) {
@@ -2384,6 +2395,8 @@ void bakeStats() {
 			
 			if(my_path() == "Heavy Rains")
 				result.addHeavyRains();
+			else if(my_path() == "The Source")
+				result.addEnlightenment();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
@@ -2739,6 +2752,7 @@ void bakeCharacter() {
 		case "Avatar of Sneaky Pete": return "Sneaky Pete";
 		case "Actually Ed the Undying": return "The Undying";
 		case "Avatar of West of Loathing": return "West of Loathing";
+		case "The Source": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=town_wrong&action=townwrong_oracle'>The Source</a>";
 		}
 		return my_path();
 	}

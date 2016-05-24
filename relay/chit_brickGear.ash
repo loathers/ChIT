@@ -409,6 +409,8 @@ void pickerGear(slot s) {
 			action = "equip";
 			cmd = "equip ";
 		} else if(closet_amount(it) > 0) {
+			if(get_property("autoSatisfyWithCloset") == "false")
+				danger_level = 1;
 			action = "uncloset";
 			cmd = "closet take " + it + "; equip ";
 		} else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0) {
