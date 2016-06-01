@@ -1788,7 +1788,6 @@ void addEnlightenment(buffer result) {
 		result.append('><a href="place.php?whichplace=manor1&action=manor1_sourcephone_ring" target="mainpane">');
 		result.append(enlightenment);
 		result.append('</a></td></tr>');
-		#  href="place.php?whichplace=manor1&action=manor1_sourcephone_ring">The Source</a>";
 	}
 }
 
@@ -2393,10 +2392,14 @@ void bakeStats() {
 				break;
 			}
 			
-			if(my_path() == "Heavy Rains")
+			switch(my_path()) {
+			case "Heavy Rains":
 				result.addHeavyRains();
-			else if(my_path() == "The Source")
+				break;
+			case "The Source":
 				result.addEnlightenment();
+				break;
+			}
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
