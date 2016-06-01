@@ -83,7 +83,7 @@ Leisurely Amblin'	type:"awol"
 #Counters
 Dance Card	style:"background-color:khaki"
 Fortune Cookie	style:"background-color:khaki"
-Source Agent	style:"background-color:#33cc33;font-style:italic;font-weight:bold;"
+Source Agent	style:"background-color:#2CB32C;font-style:italic;font-weight:bold;"
 Semirare window begin	alias:"SR range start"
 Semirare window end	alias:"SR range end"
 Bee window begin	style:"background-color:#D7D7FF;font-style:italic", image:"beeicon.gif"
