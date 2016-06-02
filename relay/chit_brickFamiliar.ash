@@ -1073,15 +1073,56 @@ void bakeFamiliar() {
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
-			name_followup += ' (<a target=mainpane href="main.php?action=minicrimbot">configure</a>)';
+			switch(get_property("crimbotChassis")) {
+			case 'Low-Light Operations Frame':
+				info = 'Block, ';
+				break;
+			case 'Smile-O-Matic':
+				info = 'Stats, ';
+				break;
+			case 'Music Box Box':
+				info = 'Spooky Damage, ';
+				break;
+			case 'Chewing Unit':
+				info = 'Meat, ';
+				break;
+			}
+			switch(get_property("crimbotArm")) {
+			case 'T8-ZR Pacification Delivery System':
+				info += 'MP, ';
+				break;
+			case '4.077 Field Medic Syringe':
+				info += 'HP, ';
+				break;
+			case 'Frostronic Hypercoil':
+				info += 'Cold Damage, ';
+				break;
+			case 'STAL-1 UltraFist':
+				info += 'Physical Damage, ';
+				break;
+			}
+			switch(get_property("crimbotPropulsion")) {
+			case 'V-TOP Frictionless Monocycle Wheel':
+				info += 'Initiative';
+				break;
+			case 'X-1 Hover Rocket':
+				info += 'Hot Damage';
+				break;
+			case 'Lambada-Class Dancing Legs':
+				info += 'Items';
+				break;
+			case 'T-NMN Tank Treads':
+				info += 'Delevel';
+				break;
+			}
+			info = '<a target=mainpane title="Configure your Mini-Crimbot" href="main.php?action=minicrimbot">' + parseMods(info) + '</a>';
 		break;
 	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
-		name_followup += ' (<a class="visit" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">mystic</a>)';
-		info = to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels, ' + info;
+		info = '<a class="visit blue-link" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">' + to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels</a>, ' + info;
 		break;
 	case $familiar[Machine Elf]:
-		if(myFam.fights_today < myFam.fights_limit)
-			name_followup += ' (<a class="visit" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">dmt</a>)';
+		info = '<a class="visit blue-link" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
+			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe';
 		break;
 	case $familiar[Intergnat]:
 		if(item_amount($item[BACON]) > 0) {
@@ -1089,6 +1130,16 @@ void bakeFamiliar() {
 				info = ", " + info;
 			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
 		}
+		break;
+	case $familiar[Fist Turkey]:
+		int muscgains = to_int(get_property("_turkeyMuscle"));
+		int mystgains = to_int(get_property("_turkeyMyst"));
+		int moxgains = to_int(get_property("_turkeyMoxie"));
+		info += ', <span title="' + muscgains + '/5 musc, ' + mystgains  + '/5 myst, ' + moxgains + '/5 moxie">' + (muscgains + mystgains + moxgains) + '/15 stats</span>';
+		break;
+	case $familiar[Nosy Nose]:
+		info = get_property("nosyNoseMonster");
+		if(info == "") info = "Nothing Sniffed";
 		break;
 	}
 	
