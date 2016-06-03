@@ -482,16 +482,34 @@ void addItemIcon(buffer result, item it, string title) {
 }
 
 int hasDrops(familiar f) {
+	int drops = 0;
 	if(f == $familiar[gelatinous cubeling]) {
-		return 3 - (min(available_amount($item[eleven-foot pole]),1) +
+		drops += 3 - (min(available_amount($item[eleven-foot pole]),1) +
 			min(available_amount($item[ring of detect boring doors]),1) +
 			min(available_amount($item[pick-o-matic lockpicks]),1));
 	} else if(f == $familiar[Rockin' Robin] && get_property("rockinRobinProgress").to_int() > 24)
-		return 1;
-	if(f.fights_limit > 0)
-		return f.drops_limit - f.drops_today + f.fights_limit - f.fights_today;
+		drops += 1;
 	
-	return f.drops_limit - f.drops_today;
+	if(f.drops_limit > 0)
+		drops += f.drops_limit - f.drops_today;
+	
+	return drops;
+}
+
+int iconInfoSpecial(familiar f, buffer iconInfo) {
+	if(f == $familiar[Fist Turkey]) {
+		int statsLeft = 15 - to_int(get_property("_turkeyMuscle")) - to_int(get_property("_turkeyMyst")) - to_int(get_property("_turkeyMoxie"));
+		if(statsLeft > 0) {
+			iconInfo.append(", ");
+			iconInfo.append(statsLeft);
+			iconInfo.append(" stat");
+			if(statsLeft != 1)
+				iconInfo.append("s");
+			return 1;
+		}
+	}
+	
+	return 0;
 }
 
 boolean need_drop(familiar f) {
@@ -513,19 +531,68 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
+	
+	buffer iconInfo;
+	// status: 1 = hasdrops (blue border), 2 = alldrops (purple border), -1 = danger (red border), 3 = good (green border)
+	// good is intended to say BRING THIS WITH YOU RIGHT NOW NO MATTER WHAT, just about
+	// danger is obviously meant to say DO NOT USE THIS FAMILIAR RIGHT NOW
+	// hasdrops means there's limited stuff to gain today, so it'd be a good idea to bring it
+	// alldrops means it hasn't dropped ANY of its stuff, or has some really valuable daily resource available
+	int status = 0;
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
-	result.append('<img class="chit_icon');
+	
 	if(dropsLeft > 0) {
-		if(f.drops_today == 0 && need_drop(f) || (f.fights_limit > 0 && f.fights_today < f.fights_limit))
-			result.append(' alldrops');
+		string dropName = f.drop_name;
+		if(dropName == "" && f.drop_item != $item[none])
+			dropName = "drop";
+		iconInfo.append(dropsLeft);
+		iconInfo.append(" ");
+		iconInfo.append(dropName);
+		if(dropsLeft > 1 && dropName.length() > 1 && dropName.char_at(dropName.length() - 1) != "s")
+			iconInfo.append("s");
+		
+		if(f.drops_today == 0 && need_drop(f))
+			status = 2;
 		else
-			result.append(' hasdrops');
-	} if(is100 != $familiar[none]) {
+			status = 1;
+	}
+	int fightsLeft = f.fights_limit - f.fights_today;
+	if(fightsLeft > 0)
+	{
+		status = 2;
+		iconInfo.append(", ");
+		iconInfo.append(fightsLeft);
+		iconInfo.append(" fight");
+		if(fightsLeft != 1)
+			iconInfo.append("s");
+	}
+	
+	int specialStatus = iconInfoSpecial(f, iconInfo);
+	if(specialStatus > status)
+		status = specialStatus;
+	
+	if(is100 != $familiar[none]) {
 		if(is100 != f)
-			result.append(' danger');
+			status = -1;
 		else
-			result.append(' good');
+			status = 3;
+	}
+	
+	result.append('<img class="chit_icon');
+	switch(status) {
+	case 1:
+		result.append(' hasdrops');
+		break;
+	case 2:
+		result.append(' alldrops');
+		break;
+	case 3:
+		result.append(' good');
+		break;
+	case -1:
+		result.append(' danger');
+		break;
 	}
 	result.append('" src="');
 	result.append(familiar_image(f));
@@ -535,13 +602,15 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 		result.append(' (the ');
 		result.append(f);
 		result.append(')');
-		string dropName = f.drop_name;
-		if(dropName == "" && f.drop_item != $item[none])
-			dropName = "drop";
-		if(dropsLeft > 1 && dropName.length() > 1 && dropName.char_at(dropName.length() - 1) != "s")
-			dropName += "s";
-		if(dropsLeft > 0)
-			result.append(' (' + dropsLeft + ' ' + dropName + ' remaining)');
+		string info = to_string(iconInfo);
+		if(info != "") {
+			result.append(' (');
+			if(char_at(info,0) != ",")
+				result.append(info);
+			else
+				result.append(substring(info,2));
+			result.append(')');
+		}
 	}
 	result.append('" />');
 }
