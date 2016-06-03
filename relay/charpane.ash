@@ -2123,8 +2123,7 @@ void addMCD(buffer result, boolean bake) {
 		//Loader
 		picker.addLoader(mcdbusy);
 		picker.mcdlist(true);
-		picker.append('</table>');
-		picker.append('</div>');
+		picker.append('</table></div>');
 		
 		chitPickers["mcd"] = picker.to_string();
 	}
@@ -2452,43 +2451,55 @@ void bakeStats() {
 	chitBricks["stats"] = result.to_string();
 }
 
-//fancy currency relay override for charpane by DeadNed (#1909053)
+// Based on fancy currency relay override for charpane by DeadNed (#1909053)
 // http://kolmafia.us/showthread.php?12311-Fancy-Currency-(Charpane-override)
 // Currently unimplemented, but being considered
-string fancycurrency(string page) {
-	string output='<ul id="chit_currency"> \n <li>';
-
-	//big ol ugly case structure to figure out which thing you clicked last!
-	switch(get_property("_ChitCurrency")){
-	case "meat": 
-		output+='<a href="#"><img src="/images/itemimages/meat.gif" class="hand" title="Meat" alt="Meat"><br>"+formatInt(my_meat())+" </a> ';
-		break;
-	case "sanddollar":
-		output+='<a href="#"><img src="/images/itemimages/sanddollar.gif" class="hand" title="Sand Dollars" alt="Sand Dollars"> <br>'+ formatInt(item_amount($item[sand dollar]))+' </a>';
-		break;
-	 case "isotope":
-		output+='<a href="#"><img src="/images/itemimages/isotope.gif" class="hand" title="Lunar Isotopes" alt="Lunar Isotopes"> <br>'+ formatInt(item_amount($item[lunar isotope]))+' </a>';
-		break;
-	 case "nickel":
-		output+='<a href="#"><img src="/images/itemimages/nickel.gif" class="hand" title="Hobo Nickels" alt="Hobo Nickels"> <br>'+ formatInt(item_amount($item[hobo nickel]))+' </a>';
-		break;
+void allCurrency(buffer result) {
+	string amount_of(item it) {
+		if(it == $item[meat from yesterday])
+			return formatInt(my_meat());
+		return formatInt(item_amount(it));
 	}
-
-	output+='\n <ul> \n <li><a href="/KoLmafia/sideCommand?cmd='+url_encode("set _ChitCurrency=sanddollar")+ '&pwd=' + my_hash() +'" ><img src="/images/itemimages/sanddollar.gif"> <br>'
-		+ formatInt(item_amount($item[sand dollar]))+' </a></li> \n <li><a href="/KoLmafia/sideCommand?cmd='+url_encode("set _ChitCurrency=isotope")+ '&pwd=' 
-		+ my_hash() +'" ><img src="/images/itemimages/isotope.gif"> <br>'+formatInt(item_amount($item[lunar isotope]))+' </a></li> \n <li><a href="/KoLmafia/sideCommand?cmd='
-		+ url_encode("set _ChitCurrency=nickel")+ '&pwd=' + my_hash() +'" ><img src="/images/itemimages/nickel.gif"> <br>'
-		+ formatInt(item_amount($item[hobo nickel]))+'</a></li> \n <li><a href="/KoLmafia/sideCommand?cmd='+url_encode("set _ChitCurrency=meat")+ '&pwd=' 
-		+ my_hash() +'" ><img src="/images/itemimages/meat.gif"><br>'+formatInt(my_meat())+'</a></li> \n </li> \n </ul> \n';
 	
-	page.replace_string('<img src="/images/itemimages/meat.gif" class=hand onclick=\'doc("meat");\' title="Meat" alt="Meat"><br>',"output");
-
-	matcher m;
-	m = create_matcher('<img src="/images/itemimages/meat.gif" .+</td><td a',page);
-	if (m.find()){
-	page = replace_first(m, output +" </td><td a");
+	string name_of(item it) {
+		if(it == $item[meat from yesterday] || it == $item[none])
+			return "Meat";
+		return to_string(it);
 	}
-	return page;
+
+	result.append('<div style="float:left"><ul id="chit_currency"><li>');
+	item current = to_item(get_property("_chitCurrency"));
+	if(current == $item[none])
+		current = $item[meat from yesterday];
+	result.append('<a href="#"><span>');
+	result.append(amount_of(current));
+	result.append('</span><img src="/images/itemimages/');
+	result.append(current.image);
+	result.append('" class="hand" title="');
+	result.append(name_of(current));
+	result.append('" alt="');
+	result.append(name_of(current));
+	result.append('"></a>');
+		
+	result.append('<ul>');
+	foreach it in $items[meat from yesterday, source essence, BACON]
+		if(amount_of(it) > 0) {
+			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
+			result.append(url_encode("set _chitCurrency="));
+			result.append(it);
+			result.append('&pwd=');
+			result.append(my_hash());
+			result.append('" title="');
+			result.append(name_of(it));
+			result.append('" alt="');
+			result.append(name_of(it));
+			result.append('"><span>');
+			result.append(amount_of(it));
+			result.append('</span><img src="/images/itemimages/');
+			result.append(it.image);
+			result.append('"></a></li>');
+		}
+	result.append('></ul></ul></div>');
 }
 
 // This function also makes use of gearName() which is in chit_brickGear.ash
@@ -2844,8 +2855,7 @@ void bakeCharacter() {
 
 	result.append('<tr>');
 	result.append('<td colspan="2"><div class="chit_resource">');
-	result.append('<div title="Meat" style="float:left"><span>' + formatInt(my_meat()) 
-		+ '</span><img src="/images/itemimages/meat.gif"></div>');
+	result.allCurrency();
 	result.append('<div title="'+my_adventures()+' Adventures remaining'
 		+ (get_property("kingLiberated") == "true"? '': '\n Current Run: '+my_daycount() +' / '+ turns_played())
 		+ '" style="float:right"><span>' + my_adventures() 

@@ -1,4 +1,4 @@
-// The original version of the Gear Brick (including pickerGear and bakeGear) was written bysoolar
+// The original version of the Gear Brick (including pickerGear and bakeGear) was written by soolar
 
 boolean [item] favGear;
 boolean [string] [item] recommendedGear;
@@ -681,11 +681,22 @@ void pickerGear(slot s) {
 			// If this is the only section, show no title. Otherwise it is "inventory"
 			string name = any_options? "inventory": "favorites";
 			
+			boolean shield; // Make sure there is at least one shield!
+			
 			// For miniaml, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
 			int amount = vars["chit.gear.layout"] == "minimal"? 11
 				: any_options? 4: 11;
-			for x from 0 to min(count(avail) - 1, amount)
+			for x from 0 to min(count(avail) - 1, amount) {
 				add_gear_option(avail[x], name);
+				if(item_type(avail[x]) == "shield")
+					shield = true;
+			}
+			if(!shield) // Find a shield!
+				for x from min(count(avail) - 1, amount) to count(avail) - 1
+					if(item_type(avail[x]) == "shield") {
+						add_gear_option(avail[x], name);
+						break;
+					}
 			
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":

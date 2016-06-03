@@ -788,19 +788,23 @@ img#fam_equip {
 	color:red;
 }
 
-/* Fancy Currency by DeadNed (#1909053) 
-   Not curently being used, but maybe... if I put in some time */
-#chit_currency ul {
+/* Modified from Fancy Currency by DeadNed (#1909053) */
+#chit_currency {
 	margin:0;
 	padding:0;
 	list-style:none;
 }
+#chit_currency span {
+	color:darkred;
+	vertical-align:middle;
+}
 #chit_currency ul li {
 	display:block;
 	position:relative;
-	float:left;
 }
 #chit_currency li ul {
+	margin:0;
+	padding:0;
 	display:none;
 }
 #chit_currency ul li a {
@@ -813,6 +817,11 @@ img#fam_equip {
 	font-weight:bold;
 	color:black;
 	font-size:smaller;
+	font-size:14px;
+}
+#chit_currency ul li img {
+	max-width:14px;
+	max-height:14px;
 }
 #chit_currency ul li a:hover {
 	background:#eeeeee;
