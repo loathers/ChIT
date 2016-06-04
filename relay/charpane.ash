@@ -2490,7 +2490,8 @@ void allCurrency(buffer result) {
 	item [int] currencies;
 	currencies[0] = $item[none];
 	foreach i,currency in split_string(vars["chit.currencies"], "\\s*(?<!\\\\),\\s*")
-		currencies[ count(currencies) ] = to_item(currency);
+		if(to_item(currency) != $item[none])
+			currencies[ count(currencies) ] = to_item(currency);
 	
 	foreach x,it in currencies {
 		if(amount_of(it) > 0) {
