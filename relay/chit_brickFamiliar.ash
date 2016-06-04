@@ -496,22 +496,6 @@ int hasDrops(familiar f) {
 	return drops;
 }
 
-int iconInfoSpecial(familiar f, buffer iconInfo) {
-	if(f == $familiar[Fist Turkey]) {
-		int statsLeft = 15 - to_int(get_property("_turkeyMuscle")) - to_int(get_property("_turkeyMyst")) - to_int(get_property("_turkeyMoxie"));
-		if(statsLeft > 0) {
-			iconInfo.append(", ");
-			iconInfo.append(statsLeft);
-			iconInfo.append(" stat");
-			if(statsLeft != 1)
-				iconInfo.append("s");
-			return 1;
-		}
-	}
-	
-	return 0;
-}
-
 boolean need_drop(familiar f) {
 	if(!can_interact())
 		switch(f) {
@@ -526,6 +510,45 @@ boolean need_drop(familiar f) {
 	return true;
 }
 
+// status: hasdrops (blue border), alldrops (purple border), danger (red border), good (green border)
+// good is intended to say BRING THIS WITH YOU RIGHT NOW NO MATTER WHAT, just about
+// danger is obviously meant to say DO NOT USE THIS FAMILIAR RIGHT NOW
+// hasdrops means there's limited stuff to gain today, so it'd be a good idea to bring it
+// alldrops means it hasn't dropped ANY of its stuff, or has some really valuable daily resource available
+
+int STATUS_NORMAL = 0;
+int STATUS_HASDROPS = 1;
+int STATUS_ALLDROPS = 2;
+int STATUS_GOOD = 3;
+int STATUS_DANGER = 4;
+
+int iconInfoSpecial(familiar f, buffer iconInfo) {
+	switch(f) {
+	case $familiar[Fist Turkey]:
+		int statsLeft = 15 - to_int(get_property("_turkeyMuscle")) - to_int(get_property("_turkeyMyst")) - to_int(get_property("_turkeyMoxie"));
+		if(statsLeft > 0) {
+			iconInfo.append(", ");
+			iconInfo.append(statsLeft);
+			iconInfo.append(" stat");
+			if(statsLeft != 1)
+				iconInfo.append("s");
+			return STATUS_HASDROPS;
+		}
+		break;
+	case $familiar[Steam-Powered Cheerleader]:
+		int steamPercent = ceil(to_float(get_property("_cheerleaderSteam")) / 2);
+		if(steamPercent > 0) {
+			iconInfo.append(steamPercent);
+			iconInfo.append("% steam");
+			if(steamPercent > 50)
+				return STATUS_ALLDROPS;
+			return STATUS_HASDROPS;
+		}
+		break;
+	}
+	return STATUS_NORMAL;
+}
+
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
 	familiar is100 = $familiar[none];
@@ -533,12 +556,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
 	
 	buffer iconInfo;
-	// status: 1 = hasdrops (blue border), 2 = alldrops (purple border), -1 = danger (red border), 3 = good (green border)
-	// good is intended to say BRING THIS WITH YOU RIGHT NOW NO MATTER WHAT, just about
-	// danger is obviously meant to say DO NOT USE THIS FAMILIAR RIGHT NOW
-	// hasdrops means there's limited stuff to gain today, so it'd be a good idea to bring it
-	// alldrops means it hasn't dropped ANY of its stuff, or has some really valuable daily resource available
-	int status = 0;
+	int status = STATUS_NORMAL;
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
 	
@@ -553,14 +571,14 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 			iconInfo.append("s");
 		
 		if(f.drops_today == 0 && need_drop(f))
-			status = 2;
+			status = STATUS_ALLDROPS;
 		else
-			status = 1;
+			status = STATUS_HASDROPS;
 	}
 	int fightsLeft = f.fights_limit - f.fights_today;
 	if(fightsLeft > 0)
 	{
-		status = 2;
+		status = STATUS_ALLDROPS;
 		iconInfo.append(", ");
 		iconInfo.append(fightsLeft);
 		iconInfo.append(" fight");
@@ -574,23 +592,23 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 	
 	if(is100 != $familiar[none]) {
 		if(is100 != f)
-			status = -1;
+			status = STATUS_DANGER;
 		else
-			status = 3;
+			status = STATUS_GOOD;
 	}
 	
 	result.append('<img class="chit_icon');
 	switch(status) {
-	case 1:
+	case STATUS_HASDROPS:
 		result.append(' hasdrops');
 		break;
-	case 2:
+	case STATUS_ALLDROPS:
 		result.append(' alldrops');
 		break;
-	case 3:
+	case STATUS_GOOD:
 		result.append(' good');
 		break;
-	case -1:
+	case STATUS_DANGER:
 		result.append(' danger');
 		break;
 	}
