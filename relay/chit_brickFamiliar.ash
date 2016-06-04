@@ -586,9 +586,11 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 			iconInfo.append("s");
 	}
 	
-	int specialStatus = iconInfoSpecial(f, iconInfo);
-	if(specialStatus > status)
-		status = specialStatus;
+	if(!isBjorn) {
+		int specialStatus = iconInfoSpecial(f, iconInfo);
+		if(specialStatus > status)
+			status = specialStatus;
+	}
 	
 	if(is100 != $familiar[none]) {
 		if(is100 != f)
