@@ -804,7 +804,7 @@ buffer buildTracker() {
 			break;
 		}
 		if (get_property("pyramidBombUsed")=="false") {
-			result.append("Find Ed<br>");
+			result.append(" - Find Ed<br>");
 			result.append(ItemReport($item[tomb ratchet], "tomb ratchets: "+item_amount($item[tomb ratchet]))+"<br>");
 			result.append(ItemReport($item[crumbling wooden wheel], "wooden wheels: "+item_amount($item[crumbling wooden wheel])));
 			result.append("<br>");
@@ -935,7 +935,7 @@ buffer buildTracker() {
 			result.append(", ");
 			result.append(ItemReport($item[electric boning knife], "boning knife"));
 		}
-		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete] contains my_path());
+		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete, The Source] contains my_path());
 		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
 			if ( my_path()=="Bees Hate You" ) {
 				result.append("<br>GMOB: ");
