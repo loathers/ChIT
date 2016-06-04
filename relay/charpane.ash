@@ -2467,7 +2467,7 @@ void allCurrency(buffer result) {
 		return to_string(it);
 	}
 	
-	string currency_image(item it) {
+	string image_of(item it) {
 		if(it == $item[none])
 			return "meat.gif";
 		return it.image;
@@ -2478,7 +2478,7 @@ void allCurrency(buffer result) {
 	result.append('<a href="#"><span>');
 	result.append(amount_of(current));
 	result.append('</span><img src="/images/itemimages/');
-	result.append(currency_image(current));
+	result.append(image_of(current));
 	result.append('" class="hand" title="');
 	result.append(name_of(current));
 	result.append('" alt="');
@@ -2487,12 +2487,12 @@ void allCurrency(buffer result) {
 		
 	result.append('<ul>');
 	
-	boolean [item] currencies;
-	currencies[$item[none]] = true;
+	item [int] currencies;
+	currencies[0] = $item[none];
 	foreach i,currency in split_string(vars["chit.currencies"], "\\s*(?<!\\\\),\\s*")
-		currencies[to_item(currency)] = true;
+		currencies[ count(currencies) ] = to_item(currency);
 	
-	foreach it in currencies {
+	foreach x,it in currencies {
 		if(amount_of(it) > 0) {
 			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
 			result.append(url_encode("set _chitCurrency="));
@@ -2506,14 +2506,13 @@ void allCurrency(buffer result) {
 			result.append('"><span>');
 			result.append(amount_of(it));
 			result.append('</span><img src="/images/itemimages/');
-			result.append(currency_image(it));
+			result.append(image_of(it));
 			result.append('"></a></li>');
 		}
 	}
 	result.append('></ul>');
 	
-	if(current == $item[disassembled clover])
-	{
+	if(current == $item[disassembled clover]) {
 		result.append('<span>&nbsp;');
 		result.append(formatInt(item_amount($item[ten-leaf clover])));
 		result.append('<a href="');

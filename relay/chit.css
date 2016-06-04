@@ -805,6 +805,7 @@ img#fam_equip {
 #chit_currency li ul {
 	margin:0;
 	padding:0;
+	text-align: right;
 	display:none;
 }
 #chit_currency ul li a {
