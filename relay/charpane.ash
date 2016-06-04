@@ -2510,7 +2510,18 @@ void allCurrency(buffer result) {
 			result.append('"></a></li>');
 		}
 	}
-	result.append('></ul></ul></div>');
+	result.append('></ul>');
+	
+	if(current == $item[disassembled clover])
+	{
+		result.append('<span>&nbsp;');
+		result.append(formatInt(item_amount($item[ten-leaf clover])));
+		result.append('<a href="');
+		result.append(sideCommand("use 1 disassembled clover"));
+		result.append('" title="assemble a clover"><img src="/images/itemimages/clover.gif" /></a></span>');
+	}
+	
+	result.append('</ul></div>');
 }
 
 // This function also makes use of gearName() which is in chit_brickGear.ash
