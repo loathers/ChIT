@@ -2456,25 +2456,29 @@ void bakeStats() {
 // Currently unimplemented, but being considered
 void allCurrency(buffer result) {
 	string amount_of(item it) {
-		if(it == $item[meat from yesterday])
+		if(it == $item[none])
 			return formatInt(my_meat());
 		return formatInt(item_amount(it));
 	}
 	
 	string name_of(item it) {
-		if(it == $item[meat from yesterday] || it == $item[none])
+		if(it == $item[none])
 			return "Meat";
 		return to_string(it);
+	}
+	
+	string currency_image(item it) {
+		if(it == $item[none])
+			return "meat.gif";
+		return it.image;
 	}
 
 	result.append('<div style="float:left"><ul id="chit_currency"><li>');
 	item current = to_item(get_property("_chitCurrency"));
-	if(current == $item[none])
-		current = $item[meat from yesterday];
 	result.append('<a href="#"><span>');
 	result.append(amount_of(current));
 	result.append('</span><img src="/images/itemimages/');
-	result.append(current.image);
+	result.append(currency_image(current));
 	result.append('" class="hand" title="');
 	result.append(name_of(current));
 	result.append('" alt="');
@@ -2482,7 +2486,13 @@ void allCurrency(buffer result) {
 	result.append('"></a>');
 		
 	result.append('<ul>');
-	foreach it in $items[meat from yesterday, source essence, BACON]
+	
+	boolean [item] currencies;
+	currencies[$item[none]] = true;
+	foreach i,currency in split_string(vars["chit.currencies"], "\\s*(?<!\\\\),\\s*")
+		currencies[to_item(currency)] = true;
+	
+	foreach it in currencies {
 		if(amount_of(it) > 0) {
 			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
 			result.append(url_encode("set _chitCurrency="));
@@ -2496,9 +2506,10 @@ void allCurrency(buffer result) {
 			result.append('"><span>');
 			result.append(amount_of(it));
 			result.append('</span><img src="/images/itemimages/');
-			result.append(it.image);
+			result.append(currency_image(it));
 			result.append('"></a></li>');
 		}
+	}
 	result.append('></ul></ul></div>');
 }
 
@@ -3588,6 +3599,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,"
 		+ "Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals,"
 		+ "Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
+	setvar("chit.currencies", "source essence,BACON");
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 3) {
