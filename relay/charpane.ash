@@ -2487,14 +2487,11 @@ void allCurrency(buffer result) {
 		
 	result.append('<ul>');
 	
-	item [int] currencies;
-	currencies[0] = $item[none];
-	foreach i,currency in split_string(vars["chit.currencies"], "\\s*(?<!\\\\),\\s*")
-		if(to_item(currency) != $item[none])
-			currencies[ count(currencies) ] = to_item(currency);
-	
-	foreach x,it in currencies {
-		if(amount_of(it) > 0) {
+	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
+	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\),\\s*") {
+		item it = to_item(cur);
+		if(amount_of(it) > 0 && !(currencies contains it)) {
+			currencies[it] = true;
 			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
 			result.append(url_encode("set _chitCurrency="));
 			result.append(it);
