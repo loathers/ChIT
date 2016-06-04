@@ -575,18 +575,19 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 		else
 			status = STATUS_HASDROPS;
 	}
-	int fightsLeft = f.fights_limit - f.fights_today;
-	if(fightsLeft > 0)
-	{
-		status = STATUS_ALLDROPS;
-		iconInfo.append(", ");
-		iconInfo.append(fightsLeft);
-		iconInfo.append(" fight");
-		if(fightsLeft != 1)
-			iconInfo.append("s");
-	}
 	
 	if(!isBjorn) {
+		int fightsLeft = f.fights_limit - f.fights_today;
+		if(fightsLeft > 0)
+		{
+			status = STATUS_ALLDROPS;
+			iconInfo.append(", ");
+			iconInfo.append(fightsLeft);
+			iconInfo.append(" fight");
+			if(fightsLeft != 1)
+				iconInfo.append("s");
+		}
+		
 		int specialStatus = iconInfoSpecial(f, iconInfo);
 		if(specialStatus > status)
 			status = specialStatus;
