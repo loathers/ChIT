@@ -545,6 +545,26 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_HASDROPS;
 		}
 		break;
+	case $familiar[Slimeling]:
+		float fullness = to_float(get_property("slimelingFullness"));
+		if(fullness > 0) {
+			iconInfo.append(", ~");
+			iconInfo.append(fullness);
+			iconInfo.append(" fullness");
+		}
+		int stacksDue = to_int(get_property("slimelingStacksDue"));
+		int stacksDropped = to_int(get_property("slimelingStacksDropped"));
+		if(stacksDue > 0 && stacksDue > stacksDropped) {
+			iconInfo.append(", ");
+			iconInfo.append(stacksDropped);
+			iconInfo.append("/");
+			iconInfo.append(stacksDue);
+			iconInfo.append(" stacks dropped");
+			if(stacksDropped == 0)
+				return STATUS_ALLDROPS;
+			return STATUS_HASDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
