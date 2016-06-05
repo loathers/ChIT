@@ -2477,13 +2477,22 @@ void allCurrency(buffer result) {
 	item current = to_item(get_property("_chitCurrency"));
 	result.append('<a href="#"><span>');
 	result.append(amount_of(current));
-	result.append('</span><img src="/images/itemimages/');
-	result.append(image_of(current));
-	result.append('" class="hand" title="');
-	result.append(name_of(current));
-	result.append('" alt="');
-	result.append(name_of(current));
-	result.append('"></a>');
+	result.append('</span>');
+	
+	if(current == $item[disassembled clover] && item_amount($item[ten-leaf clover]) > 0) {
+		result.append('<a href="');
+		result.append(sideCommand("use 1 ten-leaf clover"));
+		result.append('" title="disassemble a clover"><img src="/images/itemimages/disclover.gif" /></a></a>');
+	}
+	else {
+		result.append('<img src="/images/itemimages/');
+		result.append(image_of(current));
+		result.append('" class="hand" title="');
+		result.append(name_of(current));
+		result.append('" alt="');
+		result.append(name_of(current));
+		result.append('"></a>');
+	}
 		
 	result.append('<ul>');
 	
