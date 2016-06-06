@@ -615,7 +615,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 	
 	string blackForestState = get_property("questL11Black");
 	// You should probably bring a bird with you if you don't have a hatchling and you're looking for the black market
-	if(f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow]) {
+	if(!isBjorn && (f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow])) {
 		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) 
 			status = STATUS_GOOD;
 		else
@@ -714,7 +714,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		tryAddFamiliar(f);
 		
 	string blackForestState = get_property("questL11Black");
-	if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) {
+	if(cmd == "familiar" && (blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) {
 		tryAddFamiliar($familiar[Reassembled Blackbird]);
 		tryAddFamiliar($familiar[Reconstituted Crow]);
 	}
