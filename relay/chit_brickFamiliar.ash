@@ -616,10 +616,10 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 	string blackForestState = get_property("questL11Black");
 	// You should probably bring a bird with you if you don't have a hatchling and you're looking for the black market
 	if(f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow]) {
-		if((blackForestState == "started" ||blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) 
-				status = STATUS_GOOD;
-			else
-				status = STATUS_DANGER;
+		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) 
+			status = STATUS_GOOD;
+		else
+			status = STATUS_DANGER;
 	}
 	
 	if(is100 != $familiar[none]) {
@@ -691,24 +691,37 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		picker.append(is100);
 		picker.append('</td></tr>');
 	}
-  
-	if(favorite_familiars().count() > 0)
-	{
-		picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
-		foreach f in favorite_familiars()
-		{
-			if(f != current && f != my_familiar())
-			{
-				picker.append('<span><a class="change" href="');
-				picker.append(sideCommand(cmd + ' ' + f));
-				picker.append('">');
-				picker.addFamiliarIcon(f, cmd != "familiar");
-				picker.append('</a></span>');
+	
+	boolean anyIcons = false;
+	boolean [familiar] famsAdded;
+	
+	void tryAddFamiliar(familiar f) {
+		if(f != current && have_familiar(f) && is_unrestricted(f) && !famsAdded[f]) {
+			if(!anyIcons) {
+				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
+				anyIcons = true;
 			}
+			picker.append('<span><a class="change" href="');
+			picker.append(sideCommand(cmd + ' ' + f));
+			picker.append('">');
+			picker.addFamiliarIcon(f, cmd != "familiar");
+			picker.append('</a></span>');
+			famsAdded[f] = true;
 		}
-		picker.append('</td></tr>');
 	}
-
+	
+	foreach f in favorite_familiars()
+		tryAddFamiliar(f);
+		
+	string blackForestState = get_property("questL11Black");
+	if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) {
+		tryAddFamiliar($familiar[Reassembled Blackbird]);
+		tryAddFamiliar($familiar[Reconstituted Crow]);
+	}
+	
+	if(anyIcons)
+		picker.append('</td></tr>');
+	
 	int danger_level = 0;
 	if(is100 != $familiar[none])
 		danger_level = (is100 == current) ? 2 : -1;
