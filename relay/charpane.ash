@@ -472,13 +472,28 @@ string helperXiblaxian() {
 	result.append('><td class="icon"><a target=mainpane href="chit_xiblaxian.php"><img src="/images/itemimages/holoputer.gif"></a></td>');
 	// Text
 	if(countdown == 0) {
+		string bold_if(string text, boolean condition) {
+			if(condition)
+				return '<b>' + text + '</b>';
+			else
+				return text;
+		}
+		location currLoc = my_location();
+		boolean circ = currLoc.environment == "indoor";
+		boolean poly = currLoc.environment == "outdoor" || currLoc.environment == "underwater";
+		boolean alloy = currLoc.environment == "underground";
 		result.append('<td class="info" style="text-align:right;">');
-		result.append('Circuit (indoor):<br />Polymer (outdoor):<br />Alloy (under): </td><td class="info">');
-		result.append( available_amount($item[xiblaxian circuitry]));
+		result.append(bold_if('Circuit (indoor):', circ));
 		result.append('<br />');
-		result.append(available_amount($item[xiblaxian polymer]));
+		result.append(bold_if('Polymer (outdoor):', poly));
 		result.append('<br />');
-		result.append(available_amount($item[xiblaxian alloy]));
+		result.append(bold_if('Alloy (under):', alloy));
+		result.append('</td><td class="info">');
+		result.append(bold_if(available_amount($item[xiblaxian circuitry]), circ));
+		result.append('<br />');
+		result.append(bold_if(available_amount($item[xiblaxian polymer]), poly));
+		result.append('<br />');
+		result.append(bold_if(available_amount($item[xiblaxian alloy]), alloy));
 		result.append('</td>');
 	} else {
 		result.append('<td class="info">Xiblaxian <br />Wrist-puter</td>');
