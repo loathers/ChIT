@@ -1257,7 +1257,11 @@ void bakeFamiliar() {
 		info = '<a class="visit blue-link" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">' + to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels</a>, ' + info;
 		break;
 	case $familiar[Machine Elf]:
-		info = '<a class="visit blue-link" target="mainpane" title="The Deep Machine Tunnels" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
+		info = '<a class="visit blue-link" target="mainpane" title="DMT mixing: '
+			+ item_amount($item[abstraction: thought]) + ' item, '
+			+ item_amount($item[abstraction: action]) + ' weight, '
+			+ item_amount($item[abstraction: sensation]) + ' init'
+			+ ' possible" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
 			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe';
 		break;
 	case $familiar[Intergnat]:
