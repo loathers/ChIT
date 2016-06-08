@@ -532,7 +532,11 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			iconInfo.append(" stat");
 			if(statsLeft != 1)
 				iconInfo.append("s");
-			return STATUS_HASDROPS;
+			// The stats are nice, but they don't warrant highlighting outside of The Source, where they're super important.
+			if(my_path() == "The Source")
+				return STATUS_HASDROPS;
+			else
+				return STATUS_NORMAL;
 		}
 		break;
 	case $familiar[Steam-Powered Cheerleader]:
