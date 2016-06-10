@@ -483,12 +483,6 @@ void addItemIcon(buffer result, item it, string title) {
 
 int hasDrops(familiar f) {
 	int drops = 0;
-	if(f == $familiar[gelatinous cubeling]) {
-		drops += 3 - (min(available_amount($item[eleven-foot pole]),1) +
-			min(available_amount($item[ring of detect boring doors]),1) +
-			min(available_amount($item[pick-o-matic lockpicks]),1));
-	} else if(f == $familiar[Rockin' Robin] && get_property("rockinRobinProgress").to_int() > 24)
-		drops += 1;
 	
 	if(f.drops_limit > 0)
 		drops += f.drops_limit - f.drops_today;
@@ -567,6 +561,25 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			if(stacksDropped == 0)
 				return STATUS_ALLDROPS;
 			return STATUS_HASDROPS;
+		}
+		break;
+	case $familiar[gelatinous cubeling]:
+		boolean needPole = available_amount($item[eleven-foot pole]) < 1;
+		boolean needRing = available_amount($item[ring of detect boring doors]) < 1;
+		boolean needPick = available_amount($item[pick-o-matic lockpicks]) < 1;
+		if(needPole)
+			iconInfo.append("Pole, ");
+		if(needRing)
+			iconInfo.append("Ring, ");
+		if(needPick)
+			iconInfo.append("Pick");
+		if(needPole || needRing || needPole)
+			return STATUS_ALLDROPS;
+		break;
+	case $familiar[Rockin' Robin]:
+		if(get_property("rockinRobinProgress").to_int() > 24) {
+			iconInfo.append("Egg soon!");
+			return STATUS_ALLDROPS;
 		}
 		break;
 	}
@@ -1284,6 +1297,11 @@ void bakeFamiliar() {
 	case $familiar[Nosy Nose]:
 		info = get_property("nosyNoseMonster");
 		if(info == "") info = "Nothing Sniffed";
+		break;
+	case $familiar[Gelatinous Cubeling]:
+		buffer b;
+		iconInfoSpecial(myfam, b);
+		info = b;
 		break;
 	}
 	
