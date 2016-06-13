@@ -2468,7 +2468,6 @@ void bakeStats() {
 
 // Based on fancy currency relay override for charpane by DeadNed (#1909053)
 // http://kolmafia.us/showthread.php?12311-Fancy-Currency-(Charpane-override)
-// Currently unimplemented, but being considered
 void allCurrency(buffer result) {
 	string amount_of(item it) {
 		if(it == $item[none])
@@ -2532,7 +2531,7 @@ void allCurrency(buffer result) {
 			result.append('"></a></li>');
 		}
 	}
-	result.append('></ul>');
+	result.append('</ul>');
 	
 	if(current == $item[disassembled clover]) {
 		result.append('<span>&nbsp;');
