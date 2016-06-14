@@ -389,6 +389,7 @@ int hasBjornDrops(familiar f) {
 	return 0;
 }
 
+// TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
@@ -400,6 +401,10 @@ int hasDrops(item it) {
 		// also not exactly drops per se, but... yep
 		case $item[bone abacus]:
 			return max(1000 - to_int(get_property("boneAbacusVictories")), 0);
+		case $item[The Jokester's gun]:
+			if(get_property("_firedJokestersGun").to_boolean() == false)
+				return 1;
+			break;
 	}
 	
 	return 0;
