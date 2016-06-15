@@ -585,7 +585,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		effect ray;
 		if(get_property("shrubGifts") == "yellow")
 			ray = $effect[Everything Looks Yellow];
-		else if(get_property("shrubGifts") == "red")
+		else if(get_property("shrubGifts") == "meat")
 			ray = $effect[Everything Looks Red];
 		else break;
 		if(have_effect(ray) == 0) {
@@ -1234,8 +1234,8 @@ void bakeFamiliar() {
 		info = parseMods(mods);
 		if(get_property("shrubGifts") == "yellow")
 			info = info.replace_string(", Yellow", ", <span style='color:#999933'>Yellow</span>");
-		else if(get_property("shrubGifts") == "red")
-			info = info.replace_string(", Red", ", <span style='color:#FE2E2E'>Red</span>");
+		else if(get_property("shrubGifts") == "meat")
+			info = info.replace_string("Meat", "<span style='color:#FE2E2E'>Meat</span>");
 		break;
 	case $familiar[Mini-Crimbot]:
 		if(source.contains_text(">configure</a>)"))
