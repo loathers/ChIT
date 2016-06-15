@@ -581,6 +581,18 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		if(needPole || needRing || needPole)
 			return STATUS_ALLDROPS;
 		break;
+	case $familiar[Crimbo Shrub]:
+		effect ray;
+		if(get_property("shrubGifts") == "yellow")
+			ray = $effect[Everything Looks Yellow];
+		else if(get_property("shrubGifts") == "red")
+			ray = $effect[Everything Looks Red];
+		else break;
+		if(have_effect(ray) == 0) {
+			iconInfo.append("Ready to fire!");
+			return STATUS_ALLDROPS;
+		}
+		break;
 	case $familiar[Rockin' Robin]:
 		if(get_property("rockinRobinProgress").to_int() > 24) {
 			iconInfo.append("Egg soon!");
