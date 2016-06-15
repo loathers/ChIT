@@ -3638,9 +3638,11 @@ buffer modifyPage(buffer source) {
 			if(vars["chit.walls.layout"].contains_text("effects"))
 				vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("effects", "vykea,effects");
 			else 
-				vars["chit.roof.layout"] += ",gear";
-			updatevars();
+				vars["chit.walls.layout"] += ",vykea";
 		}
+		if(!(vars["chit.roof.layout"].contains_text("gear") || vars["chit.stats.layout"].contains_text("gear")))
+			vars["chit.roof.layout"] += ",gear";
+		updatevars();
 		set_property("chitVarVer", "3");
 	}
 	

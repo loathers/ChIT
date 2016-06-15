@@ -270,6 +270,15 @@ void pickerGear(slot s) {
 		if(to_slot(it) == s) return true;
 		switch(s) {
 		case $slot[off-hand]:
+			switch(weapon_type(it)) {
+			case $stat[Muscle]: case $stat[Mysticality]:
+				if(equipped_item($slot[weapon]).weapon_type() == $stat[Moxie])
+					return false;
+				break;
+			case $stat[Moxie]:
+				if(equipped_item($slot[weapon]).weapon_type() != $stat[Moxie])
+					return false;
+			}
 			return to_slot(it) == $slot[weapon] && item_type(it) != "chefstaff" && item_type(it) != "accordion" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
 		case $slot[acc2]: case $slot[acc3]:
 			return to_slot(it) == $slot[acc1];
