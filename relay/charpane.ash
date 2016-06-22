@@ -659,6 +659,8 @@ buff parseBuff(string source) {
 	// Add spoiler info that mafia doesn't provide
 	if(myBuff.effectName.contains_text("Romantic Monster window"))
 		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
+	else if(myBuff.effectName.contains_text("Digitize Monster window"))
+		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster");
 	
 	//Replace effect icons, if enabled
 	string [string] classmap;
