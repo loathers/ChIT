@@ -101,8 +101,7 @@ Taco Elf window begin	alias:"( Taco Elf window", style:"color:#007C29;font-style
 Taco Elf window end	alias:"Taco Elf window )", style:"color:#007C29;font-style:italic;font-weight:bold", image:"taco.gif"
 WoL Monster window begin	alias:"( Western wanderer", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
 WoL Monster window end	alias:"Western wanderer )", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
-Digitize Monster window begin	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
-Digitize Monster window end	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
+Digitize Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
 
 #He-Boulder Major Rays
 Everything Looks Blue	style:"color:blue"
