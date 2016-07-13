@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r16914; // Support for BACON
+since r17054; // New digitization counters due to KoL change
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -659,7 +659,7 @@ buff parseBuff(string source) {
 	// Add spoiler info that mafia doesn't provide
 	if(myBuff.effectName.contains_text("Romantic Monster window"))
 		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
-	else if(myBuff.effectName.contains_text("Digitize Monster window"))
+	else if(myBuff.effectName.contains_text("Digitize Monster"))
 		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster");
 	
 	//Replace effect icons, if enabled
@@ -3655,8 +3655,8 @@ buffer modifyPage(buffer source) {
 		if(get_property("_chitSVNatHead") == "false") {
 			if(get_property("_chitChecked") != "true")
 				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
-			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
 			set_property("_chitChecked", "true");
+			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
 		}
 	}
 	
