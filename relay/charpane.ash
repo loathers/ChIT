@@ -3084,6 +3084,32 @@ void bakeQuests() {
 	chitTools["quests"] = "Current Quests|quests.png";
 }
 
+// heeheehee wrote this to make ChIT remember the position of the scrollbar when the screen is refreshed.
+string autoscrollScript = "<script>\
+$(window).unload(function () {\
+	var scrolls = {};\
+	$('div').each(function () {\
+		var scroll = $(this).scrollTop();\
+		if (scroll !== 0) {\
+			scrolls[$(this).attr('id')] = $(this).scrollTop();\
+		}\
+	});\
+	if (Object.keys(scrolls).length !== 0) {\
+		localStorage.setItem('chit.scroll', JSON.stringify(scrolls));\
+	}\
+});\
+
+$(document).ready(function () {\
+	if (localStorage.getItem('chit.scroll') !== '') {\
+		var scrolls = JSON.parse(localStorage.getItem('chit.scroll'));\
+		console.log(\"scrolls\", scrolls);\
+		for (var key in scrolls) {\
+			$('#' + key).scrollTop(scrolls[key])\
+		}\
+	}\
+});\
+</script><body ";
+
 void bakeHeader() {
 
 	buffer result;
