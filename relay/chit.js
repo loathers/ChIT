@@ -260,9 +260,7 @@ $(window).unload(function () {
 			scrolls[$(this).attr('id')] = $(this).scrollTop();
 		}
 	});
-	if (Object.keys(scrolls).length !== 0) {
-		localStorage.setItem('chit.scroll', JSON.stringify(scrolls));
-	}
+	localStorage.setItem('chit.scroll', JSON.stringify(scrolls));
 });
 
 $(document).ready(function () {
