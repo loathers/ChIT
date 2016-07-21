@@ -260,12 +260,12 @@ $(window).unload(function () {
 			scrolls[$(this).attr('id')] = $(this).scrollTop();
 		}
 	});
-	localStorage.setItem('chit.scroll', JSON.stringify(scrolls));
+	sessionStorage.setItem('chit.scroll', JSON.stringify(scrolls));
 });
 
 $(document).ready(function () {
-	if (localStorage.getItem('chit.scroll') !== '') {
-		var scrolls = JSON.parse(localStorage.getItem('chit.scroll'));
+	if (sessionStorage.getItem('chit.scroll') !== '') {
+		var scrolls = JSON.parse(sessionStorage.getItem('chit.scroll'));
 		console.log("scrolls", scrolls);
 		for (var key in scrolls) {
 			$('#' + key).scrollTop(scrolls[key])
