@@ -1831,7 +1831,11 @@ void addHooch(buffer result) {
 	}
 }
 
-void addGhostBustin(buffer result) {
+void addGhostBusting(buffer result) {
+	string ghostLocation = get_property("ghostLocation");
+	if(available_amount($item[protonic accelerator pack]) == 0 && ghostLocation == "")
+		return;
+	
 	string zone_url(string loc) {
 		switch(loc) {
 		case "Madness Bakery": return "place.php?whichplace=town_right";
@@ -1841,18 +1845,17 @@ void addGhostBustin(buffer result) {
 		case "The Haunted Kitchen":
 			return "place.php?whichplace=manor1";
 		case "The Haunted Gallery": return "place.php?whichplace=manor2";
-		case "The Haunted Wine Cellar": return "place.php?whichplace=manor0";
+		case "The Haunted Wine Cellar": return "place.php?whichplace=manor4";
 		case "The Spooky Forest": return "place.php?whichplace=woods";
 		case "Cobb's Knob Treasury": return "cobbsknob.php";
 		case "The Icy Peak": return "place.php?whichplace=mclargehuge";
 		case "The Smut Orc Logging Camp": return "place.php?whichplace=orc_chasm";
-		case "Inside the Palindome": return "";
+		case "Inside the Palindome": return "place.php?whichplace=palindome";
 		}
 		return "main.php";
 	}
 
-	string ghostLocation = get_property("ghostLocation");
-	result.append('<tr><td title="Ghost to Bust" class="label">Bust</td><td class="ghostbust info" colspan="2" title="Bust a ghost here">');
+	result.append('<tr title="Bust a ghost here"><td class="label">Bust</td><td class="ghostbust info" colspan="2">');
 	if(ghostLocation == "")
 		result.append('<a style="color:#BBBBBB;">no ghost yet</a></td></tr>');
 	else {
@@ -2453,9 +2456,7 @@ void bakeStats() {
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
 			
-			if(available_amount($item[protonic accelerator pack]) > 0)
-				result.addGhostBustin();
-			
+			result.addGhostBusting();
 			result.addCIQuest();
 			result.addWalfordBucket();
 		}
