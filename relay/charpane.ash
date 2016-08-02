@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17054; // New digitization counters due to KoL change
+since r17086; // Ghost tracking!
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -1831,6 +1831,39 @@ void addHooch(buffer result) {
 	}
 }
 
+void addGhostBustin(buffer result) {
+	string zone_url(string loc) {
+		switch(loc) {
+		case "Madness Bakery": return "place.php?whichplace=town_right";
+		case "The Overgrown Lot": return "place.php?whichplace=town_wrong";
+		case "The Skeleton Store": return "place.php?whichplace=town_market";
+		case "The Haunted Conservatory":
+		case "The Haunted Kitchen":
+			return "place.php?whichplace=manor1";
+		case "The Haunted Gallery": return "place.php?whichplace=manor2";
+		case "The Haunted Wine Cellar": return "place.php?whichplace=manor0";
+		case "The Spooky Forest": return "place.php?whichplace=woods";
+		case "Cobb's Knob Treasury": return "cobbsknob.php";
+		case "The Icy Peak": return "place.php?whichplace=mclargehuge";
+		case "The Smut Orc Logging Camp": return "place.php?whichplace=orc_chasm";
+		case "Inside the Palindome": return "";
+		}
+		return "main.php";
+	}
+
+	string ghostLocation = get_property("ghostLocation");
+	result.append('<tr><td title="Ghost to Bust" class="label">Bust</td><td class="ghostbust info" colspan="2" title="Bust a ghost here">');
+	if(ghostLocation == "")
+		result.append('<a style="color:#BBBBBB;">no ghost yet</a></td></tr>');
+	else {
+		result.append('<a href="');
+		result.append(zone_url(ghostLocation));
+		result.append('" target="mainpane">');
+		result.append(ghostLocation);
+		result.append('</a></td></tr>');
+	}
+}
+
 void addCIQuest(buffer result) {
 	boolean active_quest(string prop) { return get_property(prop) == "started" ||  get_property(prop).contains_text("step"); }
 	int current, final;
@@ -2419,6 +2452,9 @@ void bakeStats() {
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
+			
+			if(available_amount($item[protonic accelerator pack]) > 0)
+				result.addGhostBustin();
 			
 			result.addCIQuest();
 			result.addWalfordBucket();
@@ -3084,32 +3120,6 @@ void bakeQuests() {
 	chitTools["quests"] = "Current Quests|quests.png";
 }
 
-// heeheehee wrote this to make ChIT remember the position of the scrollbar when the screen is refreshed.
-string autoscrollScript = "<script>\
-$(window).unload(function () {\
-	var scrolls = {};\
-	$('div').each(function () {\
-		var scroll = $(this).scrollTop();\
-		if (scroll !== 0) {\
-			scrolls[$(this).attr('id')] = $(this).scrollTop();\
-		}\
-	});\
-	if (Object.keys(scrolls).length !== 0) {\
-		localStorage.setItem('chit.scroll', JSON.stringify(scrolls));\
-	}\
-});\
-
-$(document).ready(function () {\
-	if (localStorage.getItem('chit.scroll') !== '') {\
-		var scrolls = JSON.parse(localStorage.getItem('chit.scroll'));\
-		console.log(\"scrolls\", scrolls);\
-		for (var key in scrolls) {\
-			$('#' + key).scrollTop(scrolls[key])\
-		}\
-	}\
-});\
-</script><body ";
-
 void bakeHeader() {
 
 	buffer result;
@@ -3655,7 +3665,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.gear.recommend", "in-run");
 	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
-	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,"
+	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,your cowboy boots,gold detective badge,"
 		+ "Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals,"
 		+ "Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.currencies", "source essence,BACON,cop dollar");

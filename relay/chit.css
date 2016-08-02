@@ -369,6 +369,10 @@ tr.florist :first-line {
 	color:blue;
 }
 
+td.ghostbust {
+	display:block;
+}
+
 div.progressbox {
 	padding:1px;
 	background-color:#F0F0F0;
