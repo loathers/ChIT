@@ -24,6 +24,16 @@ string gearName(item it) {
 			if(get_property("boneAbacusVictories").to_int() < 1000)
 				notes += get_property("boneAbacusVictories") + "/1000";
 			break;
+		case $item[navel ring of navel gazing]:
+			name = "navel ring";
+			// no break intentionally
+		case $item[Greatest American Pants]:
+			int runs = to_int(get_property("_navelRunaways"));
+			if(runs < 3) notes = "100% free run";
+			else if(runs < 6) notes = "80% free run";
+			else if(runs < 9) notes = "50% free run";
+			else notes = "20% free run";
+			break;
 	}
 	
 	if(notes != "")
@@ -707,7 +717,7 @@ void pickerGear(slot s) {
 			
 			boolean shield; // Make sure there is at least one shield!
 			
-			// For miniaml, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
+			// For minimal, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
 			int amount = vars["chit.gear.layout"] == "minimal"? 11
 				: any_options? 4: 11;
 			for x from 0 to min(count(avail) - 1, amount) {
