@@ -599,6 +599,13 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		}
 		break;
+	case $familiar[Intergnat]:
+		string demon = get_property("demonName12");
+		if(length(demon) > 5 && substring(demon,0,5) != "Neil ") {
+			iconInfo.append("Demon name unknown");
+			return STATUS_HASDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
@@ -1302,7 +1309,11 @@ void bakeFamiliar() {
 		if(item_amount($item[BACON]) > 0) {
 			if(length(info) > 0)
 				info = ", " + info;
+			
 			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
+			string demon = get_property("demonName12");
+			if(length(demon) > 5 && substring(demon,0,5) != "Neil ")
+				info += ', <span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
 		}
 		break;
 	case $familiar[Fist Turkey]:
