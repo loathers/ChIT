@@ -269,6 +269,41 @@ void addFavGear() {
 	}
 }
 
+void pickerEdpiece() {
+	buffer picker;
+	picker.pickerStart("edpiece", "Adorn thy crown");
+	picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
+	
+	string current = get_property("edPiece");
+	
+	void addJewel(buffer buf, string jewel, string desc, string icon) {
+		picker.append('<span><a class="change" href="');
+		picker.append(sideCommand("edpiece " + jewel));
+		picker.append('"><img class="chit_icon');
+		if(jewel == current) picker.append(' hasdrops');
+		picker.append('" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('.gif" title="Install a golden ');
+		picker.append(jewel);
+		picker.append(' (');
+		picker.append(desc);
+		picker.append(')" /></a></span>');
+	}
+	
+	picker.addJewel("bear", "Muscle +20, +2 Muscle Stats Per Fight", "teddybear");
+	picker.addJewel("owl", "Mysticality +20, +2 Mysticality Stats Per Fight", "owl");
+	picker.addJewel("puma", "Moxie +20, +2 Moxie Stats Per Fight", "blackcat");
+	picker.addJewel("hyena", "+20 to Monster Level", "lionface");
+	picker.addJewel("mouse", "+10% Item Drops from Monsters, +20% Meat from Monsters", "mouseskull");
+	picker.addJewel("weasel", "The first attack against you will always miss, Regenerate 10-20 HP per Adventure", "weasel");
+	picker.addJewel("fish", "Lets you breathe underwater", "fish");
+	
+	picker.append('</td></tr>');
+	picker.addLoader("Cool jewels!");
+	picker.append('</table></div>');
+	chitPickers["edpiece"] = picker;
+}
+
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
@@ -327,8 +362,9 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
 			break;
 		case $item[the crown of ed the undying]:
+			pickerEdpiece();
 			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=activateedhat">Change decoration (currently ');
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickeredpiece" href="#">Change decoration (currently ');
 			if(get_property("edPiece") == "")
 				picker.append('none');
 			else
