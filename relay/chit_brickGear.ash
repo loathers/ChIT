@@ -343,11 +343,26 @@ void pickerGear(slot s) {
 			picker.append(sideCommand("fold " + other));
 			picker.append('">');
 			picker.append(cmd);
-			picker.append('</a></td>');
+			picker.append('</a></td></tr>');
 			break;
 		case $item[over-the-shoulder Folder Holder]:
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=useholder">Manage your folders.</a></td></tr>');
+			break;
+		case $item[fish hatchet]:
+			              cmd = "Get Wood";
+		case $item[codpiece]:
+			if(cmd == "") cmd = "Wring Out";
+		case $item[bass clarinet]:
+		  if(cmd == "") cmd = "Drain Spit";
+		  if(!to_boolean(get_property("_floundryItemUsed"))) {
+				start_option(in_slot, true);
+				picker.append('<td colspan="2"><a class="change" href="');
+				picker.append(sideCommand("use 1 " + to_string(in_slot) + ";equip " + to_string(s) + " " + to_string(in_slot)));
+				picker.append('">');
+				picker.append(cmd);
+				picker.append('</a></td></tr>');
+			}
 			break;
 	}
 	
