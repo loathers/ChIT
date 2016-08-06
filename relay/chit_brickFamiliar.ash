@@ -1183,30 +1183,6 @@ void bakeFamiliar() {
 		famweight = to_string(familiar_weight(myfam) + weight_adjustment());
 	}
 
-	//Get equipment info
-	if(myfam == $familiar[Comma Chameleon]) {
-		famitem = $item[none];
-		equiptype = to_string(famitem);
-		matcher actorMatcher = create_matcher("</b\> pound (.*?),", source);
-		if (find(actorMatcher)) {
-			actortype = group(actorMatcher, 1);
-			equipimage = to_familiar(actortype).image;
-			info = actortype;
-		}
-	} else {
-		famitem = familiar_equipped_equipment(my_familiar());
-		if (famitem != $item[none]) {
-			equiptype = to_string(famitem);
-			// If using snow suit, find the current face & add carrot drop info
-			if(famitem == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
-				int snowface = index_of(source, "itemimages/snow");
-				equipimage = substring(source, snowface + 11, snowface + 24);
-				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
-			} else
-				equipimage = famitem.image;
-		}
-	}
-
 	// Get familiar specific info
 	switch(myfam) {
 	case $familiar[Mad Hatrack]:
@@ -1336,6 +1312,30 @@ void bakeFamiliar() {
 		iconInfoSpecial(myfam, b);
 		info = b;
 		break;
+	}
+	
+	//Get equipment info
+	if(myfam == $familiar[Comma Chameleon]) {
+		famitem = $item[none];
+		equiptype = to_string(famitem);
+		matcher actorMatcher = create_matcher("</b\> pound (.*?),", source);
+		if (find(actorMatcher)) {
+			actortype = group(actorMatcher, 1);
+			equipimage = to_familiar(actortype).image;
+			info = actortype;
+		}
+	} else {
+		famitem = familiar_equipped_equipment(my_familiar());
+		if (famitem != $item[none]) {
+			equiptype = to_string(famitem);
+			// If using snow suit, find the current face & add carrot drop info
+			if(famitem == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
+				int snowface = index_of(source, "itemimages/snow");
+				equipimage = substring(source, snowface + 11, snowface + 24);
+				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
+			} else
+				equipimage = famitem.image;
+		}
 	}
 	
 	// Charges
