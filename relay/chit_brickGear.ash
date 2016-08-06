@@ -512,16 +512,16 @@ void pickerGear(slot s) {
 		
 		switch(vars["chit.gear.layout"]) {
 		case "experimental":
-			picker.append('<div class="chit_flexitem chit_flexcontainer" style="order:');
+			picker.append('<div class="chit_flexitem" style="order:');
 			picker.append(danger_level);
-			picker.append(';"><div class="chit_flexitem"><a class="done" oncontextmenu="descitem(');
+			picker.append(';"><div><a class="done" oncontextmenu="descitem(');
 			picker.append(it.descid);
 			picker.append(',0,event); return false;" onclick="descitem(');
 			picker.append(it.descid);
 			picker.append(',0,event)" href="#">');
 			
 			picker.addItemIcon(it,"Click for item description",danger_level);
-			picker.append('</a></div><div class="chit_flexitem" style="max-width:120px;">');
+			picker.append('</a></div><div style="max-width:160px;">');
 			add_favorite_button(it);
 			if(take_action) {
 				picker.append('<a class="change" href="');
