@@ -1308,7 +1308,7 @@ void bakeFamiliar() {
 		info = '<a class="visit' + isBlue + '" target="mainpane" title="DMT mixing: '
 			+ thought + ' item, ' + action + ' weight, ' + sensation + ' init'
 			+ ' possible" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
-			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe';
+			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe' + info;
 		break;
 	case $familiar[Intergnat]:
 		if(item_amount($item[BACON]) > 0) {
