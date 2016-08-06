@@ -102,8 +102,12 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		return action + "<br /><span class='efmods'>" + mod + "<span>";
 	}
 
+	boolean [item] hiddengear;
+	foreach i,famequip in split_string(vars["chit.familiar.hiddengear"], "\\s*(?<!\\\\),\\s*")
+		hiddengear[to_item(famequip)] = true;
+	
 	void addEquipment(item it, string cmd) {
-		if (!(addeditems contains it)) {
+		if (!(addeditems contains it) && !(hiddengear contains it)) {
 			string hover;
 			string cli;
 			string action = to_string(it);
