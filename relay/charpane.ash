@@ -3644,6 +3644,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.familiar.protect", false);
 	setvar("chit.familiar.showlock", false);
 	setvar("chit.familiar.anti-gollywog", true);
+	setvar("chit.familiar.hiddengear", "");
 	setvar("chit.effects.classicons", "none");
 	setvar("chit.effects.showicons", true);
 	setvar("chit.effects.modicons", true);
