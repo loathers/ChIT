@@ -442,12 +442,16 @@ string familiar_image(familiar f) {
 	return '/images/itemimages/' + f.image;
 }
 
-string item_image(item it, boolean modify_image)
+int NO_MODIFY = 0;
+int MODIFY = 1;
+int FORCE_MODIFY = 2; // Some items only want to be modified in special cases, like the edpiece
+
+string item_image(item it, int modify_image)
 {
 	if(it == $item[none])
 		return '/images/itemimages/blank.gif';
 
-	if(modify_image)
+	if(modify_image != NO_MODIFY)
 	{
 		switch(it)
 		{
@@ -461,16 +465,35 @@ string item_image(item it, boolean modify_image)
 				break;
 		}
 	}
+	
+	if(modify_image == FORCE_MODIFY)
+	{
+		switch(it)
+		{
+			case $item[The Crown of Ed the Undying]:
+				switch(get_property("edPiece"))
+				{
+					case "bear": return '/images/itemimages/teddybear.gif';
+					case "owl": return '/images/itemimages/owl.gif';
+					case "puma": return '/images/itemimages/blackcat.gif';
+					case "hyena": return '/images/itemimages/lionface.gif';
+					case "mouse": return '/images/itemimages/mouseskull.gif';
+					case "weasel": return '/images/itemimages/weasel.gif';
+					case "fish": return '/images/itemimages/fish.gif';
+				}
+				break;
+		}
+	}
 
 	return '/images/itemimages/' + it.image;
 }
 
 string item_image(item it)
 {
-	return item_image(it, true);
+	return item_image(it, MODIFY);
 }
 
-void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image) {
+void addItemIcon(buffer result, item it, string title, int danger_level, int modify_image) {
 	result.append('<img class="chit_icon');
 	if(hasDrops(it) > 0)
 		result.append(' hasdrops');
@@ -487,6 +510,9 @@ void addItemIcon(buffer result, item it, string title, int danger_level, boolean
 	result.append('" title="');
 	result.append(title);
 	result.append('" />');
+}
+void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image) {
+	addItemIcon(result,it,title,danger_level,modify_image ? MODIFY : NO_MODIFY);
 }
 void addItemIcon(buffer result, item it, string title, int danger_level) {
 	addItemIcon(result,it,title,danger_level,true);
