@@ -333,13 +333,17 @@ void pickerGear(slot s) {
 	
 	boolean any_options = false;
 	// for use with custom context suggestions
-	void start_option(item it, boolean modify_image) {
+	void start_option(item it, int modify_image) {
 		# any_options = true;
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
+		picker.append(it.descid);
+		picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
 		picker.addItemIcon(it, "Click for item description", 0, modify_image);
 		picker.append('</a></td>');
+	}
+	
+	void start_option(item it, boolean modify_image) {
+		start_option(it, modify_image ? MODIFY : NO_MODIFY);
 	}
 	
 	// give configurable gear some love if it's in slot
@@ -361,9 +365,9 @@ void pickerGear(slot s) {
 			start_option(in_slot, false);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
 			break;
-		case $item[the crown of ed the undying]:
+		case $item[The Crown of Ed the Undying]:
 			pickerEdpiece();
-			start_option(in_slot, true);
+			start_option(in_slot, FORCE_MODIFY);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickeredpiece" href="#">Change decoration (currently ');
 			if(get_property("edPiece") == "")
 				picker.append('none');
