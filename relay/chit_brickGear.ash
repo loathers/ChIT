@@ -146,6 +146,8 @@ void addFavGear() {
 		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
 	else if(get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
 		addGear($item[Talisman o' Namsilat], "bounty");
+	else if(get_property("ghostLocation") == "Inside the Palindome")
+		addGear($item[Talisman o' Namsilat], "ghost");
 	
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
