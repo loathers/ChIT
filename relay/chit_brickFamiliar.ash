@@ -167,11 +167,49 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		return "You don't have any "+it+" for your " + fam + ".<br><br>Poor "+famname;
 	}
 	
+	void pickerSnowsuit() {
+		buffer picker;
+		picker.pickerStart("snowsuit", "Tailor the Snow Suit");
+		
+		string current = get_property("snowsuit");
+		
+		void addFace(buffer buf, string face, string desc1, string desc2, string icon) {
+			picker.append('<tr class="pickitem"><td class="icon"><a class="change" href="');
+			picker.append(sideCommand("snowsuit " + face));
+			picker.append('"><img class="chit_icon');
+			if(face == current) picker.append(' hasdrops');
+			picker.append('" src="/images/itemimages/');
+			picker.append(icon);
+			picker.append('.gif" title="');
+			picker.append(desc1);
+			picker.append(' ');
+			picker.append(desc2);
+			picker.append('" /></a></td><td colspan="2"><a class="change" href="');
+			picker.append(sideCommand("snowsuit " + face));
+			picker.append('">');
+			picker.append(desc1);
+			picker.append('<br /><span style="color:#707070">');
+			picker.append(desc2);
+			picker.append('</span></a></td></tr>');
+		}
+		
+		picker.addFace("eyebrows", "Add Angry Eyebrows", "(Familiar does physical damage)", "snowface1");
+		picker.addFace("smirk", "Add an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2");
+		picker.addFace("nose", "Add a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3");
+		picker.addFace("goatee", "Add an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4");
+		picker.addFace("hat", "Add a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5");
+		
+		picker.addLoader("Rearranging your familiar's face!");
+		picker.append('</table></div>');
+		chitPickers["snowsuit"] = picker;
+	}
+	
 	void pickEquipment() {
 
 		// First add a decorate link if you are using a Snow Suit
 		if(equipped_item($slot[familiar]) == $item[Snow Suit]) {
-			string suiturl = '<a target=mainpane class="change" href="inventory.php?pwd='+my_hash()+'&action=decorate" title="Decorate your Snow Suit\'s face">';
+			pickerSnowsuit();
+			string suiturl = '<a class="chit_launcher done" rel="chit_pickersnowsuit" href="#" title="Decorate your Snow Suit\'s face">';
 			int faceIndex = index_of(chitSource["familiar"], "itemimages/snow");
 			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
 			if(have_effect($effect[SOME PIGS]) > 0)
