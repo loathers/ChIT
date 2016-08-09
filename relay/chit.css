@@ -44,6 +44,10 @@ a.blue-link:hover {
 	color:red !important;
 }
 
+.descline {
+	color:#707070;
+}
+
 #chit_house {
 }
 #chit_roof {
@@ -584,6 +588,11 @@ table.chit_picker td {
 	border-top:0px solid #DDDDDD;
 	border-bottom:1px solid white;
 }
+
+table.chit_picker tr.currentitem td {
+	background-color:#E2E2E2;
+}
+
 table.chit_picker tr.pickitem td {
 }
 table.chit_picker tr.picknone td.info {
