@@ -274,33 +274,53 @@ void addFavGear() {
 void pickerEdpiece() {
 	buffer picker;
 	picker.pickerStart("edpiece", "Adorn thy crown");
-	picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
 	
 	string current = get_property("edPiece");
 	
 	void addJewel(buffer buf, string jewel, string desc, string icon) {
-		picker.append('<span><a class="change" href="');
-		picker.append(sideCommand("edpiece " + jewel));
-		picker.append('"><img class="chit_icon');
+		picker.append('<tr class="pickitem"><td class="icon">');
+		if(jewel != current) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("edpiece " + jewel));
+			picker.append('">');
+		}
+		picker.append('<img class="chit_icon');
 		if(jewel == current) picker.append(' hasdrops');
 		picker.append('" src="/images/itemimages/');
 		picker.append(icon);
-		picker.append('.gif" title="Install a golden ');
+		picker.append('.gif" title="');
+		if(jewel == current) picker.append('Current:');
+		else picker.append('Install');
+		picker.append(' a golden ');
 		picker.append(jewel);
 		picker.append(' (');
 		picker.append(desc);
-		picker.append(')" /></a></span>');
+		picker.append(')" />');
+		if(jewel != current) picker.append('</a>');
+		picker.append('</td><td colspan="2">');
+		if(jewel != current) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("edpiece " + jewel));
+			picker.append('">Install');
+		}
+		else picker.append('Current: ');
+		picker.append(' a golden ');
+		picker.append(jewel);
+		picker.append('<br /><span style="color:#707070">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(jewel != current) picker.append('</a>');
+		picker.append('</td></tr>');
 	}
 	
-	picker.addJewel("bear", "Muscle +20, +2 Muscle Stats Per Fight", "teddybear");
-	picker.addJewel("owl", "Mysticality +20, +2 Mysticality Stats Per Fight", "owl");
-	picker.addJewel("puma", "Moxie +20, +2 Moxie Stats Per Fight", "blackcat");
-	picker.addJewel("hyena", "+20 to Monster Level", "lionface");
-	picker.addJewel("mouse", "+10% Item Drops from Monsters, +20% Meat from Monsters", "mouseskull");
-	picker.addJewel("weasel", "The first attack against you will always miss, Regenerate 10-20 HP per Adventure", "weasel");
+	picker.addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
+	picker.addJewel("owl", "Myst +20, +2 Myst exp", "owl");
+	picker.addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
+	picker.addJewel("hyena", "+20 ML", "lionface");
+	picker.addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
+	picker.addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
 	picker.addJewel("fish", "Lets you breathe underwater", "fish");
 	
-	picker.append('</td></tr>');
 	picker.addLoader("Cool jewels!");
 	picker.append('</table></div>');
 	chitPickers["edpiece"] = picker;
