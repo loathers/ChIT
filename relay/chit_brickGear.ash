@@ -278,12 +278,13 @@ void pickerEdpiece() {
 	string current = get_property("edPiece");
 	
 	void addJewel(buffer buf, string jewel, string desc, string icon) {
-		picker.append('<tr class="pickitem"><td class="icon">');
-		if(jewel != current) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("edpiece " + jewel));
-			picker.append('">');
-		}
+		string jewelLink = '<a class="change" href="' + sideCommand("edpiece " + jewel) + '">';
+		
+		picker.append('<tr class="');
+		if(jewel != current) picker.append('pickitem');
+		else picker.append('currentitem');
+		picker.append('"><td class="icon">');
+		if(jewel != current) picker.append(jewelLink);
 		picker.append('<img class="chit_icon');
 		if(jewel == current) picker.append(' hasdrops');
 		picker.append('" src="/images/itemimages/');
@@ -299,14 +300,13 @@ void pickerEdpiece() {
 		if(jewel != current) picker.append('</a>');
 		picker.append('</td><td colspan="2">');
 		if(jewel != current) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("edpiece " + jewel));
-			picker.append('">Install');
+			picker.append(jewelLink);
+			picker.append('<b>Install</b>');
 		}
-		else picker.append('Current: ');
+		else picker.append('<b>Current:</b>');
 		picker.append(' a golden ');
 		picker.append(jewel);
-		picker.append('<br /><span style="color:#707070">');
+		picker.append('<br /><span class="descline">');
 		picker.append(desc);
 		picker.append('</span>');
 		if(jewel != current) picker.append('</a>');
@@ -316,7 +316,7 @@ void pickerEdpiece() {
 	picker.addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
 	picker.addJewel("owl", "Myst +20, +2 Myst exp", "owl");
 	picker.addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
-	picker.addJewel("hyena", "+20 ML", "lionface");
+	picker.addJewel("hyena", "+20 Monster Level", "lionface");
 	picker.addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
 	picker.addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
 	picker.addJewel("fish", "Lets you breathe underwater", "fish");
