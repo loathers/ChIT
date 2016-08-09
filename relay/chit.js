@@ -150,6 +150,7 @@ $(document).ready(function () {
 	});
 	
 	$(window).resize();
+	$(window).resize();
 	
 }); 
 
