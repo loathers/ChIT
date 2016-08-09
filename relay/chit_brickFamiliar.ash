@@ -174,30 +174,44 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		string current = get_property("snowsuit");
 		
 		void addFace(buffer buf, string face, string desc1, string desc2, string icon) {
-			picker.append('<tr class="pickitem"><td class="icon"><a class="change" href="');
-			picker.append(sideCommand("snowsuit " + face));
-			picker.append('"><img class="chit_icon');
+			string faceLink = '<a class="change" href="' + sideCommand("snowsuit " + face) + '">';
+			
+			picker.append('<tr class="');
+			if(face != current) picker.append('pickitem');
+			else picker.append('currentitem');
+			picker.append('"><td class="icon">');
+			if(face != current) picker.append(faceLink);
+			picker.append('<img class="chit_icon');
 			if(face == current) picker.append(' hasdrops');
 			picker.append('" src="/images/itemimages/');
 			picker.append(icon);
 			picker.append('.gif" title="');
+			if(face == current) picker.append('Current: ');
+			else picker.append('Add ');
 			picker.append(desc1);
 			picker.append(' ');
 			picker.append(desc2);
-			picker.append('" /></a></td><td colspan="2"><a class="change" href="');
-			picker.append(sideCommand("snowsuit " + face));
-			picker.append('">');
+			picker.append('" />');
+			if(face != current) picker.append('</a>');
+			picker.append('</td><td colspan="2">');
+			if(face != current) {
+				picker.append(faceLink);
+				picker.append('<b>Switch</b> to ');
+			}
+			else picker.append('<b>Current</b>: ');
 			picker.append(desc1);
-			picker.append('<br /><span style="color:#707070">');
+			picker.append('<br /><span class="descline">');
 			picker.append(desc2);
-			picker.append('</span></a></td></tr>');
+			picker.append('</span>');
+			if(face != current) picker.append('</a>');
+			picker.append('</td></tr>');
 		}
 		
-		picker.addFace("eyebrows", "Add Angry Eyebrows", "(Familiar does physical damage)", "snowface1");
-		picker.addFace("smirk", "Add an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2");
-		picker.addFace("nose", "Add a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3");
-		picker.addFace("goatee", "Add an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4");
-		picker.addFace("hat", "Add a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5");
+		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1");
+		picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2");
+		picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3");
+		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4");
+		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5");
 		
 		picker.addLoader("Rearranging your familiar's face!");
 		picker.append('</table></div>');
@@ -216,7 +230,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				face = "snowsuit.gif";
 			picker.append('<tr class="pickitem"><td class="fold">');
 			picker.append(suiturl);
-			picker.append('Decorate Snow Suit<br /><span style="color:#707070">Choose a Face</span></a></td><td class="icon">');
+			picker.append('Decorate Snow Suit<br /><span class="descline">Choose a Face</span></a></td><td class="icon">');
 			picker.append(suiturl);
 			picker.append('<img src="/images/itemimages/');
 			picker.append(face);
@@ -870,7 +884,7 @@ void pickerCompanion(string famname, string famtype) {
 	void addCompanion(buffer result, skill s, boolean gotfood) {
 		string hover = "Play with " + s +"<br />";
 		if(gotfood)
-			hover += "<span style='color:#707070'>Costs "+mp_cost(s)+" mp and <br />1 "+companion[s]+" (have "+item_amount(companion[s])+")";
+			hover += "<span class='descline'>Costs "+mp_cost(s)+" mp and <br />1 "+companion[s]+" (have "+item_amount(companion[s])+")";
 		else
 			hover += "<span style='color:#FF2B2B'>Need "+companion[s];
 		hover +="</span>";
