@@ -466,6 +466,12 @@ int hasDrops(item it) {
 			int runs = to_int(get_property("_navelRunaways"));
 			if(runs < 9) return 9 - runs;
 			break;
+		case $item[protonic accelerator pack]:
+			int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
+			string ghostLoc = get_property("ghostLocation");
+			if(ghostLoc != "" || turnsToGhost <= 0)
+				return 1;
+			break;
 	}
 	
 	return 0;
