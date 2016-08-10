@@ -865,6 +865,11 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	}
 		
 	// Familiars recommended for quests
+	string nsQuest = get_property("questL13Final");
+	boolean needSkinHelper = (nsQuest == "step4" && available_amount($item[beehive]) < 1);
+	string orcChasm = get_property("questL09Topping");
+	boolean highlandsTime = (orcChasm == "step1" || orcChasm == "step2");
+	
 	if(cmd == "familiar") { 
 		string blackForestState = get_property("questL11Black");
 		boolean needGuide = ((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
@@ -875,23 +880,29 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		// Typical tavern, you might want to bring the purse rat to up rat king chance
 		recIf(get_property("questL03Rat") == "step1", mlFams, "rat kings");
 		recIf(to_int(get_property("cyrptCrannyEvilness")) > 26, mlFams, "ghuol whelps");
-		string orcChasm = get_property("questL09Topping");
-		recIf(to_float(get_property("oilPeakProgress")) > 0 && (orcChasm == "step1" || orcChasm == "step2"), mlFams, "oil peak");
+		recIf(highlandsTime && to_float(get_property("oilPeakProgress")) > 0, mlFams, "oil peak");
 		recIf(available_amount($item[wine bomb]) > 0, mlFams, "wine bomb");
 		
 		// Maybe incomplete list of reasons you'd want an init familiar
 		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
 		recIf(to_int(get_property("cyrptAlcoveEvilness")) > 26, initFams, "modern zmobie");
-		recIf(((to_int(get_property("twinPeakProgress")) & (1 << 3)) == 0) && (initiative_modifier() < 40), initFams, "twin peaks");
-		recIf(get_property("questL13Final") == "started", initFams, "init test"); // todo: stop recommending immediately after taking the init test
+		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & (1 << 3)) == 0) && (initiative_modifier() < 40), initFams, "twin peaks");
+		recIf(nsQuest == "started", initFams, "init test"); // todo: stop recommending immediately after taking the init test
 		
 		// The Imitation Crab is incredibly useful for tower killing the wall of skin
-		boolean needSkinHelper = get_property("questL13Final") == "step4" && available_amount($item[beehive]) < 1;
 		recIf(needSkinHelper, $familiars[Imitation Crab, Sludgepuppy, Mini-Crimbot, Warbear Drone], "wall of skin");
+		
+		boolean [familiar] resFams = $familiars[Exotic Parrot];
+		boolean kitchenTime = get_property("questM20Necklace") == "started" && to_int(get_property("writingDesksDefeated")) == 0 && get_property("chateauMonster") != "writing desk";
+		boolean cantTakeTheHeat = numeric_modifier("Hot Resistance") < 9 || numeric_modifier("Stench Resistance") < 9; // or the stench...
+		recIf(kitchenTime && cantTakeTheHeat, resFams, "haunted kitchen");
+		string trapper = get_property("questL08Trapper");
+		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
+		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "a-boo clues");
+		recIf(nsQuest == "step2", resFams, "hedge maze");
 	}
 	else {
 		// Recommendations for the crown/bjorn
-		boolean needSkinHelper = get_property("questL13Final") == "step4" && available_amount($item[beehive]) < 1;
 		recIf(needSkinHelper, $familiars[Frumious Bandersnatch, Howling Balloon Monkey, Baby Mutant Rattlesnake, Mutant Cactus Bud], "wall of skin");
 	}
 	
