@@ -210,6 +210,12 @@ void addFavGear() {
 			addGear($item[remorseless knife], "charter");
 	}
 	
+	// Miscellaneous
+	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
+	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
+		addGear($item[protonic accelerator pack], "ghost");
+	
+	// Path specific stuff
 	switch(my_path()) {
 	case "KOLHS":
 		addGear($items[Yearbook Club Camera, over-the-shoulder Folder Holder], "path");

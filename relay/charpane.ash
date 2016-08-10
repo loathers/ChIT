@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17086; // Ghost tracking!
+since r17107; // Thorough ghost tracking!
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -1833,14 +1833,24 @@ void addHooch(buffer result) {
 
 void addGhostBusting(buffer result) {
 	string ghostLocation = get_property("ghostLocation");
-	if(available_amount($item[protonic accelerator pack]) == 0 && ghostLocation == "")
+	boolean hasPack = available_amount($item[protonic accelerator pack]) > 0;
+	if(!hasPack && ghostLocation == "")
 		return;
 	
 	string zone_url(string loc) {
 		switch(loc) {
-		case "Madness Bakery": return "place.php?whichplace=town_right";
-		case "The Overgrown Lot": return "place.php?whichplace=town_wrong";
-		case "The Skeleton Store": return "place.php?whichplace=town_market";
+		case "Madness Bakery":
+			if(get_property("questM25Armorer") == "unstarted")
+				return "shop.php?whichshop=armory&action=talk";
+			return "place.php?whichplace=town_right";
+		case "The Overgrown Lot":
+			if(get_property("questM24Doc") == "unstarted")
+				return "shop.php?whichshop=doc&action=talk";
+			return "place.php?whichplace=town_wrong";
+		case "The Skeleton Store":
+			if(get_property("questM23Meatsmith") == "unstarted")
+				return "shop.php?whichshop=meatsmith&action=talk";
+			return "place.php?whichplace=town_market";
 		case "The Haunted Conservatory":
 		case "The Haunted Kitchen":
 			return "place.php?whichplace=manor1";
@@ -1855,13 +1865,30 @@ void addGhostBusting(buffer result) {
 		return "main.php";
 	}
 
-	result.append('<tr title="Bust a ghost here"><td class="label">Bust</td><td class="ghostbust info" colspan="2">');
-	if(ghostLocation == "")
-		result.append('<a style="color:#BBBBBB;">no ghost yet</a></td></tr>');
+	result.append('<tr><td class="label">Bust</td><td class="ghostbust info" colspan="2">');
+	if(ghostLocation == "") {
+		result.append('<a ');
+		int turnsToGo = to_int(get_property("nextParanormalActivity")) - total_turns_played();
+		if(turnsToGo <= 0) {
+			if(hasPack && equipped_amount($item[protonic accelerator pack]) < 1) {
+				result.append('href="');
+				result.append(sideCommand("equip protonic accelerator pack"));
+				result.append('" title="Equip your PAP"');
+			}
+			else result.append('style="color:#555555;"');
+			result.append('>ghost report due!');
+		}
+		else {
+			result.append('style="color:#BBBBBB;">ghost in ');
+			result.append(turnsToGo);
+			result.append(' turns');
+		}
+		result.append('</a></td></tr>');
+	}
 	else {
 		result.append('<a href="');
 		result.append(zone_url(ghostLocation));
-		result.append('" target="mainpane">');
+		result.append('" title="Bust a ghost here" target="mainpane">');
 		result.append(ghostLocation);
 		result.append('</a></td></tr>');
 	}
