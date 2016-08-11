@@ -512,7 +512,14 @@ void addElementMap(buffer result, string img) {
 	result.append('<img src="');
 	result.append(imagePath);
 	result.append(img);
-	result.append('" width="190" height="190"');
+	
+	if     (have_effect($effect[Spirit of Peppermint]) > 0) result.append("cold");
+	else if(have_effect($effect[Spirit of Bacon Grease]) > 0) result.append("sleaze");
+	else if(have_effect($effect[Spirit of Garlic]) > 0) result.append("stench");
+	else if(have_effect($effect[Spirit of Cayenne]) > 0) result.append("hot");
+	else if(have_effect($effect[Spirit of Wormwood]) > 0) result.append("spooky");
+	
+	result.append('.gif" width="190" height="190"');
 	if(have_skill($skill[Flavour of Magic])) {
 		result.append(' alt="Cast Flavour of Magic" usemap="#flavmap">');
 		result.append('<map id="flavmap" name="flavmap"><area shape="circle" alt="Sleaze" title="Spirit of Bacon Grease (Sleaze)" coords="86,33,22" href="');
@@ -538,7 +545,7 @@ void pickerFlavour() {
 	
 	picker.addLoader("Spiriting flavours...");
 	picker.append('<tr class="pickitem"><td>');
-	picker.addElementMap("elementchart2.gif");
+	picker.addElementMap("elementchart2");
 	picker.append('</td></tr>');
 	
 	picker.append('</table></div>');
@@ -916,7 +923,7 @@ void bakeElements() {
 	result.append(imagePath);
 	result.append('elements.png">Elements</th></tr></thead>');
 	result.append("<tr><td>");
-	result.addElementMap("elementchart1.gif");
+	result.addElementMap("elementchart1");
 	result.append('</tr></table>');
 	
 	chitBricks["elements"] = result;
