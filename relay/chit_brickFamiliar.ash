@@ -1518,6 +1518,12 @@ void bakeFamiliar() {
 		info = '<br><span style="color:#606060;font-weight:normal">(' + info + ')</span>';
 	}
 	
+	//Add base weight to weight title
+	int base_weight = familiar_weight(myfam);
+	weight_title += " (Base Weight: " + base_weight + " lb";
+	if(base_weight > 1) weight_title += "s";
+	weight_title += ")";
+	
 	//Finally start some output
 	buffer result;
 	result.append('<table id="chit_familiar" class="chit_brick nospace">');
@@ -1525,7 +1531,7 @@ void bakeFamiliar() {
 		result.append('<tr class="wellfed">');
 	} else {
 		result.append('<tr>');
-	}	
+	}
 	result.append('<th width="40" title="'+ weight_title +'" style="color:blue">' + famweight + '</th>');
 	
 	if (protect) {
