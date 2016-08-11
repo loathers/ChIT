@@ -886,7 +886,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		// Maybe incomplete list of reasons you'd want an init familiar
 		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
 		recIf(to_int(get_property("cyrptAlcoveEvilness")) > 26, initFams, "modern zmobie");
-		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & (1 << 3)) == 0) && (initiative_modifier() < 40), initFams, "twin peaks");
+		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & 7) == 7) && (initiative_modifier() < 40), initFams, "twin peaks");
 		recIf(nsQuest == "started", initFams, "init test"); // todo: stop recommending immediately after taking the init test
 		
 		// The Imitation Crab is incredibly useful for tower killing the wall of skin
