@@ -177,6 +177,9 @@ void addFavGear() {
 		addGear($item[unstable fulminate], "quest");
 	if($strings[started, step1] contains get_property("questL11Manor"))
 		addGear($item[Lord Spookyraven's spectacles], "quest");
+	
+	if(get_property("questL13Final") == "step6" && available_amount($item[beehive]) < 1)
+		addGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
 		
 
 	// Nemesis Quest
