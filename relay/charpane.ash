@@ -3707,9 +3707,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.gear.recommend", "in-run");
 	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
-	setvar("chit.gear.favorites", "stinky cheese eye,hobo code binder,buddy bjorn,The Crown of Ed the Undying,crumpled felt fedora,Pantsgiving,your cowboy boots,gold detective badge,"
-		+ "Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals,"
-		+ "Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
+	setvar("chit.gear.favorites", "");
 	setvar("chit.currencies", "source essence,BACON,cop dollar");
 	setvar("chit.thrall.showname", false);
 	
