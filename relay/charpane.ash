@@ -1260,6 +1260,12 @@ void bakeThrall() {
 	if(my_class() != $class[Pastamancer]) return;
 	buffer result;
 	void bake(string lvl, string name, string type, string img) {
+		if(to_boolean(vars["chit.thrall.showname"])) {
+			string temp = name;
+			name = type;
+			type = temp;
+		}
+		
 		result.append('<table id="chit_thrall" class="chit_brick nospace">');
 		result.append('<tr><th title="Thrall Level">');
 		if(lvl != "")
@@ -3705,6 +3711,7 @@ buffer modifyPage(buffer source) {
 		+ "Meat Tenderizer is Murder,Ouija Board Ouija Board,Hand that Rocks the Ladle,Saucepanic,Frankly Mr. Shank,Shakespeare's Sister's Accordion,Work is a Four Letter Sword,Staff of the Headmaster's Victuals,"
 		+ "Sheila Take a Crossbow,A Light that Never Goes Out,Half a Purse,Hairpiece on Fire,Vicar's Tutu,Hand in Glove");
 	setvar("chit.currencies", "source essence,BACON,cop dollar");
+	setvar("chit.thrall.showname", false);
 	
 	// Check var version.
 	if(get_property("chitVarVer").to_int() < 3) {
