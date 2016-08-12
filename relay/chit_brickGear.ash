@@ -557,7 +557,7 @@ void pickerGear(slot s) {
 			
 			picker.addItemIcon(it,"Click for item description",danger_level);
 			picker.append('</a></div><div style="max-width:160px;">');
-			add_favorite_button(it);
+			//add_favorite_button(it);
 			if(take_action) {
 				picker.append('<a class="change" href="');
 				picker.append(command);
