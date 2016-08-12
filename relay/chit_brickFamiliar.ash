@@ -1316,11 +1316,7 @@ void bakeFamiliar() {
 		}
 
 	//Get Familiar Weight
-	matcher weightMatcher = create_matcher("</a></b>, the (<i>extremely</i> well-fed)? <b>(.*?)</b> pound ", source);
-	if (find(weightMatcher)) {
-		isFed = weightMatcher.group(1) != "";
-		famweight = weightMatcher.group(2);
-	} else if (myfam != $familiar[none]) {
+	if (myfam != $familiar[none]) {
 		famweight = to_string(familiar_weight(myfam) + weight_adjustment());
 	}
 
