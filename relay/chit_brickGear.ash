@@ -1,6 +1,7 @@
 // The original version of the Gear Brick (including pickerGear and bakeGear) was written by soolar
 
 boolean [item] favGear;
+boolean [item] okFavGear;
 boolean [string] [item] recommendedGear;
 
 string gearName(item it) {
@@ -104,14 +105,8 @@ void addGear(item it, string reason)
 		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
 		&& (gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
-		if(isFav)
-		{
-			favGear[it] = true;
-		}
-		else
-		{
-			recommendedGear[reason][it] = true;
-		}
+		if(isFav) okFavGear[it] = true;
+		else recommendedGear[reason][it] = true;
 	}
 }
 void addGear(item it)
@@ -276,7 +271,9 @@ void addFavGear() {
 	
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
-		addGear(to_item(fav.replace_string("\\,", ",")));
+		item it = to_item(fav.replace_string("\\,", ","));
+		favGear[it] = true;
+		addGear(it);
 	}
 }
 
@@ -673,7 +670,7 @@ void pickerGear(slot s) {
 		}
 	}
 	
-	add_gear_section("favorites", favGear);
+	add_gear_section("favorites", okFavGear);
 	
 	foreach reason in recommendedGear
 		add_gear_section(reason, recommendedGear[reason]);
