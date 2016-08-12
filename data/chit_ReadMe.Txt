@@ -180,6 +180,9 @@ chit.effects.usermap: Allows you to use personalized versions of chit_effects.tx
 chit.effects.describe: Adds descriptions for each active effect.
           Default: true
 -------------------------------------------------------------------------------------
+chit.thrall.showname: If true, shows the thrall name instead of type on the thrall brick
+					Default: false
+-------------------------------------------------------------------------------------
 chit.toolbar.moods: Shows or hides toolbar icon from changing and executing moods
           bonus: shows two icons, one for changing and the other for executing
           false: Does not show either
