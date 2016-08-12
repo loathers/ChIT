@@ -866,7 +866,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		
 	// Familiars recommended for quests
 	string nsQuest = get_property("questL13Final");
-	boolean needSkinHelper = (nsQuest == "step4" && available_amount($item[beehive]) < 1);
+	boolean needSkinHelper = (nsQuest == "step6" && available_amount($item[beehive]) < 1);
 	string orcChasm = get_property("questL09Topping");
 	boolean highlandsTime = (orcChasm == "step1" || orcChasm == "step2");
 	
@@ -887,7 +887,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
 		recIf(to_int(get_property("cyrptAlcoveEvilness")) > 26, initFams, "modern zmobie");
 		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & 7) == 7) && (initiative_modifier() < 40), initFams, "twin peaks");
-		recIf(nsQuest == "started", initFams, "init test"); // todo: stop recommending immediately after taking the init test
+		recIf(nsQuest != "unstarted" && to_int(get_property("nsContestants1")) < 0, initFams, "init test");
 		
 		// The Imitation Crab is incredibly useful for tower killing the wall of skin
 		recIf(needSkinHelper, $familiars[Imitation Crab, Sludgepuppy, Mini-Crimbot, Warbear Drone], "wall of skin");
