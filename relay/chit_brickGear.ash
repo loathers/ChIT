@@ -158,7 +158,8 @@ void addFavGear() {
 			addGear($item[mohawk wig], "quest");
 			break;
 	}
-	if(get_property("questL11Black") == "started")
+	string blackForest = get_property("questL11Black");
+	if(blackForest == "started" || blackForest == "step1")
 		addGear($item[blackberry galoshes], "quest");
 	if($strings[step3, step4] contains get_property("questL11Worship")) {
 		if(item_amount($item[antique machete]) > 0)
