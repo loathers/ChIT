@@ -881,7 +881,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		recIf(get_property("questL03Rat") == "step1", mlFams, "rat kings");
 		recIf(to_int(get_property("cyrptCrannyEvilness")) > 26, mlFams, "ghuol whelps");
 		recIf(highlandsTime && to_float(get_property("oilPeakProgress")) > 0, mlFams, "oil peak");
-		recIf(available_amount($item[wine bomb]) > 0, mlFams, "wine bomb");
+		recIf(available_amount($item[unstable fulminate]) > 0, mlFams, "wine bomb");
 		
 		// Maybe incomplete list of reasons you'd want an init familiar
 		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
