@@ -131,7 +131,7 @@ void addFavGear() {
 		addGear($item[continuum transfunctioner], "quest");
 	if(get_property("questL11Palindome") == "unstarted" && !aftercore)
 		addGear($item[pirate fledges], "quest");
-	else if(get_property("currentHardBountItem").contains_text("warrrrrt"))
+	else if(get_property("currentHardBountyItem").contains_text("warrrrrt"))
 		addGear($item[pirate fledges], "bounty");
 	
 	if(get_property("questS02Monkees") != "finished")
