@@ -20,6 +20,7 @@ Inside each area you can place any of the following "bricks":
    helpers:    Adventure helpers (described in more detail below)
    thrall:     Displays current Pasta Thrall, if you are a Pastamancer
    vykea:      Displays current VYKEA companion, if you have one
+	 source:     Displays your source terminal skills and allows you to swap them
    effects:    List of current effects (Not available in toolbar)
    organs:     similar to stats, but only shows spleen, stomach and liver (more useful when used in the toolbar)
    substats:   similar to stats, but only shows muscle,myst and moxie (more useful when used in the toolbar)

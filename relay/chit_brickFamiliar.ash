@@ -176,9 +176,8 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		void addFace(buffer buf, string face, string desc1, string desc2, string icon) {
 			string faceLink = '<a class="change" href="' + sideCommand("snowsuit " + face) + '">';
 			
-			picker.append('<tr class="');
-			if(face != current) picker.append('pickitem');
-			else picker.append('currentitem');
+			picker.append('<tr class="pickitem');
+			if(face == current) picker.append(' currentitem');
 			picker.append('"><td class="icon">');
 			if(face != current) picker.append(faceLink);
 			picker.append('<img class="chit_icon');
