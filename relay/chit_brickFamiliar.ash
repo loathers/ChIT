@@ -173,7 +173,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		
 		string current = get_property("snowsuit");
 		
-		void addFace(buffer buf, string face, string desc1, string desc2, string icon) {
+		void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
 			string faceLink = '<a class="change" href="' + sideCommand("snowsuit " + face) + '">';
 			
 			picker.append('<tr class="pickitem');
@@ -181,7 +181,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			picker.append('"><td class="icon">');
 			if(face != current) picker.append(faceLink);
 			picker.append('<img class="chit_icon');
-			if(face == current) picker.append(' hasdrops');
+			if(drops) picker.append(' hasdrops');
 			picker.append('" src="/images/itemimages/');
 			picker.append(icon);
 			picker.append('.gif" title="');
@@ -206,11 +206,11 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			picker.append('</td></tr>');
 		}
 		
-		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1");
-		picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2");
-		picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3");
-		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4");
-		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5");
+		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
+		picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2", false);
+		picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3", to_int(get_property("_carrotNoseDrops")) < 3);
+		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
+		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
 		
 		picker.addLoader("Rearranging your familiar's face!");
 		picker.append('</table></div>');

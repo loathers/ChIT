@@ -292,7 +292,6 @@ void pickerEdpiece() {
 		picker.append('"><td class="icon">');
 		if(jewel != current) picker.append(jewelLink);
 		picker.append('<img class="chit_icon');
-		if(jewel == current) picker.append(' hasdrops');
 		picker.append('" src="/images/itemimages/');
 		picker.append(icon);
 		picker.append('.gif" title="');
