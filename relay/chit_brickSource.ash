@@ -120,6 +120,13 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 	result.append(i);
 	result.append(':</b><br />');
 	result.append(sskill.s);
+	if(sskill.max_uses > 0) {
+		result.append(' (');
+		result.append(sskill.rem_uses);
+		result.append('/');
+		result.append(sskill.max_uses);
+		result.append(')');
+	}
 	result.append('</a></td>');
 	
 	pickerSourceSkills(i);
