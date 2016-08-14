@@ -7,6 +7,7 @@ import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
+import "chit_brickSource.ash";
 
 /************************************************************************************
 CHaracter Info Toolbox
@@ -3498,6 +3499,7 @@ void bakeBricks() {
 						case "thrall":		bakeThrall();		break;
 						case "gear":		bakeGear();			break;
 						case "vykea":		bakeVYKEA();		break;
+						case "source":		bakeSource();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
