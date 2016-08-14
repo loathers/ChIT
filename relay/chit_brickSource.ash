@@ -64,6 +64,7 @@ void addSourceSkillChoice(buffer result, string edu, boolean first) {
 	result.append(to_int(sskill.s));
 	result.append(')"><img class="chit_icon');
   if(sskill.rem_uses > 0) result.append(' hasdrops');
+	else if(sskill.max_uses > 0) result.append(' danger');
 	result.append('" src="/images/itemimages/');
 	result.append(sskill.s.image);
 	result.append('" title="Click for skill description" /></a></td><td>');
