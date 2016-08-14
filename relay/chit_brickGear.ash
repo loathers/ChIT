@@ -287,9 +287,8 @@ void pickerEdpiece() {
 	void addJewel(buffer buf, string jewel, string desc, string icon) {
 		string jewelLink = '<a class="change" href="' + sideCommand("edpiece " + jewel) + '">';
 		
-		picker.append('<tr class="');
-		if(jewel != current) picker.append('pickitem');
-		else picker.append('currentitem');
+		picker.append('<tr class="pickitem');
+		if(jewel == current)  picker.append(' currentitem');
 		picker.append('"><td class="icon">');
 		if(jewel != current) picker.append(jewelLink);
 		picker.append('<img class="chit_icon');
