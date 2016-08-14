@@ -3,6 +3,8 @@
 record source_skill {
 	skill s;
 	string skill_desc;
+	int max_uses;
+	int rem_uses;
 };
 
 boolean [string] chips;
@@ -14,11 +16,11 @@ source_skill getSourceSkill(string edu) {
 	switch(edu) {
 		case "digitize.edu":
 			sskill.s = $skill[Digitize];
-			int max_uses = 1;
-			if(chips["TRAM"]) max_uses += 1;
-			if(chips["TRIGRAM"]) max_uses += 1;
-			int uses = max_uses - to_int(get_property("_sourceTerminalDigitizeUses"));
-			sskill.skill_desc = "Create wandering copies (" + uses + "/" + max_uses + " left)";
+			sskill.max_uses = 1;
+			if(chips["TRAM"]) sskill.max_uses += 1;
+			if(chips["TRIGRAM"]) sskill.max_uses += 1;
+			sskill.rem_uses = sskill.max_uses - to_int(get_property("_sourceTerminalDigitizeUses"));
+			sskill.skill_desc = "Create wandering copies";
 			break;
 		case "extract.edu":
 			sskill.s = $skill[Extract];
@@ -31,18 +33,20 @@ source_skill getSourceSkill(string edu) {
 		case "duplicate.edu":
 			sskill.s = $skill[Duplicate];
 			int dupes = to_int(get_property("_sourceTerminalDuplicateUses"));
-			if(isSource) sskill.skill_desc = "Triple a monster (" + (5 - dupes) + "/5 left)";
-			else sskill.skill_desc = "Double a monster (" + (1 - dupes) + "/1 left)";
+			sskill.max_uses = isSource ? 5 : 1;
+			sskill.rem_uses = sskill.max_uses - dupes;
+			sskill.skill_desc = isSource ? "Triple a monster" : "Double a monster";
 			break;
 		case "portscan.edu":
 			sskill.s = $skill[Portscan];
-			if(isSource) sskill.skill_desc = "Force a source agent next turn";
-			else sskill.skill_desc = "Force a government agent next turn";
-			sskill.skill_desc += " (" + (3 - to_int(get_property("_sourceTerminalPortscanUses"))) + "/3 left)";
+			sskill.skill_desc = isSource ? "Force a source agent next turn" : "Force a government agent next turn";
+			sskill.max_uses = 3;
+			sskill.rem_uses = 3 - to_int(get_property("_sourceTerminalPortscanUses"));
 			break;
 		case "turbo.edu":
 			sskill.s = $skill[Turbo];
 			sskill.skill_desc = "Recover 1000 mp, then overheat";
+			if(have_effect($effect[Overheated]) <= 0) sskill.rem_uses = 1;
 			break;
 	}
 	return sskill;
@@ -59,7 +63,7 @@ void addSourceSkillChoice(buffer result, string edu, boolean first) {
 	result.append('); return false;" onclick="skill(');
 	result.append(to_int(sskill.s));
 	result.append(')"><img class="chit_icon');
-	if(isActive) result.append(' hasdrops');
+  if(sskill.rem_uses > 0) result.append(' hasdrops');
 	result.append('" src="/images/itemimages/');
 	result.append(sskill.s.image);
 	result.append('" title="Click for skill description" /></a></td><td>');
@@ -74,6 +78,13 @@ void addSourceSkillChoice(buffer result, string edu, boolean first) {
 	result.append(sskill.s);
 	result.append('<br /><span class="descline">');
 	result.append(sskill.skill_desc);
+	if(sskill.max_uses > 0) {
+		result.append(' (');
+		result.append(sskill.rem_uses);
+		result.append('/');
+		result.append(sskill.max_uses);
+		result.append(' left)');
+	}
 	result.append('</span>');
 	if(!isActive) result.append('</a>');
 	result.append('</td></tr>');
@@ -98,7 +109,10 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 	result.append(to_int(sskill.s));
 	result.append('); return false;" onclick="skill(');
 	result.append(to_int(sskill.s));
-	result.append(')"><img class="chit_icon" src="/images/itemimages/');
+	result.append(')"><img class="chit_icon');
+	if(sskill.rem_uses > 0) result.append(' hasdrops');
+	else if(sskill.max_uses > 0) result.append(' danger');
+	result.append('" src="/images/itemimages/');
 	result.append(sskill.s.image);
 	result.append('" title="Click for skill description" /></td><td><a class="chit_launcher" rel="chit_pickersourceskills');
 	result.append(i);
