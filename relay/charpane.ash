@@ -2911,6 +2911,7 @@ void bakeCharacter() {
 		case "Actually Ed the Undying": return "The Undying";
 		case "Avatar of West of Loathing": return "West of Loathing";
 		case "The Source": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=town_wrong&action=townwrong_oracle'>The Source</a>";
+		case "Nuclear Autumn": return "<a target='mainpane' style='font-weight:normal;' href='shop.php?whichshop=mutate'>Nuclear Autumn</a>";
 		}
 		return my_path();
 	}
