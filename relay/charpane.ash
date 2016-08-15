@@ -2016,6 +2016,23 @@ void addKa(buffer result) {
 		result.append('<img title="Ka Coins" style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
 }
 
+void addRadSick(buffer result) {
+	matcher radsick = create_matcher('Rad Sickness:</td><td align\=left><b><font color\=black><span alt=".*? to All Stats" title=".*? to All Stats">(.*?)</span>', chitSource["stats"]);
+	if(find(radsick)) {
+		string sickness = group(radsick,1);
+		result.append('<tr><td class="label"><span title="Radiation Sickness">Radsick</span></td><td class="info"><span title="-');
+		result.append(sickness);
+		result.append(' to All Stats">');
+		result.append(sickness);
+		result.append('</span>');
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('</td><td><div title="-' + sickness + ' to All Stats" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif"></div>');
+		else
+			result.append('<img title="-' + sickness + '" style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif">');
+		result.append('</td></tr>');
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -2493,6 +2510,9 @@ void bakeStats() {
 				break;
 			case "The Source":
 				result.addEnlightenment();
+				break;
+			case "Nuclear Autumn":
+				result.addRadSick();
 				break;
 			}
 			
