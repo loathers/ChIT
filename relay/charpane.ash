@@ -1375,13 +1375,6 @@ void addCurrentMood(buffer result, boolean picker) {
 }
 
 void pickMood() {
-	boolean mood_plus(string full, string mood) {
-		if(mood == "apathetic") return false;
-		foreach i,m in split_string(full,", ")
-			if(m == mood) return false;
-		return true;
-	}
-
 	buffer picker;
 	picker.pickerStart("mood", "Select New Mood");
 	picker.addLoader("Getting Moody");
@@ -1393,12 +1386,21 @@ void pickMood() {
 		picker.append('">');
 		picker.append(m);
 		picker.append('</a></td><td>');
-		if(moodname != "???" && mood_plus(moodname,m)) {
-			picker.append('<a title="ADD this to current mood" href="');
-			picker.append(sideCommand("mood "+moodname+", "+m));
-			picker.append('"><img src="');
-			picker.append(imagePath);
-			picker.append('control_add_blue.png"><a>');
+		boolean isActive = list_contains(moodname,m);
+		if(moodname != "???" && m != "apathetic" && moodname != m) {
+			if(!isActive) {
+				picker.append('<a title="ADD ' + m + ' to current mood" href="');
+				picker.append(sideCommand("mood " + list_add(moodname,m)));
+				picker.append('"><img src="');
+				picker.append(imagePath);
+				picker.append('control_add_blue.png"></a>');
+			} else {
+				picker.append('<a title="REMOVE ' + m + ' from current mood" href="');
+				picker.append(sideCommand("mood " + list_remove(moodname,m)));
+				picker.append('"><img src="');
+				picker.append(imagePath);
+				picker.append('control_remove_red.png"></a>');
+			} 
 		} else
 			picker.append('&nbsp;');
 		picker.append('</td></tr>');
