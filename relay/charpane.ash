@@ -2592,29 +2592,60 @@ void allCurrency(buffer result) {
 			return "meat.gif";
 		return it.image;
 	}
-
-	result.append('<div style="float:left"><ul id="chit_currency"><li>');
-	item current = to_item(get_property("_chitCurrency"));
-	result.append('<a href="#"><span>');
-	result.append(amount_of(current));
-	result.append('</span>');
 	
-	if(current == $item[disassembled clover] && item_amount($item[ten-leaf clover]) > 0) {
-		result.append('<a href="');
-		result.append(sideCommand("use 1 ten-leaf clover"));
-		result.append('" title="disassemble a clover"><img src="/images/itemimages/disclover.gif" /></a></a>');
-	}
-	else {
+	boolean anycurr = false;
+	boolean [item] displayedCurrencies;
+	
+	void addCurrencyIcon(buffer result, item currency, string link) {
+		result.append(link);
 		result.append('<img src="/images/itemimages/');
-		result.append(image_of(current));
-		result.append('" class="hand" title="');
-		result.append(name_of(current));
+		result.append(image_of(currency));
 		result.append('" alt="');
-		result.append(name_of(current));
-		result.append('"></a>');
+		result.append(name_of(currency));
+		if(link == "") {
+			result.append('" class="hand" title="');
+			result.append(name_of(currency));
+		}
+		result.append('" />');
+		if(link != "")
+			result.append('</a>');
 	}
+	
+	void addCurrency(buffer result, item currency) {
+		if(displayedCurrencies[currency])
+			return;
+		if(anycurr)
+			result.append('&nbsp;&nbsp;');
 		
-	result.append('<ul>');
+		anycurr = true;
+		displayedCurrencies[currency] = true;
+		
+		result.append('<span>');
+		result.append(amount_of(currency));
+		result.append('</span>');
+		
+		switch(currency) {
+			case $item[disassembled clover]:
+				result.addCurrencyIcon(currency, item_amount($item[ten-leaf clover]) > 0 ? '<a title="disassemble a clover" href="' + sideCommand("use 1 ten-leaf clover") + '">' : "");
+				result.addCurrency($item[ten-leaf clover]);
+				break;
+			case $item[ten-leaf clover]:
+				result.addCurrencyIcon(currency, item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "");
+				result.addCurrency($item[disassembled clover]);
+				break;
+			default:
+				result.addCurrencyIcon(currency, "");
+				break;
+		}
+	}
+
+	string [int] dispCurrencies = split_string(get_property("_chitCurrency"), ",");
+	item current = to_item(dispCurrencies[0]);
+	
+	result.append('<div style="float:left"><ul id="chit_currency"><li><a href="#">');
+	foreach i,curr in dispCurrencies
+		result.addCurrency(to_item(curr));	
+	result.append('</a><ul>');
 	
 	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
 	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\),\\s*") {
@@ -2638,14 +2669,6 @@ void allCurrency(buffer result) {
 		}
 	}
 	result.append('</ul>');
-	
-	if(current == $item[disassembled clover]) {
-		result.append('<span>&nbsp;');
-		result.append(formatInt(item_amount($item[ten-leaf clover])));
-		result.append('<a href="');
-		result.append(sideCommand("use 1 disassembled clover"));
-		result.append('" title="assemble a clover"><img src="/images/itemimages/clover.gif" /></a></span>');
-	}
 	
 	result.append('</ul></div>');
 }
