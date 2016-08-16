@@ -2646,8 +2646,20 @@ void allCurrency(buffer result) {
 				// Due to the nature of The Towering Inferno Discotheque I'm not really sure how to link directly to the store itself...
 				result.addCurrencyIcon(currency, '<a title="The Towering Inferno Discotheque" target="mainpane" href="place.php?whichplace=airport_hot&action=airport4_zone1&forceoption=0">');
 				break;
-			case $item[Wal-Mart gift certificate]
+			case $item[Wal-Mart gift certificate]:
 				result.addCurrencyIcon(currency, '<a title="Wal-Mart" target="mainpane" href="shop.php?whichshop=glaciest">');
+				break;
+			case $item[rad]:
+				result.addCurrencyIcon(currency, '<a title="Fiddle with your genes" target="mainpane" href="shop.php?whichshop=mutate">');
+				break;
+			case $item[source essence]:
+				string termlink = 'campground.php?action=terminal';
+				if(my_path() == "Nuclear Autumn")
+					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
+				result.addCurrencyIcon(currency, '<a title="Source Terminal" target="mainpane" href="' + termlink + '">');
+				break;
+			case $item[BACON]:
+				result.addCurrencyIcon(currency, '<a title="Born too late to explore the Earth. Born too soon to explore the galaxy. Born just in time to BROWSE DANK MEMES." target="mainpane" href="shop.php?whichshop=bacon">');
 				break;
 			default:
 				result.addCurrencyIcon(currency, "");
@@ -2686,7 +2698,7 @@ void allCurrency(buffer result) {
 	}
 	result.append('</ul>');
 	
-	result.append('</ul></div>');
+	result.append('</li></ul></div>');
 }
 
 // This function also makes use of gearName() which is in chit_brickGear.ash
