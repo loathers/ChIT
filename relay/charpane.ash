@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17107; // Thorough ghost tracking!
+since r17120; // current_rad_sickness
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -2018,18 +2018,21 @@ void addKa(buffer result) {
 }
 
 void addRadSick(buffer result) {
-	matcher radsick = create_matcher('Rad Sickness:</td><td align\=left><b><font color\=black><span alt=".*? to All Stats" title=".*? to All Stats">(.*?)</span>', chitSource["stats"]);
-	if(find(radsick)) {
-		string sickness = group(radsick,1);
-		result.append('<tr><td class="label"><a target="mainpane" href="campground.php" title="Head to your fallout shelter to deal with Radiation Sickness">Radsick</a></td><td class="info"><span title="-');
+	int sickness = current_rad_sickness();
+	if(sickness > 0) {
+		result.append('<tr><td class="label"><a target="mainpane" href="campground.php" title="Head to your fallout shelter to deal with Radiation Sickness">Radsick</a></td><td class="info" title="-');
 		result.append(sickness);
 		result.append(' to All Stats">');
 		result.append(sickness);
-		result.append('</span>');
-		if(to_boolean(vars["chit.stats.showbars"]))
-			result.append('</td><td><div title="-' + sickness + ' to All Stats" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif"></div>');
-		else
-			result.append('<img title="-' + sickness + ' to All Stats" style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif">');
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('</td><td title="-');
+			result.append(sickness);
+			result.append(' to All Stats" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif">');
+		} else {
+			result.append('<img title="-');
+			result.append(sickness);
+			result.append(' to All Stats" style="max-width:14px;padding-left:3px;" src="/images/itemimages/radiation.gif">');
+		}
 		result.append('</td></tr>');
 	}
 }
