@@ -1179,7 +1179,7 @@ void pickerThrall() {
 	void addThrall(buffer result, thrall t) {
 		skill s = t.skill;
 		buffer url;
-		if(t.level == 0) { // If this is a first time summmons, I want to see it in mainpaine!
+		if(t.level == 0) { // If this is a first time summmons, I want to see it in mainpain!
 			url.append('<a target=mainpane class="change" href="runskillz.php?action=Skillz&whichskill=');
 			url.append(to_int(s));
 			url.append('&pwd=');
@@ -2632,6 +2632,22 @@ void allCurrency(buffer result) {
 			case $item[ten-leaf clover]:
 				result.addCurrencyIcon(currency, item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "");
 				result.addCurrency($item[disassembled clover]);
+				break;
+			case $item[Beach Buck]:
+				result.addCurrencyIcon(currency, '<a title="Take a trip to Spring Break Beach" target="mainpane" href="place.php?whichplace=airport_sleaze">');
+				break;
+			case $item[Coinspiracy]:
+				result.addCurrencyIcon(currency, '<a title="Down the hatch to the Conspiracy Island bunker" target="mainpane" href="place.php?whichplace=airport_spooky_bunker">');
+				break;
+			case $item[FunFunds&trade;]:
+				result.addCurrencyIcon(currency, '<a title="The Dinsey Company Store" target="mainpane" href="shop.php?whichshop=landfillstore">');
+				break;
+			case $item[Volcoino]:
+				// Due to the nature of The Towering Inferno Discotheque I'm not really sure how to link directly to the store itself...
+				result.addCurrencyIcon(currency, '<a title="The Towering Inferno Discotheque" target="mainpane" href="place.php?whichplace=airport_hot&action=airport4_zone1&forceoption=0">');
+				break;
+			case $item[Wal-Mart gift certificate]
+				result.addCurrencyIcon(currency, '<a title="Wal-Mart" target="mainpane" href="shop.php?whichshop=glaciest">');
 				break;
 			default:
 				result.addCurrencyIcon(currency, "");
