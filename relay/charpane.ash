@@ -7,7 +7,7 @@ import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
-import "chit_brickSource.ash";
+import "chit_brickTerminal.ash";
 
 /************************************************************************************
 CHaracter Info Toolbox
@@ -1872,7 +1872,8 @@ void addGhostBusting(buffer result) {
 			return "place.php?whichplace=manor1";
 		case "The Haunted Gallery": return "place.php?whichplace=manor2";
 		case "The Haunted Wine Cellar": return "place.php?whichplace=manor4";
-		case "The Spooky Forest": return "place.php?whichplace=woods";
+		case "The Spooky Forest":
+		case "The Old Landfill": return "place.php?whichplace=woods";
 		case "Cobb's Knob Treasury": return "cobbsknob.php";
 		case "The Icy Peak": return "place.php?whichplace=mclargehuge";
 		case "The Smut Orc Logging Camp": return "place.php?whichplace=orc_chasm";
@@ -3185,6 +3186,30 @@ void bakeQuests() {
 	chitTools["quests"] = "Current Quests|quests.png";
 }
 
+// heeheehee wrote this to make ChIT remember the position of the scrollbar when the screen is refreshed.
+string autoscrollScript = "<script>\
+$(window).unload(function () {\
+	var scrolls = {};\
+	$('div').each(function () {\
+		var scroll = $(this).scrollTop();\
+		if (scroll !== 0) {\
+			scrolls[$(this).attr('id')] = $(this).scrollTop();\
+		}\
+	});\
+	sessionStorage.setItem('chit.scroll', JSON.stringify(scrolls));\
+});\
+
+$(document).ready(function () {\
+	if (sessionStorage.getItem('chit.scroll') !== '') {\
+		var scrolls = JSON.parse(sessionStorage.getItem('chit.scroll'));\
+		console.log(\"scrolls\", scrolls);\
+		for (var key in scrolls) {\
+			$('#' + key).scrollTop(scrolls[key])\
+		}\
+	}\
+});\
+</script><body ";
+
 void bakeHeader() {
 
 	buffer result;
@@ -3229,6 +3254,10 @@ void bakeHeader() {
 		replacefamfavs .replace_string("= [[[","= [[");
 		result.replace_string(famfavmatch.group(0),replacefamfavs);
 	}
+	
+	// Add javascript for remembering autoscroll if desired
+	if(to_boolean(vars["chit.autoscroll"]))
+		result.replace_string("<body ", autoscrollScript);
 	
 	chitBricks["header"] = result.to_string();
 		
@@ -3522,7 +3551,7 @@ void bakeBricks() {
 						case "thrall":		bakeThrall();		break;
 						case "gear":		bakeGear();			break;
 						case "vykea":		bakeVYKEA();		break;
-						case "source":		bakeSource();		break;
+						case "terminal":	bakeTerminal();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
@@ -3697,7 +3726,9 @@ buffer modifyPage(buffer source) {
 		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
 	//Set default values for zlib variables
 	setvar("chit.checkversion", false);
+	setvar("chit.autoscroll", true);
 	setvar("chit.disable", false);
+	setvar("chit.currencies", "source essence,BACON,cop dollar");
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
 	setvar("chit.clan.display", "off"); // Valid values are on,off,away
@@ -3733,7 +3764,6 @@ buffer modifyPage(buffer source) {
 	setvar("chit.gear.pull", "favorites");
 	setvar("chit.gear.layout", "default");
 	setvar("chit.gear.favorites", "");
-	setvar("chit.currencies", "source essence,BACON,cop dollar");
 	setvar("chit.thrall.showname", false);
 	
 	// Check var version.
