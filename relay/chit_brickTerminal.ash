@@ -159,7 +159,12 @@ void bakeTerminal() {
 	buffer result;
 	
 	result.append('<table id="chit_source" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" href="./campground.php?action=terminal"><img src="');
+	result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" href="');
+	if(my_path() == "Nuclear Autumn")
+		result.append('./place.php?whichplace=falloutshelter&action=vault_term');
+	else
+		result.append('./campground.php?action=terminal');
+	result.append('"><img src="');
 	result.append(imagePath);
 	result.append('application_xp_terminal.png" />Source Terminal</a></th></tr><tr>');
 	
