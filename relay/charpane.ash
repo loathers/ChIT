@@ -2667,7 +2667,8 @@ void allCurrency(buffer result) {
 		}
 	}
 
-	string [int] dispCurrencies = split_string(get_property("_chitCurrency"), ",");
+	string _chitCurrency = get_property("_chitCurrency");
+	string [int] dispCurrencies = split_string(_chitCurrency, ",");
 	item current = to_item(dispCurrencies[0]);
 	
 	result.append('<div style="float:left"><ul id="chit_currency"><li><a href="#">');
@@ -2682,7 +2683,13 @@ void allCurrency(buffer result) {
 			currencies[it] = true;
 			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
 			result.append(url_encode("set _chitCurrency="));
-			result.append(it);
+			if(to_boolean(vars["chit.currencies.showmany"])) {
+				if(list_contains(_chitCurrency,cur,","))
+					result.append(list_remove(_chitCurrency,cur,","));
+				else
+					result.append(list_add(_chitCurrency,cur,","));
+			} else
+				result.append(it);
 			result.append('&pwd=');
 			result.append(my_hash());
 			result.append('" title="');
@@ -3783,6 +3790,7 @@ buffer modifyPage(buffer source) {
 	setvar("chit.autoscroll", true);
 	setvar("chit.disable", false);
 	setvar("chit.currencies", "source essence,BACON,cop dollar");
+	setvar("chit.currencies.showmany", false);
 	setvar("chit.character.avatar", true);
 	setvar("chit.character.title", true);
 	setvar("chit.clan.display", "off"); // Valid values are on,off,away
