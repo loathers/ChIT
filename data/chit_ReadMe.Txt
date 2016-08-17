@@ -114,6 +114,13 @@ chit.gear.recommend: Whether or not to recommend some generally useful/QoL gear 
 					 never:  Does not show any gear outside of favorites and very specific quest items
 					Default: in-run
 -------------------------------------------------------------------------------------
+chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
+					Default: source essence,BACON,cop dollar
+chit.currencies.showmany: Whether or not to enable showing several currencies at once
+					If this is true, clicking currencies in the dropdown list will add or remove them from the list of displayed currencies
+					Otherwise, it will simply set whatever you clicked to be the current currency
+					Default: false
+-------------------------------------------------------------------------------------
 HELPERS are displayed when certain counters reaches 0. 
 They will present you with a list of relevant adventure locations. 
 Helpers are there merely for convenience; they will NOT try to auto-adventure for you.
