@@ -703,7 +703,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
@@ -744,6 +744,11 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 		int specialStatus = iconInfoSpecial(f, iconInfo);
 		if(specialStatus > status)
 			status = specialStatus;
+	}
+	
+	if(reason != "") {
+		iconInfo.append(", recommended for ");
+		iconInfo.append(reason);
 	}
 	
 	string blackForestState = get_property("questL11Black");
@@ -798,6 +803,10 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) 
 	result.append('" />');
 }
 
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
+	addFamiliarIcon(result, f, isBjorn, title, "");
+}
+
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
 	addFamiliarIcon(result, f, isBjorn, true);
 }
@@ -828,8 +837,10 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	boolean anyIcons = false;
 	boolean [familiar] famsAdded;
 	
-	boolean tryAddFamiliar(familiar f) {
-		if(f != current && have_familiar(f) && is_unrestricted(f) && !famsAdded[f]) {
+	boolean tryAddFamiliar(familiar f, string reason) {
+		if(f == current)
+			return true;
+		if(have_familiar(f) && is_unrestricted(f) && !famsAdded[f]) {
 			if(!anyIcons) {
 				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
 				anyIcons = true;
@@ -837,7 +848,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 			picker.append('<span><a class="change" href="');
 			picker.append(sideCommand(cmd + ' ' + f));
 			picker.append('">');
-			picker.addFamiliarIcon(f, cmd != "familiar");
+			picker.addFamiliarIcon(f, cmd != "familiar", true, reason);
 			picker.append('</a></span>');
 			famsAdded[f] = true;
 			return true;
@@ -845,12 +856,15 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		return famsAdded[f];
 	}
 	
+	boolean tryAddFamiliar(familiar f) {
+		return tryAddFamiliar(f, "");
+	}
+	
 	foreach f in favorite_familiars()
 		tryAddFamiliar(f);
 		
 	boolean recIf(boolean condition, familiar fam, string reason) {
-		// reason isn't used, YET
-		if(condition) return tryAddFamiliar(fam);
+		if(condition) return tryAddFamiliar(fam, reason);
 		return false;
 	}
 	
