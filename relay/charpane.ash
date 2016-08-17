@@ -2659,7 +2659,7 @@ void allCurrency(buffer result) {
 				result.addCurrencyIcon(currency, '<a title="Boot up the Source Terminal" target="mainpane" href="' + termlink + '">');
 				break;
 			case $item[BACON]:
-				result.addCurrencyIcon(currency, '<a title="Born too late to explore the Earth. Born too soon to explore the galaxy. Born just in time to BROWSE DANK MEMES." target="mainpane" href="shop.php?whichshop=bacon">');
+				result.addCurrencyIcon(currency, '<a title="Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES" target="mainpane" href="shop.php?whichshop=bacon">');
 				break;
 			case $item[cop dollar]:
 				result.addCurrencyIcon(currency, '<a title="Visit the quartermaster" target="mainpane" href="shop.php?whichshop=detective">');
@@ -2670,13 +2670,14 @@ void allCurrency(buffer result) {
 		}
 	}
 
-	string _chitCurrency = get_property("_chitCurrency");
-	string [int] dispCurrencies = split_string(_chitCurrency, ",");
+	boolean showMany = to_boolean(vars["chit.currencies.showmany"]);
+	string chitCurrency = showmany ? get_property("chitCurrency") : get_property("_chitCurrency");
+	string [int] dispCurrencies = split_string(chitCurrency, ",");
 	item current = to_item(dispCurrencies[0]);
 	
 	result.append('<div style="float:left"><ul id="chit_currency"><li><a href="#">');
 	foreach i,curr in dispCurrencies
-		result.addCurrency(to_item(curr));	
+		result.addCurrency(to_item(curr));
 	result.append('</a><ul>');
 	
 	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
@@ -2685,14 +2686,16 @@ void allCurrency(buffer result) {
 		if(amount_of(it) > 0 && !(currencies contains it)) {
 			currencies[it] = true;
 			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
-			result.append(url_encode("set _chitCurrency="));
-			if(to_boolean(vars["chit.currencies.showmany"])) {
-				if(list_contains(_chitCurrency,cur,","))
-					result.append(list_remove(_chitCurrency,cur,","));
+			if(showMany) {
+				result.append(url_encode("set chitCurrency="));
+				if(list_contains(chitCurrency,cur,","))
+					result.append(list_remove(chitCurrency,cur,","));
 				else
-					result.append(list_add(_chitCurrency,cur,","));
-			} else
+					result.append(list_add(chitCurrency,cur,","));
+			} else {
+				result.append(url_encode("set _chitCurrency="));
 				result.append(it);
+			}
 			result.append('&pwd=');
 			result.append(my_hash());
 			result.append('" title="');
