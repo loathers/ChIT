@@ -155,6 +155,13 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 	addSourceSkillDisplay(result, edu, i, true);
 }
 
+void term_link(buffer result) {
+	if(my_path() == "Nuclear Autumn")
+		result.append('place.php?whichplace=falloutshelter&action=vault_term');
+	else
+		result.append('campground.php?action=terminal');
+}
+
 // Part of terminal block that can be included in stats for a smaller footprint
 // I'm not sure if it is a good idea, but it is an option
 void addTerminal(buffer result) {
@@ -163,7 +170,9 @@ void addTerminal(buffer result) {
 		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
 			chips[chip] = true;
 		
-		result.append('<tr><td class="label">Terminal</td><td ');
+		result.append('<tr><td class="label"><a class="visit" target="mainpane" href="');
+		result.term_link();
+		result.append('">Terminal</a></td><td ');
 		if(to_boolean(vars["chit.stats.showbars"])) result.append('colspan="2">');
 		else result.append('class="info">');
 		
@@ -185,10 +194,7 @@ void bakeTerminal() {
 		
 		result.append('<table id="chit_terminal" class="chit_brick nospace"><tbody>');
 		result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" href="');
-		if(my_path() == "Nuclear Autumn")
-			result.append('./place.php?whichplace=falloutshelter&action=vault_term');
-		else
-			result.append('./campground.php?action=terminal');
+		result.term_link();
 		result.append('"><img src="');
 		result.append(imagePath);
 		result.append('application_xp_terminal.png" />Source Terminal</a></th></tr><tr>');
