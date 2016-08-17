@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17120; // current_rad_sickness
+since r17127; // get_campground() now works for the Fallout Shelter
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -2481,6 +2481,7 @@ void bakeStats() {
 				case "liver": 	result.addLiver(showBars); 			break;
 				case "spleen": 	result.addSpleen(showBars); 		break;
 				case "florist": result.addFlorist(true);			break;
+				case "terminal":result.addTerminal();				break;
 				case "hp": 		addHP(); 			break;
 				case "mp": 		addMP(); 			break;
 				case "axel": 	addAxel(); 			break;

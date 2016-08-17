@@ -142,37 +142,50 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 	pickerSourceSkills(i);
 }
 
+// Part of terminal block that can be included in stats for a smaller footprint
+// I'm not sure if it is a good idea, but it is an option
+void addTerminal(buffer result) {
+	// Nothing to do if you don't have the terminal
+	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal])) {
+		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
+			chips[chip] = true;
+		
+		result.append('<tr><td colspan="4"><table id="chit_terminal" class="chit_brick nospace"><tbody><tr>');
+		
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1);
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate2"), 2);
+		
+		result.append('</tr></tbody></table></td></tr>');
+
+		chitBricks["terminal"] = result.to_string();
+		chitTools["terminal"] = "Source Terminal|application_xp_terminal.png";
+	}
+}
+
 void bakeTerminal() {
 	// Nothing to do if you don't have the terminal
-	if(get_property("_chitTerminal") == "") {
+	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal])) {
+		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
+			chips[chip] = true;
+		
+		buffer result;
+		
+		result.append('<table id="chit_terminal" class="chit_brick nospace"><tbody>');
+		result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" href="');
 		if(my_path() == "Nuclear Autumn")
-			set_property("_chitTerminal", visit_url("campground.php").contains_text("vaultterminal.gif"));
+			result.append('./place.php?whichplace=falloutshelter&action=vault_term');
 		else
-			set_property("_chitTerminal", get_campground() contains $item[Source terminal] && be_good($item[Source terminal]));
-	}
-	if(!to_boolean(get_property("_chitTerminal")))
-		return;
-	
-	foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
-		chips[chip] = true;
-	
-	buffer result;
-	
-	result.append('<table id="chit_source" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" href="');
-	if(my_path() == "Nuclear Autumn")
-		result.append('./place.php?whichplace=falloutshelter&action=vault_term');
-	else
-		result.append('./campground.php?action=terminal');
-	result.append('"><img src="');
-	result.append(imagePath);
-	result.append('application_xp_terminal.png" />Source Terminal</a></th></tr><tr>');
-	
-	result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1);
-	result.addSourceSkillDisplay(get_property("sourceTerminalEducate2"), 2);
-	
-	result.append('</tr></tbody></table>');
+			result.append('./campground.php?action=terminal');
+		result.append('"><img src="');
+		result.append(imagePath);
+		result.append('application_xp_terminal.png" />Source Terminal</a></th></tr><tr>');
+		
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1);
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate2"), 2);
+		
+		result.append('</tr></tbody></table>');
 
-	chitBricks["terminal"] = result.to_string();
-	chitTools["terminal"] = "Source Terminal|application_xp_terminal.png";
+		chitBricks["terminal"] = result.to_string();
+		chitTools["terminal"] = "Source Terminal|application_xp_terminal.png";
+	}
 }
