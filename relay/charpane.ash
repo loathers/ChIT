@@ -1856,15 +1856,15 @@ void addGhostBusting(buffer result) {
 	string zone_url(string loc) {
 		switch(loc) {
 		case "Madness Bakery":
-			if(get_property("questM25Armorer") == "unstarted")
+			if(get_property("questM25Armorer") == "unstarted" && npc_price($item[sweet ninja sword]) != 0)
 				return "shop.php?whichshop=armory&action=talk";
 			return "place.php?whichplace=town_right";
 		case "The Overgrown Lot":
-			if(get_property("questM24Doc") == "unstarted")
+			if(get_property("questM24Doc") == "unstarted" && npc_price($item[Doc Galaktik's Pungent Unguent]) != 0)
 				return "shop.php?whichshop=doc&action=talk";
 			return "place.php?whichplace=town_wrong";
 		case "The Skeleton Store":
-			if(get_property("questM23Meatsmith") == "unstarted")
+			if(get_property("questM23Meatsmith") == "unstarted" && npc_price($item[big stick]) != 0)
 				return "shop.php?whichshop=meatsmith&action=talk";
 			return "place.php?whichplace=town_market";
 		case "The Haunted Conservatory":
