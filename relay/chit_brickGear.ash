@@ -848,7 +848,7 @@ void addGear(buffer result) {
 		pickerGear(s);
 	}
 	
-	result.append('<tr><td colspan="3">');
+	result.append('<tr><td colspan="4">');
 	foreach s in $slots[ hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3 ]
 		addSlot(s);
 	result.append('</td></tr>');
