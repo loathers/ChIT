@@ -3035,11 +3035,17 @@ void bakeCharacter() {
 		# result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit">' + myAvatar + '</a></td>');
 	}
 	pickOutfit();
-	result.append('<td class="label"><a target="mainpane" href="');
-	result.append(myGuild());
-	result.append('" title="Visit your guild">');
-	result.append(myTitle());
-	result.append('</a></td><td class="level" rowspan="2" style="width:30px;');
+	result.append('<td class="label">');
+	if(my_path() == "Nuclear Autumn")
+		result.append(myTitle());
+	else {
+		result.append('<a target="mainpane" href="');
+		result.append(myGuild());
+		result.append('" title="Visit your guild">');
+		result.append(myTitle());
+		result.append('</a>');
+	}
+	result.append('</td><td class="level" rowspan="2" style="width:30px;');
 	result.append(councilStyle);
 	result.append('"><a target="mainpane" href="council.php" title="');
 	result.append(councilText);

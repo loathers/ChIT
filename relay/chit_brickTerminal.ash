@@ -163,7 +163,6 @@ void term_link(buffer result) {
 }
 
 // Part of terminal block that can be included in stats for a smaller footprint
-// I'm not sure if it is a good idea, but it is an option
 void addTerminal(buffer result) {
 	// Nothing to do if you don't have the terminal
 	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal])) {
