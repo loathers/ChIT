@@ -2641,14 +2641,13 @@ void allCurrency(buffer result) {
 				result.addCurrencyIcon(currency, '<a title="Down the hatch to the Conspiracy Island bunker" target="mainpane" href="place.php?whichplace=airport_spooky_bunker">');
 				break;
 			case $item[FunFunds&trade;]:
-				result.addCurrencyIcon(currency, '<a title="The Dinsey Company Store" target="mainpane" href="shop.php?whichshop=landfillstore">');
+				result.addCurrencyIcon(currency, '<a title="Buy some souvenirs at the Dinsey Company Store" target="mainpane" href="shop.php?whichshop=landfillstore">');
 				break;
 			case $item[Volcoino]:
-				// Due to the nature of The Towering Inferno Discotheque I'm not really sure how to link directly to the store itself...
-				result.addCurrencyIcon(currency, '<a title="The Towering Inferno Discotheque" target="mainpane" href="place.php?whichplace=airport_hot&action=airport4_zone1&forceoption=0">');
+				result.addCurrencyIcon(currency, '<a title="Boogie right on down to Disco GiftCo" target="mainpane" href="shop.php?whichshop=infernodisco">');
 				break;
 			case $item[Wal-Mart gift certificate]:
-				result.addCurrencyIcon(currency, '<a title="Wal-Mart" target="mainpane" href="shop.php?whichshop=glaciest">');
+				result.addCurrencyIcon(currency, '<a title="Browse the goods at Wal-Mart" target="mainpane" href="shop.php?whichshop=glaciest">');
 				break;
 			case $item[rad]:
 				result.addCurrencyIcon(currency, '<a title="Fiddle with your genes" target="mainpane" href="shop.php?whichshop=mutate">');
@@ -2657,10 +2656,13 @@ void allCurrency(buffer result) {
 				string termlink = 'campground.php?action=terminal';
 				if(my_path() == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
-				result.addCurrencyIcon(currency, '<a title="Source Terminal" target="mainpane" href="' + termlink + '">');
+				result.addCurrencyIcon(currency, '<a title="Boot up the Source Terminal" target="mainpane" href="' + termlink + '">');
 				break;
 			case $item[BACON]:
 				result.addCurrencyIcon(currency, '<a title="Born too late to explore the Earth. Born too soon to explore the galaxy. Born just in time to BROWSE DANK MEMES." target="mainpane" href="shop.php?whichshop=bacon">');
+				break;
+			case $item[cop dollar]:
+				result.addCurrencyIcon(currency, '<a title="Visit the quartermaster" target="mainpane" href="shop.php?whichshop=detective">');
 				break;
 			default:
 				result.addCurrencyIcon(currency, "");
