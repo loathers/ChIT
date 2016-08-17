@@ -103,10 +103,10 @@ void pickerSourceSkills(int i) {
 	chitPickers["sourceskills" + i] = picker;
 }
 
-void addSourceSkillDisplay(buffer result, string edu, int i) {
+void addSourceSkillDisplay(buffer result, string edu, int i, boolean fullSize) {
 	source_skill sskill = getSourceSkill(edu);
 	
-	result.append('<td class="icon">');
+	if(fullSize) result.append('<td class="icon">');
 	if(sskill.s != $skill[none]) {
 		result.append('<a class="done" href="#" oncontextmenu="skill(');
 		result.append(to_int(sskill.s));
@@ -114,21 +114,29 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 		result.append(to_int(sskill.s));
 		result.append(')">');
 	}
-	result.append('<img class="chit_icon');
-	if(sskill.rem_uses > 0) result.append(' hasdrops');
-	else if(sskill.max_uses > 0) result.append(' danger');
-	result.append('" src="/images/itemimages/');
+	result.append('<img ');
+	if(fullSize) {
+		result.append('class="chit_icon');
+		if(sskill.rem_uses > 0) result.append(' hasdrops');
+		else if(sskill.max_uses > 0) result.append(' danger');
+		result.append('" ');
+	} else result.append('style="max-width:14px;max-height:14px;" ');
+	result.append('src="/images/itemimages/');
 	if(sskill.s == $skill[none])
 		result.append('antianti.gif" />');
 	else {
 		result.append(sskill.s.image);
 		result.append('" title="Click for skill description" />');
 	}
-	result.append('</td><td><a class="chit_launcher" rel="chit_pickersourceskills');
+	if(fullSize) result.append('</td><td>');
+	result.append('<a class="chit_launcher" rel="chit_pickersourceskills');
 	result.append(i);
-	result.append('" href="#"><b>Skill #');
-	result.append(i);
-	result.append(':</b><br />');
+	result.append('" href="#">');
+	if(fullSize) {
+		result.append('<b>Skill #');
+		result.append(i);
+		result.append(':</b><br />');
+	}
 	result.append(sskill.s);
 	if(sskill.max_uses > 0) {
 		result.append(' (');
@@ -137,9 +145,14 @@ void addSourceSkillDisplay(buffer result, string edu, int i) {
 		result.append(sskill.max_uses);
 		result.append(')');
 	}
-	result.append('</a></td>');
+	result.append('</a>');
+	if(fullSize) result.append('</td>');
 	
 	pickerSourceSkills(i);
+}
+
+void addSourceSkillDisplay(buffer result, string edu, int i) {
+	addSourceSkillDisplay(result, edu, i, true);
 }
 
 // Part of terminal block that can be included in stats for a smaller footprint
@@ -150,15 +163,15 @@ void addTerminal(buffer result) {
 		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
 			chips[chip] = true;
 		
-		result.append('<tr><td colspan="4"><table id="chit_terminal" class="chit_brick nospace"><tbody><tr>');
+		result.append('<tr><td class="label">Terminal</td><td ');
+		if(to_boolean(vars["chit.stats.showbars"])) result.append('colspan="2">');
+		else result.append('class="info">');
 		
-		result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1);
-		result.addSourceSkillDisplay(get_property("sourceTerminalEducate2"), 2);
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1, false);
+		result.append(" ");
+		result.addSourceSkillDisplay(get_property("sourceTerminalEducate2"), 2, false);
 		
-		result.append('</tr></tbody></table></td></tr>');
-
-		chitBricks["terminal"] = result.to_string();
-		chitTools["terminal"] = "Source Terminal|application_xp_terminal.png";
+		result.append('</td></tr>');
 	}
 }
 
