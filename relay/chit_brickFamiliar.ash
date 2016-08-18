@@ -479,6 +479,7 @@ int hasDrops(item it) {
 // Set familiar image, including path to image. Some familiar images are purposefully changed, others need to be normalized.
 string familiar_image(familiar f) {
 	switch(f) {
+	case $familiar[none]: return "/images/itemimages/antianti.gif";
 	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
