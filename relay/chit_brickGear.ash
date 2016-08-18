@@ -256,15 +256,16 @@ void addFavGear() {
 					ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
 				if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
 					ascendGear["today", it] = true;
-				if(my_inebriety() > inebriety_limit()) {
-					float score = numeric_modifier(it, "Adventures");
-					if(hippy_stone_broken())
-						score += numeric_modifier(it, "PVP Fights");
-					if(score > 0)
-						ascendGear["rollover", it] = true;
-				}
+				if(numeric_modifier(it, "Adventures") > 0 || (hippy_stone_broken() && numeric_modifier(it, "PVP Fights") > 0))
+					drunkGear["rollover", it] = true;
 			}
+			drunkGear["DRUNK", $item[Drunkula's wineglass]] = true;
 		}
+		
+		if(my_inebriety() > inebriety_limit())
+			foreach type in drunkGear
+				addGear(drunkGear[type], type);
+		
 		foreach type in ascendGear
 			addGear(ascendGear[type], type);
 		
