@@ -267,8 +267,8 @@ void addFavGear() {
 				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 10);
 			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
 				ascendGear["today", it] = 1;
-			drunkGear.addItemIf("rollover", it, numeric_modifier(it, "Adventures"), 1);
-			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "PVP Fights"), 1);
+			drunkGear.addItemIf("nopvprollover", it, numeric_modifier(it, "Adventures"), 1);
+			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
 		}
 		drunkGear["DRUNK", $item[Drunkula's wineglass]] = 100;
 	}
@@ -277,6 +277,10 @@ void addFavGear() {
 	if(my_inebriety() > inebriety_limit())
 		foreach type in drunkGear {
 			switch(type) {
+				case "nopvprollover":
+					if(!hippy_stone_broken())
+						addGear(drunkGear[type], "rollover");
+					break;
 				case "pvprollover":
 					if(hippy_stone_broken())
 						addGear(drunkGear[type], "rollover");
