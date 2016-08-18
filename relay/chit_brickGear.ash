@@ -254,16 +254,22 @@ void addFavGear() {
 				ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
 			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
 				ascendGear["today", it] = true;
-			if(numeric_modifier(it, "Adventures") > 0 || (hippy_stone_broken() && numeric_modifier(it, "PVP Fights") > 0))
+			if(numeric_modifier(it, "Adventures") > 0)
 				drunkGear["rollover", it] = true;
+			if(numeric_modifier(it, "PVP Fights") > 0)
+				drunkGear["pvprollover", it] = true;
 		}
 		drunkGear["DRUNK", $item[Drunkula's wineglass]] = true;
 	}
 	
 	// Rollover equipment
 	if(my_inebriety() > inebriety_limit())
-		foreach type in drunkGear
-			addGear(drunkGear[type], type);
+		foreach type in drunkGear {
+			if(type != "pvprollover")
+				addGear(drunkGear[type], type);
+			else if(hippy_stone_broken())
+				addGear(drunkGear[type], "rollover");
+		}
 	// Melties
 	addGear(ascendGear["today"], "today");
 	
