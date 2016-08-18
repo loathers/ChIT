@@ -1445,6 +1445,34 @@ buffer buildTracker() {
 	}
 	
 	
+	//progress in questPAGhost, ghost location in ghostLocation
+	if (Started("questPAGhost")) {
+		string[location] loczone;
+		loczone[$location[Cobb's Knob Treasury]] = "cobbsknob.php";
+		loczone[$location[The Haunted Conservatory]] = "place.php?whichplace=manor1";
+		loczone[$location[The Haunted Gallery]] = "place.php?whichplace=manor2";
+		loczone[$location[The Haunted Kitchen]] = "place.php?whichplace=manor1";
+		loczone[$location[The Haunted Wine Cellar]] = "place.php?whichplace=manor4";
+		loczone[$location[The Icy Peak]] = "place.php?whichplace=mclargehuge";
+		loczone[$location[Inside the Palindome]] = "place.php?whichplace=plains";
+		loczone[$location[Madness Bakery]] = "place.php?whichplace=town_right";
+		loczone[$location[The Old Landfill]] = "place.php?whichplace=plains";
+		loczone[$location[The Overgrown Lot]] = "place.php?whichplace=town_wrong";
+		loczone[$location[The Skeleton Store]] = "place.php?whichplace=town_market";
+		loczone[$location[The Smut Orc Logging Camp]] = "place.php?whichplace=orc_chasm";
+		loczone[$location[The Spooky Forest]] = "woods.php";
+		
+		result.append("<tr><td>");
+		result.append("Ghost Busting");
+		result.append(" - ");
+		result.append("<a target=mainpane href=\"");
+		result.append(loczone[to_location(get_property("ghostLocation"))]);
+		result.append("\">");
+		result.append(get_property("ghostLocation"));
+		result.append("</a>");
+		result.append("</td></tr>");
+	}
+	
 	
 	//questM26Oracle
 	if (Started("questM26Oracle")) {
