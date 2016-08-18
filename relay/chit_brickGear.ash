@@ -291,7 +291,6 @@ void addFavGear() {
 		}
 	// Melties
 	addGear(ascendGear["today"], "today");
-	
 		
 	// some handy in-run stuff
 	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always") {
@@ -536,7 +535,7 @@ void pickerGear(slot s) {
 	
 	boolean [item] displayedItems;
 	
-	void add_gear_option(item it, string reason) {
+	boolean add_gear_option(buffer b, item it, string reason) {
 		int danger_level = 0;
 		string cmd;
 		string action = "";
@@ -572,7 +571,7 @@ void pickerGear(slot s) {
 			action_description += '(' + pulls_remaining() + ' left)';
 			cmd = "pull " + it + "; equip ";
 		} else // no options were found, give up
-			return;
+			return false;
 		
 		any_options = true;
 		displayedItems[it] = true;
@@ -581,95 +580,97 @@ void pickerGear(slot s) {
 		
 		switch(vars["chit.gear.layout"]) {
 		case "experimental":
-			picker.append('<div class="chit_flexitem" style="order:');
-			picker.append(danger_level);
-			picker.append(';"><div><a class="done" oncontextmenu="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event); return false;" onclick="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event)" href="#">');
+			b.append('<div class="chit_flexitem" style="order:');
+			b.append(danger_level);
+			b.append(';"><div><a class="done" oncontextmenu="descitem(');
+			b.append(it.descid);
+			b.append(',0,event); return false;" onclick="descitem(');
+			b.append(it.descid);
+			b.append(',0,event)" href="#">');
 			
-			picker.addItemIcon(it,"Click for item description",danger_level);
-			picker.append('</a></div><div style="max-width:160px;">');
+			b.addItemIcon(it,"Click for item description",danger_level);
+			b.append('</a></div><div style="max-width:160px;">');
 			//add_favorite_button(it);
 			if(take_action) {
-				picker.append('<a class="change" href="');
-				picker.append(command);
-				picker.append('">');
+				b.append('<a class="change" href="');
+				b.append(command);
+				b.append('">');
 			}
-			picker.append('<span style="font-weight:bold;">');
+			b.append('<span style="font-weight:bold;">');
 			if(danger_level > 0)
-				picker.append('<span class="warning-link">');
-			picker.append(action);
+				b.append('<span class="warning-link">');
+			b.append(action);
 			if(danger_level > 0)
-				picker.append('</span>');
-			picker.append(' ');
-			picker.append(action_description);
-			picker.append('</span> ');
-			picker.append(gearName(it));
+				b.append('</span>');
+			b.append(' ');
+			b.append(action_description);
+			b.append('</span> ');
+			b.append(gearName(it));
 			if(take_action)
-				picker.append('</a>');
-			picker.append('</div></div>');
+				b.append('</a>');
+			b.append('</div></div>');
 			break;
 			
 		case "minimal":
-			picker.append('<span><a class="');
+			b.append('<span><a class="');
 			if(take_action)
-				picker.append('change');
+				b.append('change');
 			else
-				picker.append('icon');
-			picker.append('" oncontextmenu="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event); return false;"');
+				b.append('icon');
+			b.append('" oncontextmenu="descitem(');
+			b.append(it.descid);
+			b.append(',0,event); return false;"');
 			if(take_action) {
-				picker.append(' href="');
-				picker.append(command);
-				picker.append('"');
+				b.append(' href="');
+				b.append(command);
+				b.append('"');
 			}
-			picker.append('>');
+			b.append('>');
 			if(take_action)
-				picker.addItemIcon(it,gearName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+				b.addItemIcon(it,gearName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
 			else
-				picker.addItemIcon(it,'&#013;Right click for description',danger_level);
+				b.addItemIcon(it,'&#013;Right click for description',danger_level);
 			if(take_action)
-				picker.append('</a>');
-			picker.append('</span>');
+				b.append('</a>');
+			b.append('</span>');
 			break;
 			
 		default:
-			picker.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event); return false;" onclick="descitem(');
-			picker.append(it.descid);
-			picker.append(',0,event)" href="#">');
-			picker.addItemIcon(it,"Click for item description",danger_level);
-			picker.append('</a></td><td>');
+			b.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
+			b.append(it.descid);
+			b.append(',0,event); return false;" onclick="descitem(');
+			b.append(it.descid);
+			b.append(',0,event)" href="#">');
+			b.addItemIcon(it,"Click for item description",danger_level);
+			b.append('</a></td><td>');
 			if(take_action) {
-				picker.append('<a class="change" href="');
-				picker.append(command);
-				picker.append('">');
+				b.append('<a class="change" href="');
+				b.append(command);
+				b.append('">');
 			}
-			picker.append('<span style="font-weight:bold;">');
+			b.append('<span style="font-weight:bold;">');
 			if(danger_level > 0)
-				picker.append('<span class="warning-link">');
-			picker.append(action);
+				b.append('<span class="warning-link">');
+			b.append(action);
 			if(danger_level > 0)
-				picker.append('</span>');
-			picker.append(' ');
-			picker.append(action_description);
-			picker.append('</span> ');
-			picker.append(gearName(it));
+				b.append('</span>');
+			b.append(' ');
+			b.append(action_description);
+			b.append('</span> ');
+			b.append(gearName(it));
 			if(reason != "favorites") {
-				picker.append(' (');
-				picker.append(reason);
-				picker.append(')');
+				b.append(' (');
+				b.append(reason);
+				b.append(')');
 			}
 			if(take_action)
-				picker.append('</a>');
-			picker.append('</td><td>');
+				b.append('</a>');
+			b.append('</td><td>');
 			add_favorite_button(it);
-			picker.append('</td></tr>');
+			b.append('</td></tr>');
 		}
+		
+		return true;
 	}
 	
 	void add_gear_section(string name, float [item] list) {
@@ -680,32 +681,39 @@ void pickerGear(slot s) {
 					toDisplay[ count(toDisplay) ] = it;
 		
 		if(count(toDisplay) > 0) {
+			buffer temp;
+			boolean show = false;
+			
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
-				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-				picker.append(name);
-				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+				temp.append(name);
+				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			case "minimal":
-				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-				picker.append(name);
-				picker.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+				temp.append(name);
+				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
 				break;
 			}
 			
 			sort toDisplay by -list[value];
 			
 			foreach i,it in toDisplay
-				add_gear_option(it, name);
+				if(temp.add_gear_option(it, name))
+					show = true;
 			
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
-				picker.append('</div></td></tr>');
+				temp.append('</div></td></tr>');
 				break;
 			case "minimal":
-				picker.append('</td></tr>');
+				temp.append('</td></tr>');
 				break;
 			}
+			
+			if(show)
+				picker.append(temp.to_string());
 		}
 	}
 	
@@ -828,14 +836,14 @@ void pickerGear(slot s) {
 			int amount = vars["chit.gear.layout"] == "minimal"? 11
 				: any_options? 4: 11;
 			for x from 0 to min(count(avail) - 1, amount) {
-				add_gear_option(avail[x], name);
+				picker.add_gear_option(avail[x], name);
 				if(item_type(avail[x]) == "shield")
 					shield = true;
 			}
 			if(!shield) // Find a shield!
 				for x from min(count(avail) - 1, amount) to count(avail) - 1
 					if(item_type(avail[x]) == "shield") {
-						add_gear_option(avail[x], name);
+						picker.add_gear_option(avail[x], name);
 						break;
 					}
 			
