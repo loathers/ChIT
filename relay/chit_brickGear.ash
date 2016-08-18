@@ -252,8 +252,7 @@ void addFavGear() {
 				list[category, it] = val;
 		}
 		
-		float [string, item] ascendGear;
-		float [string, item] drunkGear;
+		float [string, item] ascendGear, drunkGear;
 		foreach it in $items[] {
 			ascendGear.addItemIf("item", it, numeric_modifier(it, "Item Drop"), 10);
 			ascendGear.addItemIf("ML", it, numeric_modifier(it, "Monster Level"), 10);
@@ -264,11 +263,12 @@ void addFavGear() {
 			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"]
 				prisdmg = min(prisdmg, numeric_modifier(it, s));
 			ascendGear.addItemIf("prismatic", it, prisdmg, 2);
-			ascendGear.addItemIf("res", it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 10);
+			ascendGear.addItemIf("res", it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance")
+				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 10);
 			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
 				ascendGear["today", it] = 1;
-			drunkGear.addItemIf("nopvprollover", it, numeric_modifier(it, "Adventures"), 1);
-			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
+			drunkGear.addItemIf("rollover", it, numeric_modifier(it, "Adventures"), 1);
+			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "PVP Fights"), 1);
 		}
 		drunkGear["DRUNK", $item[Drunkula's wineglass]] = 100;
 	}
@@ -277,17 +277,12 @@ void addFavGear() {
 	if(my_inebriety() > inebriety_limit())
 		foreach type in drunkGear {
 			switch(type) {
-				case "nopvprollover":
-					if(!hippy_stone_broken())
-						addGear(drunkGear[type], "rollover");
-					break;
 				case "pvprollover":
 					if(hippy_stone_broken())
 						addGear(drunkGear[type], "rollover");
 					break;
 				default:
 					addGear(drunkGear[type], type);
-					break;
 			}
 		}
 	// Melties
@@ -675,15 +670,12 @@ void pickerGear(slot s) {
 	
 	void add_gear_section(string name, float [item] list) {
 		item [int] toDisplay;
-		int dispCount = 0;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
-				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it)) {
-					toDisplay[dispCount] = it;
-					dispCount += 1;
-				}
+				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
+					toDisplay[ count(toDisplay) ] = it;
 		
-		if(dispCount > 0) {
+		if(count(toDisplay) > 0) {
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
