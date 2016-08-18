@@ -715,14 +715,9 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
 	
 	if(dropsLeft > 0) {
-		string dropName = f.drop_name;
-		if(dropName == "" && f.drop_item != $item[none])
-			dropName = "drop";
 		iconInfo.append(dropsLeft);
 		iconInfo.append(" ");
-		iconInfo.append(dropName);
-		if(dropsLeft > 1 && dropName.length() > 1 && dropName.char_at(dropName.length() - 1) != "s")
-			iconInfo.append("s");
+		iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
 		
 		if(f.drops_today == 0 && need_drop(f))
 			status = STATUS_ALLDROPS;
@@ -886,8 +881,8 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	
 	if(cmd == "familiar") { 
 		string blackForestState = get_property("questL11Black");
-		boolean needGuide = ((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
-		recIf(needGuide, $familiars[Reassembled Blackbird, Reconstituted Crow], "Black forest guide");
+		boolean needGuide = (($strings[started, step1] contains blackForestState) && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
+		recIf(needGuide, $familiars[Reassembled Blackbird, Reconstituted Crow], "black forest");
 		
 		// Probably incomplete list of reasons you'd want the purse rat
 		boolean [familiar] mlFams = $familiars[Purse Rat]; // There's only one atm that I know of but who knows what the future holds
@@ -912,7 +907,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		recIf(kitchenTime && cantTakeTheHeat, resFams, "haunted kitchen");
 		string trapper = get_property("questL08Trapper");
 		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
-		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "a-boo clues");
+		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "surviving a-boo clues");
 		recIf(nsQuest == "step2", resFams, "hedge maze");
 	}
 	else {
