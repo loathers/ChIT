@@ -1,8 +1,8 @@
 // The original version of the Gear Brick (including pickerGear and bakeGear) was written by soolar
 
-boolean [item] favGear;
-boolean [item] okFavGear;
-boolean [string] [item] recommendedGear;
+float [item] favGear;
+float [item] okFavGear;
+float [string, item] recommendedGear;
 
 string gearName(item it) {
 	string name = to_string(it);
@@ -96,7 +96,7 @@ int foldable_amount(item it) {
 	return foldable_amount(it, false);
 }
 
-void addGear(item it, string reason)
+void addGear(item it, string reason, float score)
 {
 	class gear_class = class_modifier(it,"Class");
 	boolean isFav = (reason == "");
@@ -105,22 +105,33 @@ void addGear(item it, string reason)
 		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
 		&& (gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
-		if(isFav) okFavGear[it] = true;
-		else recommendedGear[reason][it] = true;
+		if(isFav) okFavGear[it] = 1;
+		else recommendedGear[reason][it] = score;
 	}
 }
 void addGear(item it)
 {
-	addGear(it, "");
+	addGear(it, "", 1);
 }
 void addGear(boolean [item] list, string reason)
 {
 	foreach it in list
-		addGear(it, reason);
+		addGear(it, reason, 1);
 }
 void addGear(boolean [item] list)
 {
 	addGear(list, "");
+}
+
+void addGear(float [item] list, string reason)
+{
+	foreach it,score in list
+		addGear(it, reason, score);
+}
+
+void addGear(item it, string reason)
+{
+	addGear(it, reason, 1);
 }
 
 void addFavGear() {	
@@ -236,39 +247,48 @@ void addFavGear() {
 	
 	// Find varous stuff instead of hardcoding lists
 	static {
-		boolean [string, item] ascendGear;
-		boolean [string, item] drunkGear;
-		foreach it in $items[] {
-			if(numeric_modifier(it, "Monster Level") >= 10)
-				ascendGear["ML", it] = true;
-			if(numeric_modifier(it, "Combat Rate") == 0) { // Get most common stuff done with one check instead of two
-			} else if(numeric_modifier(it, "Combat Rate") < 0)
-				ascendGear["-combat", it] = true;
-			else // Only non-combat gear is left
-				ascendGear["+combat", it] = true;
-			if(numeric_modifier(it, "Experience") > 0 || numeric_modifier(it, my_primestat()+ " Experience") > 0)
-				ascendGear["exp", it] = true;
-			if(numeric_modifier(it, "Spooky Damage") > 1 && numeric_modifier(it, "Stench Damage") > 1 && numeric_modifier(it, "Hot Damage") > 1 && numeric_modifier(it, "Cold Damage") > 1 && numeric_modifier(it, "Sleaze Damage") > 1)
-				ascendGear["prismatic", it] = true; // Prismatic Damage +2 or better
-			if(numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance") >= 10)
-				ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
-			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
-				ascendGear["today", it] = true;
-			if(numeric_modifier(it, "Adventures") > 0)
-				drunkGear["rollover", it] = true;
-			if(numeric_modifier(it, "PVP Fights") > 0)
-				drunkGear["pvprollover", it] = true;
+		void addItemIf(float [string, item] list, string category, item it, float val, float min) {
+			if(val >= min)
+				list[category, it] = val;
 		}
-		drunkGear["DRUNK", $item[Drunkula's wineglass]] = true;
+		
+		float [string, item] ascendGear;
+		float [string, item] drunkGear;
+		foreach it in $items[] {
+			ascendGear.addItemIf("item", it, numeric_modifier(it, "Item Drop"), 10);
+			ascendGear.addItemIf("ML", it, numeric_modifier(it, "Monster Level"), 10);
+			ascendGear.addItemIf("-combat", it, -numeric_modifier(it, "Combat Rate"), 0.5);
+			ascendGear.addItemIf("+combat", it, numeric_modifier(it, "Combat Rate"), 0.5);
+			ascendGear.addItemIf("exp", it, numeric_modifier(it, "Experience") + numeric_modifier(it, my_primestat()+ " Experience"), 1);
+			float prisdmg = numeric_modifier(it, "Spooky Damage");
+			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"]
+				prisdmg = min(prisdmg, numeric_modifier(it, s));
+			ascendGear.addItemIf("prismatic", it, prisdmg, 2);
+			ascendGear.addItemIf("res", it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 10);
+			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
+				ascendGear["today", it] = 1;
+			drunkGear.addItemIf("nopvprollover", it, numeric_modifier(it, "Adventures"), 1);
+			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
+		}
+		drunkGear["DRUNK", $item[Drunkula's wineglass]] = 100;
 	}
 	
 	// Rollover equipment
 	if(my_inebriety() > inebriety_limit())
 		foreach type in drunkGear {
-			if(type != "pvprollover")
-				addGear(drunkGear[type], type);
-			else if(hippy_stone_broken())
-				addGear(drunkGear[type], "rollover");
+			switch(type) {
+				case "nopvprollover":
+					if(!hippy_stone_broken())
+						addGear(drunkGear[type], "rollover");
+					break;
+				case "pvprollover":
+					if(hippy_stone_broken())
+						addGear(drunkGear[type], "rollover");
+					break;
+				default:
+					addGear(drunkGear[type], type);
+					break;
+			}
 		}
 	// Melties
 	addGear(ascendGear["today"], "today");
@@ -292,7 +312,7 @@ void addFavGear() {
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
 		item it = to_item(fav.replace_string("\\,", ","));
-		favGear[it] = true;
+		favGear[it] = 1;
 		addGear(it);
 	}
 }
@@ -653,14 +673,17 @@ void pickerGear(slot s) {
 		}
 	}
 	
-	void add_gear_section(string name, boolean [item] list) {
-		boolean [item] toDisplay;
+	void add_gear_section(string name, float [item] list) {
+		item [int] toDisplay;
+		int dispCount = 0;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
-				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
-					toDisplay[it] = true;
+				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it)) {
+					toDisplay[dispCount] = it;
+					dispCount += 1;
+				}
 		
-		if(toDisplay.count() > 0) {
+		if(dispCount > 0) {
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
@@ -674,7 +697,9 @@ void pickerGear(slot s) {
 				break;
 			}
 			
-			foreach it in toDisplay
+			sort toDisplay by -list[value];
+			
+			foreach i,it in toDisplay
 				add_gear_option(it, name);
 			
 			switch(vars["chit.gear.layout"]) {
