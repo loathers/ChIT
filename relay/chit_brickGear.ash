@@ -234,37 +234,42 @@ void addFavGear() {
 		break;
 	}
 	
+	// Find varous stuff instead of hardcoding lists
+	static {
+		boolean [string, item] ascendGear;
+		boolean [string, item] drunkGear;
+		foreach it in $items[] {
+			if(numeric_modifier(it, "Monster Level") >= 10)
+				ascendGear["ML", it] = true;
+			if(numeric_modifier(it, "Combat Rate") == 0) { // Get most common stuff done with one check instead of two
+			} else if(numeric_modifier(it, "Combat Rate") < 0)
+				ascendGear["-combat", it] = true;
+			else // Only non-combat gear is left
+				ascendGear["+combat", it] = true;
+			if(numeric_modifier(it, "Experience") > 0 || numeric_modifier(it, my_primestat()+ " Experience") > 0)
+				ascendGear["exp", it] = true;
+			if(numeric_modifier(it, "Spooky Damage") > 1 && numeric_modifier(it, "Stench Damage") > 1 && numeric_modifier(it, "Hot Damage") > 1 && numeric_modifier(it, "Cold Damage") > 1 && numeric_modifier(it, "Sleaze Damage") > 1)
+				ascendGear["prismatic", it] = true; // Prismatic Damage +2 or better
+			if(numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance") >= 10)
+				ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
+			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
+				ascendGear["today", it] = true;
+			if(numeric_modifier(it, "Adventures") > 0 || (hippy_stone_broken() && numeric_modifier(it, "PVP Fights") > 0))
+				drunkGear["rollover", it] = true;
+		}
+		drunkGear["DRUNK", $item[Drunkula's wineglass]] = true;
+	}
+	
+	// Rollover equipment
+	if(my_inebriety() > inebriety_limit())
+		foreach type in drunkGear
+			addGear(drunkGear[type], type);
+	// Melties
+	addGear(ascendGear["today"], "today");
+	
+		
 	// some handy in-run stuff
 	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always") {
-		
-		// Find varous stuff instead of hardcoding lists
-		static {
-			boolean [string, item] ascendGear;
-			foreach it in $items[] {
-				if(numeric_modifier(it, "Monster Level") >= 10)
-					ascendGear["ML", it] = true;
-				if(numeric_modifier(it, "Combat Rate") == 0) { // Get most common stuff done with one check instead of two
-				} else if(numeric_modifier(it, "Combat Rate") < 0)
-					ascendGear["-combat", it] = true;
-				else // Only non-combat gear is left
-					ascendGear["+combat", it] = true;
-				if(numeric_modifier(it, "Experience") > 0 || numeric_modifier(it, my_primestat()+ " Experience") > 0)
-					ascendGear["exp", it] = true;
-				if(numeric_modifier(it, "Spooky Damage") > 1 && numeric_modifier(it, "Stench Damage") > 1 && numeric_modifier(it, "Hot Damage") > 1 && numeric_modifier(it, "Cold Damage") > 1 && numeric_modifier(it, "Sleaze Damage") > 1)
-					ascendGear["prismatic", it] = true; // Prismatic Damage +2 or better
-				if(numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance") + numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance") >= 10)
-					ascendGear["res", it] = true;  // This was mostly to get the training legwarmers on the list, but anything that has all res +2 or better is worth noting
-				if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
-					ascendGear["today", it] = true;
-				if(numeric_modifier(it, "Adventures") > 0 || (hippy_stone_broken() && numeric_modifier(it, "PVP Fights") > 0))
-					drunkGear["rollover", it] = true;
-			}
-			drunkGear["DRUNK", $item[Drunkula's wineglass]] = true;
-		}
-		
-		if(my_inebriety() > inebriety_limit())
-			foreach type in drunkGear
-				addGear(drunkGear[type], type);
 		
 		foreach type in ascendGear
 			addGear(ascendGear[type], type);
