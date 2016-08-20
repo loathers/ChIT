@@ -483,18 +483,18 @@ void pickerGear(slot s) {
 			break;
 	}
 	
-	void add_favorite_button(item it) {
-		picker.append('<a class="change chit_favbutton" href="');
+	void add_favorite_button(buffer result, item it) {
+		result.append('<a class="change chit_favbutton" href="');
 		if(favGear contains it) {
-			picker.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
-			picker.append('" rel="delfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_remove_red.png"></a>');
+			result.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
+			result.append('" rel="delfav"><img src="');
+			result.append(imagePath);
+			result.append('control_remove_red.png"></a>');
 		} else {
-			picker.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
-			picker.append('" rel="addfav"><img src="');
-			picker.append(imagePath);
-			picker.append('control_add_blue.png"></a>');
+			result.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
+			result.append('" rel="addfav"><img src="');
+			result.append(imagePath);
+			result.append('control_add_blue.png"></a>');
 		}
 	}
 	
@@ -506,7 +506,7 @@ void pickerGear(slot s) {
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
 		picker.append(gearName(in_slot));
 		picker.append('</a></td><td>');
-		add_favorite_button(in_slot);
+		picker.add_favorite_button(in_slot);
 		picker.append('</td></tr>');
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
@@ -593,7 +593,7 @@ void pickerGear(slot s) {
 			
 			b.addItemIcon(it,"Click for item description",danger_level);
 			b.append('</a></div><div style="max-width:160px;">');
-			//add_favorite_button(it);
+			//b.add_favorite_button(it);
 			if(take_action) {
 				b.append('<a class="change" href="');
 				b.append(command);
@@ -669,7 +669,7 @@ void pickerGear(slot s) {
 			if(take_action)
 				b.append('</a>');
 			b.append('</td><td>');
-			add_favorite_button(it);
+			b.add_favorite_button(it);
 			b.append('</td></tr>');
 		}
 		
