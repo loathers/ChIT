@@ -908,7 +908,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		string trapper = get_property("questL08Trapper");
 		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
 		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "surviving a-boo clues");
-		recIf(nsQuest == "step2", resFams, "hedge maze");
+		recIf(nsQuest == "step4", resFams, "hedge maze");
 	}
 	else {
 		// Recommendations for the crown/bjorn
