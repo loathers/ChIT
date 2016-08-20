@@ -909,6 +909,8 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
 		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "surviving a-boo clues");
 		recIf(nsQuest == "step4", resFams, "hedge maze");
+		
+		recIf(get_property("questM03Bugbear") == "step2", $familiars[Flaming Gravy Fairy, Frozen Gravy Fairy, Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], "felonia");
 	}
 	else {
 		// Recommendations for the crown/bjorn

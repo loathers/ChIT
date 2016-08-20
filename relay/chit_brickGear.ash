@@ -224,6 +224,9 @@ void addFavGear() {
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
 		addGear($item[protonic accelerator pack], "ghost");
+
+	if(get_property("questM03Bugbear") == "step2") // Felonia
+		addGear($item[spooky glove], "quest");
 	
 	// Path specific stuff
 	switch(my_path()) {
