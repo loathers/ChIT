@@ -699,6 +699,12 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_HASDROPS;
 		}
 		break;
+	case $familiar[Reanimated Reanimator]:
+		if(get_property("_badlyRomanticArrows").to_int() == 0) {
+			iconInfo.append("Wink available");
+			return STATUS_ALLDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
@@ -1348,6 +1354,9 @@ void bakeFamiliar() {
 		break;
 	case $familiar[Reanimated Reanimator]:
 		name_followup += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
+		buffer wink;
+		iconInfoSpecial(myfam,wink);
+		info = wink;
 		break;
 	case $familiar[Grim Brother]:
 		if(source.contains_text(">talk</a>)"))
