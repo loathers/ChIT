@@ -107,6 +107,7 @@ void addSourceSkillDisplay(buffer result, string edu, int i, boolean fullSize) {
 	source_skill sskill = getSourceSkill(edu);
 	
 	if(fullSize) result.append('<td class="icon">');
+	else result.append('<span style="white-space:nowrap;">');
 	if(sskill.s != $skill[none]) {
 		result.append('<a class="done" href="#" oncontextmenu="skill(');
 		result.append(to_int(sskill.s));
@@ -147,6 +148,7 @@ void addSourceSkillDisplay(buffer result, string edu, int i, boolean fullSize) {
 	}
 	result.append('</a>');
 	if(fullSize) result.append('</td>');
+	else result.append('</span>');
 	
 	pickerSourceSkills(i);
 }

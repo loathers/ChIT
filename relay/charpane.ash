@@ -1258,7 +1258,7 @@ void pickerThrall() {
 }
 
 void bakeThrall() {
-	if(my_class() != $class[Pastamancer]) return;
+	if(my_class() != $class[Pastamancer] || my_path() == "Nuclear Autumn") return;
 	buffer result;
 	void bake(string lvl, string name, string type, string img) {
 		if(to_boolean(vars["chit.thrall.showname"])) {
@@ -2496,10 +2496,12 @@ void bakeStats() {
 		if(section.contains_stat()) {
 			switch(my_class()) {
 			case $class[Seal Clubber]:
-				result.addFury();
+				if(my_path() != "Nuclear Autumn")
+					result.addFury();
 				break;
 			case $class[Sauceror]:
-				result.addSauce();
+				if(my_path() != "Nuclear Autumn")
+					result.addSauce();
 				break;
 			case $class[Avatar of Sneaky Pete]:
 				result.addAud();
@@ -2524,9 +2526,16 @@ void bakeStats() {
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
 			
-			result.addGhostBusting();
-			result.addCIQuest();
-			result.addWalfordBucket();
+			// Quest updates should be shown if the tracker brick is not in use.
+			boolean tracker;
+			foreach layout in $strings[roof, walls, floor, toolbar]
+				if(vars["chit." + layout + ".layout"].contains_text("tracker"))
+					tracker = true;
+			if(!tracker) {
+				result.addGhostBusting();
+				result.addCIQuest();
+				result.addWalfordBucket();
+			}
 		}
 		
 		result.append("</tbody>");
