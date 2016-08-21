@@ -1389,8 +1389,13 @@ void pickMood() {
 		boolean isActive = list_contains(moodname,m);
 		if(moodname != "???" && m != "apathetic" && moodname != m) {
 			if(!isActive) {
+				string mlist = moodname;
+				if(m == "combat")
+					mlist = list_remove(mlist, "noncom");
+				else if(m == "noncom")
+					mlist = list_remove(mlist, "combat");
 				picker.append('<a title="ADD ' + m + ' to current mood" href="');
-				picker.append(sideCommand("mood " + list_add(moodname,m)));
+				picker.append(sideCommand("mood " + list_add(mlist,m)));
 				picker.append('"><img src="');
 				picker.append(imagePath);
 				picker.append('control_add_blue.png"></a>');
