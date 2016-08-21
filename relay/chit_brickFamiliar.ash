@@ -888,7 +888,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	if(cmd == "familiar") { 
 		string blackForestState = get_property("questL11Black");
 		boolean needGuide = (($strings[started, step1] contains blackForestState) && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
-		recIf(needGuide, $familiars[Reassembled Blackbird, Reconstituted Crow], "black forest");
+		recIf(needGuide, $familiars[Reconstituted Crow, Reassembled Blackbird], "black forest");
 		
 		// Probably incomplete list of reasons you'd want the purse rat
 		boolean [familiar] mlFams = $familiars[Purse Rat]; // There's only one atm that I know of but who knows what the future holds
