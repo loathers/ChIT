@@ -169,6 +169,8 @@ void addFavGear() {
 			addGear($item[mohawk wig], "quest");
 			break;
 	}
+	if(get_property("questM12Pirate") == "step2")
+		addGear($item[frilly skirt], "quest");
 	string blackForest = get_property("questL11Black");
 	if(blackForest == "started" || blackForest == "step1")
 		addGear($item[blackberry galoshes], "quest");
