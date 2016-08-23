@@ -698,6 +698,10 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			iconInfo.append("Demon name unknown");
 			return STATUS_HASDROPS;
 		}
+		else {
+			iconInfo.append("Demon name is ");
+			iconInfo.append(demon);
+		}
 		break;
 	case $familiar[Reanimated Reanimator]:
 		if(get_property("_badlyRomanticArrows").to_int() == 0) {
