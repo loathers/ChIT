@@ -99,20 +99,50 @@ chit.gear.layout: The layout to use for the gear picker.
 					 experimental - WIP layout that should eventually become default, but might occasionally be a bit janky
 					Default: default
 					
-chit.gear.pull: Whether or not the gear picker should recommend pullable items when in-run
-          Options include:
-					 anything - always suggest pulling
-					 favorites - only suggest pulling for favorites
-					 nothing - never suggest pulling
-          Default: favorites
-					
-chit.gear.recommend: Whether or not to recommend some generally useful/QoL gear in the picker
-          Regardless of value, the gear picker will always recommend items in some specific quest contexts
-					Options include:
-					 in-run: Only shows extra gear while in run
-					 always: Shows extra gear in aftercore too
-					 never:  Does not show any gear outside of favorites and very specific quest items
-					Default: in-run
+chit.gear.display.in-run: Comma delimited list of categories to display in the gear picker while in-run, in order
+					Valid categories are:
+						favorites - gear from chit.gear.favorites
+						astral - astral equipment from valhalla
+						item - gear that gives a +item drop bonus
+						meat - gear that gives a +meat drop bonus
+						ML - gear that gives +ML
+						exp - gear that gives general +substats or main +substats
+						quest - gear needed for certain quests
+						path - gear that is particularly useful in your current path
+						prismatic - gear with prismatic elemental damage
+						elemental - gear with any elemental damage at all
+						fam weight - gear with +familiar weight
+						muscle - +muscle gear
+						myticality - +myst gear
+						moxie - +mox gear
+						max hp - +max hp gear
+						max mp - +max mp gear
+						initiative - +init gear
+						smithsness - +smithsness gear
+						res - gear with a significant total amount of elemental resistance
+						charter - gear for charter quests or other charter related tasks
+						today - gear that will disappear at the end of the day
+						rollover - gear with +adv (and +fites if your hippy stone is broken), will only display when overdrunk
+						DRUNK - just Drunkula's wineglass, will only display when overdrunk
+						Wow - World's best adventurer?! Wow! Good for you! A+!
+					Category names ARE case sensitive. The list is comma delimited.
+					Certain special categories that are too niche to include will always be displayed (ex. bounty is basically just the fledges or the talisman o' namsilat when needed for bounty hunting)
+					You can include some options with a category by appending a : and then <option>=<value>
+					Valid options are:
+						amount=(any numeric value, or "all"): how many items to display in this category (from best to worst, when applicable). "all" "0" or any negative number will just display everything.
+						pull=(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
+						create=(true/false): whether to display items when you could make them but don't have any made
+					When these options are not explicitly provided for a category, the defaults from the next variable will be used.
+					Default: favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all
+
+chit.gear.display.in-run.defaults: Comma delimited list of default options to be used in chit.gear.display.in-run
+					Default: create=false, pull=false, amount=1
+
+chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in aftercore instead of in-run
+					Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
+
+chit.gear.display.aftercore.defaults: Same as chit.gear.display.in-run.defaults, but for aftercore
+					Default: create=true, pull=true, amount=1
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
 					Default: source essence,BACON,cop dollar

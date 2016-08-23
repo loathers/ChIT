@@ -3848,8 +3848,10 @@ buffer modifyPage(buffer source) {
 	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods", "true");
-	setvar("chit.gear.recommend", "in-run");
-	setvar("chit.gear.pull", "favorites");
+	setvar("chit.gear.display.in-run", "favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all");
+	setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
+	setvar("chit.gear.display.in-run.defaults", "create=false, pull=false, amount=1");
+	setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
 	setvar("chit.gear.layout", "default");
 	setvar("chit.gear.favorites", "");
 	setvar("chit.thrall.showname", false);
