@@ -115,6 +115,8 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						muscle - +muscle gear
 						myticality - +myst gear
 						moxie - +mox gear
+						hp regen - gear with hp regen
+						mp regen - gear with mp regen
 						max hp - +max hp gear
 						max mp - +max mp gear
 						initiative - +init gear

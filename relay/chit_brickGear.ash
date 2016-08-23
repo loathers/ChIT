@@ -308,6 +308,8 @@ void addFavGear() {
 		gear_category mus = newCategory("muscle");
 		gear_category mys = newCategory("mysticality");
 		gear_category mox = newCategory("moxie");
+		gear_category hpreg = newCategory("hp regen");
+		gear_category mpreg = newCategory("mp regen");
 		gear_category maxhp = newCategory("max hp");
 		gear_category maxmp = newCategory("max mp");
 		gear_category init = newCategory("initiative");
@@ -342,6 +344,8 @@ void addFavGear() {
 				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 5);
 			fam.addItemIf(it, numeric_modifier(it, "Familiar Weight"), 1);
 			init.addItemIf(it, numeric_modifier(it, "Initiative"), 1);
+			hpreg.addItemIf(it, numeric_modifier(it, "HP Regen Min") + numeric_modifier(it, "HP Regen Max"), 1);
+			mpreg.addItemIf(it, numeric_modifier(it, "MP Regen Min") + numeric_modifier(it, "MP Regen Max"), 1);
 			maxhp.addItemIf(it, numeric_modifier(it, "Maximum HP") + numeric_modifier(it, "Maximum HP Percent"), 1);
 			maxmp.addItemIf(it, numeric_modifier(it, "Maximum MP") + numeric_modifier(it, "Maximum MP Percent"), 1);
 			mox.addItemIf(it, numeric_modifier(it, "Moxie") + numeric_modifier(it, "Moxie Percent"), 1);
