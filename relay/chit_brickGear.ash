@@ -1,8 +1,8 @@
 // The original version of the Gear Brick (including pickerGear and bakeGear) was written by soolar
 
-float [item] favGear;
-float [item] okFavGear;
+boolean [item] favGear;
 float [string, item] recommendedGear;
+boolean [string] forceSections;
 
 string gearName(item it) {
 	string name = to_string(it);
@@ -43,84 +43,103 @@ string gearName(item it) {
 	return name;
 }
 
-int foldable_amount(item it, boolean generous);
-
-int chit_available(item it, boolean generous, boolean foldcheck)
-{
-	int available = item_amount(it) + creatable_amount(it) + closet_amount(it);
-	if(available == 0 && boolean_modifier(it, "Free Pull"))
-	{
-		available += available_amount(it);
+boolean aftercore = qprop("questL13Final");
+string [string] defaults;
+string defaults_str = vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"];
+foreach i,opt in split_string(defaults_str, ", ?") {
+	string [int] spl = split_string(opt," ?= ?");
+	if(spl.count() == 2)
+		defaults[spl[0]] = spl[1];
+}
+string [string,string] reason_options;
+foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
+	string [string] options;
+	string [int] spl = split_string(s,":");
+	if(spl.count() > 1) {
+		for i from 1 to spl.count() - 1 {
+			string [int] opt = split_string(spl[i], " ?= ?");
+			if(opt.count() == 2)
+				options[opt[0]] = opt[1];
+		}
 	}
+	reason_options[spl[0]] = options;
+}
+
+string get_option(string reason, string option) {
+	if(forceSections[reason] && option == "amount")
+		return "all";
+	if(reason != "" && reason_options[reason,option] != "")
+		return reason_options[reason,option];
+	return defaults[option];
+}
+
+int foldable_amount(item it, string reason);
+
+int chit_available(item it, string reason, boolean foldcheck)
+{
+	int available = item_amount(it) + closet_amount(it);
+	if(to_boolean(reason.get_option("create")))
+		available += creatable_amount(it);
+	if(available == 0 && boolean_modifier(it, "Free Pull"))
+		available += available_amount(it);
 	
 	if(pulls_remaining() == -1)
-	{
 		available += storage_amount(it);
-	}
-	else if(pulls_remaining() > 0 && (vars["chit.gear.pull"] == "anything" || (generous && vars["chit.gear.pull"] != "nothing")))
-	{
+	else if(pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
 		available += min(pulls_remaining(), storage_amount(it));
-	}
-	if(generous)
-	{
-		available += equipped_amount(it);
-	}
+	available += equipped_amount(it);
 	
 	if(foldcheck)
-	{
-		available += foldable_amount(it, generous);
-	}
+		available += foldable_amount(it, reason);
 	
 	return available;
 }
 
-int chit_available(item it, boolean generous)
+int chit_available(item it, string reason)
 {
-	return chit_available(it, generous, true);
+	return chit_available(it, reason, true);
 }
 
 int chit_available(item it)
 {
-	return chit_available(it, false);
+	return chit_available(it, "");
 }
 
-int foldable_amount(item it, boolean generous) {
+int foldable_amount(item it, string reason) {
 	int amount = 0;
 	foreach foldable, i in get_related(it, "fold")
 		if(foldable != it)
-			amount += chit_available(foldable, generous, false);
+			amount += chit_available(foldable, reason, false);
 	
 	return amount;
-}
-int foldable_amount(item it) {
-	return foldable_amount(it, false);
 }
 
 void addGear(item it, string reason, float score)
 {
 	class gear_class = class_modifier(it,"Class");
-	boolean isFav = (reason == "");
 	
-	if(is_unrestricted(it) && can_equip(it) && chit_available(it, isFav) > 0
+	if(is_unrestricted(it) && can_equip(it) && chit_available(it, reason) > 0
 		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
 		&& (gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
 	{
-		if(isFav) okFavGear[it] = 1;
-		else recommendedGear[reason][it] = score;
+		recommendedGear[reason][it] = score;
 	}
 }
-void addGear(item it)
+// Don't overuse this, it will force the display of the item's section regardless of user settings
+void forceAddGear(item it, string reason)
 {
-	addGear(it, "", 1);
+	addGear(it, reason, 1000);
+	forceSections[reason] = true;
 }
 void addGear(boolean [item] list, string reason)
 {
 	foreach it in list
 		addGear(it, reason, 1);
 }
-void addGear(boolean [item] list)
+void forceAddGear(boolean [item] list, string reason)
 {
-	addGear(list, "");
+	addGear(list, reason);
+	forceSections[reason] = true;
 }
 
 void addGear(float [item] list, string reason)
@@ -143,7 +162,7 @@ void addFavGear() {
 	if(get_property("questL11Palindome") == "unstarted" && !aftercore)
 		addGear($item[pirate fledges], "quest");
 	else if(get_property("currentHardBountyItem").contains_text("warrrrrt"))
-		addGear($item[pirate fledges], "bounty");
+		forceAddGear($item[pirate fledges], "bounty");
 	
 	if(get_property("questS02Monkees") != "finished")
 		addGear($items[black glass], "quest");
@@ -151,9 +170,9 @@ void addFavGear() {
 	if(get_property("questL11Palindome") != "finished")
 		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
 	else if(get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
-		addGear($item[Talisman o' Namsilat], "bounty");
+		forceAddGear($item[Talisman o' Namsilat], "bounty");
 	else if(get_property("ghostLocation") == "Inside the Palindome")
-		addGear($item[Talisman o' Namsilat], "ghost");
+		forceAddGear($item[Talisman o' Namsilat], "ghost");
 	
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
@@ -188,7 +207,7 @@ void addFavGear() {
 		addGear($item[Lord Spookyraven's spectacles], "quest");
 	
 	if(get_property("questL13Final") == "step6" && available_amount($item[beehive]) < 1)
-		addGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
+		forceAddGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
 		
 
 	// Nemesis Quest
@@ -246,77 +265,111 @@ void addFavGear() {
 		break;
 	case "Avatar of West of Loathing":
 		addGear($items[Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos and Chickpeas, Hellfire Spicy Beans, Frigid Northern Beans, World's Blackest-Eyed Peas, 
-			Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans], "beans");
+			Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans], "path");
 		break;
 	}
 	
 	// Find varous stuff instead of hardcoding lists
 	static {
-		void addItemIf(float [string, item] list, string category, item it, float val, float min) {
+		record gear_category {
+			float [item] list;
+			string name;
+			boolean pvpOnly;
+			boolean noPvpOnly;
+			boolean drunkOnly;
+		};
+		gear_category [int] catList;
+		gear_category newCategory(string name) {
+			gear_category cat;
+			cat.name = name;
+			cat.pvpOnly = false;
+			cat.noPvpOnly = false;
+			cat.drunkOnly = false;
+
+			catList[catList.count()] = cat;
+
+			return cat;
+		}
+		void addItemIf(gear_category cat, item it, float val, float min) {
 			if(val >= min)
-				list[category, it] = val;
+				cat.list[it] = val;
 		}
 		
+		gear_category itemDrop = newCategory("item");
+		gear_category meatDrop = newCategory("meat");
+		gear_category ML = newCategory("ML");
+		gear_category noncom = newCategory("-combat");
+		gear_category combat = newCategory("+combat");
+		gear_category exp = newCategory("exp");
+		gear_category prismatic = newCategory("prismatic");
+		gear_category elemental = newCategory("elemental");
+		gear_category res = newCategory("res");
+		gear_category fam = newCategory("fam weight");
+		gear_category mus = newCategory("muscle");
+		gear_category mys = newCategory("mysticality");
+		gear_category mox = newCategory("moxie");
+		gear_category maxhp = newCategory("max hp");
+		gear_category maxmp = newCategory("max mp");
+		gear_category init = newCategory("initiative");
+		gear_category smithsness = newCategory("smithsness");
+		gear_category today = newCategory("today");
+		gear_category pvprollover = newCategory("rollover");
+		pvprollover.pvpOnly = true;
+		pvprollover.drunkOnly = true;
+		gear_category nopvprollover = newCategory("rollover");
+		nopvprollover.noPvpOnly = true;
+		pvprollover.drunkOnly = true;
+		gear_category drunk = newCategory("DRUNK");
+		drunk.drunkOnly = true;
+
 		float [string, item] ascendGear, drunkGear;
 		foreach it in $items[] {
-			ascendGear.addItemIf("item", it, numeric_modifier(it, "Item Drop"), 10);
-			ascendGear.addItemIf("ML", it, numeric_modifier(it, "Monster Level"), 10);
-			ascendGear.addItemIf("-combat", it, -numeric_modifier(it, "Combat Rate"), 0.5);
-			ascendGear.addItemIf("+combat", it, numeric_modifier(it, "Combat Rate"), 0.5);
-			ascendGear.addItemIf("exp", it, numeric_modifier(it, "Experience") + numeric_modifier(it, my_primestat()+ " Experience"), 1);
+			itemDrop.addItemIf(it, numeric_modifier(it, "Item Drop"), 1);
+			meatDrop.addItemIf(it, numeric_modifier(it, "Meat Drop"), 1);
+			ML.addItemIf(it, numeric_modifier(it, "Monster Level"), 1);
+			noncom.addItemIf(it, -numeric_modifier(it, "Combat Rate"), 0.5);
+			combat.addItemIf(it, numeric_modifier(it, "Combat Rate"), 0.5);
+			exp.addItemIf(it, numeric_modifier(it, "Experience") + numeric_modifier(it, my_primestat()+ " Experience"), 1);
 			float prisdmg = numeric_modifier(it, "Spooky Damage");
-			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"]
+			float eledmg = prisdmg;
+			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"] {
 				prisdmg = min(prisdmg, numeric_modifier(it, s));
-			ascendGear.addItemIf("prismatic", it, prisdmg, 2);
-			ascendGear.addItemIf("res", it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance")
-				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 10);
+				eledmg += numeric_modifier(it, s);
+			}
+			prismatic.addItemIf(it, prisdmg, 1);
+			elemental.addItemIf(it, eledmg, 1);
+			res.addItemIf(it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance")
+				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 5);
+			fam.addItemIf(it, numeric_modifier(it, "Familiar Weight"), 1);
+			init.addItemIf(it, numeric_modifier(it, "Initiative"), 1);
+			maxhp.addItemIf(it, numeric_modifier(it, "Maximum HP") + numeric_modifier(it, "Maximum HP Percent"), 1);
+			maxmp.addItemIf(it, numeric_modifier(it, "Maximum MP") + numeric_modifier(it, "Maximum MP Percent"), 1);
+			mox.addItemIf(it, numeric_modifier(it, "Moxie") + numeric_modifier(it, "Moxie Percent"), 1);
+			mus.addItemIf(it, numeric_modifier(it, "Muscle") + numeric_modifier(it, "Muscle Percent"), 1);
+			mys.addItemIf(it, numeric_modifier(it, "Mysticality") + numeric_modifier(it, "Mysticality Percent"), 1);
+			smithsness.addItemIf(it, numeric_modifier(it, "Smithsness"), 1);
 			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
-				ascendGear["today", it] = 1;
-			drunkGear.addItemIf("nopvprollover", it, numeric_modifier(it, "Adventures"), 1);
-			drunkGear.addItemIf("pvprollover", it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
+				today.list[it] = 1;
+			nopvprollover.addItemIf(it, numeric_modifier(it, "Adventures"), 1);
+			pvprollover.addItemIf(it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
 		}
-		drunkGear["DRUNK", $item[Drunkula's wineglass]] = 100;
+		drunk.list[$item[Drunkula's wineglass]] = 100;
 	}
 	
-	// Rollover equipment
-	if(my_inebriety() > inebriety_limit())
-		foreach type in drunkGear {
-			switch(type) {
-				case "nopvprollover":
-					if(!hippy_stone_broken())
-						addGear(drunkGear[type], "rollover");
-					break;
-				case "pvprollover":
-					if(hippy_stone_broken())
-						addGear(drunkGear[type], "rollover");
-					break;
-				default:
-					addGear(drunkGear[type], type);
-			}
-		}
-	// Melties
-	addGear(ascendGear["today"], "today");
+	foreach i,cat in catList
+		if((!cat.pvpOnly || hippy_stone_broken()) && (!cat.noPvpOnly || !hippy_stone_broken()) && (!cat.drunkOnly || (my_inebriety() > inebriety_limit())))
+			addGear(cat.list, cat.name);
 		
 	// some handy in-run stuff
-	if((vars["chit.gear.recommend"] == "in-run" && !aftercore) || vars["chit.gear.recommend"] == "always") {
-		
-		foreach type in ascendGear
-			addGear(ascendGear[type], type);
-		
-		addGear($item[World's Best Adventurer sash], "Wow");
-		addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
-			astral mask, astral pet sweater, astral shirt], "astral"); // You must have taken this for a reason
-		
-	}
-	
-	if(my_inebriety() > inebriety_limit())
-		addGear($item[Drunkula's wineglass], "drunk");
+	addGear($item[World's Best Adventurer sash], "Wow");
+	addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
+		astral mask, astral pet sweater, astral shirt], "astral"); // You must have taken this for a reason
 	
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
 		item it = to_item(fav.replace_string("\\,", ","));
-		favGear[it] = 1;
-		addGear(it);
+		favGear[it] = true;
+		addGear(it, "favorites");
 	}
 }
 
@@ -559,7 +612,7 @@ void pickerGear(slot s) {
 		} else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0) {
 			action = "free pull";
 			cmd = "equip ";
-		} else if(foldable_amount(it) > 0) {
+		} else if(foldable_amount(it, reason) > 0) {
 			action = "fold";
 			cmd = "fold " + it + "; equip ";
 		} else if(storage_amount(it) > 0 && pulls_remaining() == -1) { // Out of ronin (or in aftercore), prefer pulls to creation
@@ -687,7 +740,6 @@ void pickerGear(slot s) {
 		
 		if(count(toDisplay) > 0) {
 			buffer temp;
-			boolean show = false;
 			
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
@@ -704,9 +756,17 @@ void pickerGear(slot s) {
 			
 			sort toDisplay by -list[value];
 			
-			foreach i,it in toDisplay
-				if(temp.add_gear_option(it, name))
-					show = true;
+			int shown = 0;
+			string amountOption = name.get_option("amount");
+			int toShow = (amountOption == "all") ? -1 : to_int(amountOption);
+
+			foreach i,it in toDisplay {
+				if(temp.add_gear_option(it, name)) {
+					shown += 1;
+					if(toShow > 0 && shown >= toShow)
+						break;
+				}
+			}
 			
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
@@ -717,15 +777,32 @@ void pickerGear(slot s) {
 				break;
 			}
 			
-			if(show)
+			if(shown > 0)
 				picker.append(temp.to_string());
 		}
 	}
 	
-	add_gear_section("favorites", okFavGear);
-	
-	foreach reason in recommendedGear
-		add_gear_section(reason, recommendedGear[reason]);
+	string disp_str = vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")];
+	foreach i,section in split_string(disp_str,", *") {
+		string [int] spl = split_string(section,":");
+		string sectionname = spl[0];
+		string [string] options;
+		if(spl.count() > 1) {
+			for i from 1 to (spl.count() - 1) {
+				string [int] optspl = split_string(spl[i]," ?= ?");
+				if(optspl.count() == 2)
+					options[optspl[0]] = optspl[1];
+			}
+		}
+		float [item] list = recommendedGear[sectionname];
+		add_gear_section(sectionname, list);
+		forceSections[sectionname] = false;
+	}
+
+	foreach section,stillforce in forceSections {
+		if(stillforce)
+			add_gear_section(section, recommendedGear[section]);
+	}
 	
 	float mod_val(item it, string mod) {
 		switch(it) {
