@@ -838,16 +838,36 @@ img#fam_equip {
 	max-width:14px;
 	max-height:14px;
 }
+#chit_currency ul li.current a {
+	background:#dddddd;
+}
 #chit_currency ul li a:hover {
-	background:#eeeeee;
+	background:#bbbbbb;
 }
 #chit_currency li:hover ul {
 	display:block;
 	position:absolute;
+	border:1px solid gray;
 }
 #chit_currency li:hover li {
 	float:none;
 	font-size:12px;
+	border-bottom:1px solid gray;
+}
+#chit_currency li:hover li.currency_edit {
+	border-bottom:none;
+}
+#chit_currency span.currency_block {
+	margin-left:0.3em;
+	margin-right:0.3em;
+}
+#chit_currency span.currency_amount {
+	margin-right:0em;
+}
+#chit_currency img.currency_icon {
+	margin-left:0em;
+	padding-left:0.1em;
+	padding-right:0.2em;
 }
 
 img.chit_icon {

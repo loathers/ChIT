@@ -2608,12 +2608,11 @@ void allCurrency(buffer result) {
 		return it.image;
 	}
 	
-	boolean anycurr = false;
 	boolean [item] displayedCurrencies;
 	
 	void addCurrencyIcon(buffer result, item currency, string link) {
 		result.append(link);
-		result.append('<img src="/images/itemimages/');
+		result.append('<img class="currency_icon" src="/images/itemimages/');
 		result.append(image_of(currency));
 		result.append('" alt="');
 		result.append(name_of(currency));
@@ -2629,13 +2628,10 @@ void allCurrency(buffer result) {
 	void addCurrency(buffer result, item currency) {
 		if(displayedCurrencies[currency])
 			return;
-		if(anycurr)
-			result.append('&nbsp;&nbsp;');
 		
-		anycurr = true;
 		displayedCurrencies[currency] = true;
 		
-		result.append('<span>');
+		result.append('<span class="currency_amount">');
 		result.append(amount_of(currency));
 		result.append('</span>');
 		
@@ -2689,17 +2685,22 @@ void allCurrency(buffer result) {
 	string [int] dispCurrencies = split_string(chitCurrency, ",");
 	item current = to_item(dispCurrencies[0]);
 	
-	result.append('<div style="float:left"><ul id="chit_currency"><li><a href="#">');
-	foreach i,curr in dispCurrencies
+	result.append('<div style="float:left" class="hand"><ul id="chit_currency"><li>');
+	foreach i,curr in dispCurrencies {
+		result.append('<span class="currency_block">');
 		result.addCurrency(to_item(curr));
-	result.append('</a><ul>');
+		result.append('</span>');
+	}
+	result.append('<ul>');
 	
 	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
 	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\),\\s*") {
 		item it = to_item(cur);
 		if(amount_of(it) > 0 && !(currencies contains it)) {
 			currencies[it] = true;
-			result.append('<li><a href="/KoLmafia/sideCommand?cmd=');
+			result.append('<li');
+			if(displayedCurrencies[it]) result.append(' class="current"');
+			result.append('><a href="/KoLmafia/sideCommand?cmd=');
 			if(showMany) {
 				result.append(url_encode("set chitCurrency="));
 				if(list_contains(chitCurrency,cur,","))
@@ -2723,7 +2724,11 @@ void allCurrency(buffer result) {
 			result.append('"></a></li>');
 		}
 	}
-	result.append('</ul>');
+	result.append('<li class="currency_edit"><a onclick=\'var currencies = prompt("Edit displayed currencies: (Items that you have none of will not be displayed)", "');
+	result.append(vars["chit.currencies"]);
+	result.append('"); if(currencies!=null) { window.location.href = "/KoLmafia/sideCommand?cmd=zlib+chit.currencies+=+" + currencies.replace(/ /g,"+") + "&pwd=');
+	result.append(my_hash());
+	result.append('"; }\'>Edit List</a></li></ul>');
 	
 	result.append('</li></ul></div>');
 }
