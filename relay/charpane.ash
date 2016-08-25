@@ -1887,10 +1887,10 @@ void addGhostBusting(buffer result) {
 		return "main.php";
 	}
 
+	int turnsToGo = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	result.append('<tr><td class="label">Bust</td><td class="ghostbust info" colspan="2">');
 	if(ghostLocation == "") {
 		result.append('<a ');
-		int turnsToGo = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 		if(turnsToGo <= 0) {
 			if(hasPack && equipped_amount($item[protonic accelerator pack]) < 1) {
 				result.append('href="');
@@ -1912,7 +1912,9 @@ void addGhostBusting(buffer result) {
 		result.append(zone_url(ghostLocation));
 		result.append('" title="Bust a ghost here" target="mainpane">');
 		result.append(ghostLocation);
-		result.append('</a></td></tr>');
+		result.append(' (');
+		result.append(turnsToGo);
+		result.append(' turns)</a></td></tr>');
 	}
 }
 
