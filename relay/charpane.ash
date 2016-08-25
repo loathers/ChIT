@@ -1913,8 +1913,11 @@ void addGhostBusting(buffer result) {
 		result.append('" title="Bust a ghost here" target="mainpane">');
 		result.append(ghostLocation);
 		result.append(' (');
-		result.append(turnsToGo);
-		result.append(' turns)</a></td></tr>');
+		if(turnsToGo > 0) {
+			result.append(turnsToGo);
+			result.append(' turns');
+		} else result.append('next ready');
+		result.append(')</a></td></tr>');
 	}
 }
 
