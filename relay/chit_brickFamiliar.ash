@@ -727,7 +727,13 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	if(dropsLeft > 0) {
 		iconInfo.append(dropsLeft);
 		iconInfo.append(" ");
-		iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
+		if(f.drop_item != $item[none])
+			iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
+		else {
+			iconInfo.append(f.drop_name);
+			if(dropsLeft > 1)
+				iconInfo.append("s");
+		}
 		
 		if(f.drops_today == 0 && need_drop(f))
 			status = STATUS_ALLDROPS;
