@@ -332,14 +332,11 @@ void addFavGear() {
 			noncom.addItemIf(it, -numeric_modifier(it, "Combat Rate"), 0.5);
 			combat.addItemIf(it, numeric_modifier(it, "Combat Rate"), 0.5);
 			exp.addItemIf(it, numeric_modifier(it, "Experience") + numeric_modifier(it, my_primestat()+ " Experience"), 1);
-			float prisdmg = numeric_modifier(it, "Spooky Damage");
-			float eledmg = prisdmg;
-			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"] {
-				prisdmg = min(prisdmg, numeric_modifier(it, s));
+			float eledmg = numeric_modifier(it, "Spooky Damage");
+			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"]
 				eledmg += numeric_modifier(it, s);
-			}
-			prismatic.addItemIf(it, prisdmg, 1);
 			elemental.addItemIf(it, eledmg, 1);
+			prismatic.addItemIf(it, numeric_modifier(it, "Prismatic Damage"), 1);
 			res.addItemIf(it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance")
 				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 5);
 			fam.addItemIf(it, numeric_modifier(it, "Familiar Weight"), 1);
