@@ -1,0 +1,95 @@
+1
+# IMPORTANT NOTE: CHANGES TO THIS FILE WILL PROBABLY NOT TAKE EFFECT UNTIL YOU RELAUNCH MAFIA
+# Using a very large tab width is recommended for viewing this file
+# Category Name is used in chit.gear.display.in-run and chit.gear.display.aftercore
+# Multiple lines can have the same category name as long as they have different numeric modifiers
+# Numeric Modifiers are anything that works as an argument to numeric_modifier, see http://wiki.kolmafia.us/index.php?title=Modifiers
+# The Numeric Modifiers section is a comma separated list of these modifiers, with an optional multiplier in front
+# You can also have a lone number as a default score. This could be useful for purely boolean categories like melties, or for setting a threshold with a negative number
+# Attributes is a comma separated list of the following in the format of AttributeName: Value, AttributeName2: Value2 etc
+# You can have the same attribute multiple times with different arguments, although with some of them that might just make the category completely empty...
+# Attributes with a boolean argument mean that those items will not be displayed unless that situation is either true or false, depending on the argument
+
+# Attribute Name	Arguments
+# IsTrue	Any boolean modifier, again see the wiki. It must be true for an item to be listed
+# PvP	Boolean: The hippy stone is smashed
+# Drunk	Boolean: The player is overdrunk
+# Mainstat	Any stats, in the form of "Muscle" "Mysticality" or "Moxie" (case sensitive) can contain several, eg "Muscle or Moxie"
+#	The way you phrase it is irrelevant as long as it contains the full name of all stats you want in the proper case
+# Quest	Any argument to zlib's qprop function
+# Bounty	One of your current bounty targets contains this text
+# Path	Only display if you are in a specific path
+# Manual	If true, then the Numeric Modifiers list is instead treated as a list of items, rather than a list of modifiers. Items can be scored with multipliers.
+# Force	If true, EVERYTHING in this section (even from other lines, EVERYTHING with that section name) will display regardless of user settings
+
+# Category Name	Numeric Modifiers	Attributes (optional)
+item	Item Drop
+meat	Meat Drop
+ML	Monster Level
+-combat	-1*Combat Rate
++combat	Combat Rate
+exp	0.5*Experience, Muscle Experience	Mainstat: Muscle
+exp	0.5*Experience, Mysticality Experience	Mainstat: Mysticality
+exp	0.5*Experience, Moxie Experience	Mainstat: Moxie
+prismatic	Prismatic Damage
+elemental	Hot Damage, Cold Damage, Sleaze Damage, Stench Damage, Spooky Damage
+fam weight	Familiar Weight
+muscle	Muscle, 10*Muscle Percent
+mysticality	Mysticality, 10*Mysticality Percent
+moxie	Moxie, 10*Moxie Percent
+mainstat	Muscle, 10*Muscle Percent	Mainstat: Muscle
+mainstat	Mysticality, 10*Mysticality Percent	Mainstat: Mysticality
+mainstat	Moxie, 10*Moxie Percent	Mainstat: Moxie
+damage	Weapon Damage, 0.5*Weapon Damage Percent	Mainstat: Muscle
+damage	Spell Damage, Spell Damage Percent	Mainstat: Mysticality
+damage	Weapon Damage, 0.5*Weapon Damage Percent, Ranged Damage	Mainstat: Moxie
+melee damage	Weapon Damage, 0.5*Weapon Damage Percent
+spell damage	Spell Damage, Spell Damage Percent
+ranged damage	Weapon Damage, 0.5*Weapon Damage Percent, Ranged Damage
+hp regen	HP Regen Min, HP Regen Max
+mp regen	MP Regen Min, MP Regen Max
+initiative	Initiative
+smithsness	Smithsness
+today	1	IsTrue: Lasts Until Tomorrow
+rollover	Adventures	PvP: false, Drunk: true
+rollover	Adventures, PVP Fights	PvP: true, Drunk: true
+
+# Manual lists
+DRUNK	Drunkula's wineglass	Manual: true
+Wow	World's Best Adventurer sash	Manual: true
+astral	astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol, astral mask, astral pet sweater, astral shirt	Manual: true
+
+# Manual lists for quest stuff
+quest	pirate fledges	Manual: true, Quest: questL11Palindome == unstarted, Quest: questL13Final != finished
+quest	black glass	Manual: true, Quest: questS02Monkees != finished
+quest	Talisman o' Namsilat, Mega Gem	Manual: true, Quest: questL11Palindome != finished
+quest	titanium assault umbrella, amulet of extreme plot significance	Manual: true, Quest: questL10Garbage == step7
+quest	mohawk wig	Manual: true, Quest: questL10Garbage == step9
+quest	frilly skirt	Manual: true, Quest: questM12Pirate == step2
+quest	blackberry galoshes	Manual: true, Quest: questL11Black >= started, Quest: questL11Black <= step1
+quest	antique machette, muculent machete, machetito, papier-m&#226;ch&#233;te	Manual: true, Quest: questL11Worship >= step3, Quest: questL11Worship <= step4
+quest	Surgeonosity	Quest: hiddenHospitalProgress == 1
+quest	2*UV-resistant compass, 3*ornate dowsing rod	Manual: true, Quest: questL11Desert == started
+quest	Lord Spookyraven's spectacles	Manual: true, Quest: questL11Manor >= started, Quest: questL11Manor <= step1
+quest	unstable fulminate	Manual: true, Quest: questL11Manor >= step1, Quest: questL11Manor <= step3
+quest	Clownosity	Quest: questG04Nemesis == step5
+quest	Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages	Manual: true, Quest: questG04Nemesis == step8
+quest	Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages	Manual: true, Quest: questG04Nemesis == step27
+quest	fouet de tortue-dressage, spaghetti cult robe	Manual: true, Quest: questG04Nemesis >= step25, Quest: questG04Nemesis <= step26
+quest	spooky glove	Manual: true, Quest: questM03Bugbear == step2
+
+# Path stuff
+path	Yearbook Club Camera, over-the-shoulder Folder Holder	Manual: true, Path: KOLHS
+path	The Crown of Ed the Undying, 7961, obsidian nutcracker	Manual: true, Path: Actually Ed the Undying
+path	pool skimmer, lightning rod, thunder down underwear, famous blue raincoat, thor's pliers	Manual: true, Path: Heavy Rains
+path	Random Monster Modifiers	Path: One Crazy Random Summer
+path	Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos and Chickpeas, Hellfire Spicy Beans, Frigid Northern Beans, World's Blackest-Eyed Peas, Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans	Manual: true, Path: Avatar of West of Loathing
+path	lead umbrella	Manual: true, Path: Nuclear Autumn
+
+# Bounty hunting stuff
+bounty	pirate fledges	Manual: true, Bounty: warrrrrt, Force: true
+bounty	Talisman o' Namsilat	Manual: true, Bounty: bit of wilted lettuce, Force: true
+
+# Charter stuff
+charter	Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker, Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder, GPS-tracking wristwatch, lube-shoes, Dinsey mascot mask, trash net	Manual: true
+
