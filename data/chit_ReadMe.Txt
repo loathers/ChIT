@@ -112,9 +112,14 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						prismatic - gear with prismatic elemental damage
 						elemental - gear with any elemental damage at all
 						fam weight - gear with +familiar weight
+						mainstat - +mainstat gear
 						muscle - +muscle gear
 						myticality - +myst gear
 						moxie - +mox gear
+						melee damage - damage with melee weapons
+						spell damage - damage with spells, not including elemental spell damage
+						ranged damage - damage with ranged weapons
+						damage - melee damage/spell damage/ranged damage for muscle/myst/moxie classes respectively
 						hp regen - gear with hp regen
 						mp regen - gear with mp regen
 						max hp - +max hp gear
@@ -128,6 +133,8 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						DRUNK - just Drunkula's wineglass, will only display when overdrunk
 						Wow - World's best adventurer?! Wow! Good for you! A+!
 					Category names ARE case sensitive. The list is comma delimited.
+					You can also create your own custom categories, by editting data/chit_GearCategories.txt
+					Explanation of how to do so is provided via comments in data/chit_GearCategories.txt
 					Certain special categories that are too niche to include will always be displayed (ex. bounty is basically just the fledges or the talisman o' namsilat when needed for bounty hunting)
 					You can include some options with a category by appending a : and then <option>=<value>
 					Valid options are:
