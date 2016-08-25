@@ -159,78 +159,20 @@ void addFavGear() {
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($item[continuum transfunctioner], "quest");
-	if(get_property("questL11Palindome") == "unstarted" && !aftercore)
-		addGear($item[pirate fledges], "quest");
-	else if(get_property("currentHardBountyItem").contains_text("warrrrrt"))
-		forceAddGear($item[pirate fledges], "bounty");
 	
-	if(get_property("questS02Monkees") != "finished")
-		addGear($items[black glass], "quest");
-		
-	if(get_property("questL11Palindome") != "finished")
-		addGear($items[Talisman o' Namsilat,Mega Gem], "quest");
-	else if(get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
-		forceAddGear($item[Talisman o' Namsilat], "bounty");
-	else if(get_property("ghostLocation") == "Inside the Palindome")
+	if(get_property("ghostLocation") == "Inside the Palindome")
 		forceAddGear($item[Talisman o' Namsilat], "ghost");
 	
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
 	if(!aftercore && get_property("dailyDungeonDone") == "false" && total_keys() < 3)
 		addGear($item[ring of Detect Boring Doors], "quest");
-	switch(get_property("questL10Garbage")) {
-		// castle basement unlocked, but not cleared
-		case "step7":
-			addGear($items[titanium assault umbrella,amulet of extreme plot significance], "quest");
-			break;
-		// castle top floor unlocked, but not cleared
-		case "step9":
-			addGear($item[mohawk wig], "quest");
-			break;
-	}
-	if(get_property("questM12Pirate") == "step2")
-		addGear($item[frilly skirt], "quest");
-	string blackForest = get_property("questL11Black");
-	if(blackForest == "started" || blackForest == "step1")
-		addGear($item[blackberry galoshes], "quest");
-	if($strings[step3, step4] contains get_property("questL11Worship")) {
-		if(item_amount($item[antique machete]) > 0)
-			addGear($item[antique machete], "quest");
-		if(get_property("hiddenHospitalProgress") == "1")
-			addGear($items[surgical apron, bloodied surgical dungarees, surgical mask, head mirror, half-size scalpel], "quest");
-	}
-	if(get_property("questL11Desert") == "started")
-		addGear($items[UV-resistant compass, ornate dowsing rod], "quest");
-	if($strings[step1,step2,step3] contains get_property("questL11Manor"))
-		addGear($item[unstable fulminate], "quest");
-	if($strings[started, step1] contains get_property("questL11Manor"))
-		addGear($item[Lord Spookyraven's spectacles], "quest");
 	
 	if(get_property("questL13Final") == "step6" && available_amount($item[beehive]) < 1)
 		forceAddGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
 		
 
-	// Nemesis Quest
-	switch(get_property("questG04Nemesis")) {
-	case "step5":  // Kill Beelzebozo
-		addGear($items[clown shoes,bloody clown pants,balloon helmet,balloon sword,foolscap fool's cap,big red clown nose,polka-dot bow tie,clown wig,clownskin belt,clownskin buckler,clown whip,clownskin harness], "quest");
-		break;
-	case "step8":	// Fight Nemesis in The Dark and Dank and Sinister Cave
-	case "step27":	// Fight Nemesis on Secret Tropical Island Volcano Lair
-		addGear($items[Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages], "quest");
-		break;
-	case "step25":
-	case "step26":
-		addGear($items[fouet de tortue-dressage, spaghetti cult robe], "quest");
-		break;
-	}
-	
 	// Charter zone quest equipment
-	addGear($items[
-		Paradaisical Cheeseburger recipe, Taco Dan's Taco Stand Cocktail Sauce Bottle, sprinkle shaker,
-		Personal Ventilation Unit, gore bucket,encrypted micro-cassette recorder,GPS-tracking wristwatch,
-		lube-shoes, Dinsey mascot mask, trash net
-	], "charter");
 	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
 		addGear($items[smooth velvet pants, smooth velvet shirt, smooth velvet hat, smooth velvet pocket square, smooth velvet socks, smooth velvet hanky], "charter");
 	if(get_property("coldAirportAlways") == "true" || get_property("_coldAirportToday") == "true") {
@@ -244,127 +186,140 @@ void addFavGear() {
 	// Miscellaneous
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
-		addGear($item[protonic accelerator pack], "ghost");
-
-	if(get_property("questM03Bugbear") == "step2") // Felonia
-		addGear($item[spooky glove], "quest");
-	
-	// Path specific stuff
-	switch(my_path()) {
-	case "KOLHS":
-		addGear($items[Yearbook Club Camera, over-the-shoulder Folder Holder], "path");
-		break;
-	case "Actually Ed the Undying":
-		addGear($items[The Crown of Ed the Undying, 7961, obsidian nutcracker], "path");
-		break;
-	case "Heavy Rains":
-		addGear($items[pool skimmer, lightning rod, thunder down underwear, famous blue raincoat, thor's pliers], "path");
-		break;
-	case "One Crazy Random Summer":
-		addGear($items[dice ring, dice belt buckle, dice-print pajama pants, dice-shaped backpack, dice-print do-rag, dice sunglasses], "path");
-		break;
-	case "Avatar of West of Loathing":
-		addGear($items[Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos and Chickpeas, Hellfire Spicy Beans, Frigid Northern Beans, World's Blackest-Eyed Peas, 
-			Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans], "path");
-		break;
-	}
+		forceAddGear($item[protonic accelerator pack], "ghost");
 	
 	// Find varous stuff instead of hardcoding lists
 	static {
+		record modifier {
+			float multiplier;
+			string mod;
+		};
 		record gear_category {
 			float [item] list;
 			string name;
-			boolean pvpOnly;
-			boolean noPvpOnly;
-			boolean drunkOnly;
+			modifier [int] modifiers;
+			string [string, int] attributes;
 		};
 		gear_category [int] catList;
-		gear_category newCategory(string name) {
+		gear_category newCategory(string name, string mods, string attrs) {
 			gear_category cat;
 			cat.name = name;
-			cat.pvpOnly = false;
-			cat.noPvpOnly = false;
-			cat.drunkOnly = false;
+			foreach i,mod in mods.split_string(" *, *") {
+				string [int] split = mod.split_string(" *\\* *");
+				modifier curr;
+				if(split.count() == 1) {
+					if(split[0].to_float() != 0.0) {
+						curr.multiplier = split[0].to_float();
+						curr.mod = "flatval";
+					} else {
+						curr.multiplier = 1;
+						curr.mod = split[0];
+					}
+				} else {
+					curr.multiplier = to_float(split[0]);
+					curr.mod = split[1];
+				}
+				cat.modifiers[i] = curr;
+			}
+			if(attrs != "") {
+				foreach i,attr in attrs.split_string(" *, *") {
+					string [int] split = attr.split_string(" *: *");
+					if(split.count() == 2) {
+						string [int] attrVals = cat.attributes[split[0]];
+						attrVals[attrVals.count()] = split[1];
+						cat.attributes[split[0]] = attrVals;
+					} else
+						vprint("CHIT: Malformed gear category attribute (" + attr + ")", "red", 1);
+				}
+			}
 
 			catList[catList.count()] = cat;
 
 			return cat;
 		}
-		void addItemIf(gear_category cat, item it, float val, float min) {
-			if(val >= min)
-				cat.list[it] = val;
-		}
-		
-		gear_category itemDrop = newCategory("item");
-		gear_category meatDrop = newCategory("meat");
-		gear_category ML = newCategory("ML");
-		gear_category noncom = newCategory("-combat");
-		gear_category combat = newCategory("+combat");
-		gear_category exp = newCategory("exp");
-		gear_category prismatic = newCategory("prismatic");
-		gear_category elemental = newCategory("elemental");
-		gear_category res = newCategory("res");
-		gear_category fam = newCategory("fam weight");
-		gear_category mus = newCategory("muscle");
-		gear_category mys = newCategory("mysticality");
-		gear_category mox = newCategory("moxie");
-		gear_category hpreg = newCategory("hp regen");
-		gear_category mpreg = newCategory("mp regen");
-		gear_category maxhp = newCategory("max hp");
-		gear_category maxmp = newCategory("max mp");
-		gear_category init = newCategory("initiative");
-		gear_category smithsness = newCategory("smithsness");
-		gear_category today = newCategory("today");
-		gear_category pvprollover = newCategory("rollover");
-		pvprollover.pvpOnly = true;
-		pvprollover.drunkOnly = true;
-		gear_category nopvprollover = newCategory("rollover");
-		nopvprollover.noPvpOnly = true;
-		pvprollover.drunkOnly = true;
-		gear_category drunk = newCategory("DRUNK");
-		drunk.drunkOnly = true;
 
-		float [string, item] ascendGear, drunkGear;
+		string [string,string] categories;
+		if(!file_to_map("chit_GearCategories.txt", categories))
+			vprint("CHIT: chit_GearCategories.txt could not be loaded", "red", 1);
+		foreach name,mods,attrs in categories
+			newCategory(name, mods, attrs);
+		
 		foreach it in $items[] {
-			itemDrop.addItemIf(it, numeric_modifier(it, "Item Drop"), 1);
-			meatDrop.addItemIf(it, numeric_modifier(it, "Meat Drop"), 1);
-			ML.addItemIf(it, numeric_modifier(it, "Monster Level"), 1);
-			noncom.addItemIf(it, -numeric_modifier(it, "Combat Rate"), 0.5);
-			combat.addItemIf(it, numeric_modifier(it, "Combat Rate"), 0.5);
-			exp.addItemIf(it, numeric_modifier(it, "Experience") + numeric_modifier(it, my_primestat()+ " Experience"), 1);
-			float eledmg = numeric_modifier(it, "Spooky Damage");
-			foreach s in $strings["Stench Damage", "Hot Damage", "Cold Damage", "Sleaze Damage"]
-				eledmg += numeric_modifier(it, s);
-			elemental.addItemIf(it, eledmg, 1);
-			prismatic.addItemIf(it, numeric_modifier(it, "Prismatic Damage"), 1);
-			res.addItemIf(it, numeric_modifier(it, "Spooky Resistance") + numeric_modifier(it, "Stench Resistance") + numeric_modifier(it, "Hot Resistance")
-				+ numeric_modifier(it, "Cold Resistance") + numeric_modifier(it, "Sleaze Resistance"), 5);
-			fam.addItemIf(it, numeric_modifier(it, "Familiar Weight"), 1);
-			init.addItemIf(it, numeric_modifier(it, "Initiative"), 1);
-			hpreg.addItemIf(it, numeric_modifier(it, "HP Regen Min") + numeric_modifier(it, "HP Regen Max"), 1);
-			mpreg.addItemIf(it, numeric_modifier(it, "MP Regen Min") + numeric_modifier(it, "MP Regen Max"), 1);
-			maxhp.addItemIf(it, numeric_modifier(it, "Maximum HP") + numeric_modifier(it, "Maximum HP Percent"), 1);
-			maxmp.addItemIf(it, numeric_modifier(it, "Maximum MP") + numeric_modifier(it, "Maximum MP Percent"), 1);
-			mox.addItemIf(it, numeric_modifier(it, "Moxie") + numeric_modifier(it, "Moxie Percent"), 1);
-			mus.addItemIf(it, numeric_modifier(it, "Muscle") + numeric_modifier(it, "Muscle Percent"), 1);
-			mys.addItemIf(it, numeric_modifier(it, "Mysticality") + numeric_modifier(it, "Mysticality Percent"), 1);
-			smithsness.addItemIf(it, numeric_modifier(it, "Smithsness"), 1);
-			if(string_modifier(it, "Evaluated Modifiers").contains_text("Lasts Until Rollover"))
-				today.list[it] = 1;
-			nopvprollover.addItemIf(it, numeric_modifier(it, "Adventures"), 1);
-			pvprollover.addItemIf(it, numeric_modifier(it, "Adventures") + numeric_modifier(it, "PVP Fights"), 1);
+			foreach i,cat in catList {
+				if(!to_boolean(cat.attributes["Manual", 0])) {
+					float score = 0;
+					foreach i,mod in cat.modifiers {
+						if(mod.mod == "flatval")
+							score += mod.multiplier;
+						else
+							score += numeric_modifier(it, mod.mod) * mod.multiplier;
+					}
+					foreach attr,i,val in cat.attributes {
+							switch(attr) {
+								case "IsTrue":
+									if(!boolean_modifier(it,val))
+										score = -1;
+									break;
+							}
+					}
+					if(score > 0)
+						cat.list[it] = score;
+				}
+			}
 		}
-		drunk.list[$item[Drunkula's wineglass]] = 100;
+		foreach i,cat in catList {
+			if(to_boolean(cat.attributes["Manual", 0])) {
+				foreach i,mod in cat.modifiers
+					cat.list[to_item(mod.mod)] = mod.multiplier;
+			}
+		}
 	}
 	
-	foreach i,cat in catList
-		if((!cat.pvpOnly || hippy_stone_broken()) && (!cat.noPvpOnly || !hippy_stone_broken()) && (!cat.drunkOnly || (my_inebriety() > inebriety_limit())))
+	foreach i,cat in catList {
+		boolean ok = true;
+		boolean force = false;
+		foreach attr,i,val in cat.attributes {
+			switch(attr) {
+				case "PvP":
+					if(to_boolean(val) != hippy_stone_broken())
+						ok = false;
+					break;
+				case "Drunk":
+					if(to_boolean(val) != (my_inebriety() > inebriety_limit()))
+						ok = false;
+					break;
+				case "Mainstat":
+					if(index_of(val, my_primestat()) < 0)
+						ok = false;
+					break;
+				case "Quest":
+					if(!qprop(val))
+						ok = false;
+					break;
+				case "Bounty":
+					if(index_of(get_property("currentEasyBountyItem"), val) < 0 &&
+						 index_of(get_property("currentHardBountyItem"), val) < 0 &&
+						 index_of(get_property("currentSpecialBountyItem"), val) < 0)
+						ok = false;
+					break;
+				case "Path":
+					if(my_path() != val)
+						ok = false;
+					break;
+				case "Force":
+					force = to_boolean(val);
+					break;
+			}
+			if(!ok)
+				break;
+		}
+		if(ok) {
+			if(force)
+				forceSections[cat.name] = true;
 			addGear(cat.list, cat.name);
+		}
+	}
 		
-	// some handy in-run stuff
-	addGear($item[World's Best Adventurer sash], "Wow");
-	addGear($items[astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol,
-		astral mask, astral pet sweater, astral shirt], "astral"); // You must have taken this for a reason
 	
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
