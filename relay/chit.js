@@ -150,7 +150,7 @@ $(document).ready(function () {
 	});
 	
 	$(window).resize();
-	$(window).resize(); // This is not an error. soolar added it in r420 and it is necessary.
+	$(window).resize(); // This is redundant, but soolar added it in r420 and it is necessary.
 	
 }); 
 

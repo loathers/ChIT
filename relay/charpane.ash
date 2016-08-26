@@ -1910,7 +1910,13 @@ void addGhostBusting(buffer result) {
 	else {
 		result.append('<a href="');
 		result.append(zone_url(ghostLocation));
-		result.append('" title="Bust a ghost here" target="mainpane">');
+		result.append('" title="Bust a ghost here');
+		if(turnsToGo > 0) {
+			result.append('\nReplacement ghost in ');
+			result.append(turnsToGo);
+			result.append(' turns');
+		}
+		result.append('" target="mainpane">');
 		result.append(ghostLocation);
 		result.append(' (');
 		if(turnsToGo > 0) {
