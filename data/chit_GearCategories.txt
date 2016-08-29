@@ -67,7 +67,7 @@ quest	titanium assault umbrella, amulet of extreme plot significance	Manual: tru
 quest	mohawk wig	Manual: true, Quest: questL10Garbage == step9
 quest	frilly skirt	Manual: true, Quest: questM12Pirate == step2
 quest	blackberry galoshes	Manual: true, Quest: questL11Black >= started, Quest: questL11Black <= step1
-quest	antique machette, muculent machete, machetito, papier-m&#226;ch&#233;te	Manual: true, Quest: questL11Worship >= step3, Quest: questL11Worship <= step4
+quest	antique machete, muculent machete, machetito, papier-m&#226;ch&#233;te	Manual: true, Quest: questL11Worship >= step3, Quest: questL11Worship <= step4
 quest	Surgeonosity	Quest: hiddenHospitalProgress == 1
 quest	2*UV-resistant compass, 3*ornate dowsing rod	Manual: true, Quest: questL11Desert == started
 quest	Lord Spookyraven's spectacles	Manual: true, Quest: questL11Manor >= started, Quest: questL11Manor <= step1
