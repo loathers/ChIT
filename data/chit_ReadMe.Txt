@@ -105,6 +105,8 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						astral - astral equipment from valhalla
 						item - gear that gives a +item drop bonus
 						meat - gear that gives a +meat drop bonus
+						-combat - gear that makes monsters less attracted to you
+						+combat - gear that makes monsters more attracted to you
 						ML - gear that gives +ML
 						exp - gear that gives general +substats or main +substats
 						quest - gear needed for certain quests
@@ -142,7 +144,7 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						pull=(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
 						create=(true/false): whether to display items when you could make them but don't have any made
 					When these options are not explicitly provided for a category, the defaults from the next variable will be used.
-					Default: favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all
+					Default: favorites:amount=all:pull=true:create=true, astral:amount=all, item, -combat, +combat, quest:amount=all:pull=true:create=true, today:amount=all:create=false, ML, initiative, path:amount=all, prismatic, res, meat, charter:amount=all, rollover, DRUNK:amount=all, Wow:amount=all
 
 chit.gear.display.in-run.defaults: Comma delimited list of default options to be used in chit.gear.display.in-run
 					Default: create=false, pull=false, amount=1

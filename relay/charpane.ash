@@ -3862,7 +3862,8 @@ buffer modifyPage(buffer source) {
 	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 	setvar("chit.toolbar.moods", "true");
-	setvar("chit.gear.display.in-run", "favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all");
+	string gearDispInRunDefault = "favorites:amount=all:pull=true:create=true, astral:amount=all, item, -combat, +combat, quest:amount=all:pull=true:create=true, today:amount=all:create=false, ML, initiative, path:amount=all, prismatic, res, meat, charter:amount=all, rollover, DRUNK:amount=all, Wow:amount=all";
+	setvar("chit.gear.display.in-run", gearDispInRunDefault);
 	setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
 	setvar("chit.gear.display.in-run.defaults", "create=false, pull=false, amount=1");
 	setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
@@ -3871,7 +3872,8 @@ buffer modifyPage(buffer source) {
 	setvar("chit.thrall.showname", false);
 	
 	// Check var version.
-	if(get_property("chitVarVer").to_int() < 3) {
+	int varVer = get_property("chitVarVer").to_int();
+	if(varVer < 3) {
 		if(!vars["chit.walls.layout"].contains_text("vykea")) {
 			if(vars["chit.walls.layout"].contains_text("effects"))
 				vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("effects", "vykea,effects");
@@ -3882,6 +3884,14 @@ buffer modifyPage(buffer source) {
 			vars["chit.roof.layout"] += ",gear";
 		updatevars();
 		set_property("chitVarVer", "3");
+	}
+	// Update in-run gear display IF it has not been changed from the old default
+	if(varVer < 4) {
+		if(vars["chit.gear.display.in-run"] == "favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all") {
+			vars["chit.gear.display.in-run"] = gearDispInRunDefault;
+			updatevars();
+		}
+		set_property("chitVarVer", "4");
 	}
 	
 	//Check for updates (once a day)
