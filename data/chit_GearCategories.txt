@@ -77,9 +77,10 @@ quest	Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-A
 quest	Hammer of Smiting, Chelonian Morningstar, Greek Pasta Spoon of Peril, 17-Alarm Saucepan, Shagadelic Disco Banjo, Squeezebox of the Ages	Manual: true, Quest: questG04Nemesis == step27
 quest	fouet de tortue-dressage, spaghetti cult robe	Manual: true, Quest: questG04Nemesis >= step25, Quest: questG04Nemesis <= step26
 quest	spooky glove	Manual: true, Quest: questM03Bugbear == step2
+quest	E.M.U. Unit	Manual: true, Quest: questF04Elves == step3
 
 # Path stuff
-path	Yearbook Club Camera, over-the-shoulder Folder Holder	Manual: true, Path: KOLHS
+path	Yearbook Club Camera, over-the-shoulder Folder Holder, twisted-up wet towel	Manual: true, Path: KOLHS
 path	The Crown of Ed the Undying, 7961, obsidian nutcracker	Manual: true, Path: Actually Ed the Undying
 path	pool skimmer, lightning rod, thunder down underwear, famous blue raincoat, thor's pliers	Manual: true, Path: Heavy Rains
 path	Random Monster Modifiers	Path: One Crazy Random Summer

@@ -2939,6 +2939,8 @@ void bakeCharacter() {
 	}
 	
 	string myGuild() {
+		if(my_path() == "Nuclear Autumn")
+			return "shop.php?whichshop=mutate";
 		switch(my_class()) {
 		case $class[Seal Clubber]:
 		case $class[Turtle Tamer]:
@@ -3009,7 +3011,7 @@ void bakeCharacter() {
 		case "Actually Ed the Undying": return "The Undying";
 		case "Avatar of West of Loathing": return "West of Loathing";
 		case "The Source": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=town_wrong&action=townwrong_oracle'>The Source</a>";
-		case "Nuclear Autumn": return "<a target='mainpane' style='font-weight:normal;' href='shop.php?whichshop=mutate'>Nuclear Autumn</a>";
+		case "Nuclear Autumn": return "<a target='mainpane' style='font-weight:normal;' href='campground.php'>Nuclear Autumn</a>";
 		}
 		return my_path();
 	}
@@ -3066,15 +3068,11 @@ void bakeCharacter() {
 	}
 	pickOutfit();
 	result.append('<td class="label">');
-	if(my_path() == "Nuclear Autumn")
-		result.append(myTitle());
-	else {
-		result.append('<a target="mainpane" href="');
-		result.append(myGuild());
-		result.append('" title="Visit your guild">');
-		result.append(myTitle());
-		result.append('</a>');
-	}
+	result.append('<a target="mainpane" href="');
+	result.append(myGuild());
+	result.append('" title="Visit your guild">');
+	result.append(myTitle());
+	result.append('</a>');
 	result.append('</td><td class="level" rowspan="2" style="width:30px;');
 	result.append(councilStyle);
 	result.append('"><a target="mainpane" href="council.php" title="');
