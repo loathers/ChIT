@@ -33,6 +33,7 @@ exp	0.5*Experience, Mysticality Experience	Mainstat: Mysticality
 exp	0.5*Experience, Moxie Experience	Mainstat: Moxie
 prismatic	Prismatic Damage
 elemental	Hot Damage, Cold Damage, Sleaze Damage, Stench Damage, Spooky Damage
+resistance	Hot Resistance, Cold Resistance, Sleaze Resistance, Stench Resistance, Spooky Resistance
 fam weight	Familiar Weight
 muscle	Muscle, 10*Muscle Percent
 mysticality	Mysticality, 10*Mysticality Percent
