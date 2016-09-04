@@ -113,6 +113,7 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 						path - gear that is particularly useful in your current path
 						prismatic - gear with prismatic elemental damage
 						elemental - gear with any elemental damage at all
+						resistance - gear with any elemental resistance at all
 						fam weight - gear with +familiar weight
 						mainstat - +mainstat gear
 						muscle - +muscle gear
