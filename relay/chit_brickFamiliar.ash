@@ -272,6 +272,10 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				}
 			}
 		}
+		if(my_familiar() == $familiar[Trick-or-Treating Tot])
+			foreach piece in $items[li'l eyeball costume, li'l candy corn costume, li'l robot costume, li'l knight costume, li'l liberty costume, li'l unicorn costume]
+				if(available_amount(piece) == 0 && npc_price(piece) > 0 && npc_price(piece) <= my_meat())
+					addEquipment(piece, "retrieve");
 
 		//Make Sugar Shield
 		item shield = $item[sugar shield];
@@ -693,6 +697,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		}
 		break;
 	case $familiar[Intergnat]:
+		int status = STATUS_NORMAL;
 		string demon = get_property("demonName12");
 		if(length(demon) < 5 || substring(demon,0,5) != "Neil ") {
 			iconInfo.append("Demon name unknown");
@@ -702,7 +707,22 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			iconInfo.append("Demon name is ");
 			iconInfo.append(demon);
 		}
-		break;
+		if(!can_interact()) {
+			if(available_amount($item[scroll of ancient forbidden unspeakable evil]) == 0) {
+				iconInfo.append(",\n    Need AFUE scroll");
+				status = STATUS_HASDROPS;
+			}
+			if(available_amount($item[thin black candle]) < 3) {
+				if(!iconInfo.contains_text("Need AFUE scroll"))
+					iconInfo.append(",\n    Need ");
+				else
+					iconInfo.append(", Need ");
+				iconInfo.append(to_string(3 - available_amount($item[thin black candle])));
+				iconInfo.append(" more candles");
+				status = STATUS_HASDROPS;
+			}
+		}
+		return status;
 	case $familiar[Reanimated Reanimator]:
 		if(get_property("_badlyRomanticArrows").to_int() == 0) {
 			iconInfo.append("Wink available");
