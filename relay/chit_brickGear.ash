@@ -9,6 +9,9 @@ string gearName(item it) {
 	string notes = "";
 
 	switch(it) {
+		case $item[mayfly bait necklace]:
+			if(hasDrops(it) > 0) notes = hasDrops(it) + ' summons left';
+			break;
 		case $item[pantsgiving]:
 			notes = (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes';
 			break;
@@ -907,6 +910,25 @@ void pickerGear(slot s) {
 	chitPickers["gear" + s] = picker;
 }
 
+int dangerLevel(item it) {
+	switch(it) {
+		case $item[Mega Gem]:
+			return (qprop("questL11Palindome") ? 2 : -1);
+		case $item[Talisman o' Namsilat]:
+			if(qprop("questL11Palindome") && !get_property("currentHardBountyItem").contains_text("bit of wilted lettuce"))
+				return 1;
+			break;
+		case $item[UV-resistant compass]: case $item[ornate dowsing rod]:
+			if(get_property("desertExploration").to_int() < 100) {
+				if(my_location() != $location[The Arid, Extra-Dry Desert])
+					return 1;
+			} else
+				return 2;
+			break;
+	}
+	return 0;
+}
+
 // Part of gear block that can be included in stats for a smaller footprint
 void addGear(buffer result) {
 	addFavGear();
@@ -929,7 +951,7 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s)));
+		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s)), dangerLevel(equipped_item(s)));
 		result.append('</a></span>');
 		pickerGear(s);
 	}
