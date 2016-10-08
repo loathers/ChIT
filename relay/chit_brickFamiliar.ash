@@ -451,6 +451,7 @@ int hasBjornDrops(familiar f) {
 // TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
+		case $item[mayfly bait necklace]: return 30 - to_int(get_property("_mayflySummons"));
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
 		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
 		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
