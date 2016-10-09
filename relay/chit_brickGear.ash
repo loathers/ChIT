@@ -9,6 +9,9 @@ string gearName(item it) {
 	string notes = "";
 
 	switch(it) {
+		case $item[V for Vivala mask]:
+			if(hasDrops(it) > 0) notes = hasDrops(it) + ' adv gainable';
+			break;
 		case $item[mayfly bait necklace]:
 			if(hasDrops(it) > 0) notes = hasDrops(it) + ' summons left';
 			break;

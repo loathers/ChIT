@@ -443,6 +443,7 @@ int hasBjornDrops(familiar f) {
 	switch(f) {
 		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDropsCrown",1);
 		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDropsCrown",2);
+		case $familiar[trick-or-treating tot]: return checkDrops("_hoardedCandyDropsCrown",3);
 	}
 	
 	return 0;
@@ -451,6 +452,7 @@ int hasBjornDrops(familiar f) {
 // TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
+		case $item[V for Vivala mask]: return 10 - to_int(get_property("_vmaskAdv"));
 		case $item[mayfly bait necklace]: return 30 - to_int(get_property("_mayflySummons"));
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
 		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
@@ -751,9 +753,17 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		if(f.drop_item != $item[none])
 			iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
 		else {
-			iconInfo.append(f.drop_name);
-			if(dropsLeft > 1)
-				iconInfo.append("s");
+			if(f.drop_name != "") {
+				iconInfo.append(f.drop_name);
+				if(dropsLeft > 1)
+					iconInfo.append("s");
+			}
+			else switch(f) {
+				case $familiar[trick-or-treating tot]:
+					if(dropsLeft > 1) iconInfo.append("candies");
+					else iconInfo.append("candy");
+					break;
+			}
 		}
 		
 		if(f.drops_today == 0 && need_drop(f))
