@@ -758,7 +758,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 				if(dropsLeft > 1)
 					iconInfo.append("s");
 			}
-			else switch(f) {
+		else switch(f) {
 				case $familiar[trick-or-treating tot]:
 					if(dropsLeft > 1) iconInfo.append("candies");
 					else iconInfo.append("candy");
@@ -1305,7 +1305,7 @@ void bakeFamiliar() {
 	string famtype = '<a target=mainpane href="familiar.php" class="familiarpick">(None)</a>';
 	string equipimage = "blank.gif";
 	string equiptype, actortype, famweight, info, famstyle, charges, chargeTitle;
-	boolean isFed = false;
+	boolean isFed = source.contains_text('</a></b>, the <i>extremely</i> well-fed <b>');
 	string weight_title = "Buffed Weight";
 	string name_followup = "";
 	
