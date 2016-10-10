@@ -668,7 +668,8 @@ buff parseBuff(string source) {
 	if(myBuff.effectName.contains_text("Romantic Monster window"))
 		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
 	else if(myBuff.effectName.contains_text("Digitize Monster"))
-		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster");
+		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster") + " #" +
+                  (to_int(get_property("_sourceTerminalDigitizeMonsterCount")) + 1);
 	
 	//Replace effect icons, if enabled
 	string [string] classmap;
