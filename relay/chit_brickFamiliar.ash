@@ -682,14 +682,19 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		break;
 	case $familiar[Crimbo Shrub]:
-		effect ray;
-		if(get_property("shrubGifts") == "yellow")
-			ray = $effect[Everything Looks Yellow];
-		else if(get_property("shrubGifts") == "meat")
-			ray = $effect[Everything Looks Red];
-		else break;
-		if(have_effect(ray) == 0) {
+		switch(get_property("shrubGifts")) {
+		case "yellow":
+			if(have_effect($effect[Everything Looks Yellow]) > 0)
+				break;
 			iconInfo.append("Ready to fire!");
+			return STATUS_ALLDROPS;
+		case "meat":
+			if(have_effect($effect[Everything Looks Red]) > 0)
+				break;
+			iconInfo.append("Ready to fire!");
+			return STATUS_ALLDROPS;
+		case "": // If Crimbo Shrub has not yet been set up this ascension
+			iconInfo.append("Needs to be decorated!");
 			return STATUS_ALLDROPS;
 		}
 		break;
@@ -757,8 +762,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 				iconInfo.append(f.drop_name);
 				if(dropsLeft > 1)
 					iconInfo.append("s");
-			}
-		else switch(f) {
+			} else switch(f) {
 				case $familiar[trick-or-treating tot]:
 					if(dropsLeft > 1) iconInfo.append("candies");
 					else iconInfo.append("candy");
