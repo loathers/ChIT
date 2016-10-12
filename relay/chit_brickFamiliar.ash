@@ -709,7 +709,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		string demon = get_property("demonName12");
 		if(length(demon) < 5 || substring(demon,0,5) != "Neil ") {
 			iconInfo.append("Demon name unknown");
-			return STATUS_HASDROPS;
+			status = STATUS_HASDROPS;
 		}
 		else {
 			iconInfo.append("Demon name is ");
