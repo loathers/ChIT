@@ -289,28 +289,6 @@ buffer buildTracker() {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//L7: crypt, questL07Cyrptic
 	if (Started("questL07Cyrptic")) {
 		void evilat(buffer report, string place) {
@@ -342,12 +320,6 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr></table></td></tr>");
 	}
-	
-	
-	
-	
-	
-	
 	
 	
 	//Check for Island unlock and Swashbuckling Getup
@@ -429,16 +401,6 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -641,7 +603,15 @@ buffer buildTracker() {
 			case "step1": case "step2":
 				result.append("<a target=mainpane href=\"manor3.php\">Manor Cellar</a>");
 				result.append(" - Find Lord Spookyraven");
-				if (available_amount($item[Lord Spookyraven's spectacles])==0) {
+				if (my_path()=="Nuclear Autumn" && available_amount($item[E-Z Cook&trade; oven])==0 && item_amount($item[recipe: mortar-dissolving solution])>0) {
+					result.append("<br>Find mortar dissolvers:");
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor1\">Kitchen</a> - "+ItemReport($item[loosening powder]));
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor1\">Conservatory</a> - "+ItemReport($item[powdered castoreum],"castoreum"));
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor2\">Bathroom</a> - "+ItemReport($item[drain dissolver]));
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor2\">Gallery</a> - "+ItemReport($item[triple-distilled turpentine],"distilled turpentine"));
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor3\">Laboratory</a> - "+ItemReport($item[detartrated anhydrous sublicalc],"anhydrous sublicalc"));
+					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor3\">Storage</a> - "+ItemReport($item[triatomaceous dust]));
+				} else if (available_amount($item[Lord Spookyraven's spectacles])==0) {
 					result.append("<br>Find "+ItemReport($item[Lord Spookyraven's spectacles]));
 				} else if (get_property("spookyravenRecipeUsed")!="with_glasses") {
 					result.append("<br>Equip spectacles, read mortar recipe");
@@ -894,6 +864,7 @@ buffer buildTracker() {
 		//Gate item
 		if ( $strings[started, step1, step2, step3, step4] contains get_property("questL13Final")) {
 			result.append("<br>");
+			result.append("<a target=mainpane href=\"place.php?whichplace=nstower&action=ns_01_contestbooth\">Contests</a>: ");
 			if ( get_property("telescopeUpgrades")=="0" || in_bad_moon()) {
 				result.append("no telescope");
 			}
@@ -901,8 +872,7 @@ buffer buildTracker() {
 				result.append("no current telescope info");
 			}
 			else {
-				result.append("<a target=mainpane href=\"place.php?whichplace=nstower&action=ns_01_contestbooth\">Contests</a>");
-				result.append(": Init, ");
+				result.append("Init, ");
 				result.append(DecoMods(get_property("nsChallenge1")));
 				result.append(", ");
 				result.append(DecoMods(get_property("nsChallenge2")));
@@ -1348,14 +1318,6 @@ buffer buildTracker() {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	//questECoBucket
 	if (Started("questECoBucket")) {
 		int current = get_property("walfordBucketProgress").to_int();
@@ -1446,7 +1408,8 @@ buffer buildTracker() {
 	
 	
 	//progress in questPAGhost, ghost location in ghostLocation
-	if (Started("questPAGhost")) {
+	if (Started("questPAGhost") && have_equipped($item[protonic accelerator pack])) {
+		location gloc = to_location(get_property("ghostLocation"));
 		string[location] loczone;
 		loczone[$location[Cobb's Knob Treasury]] = "cobbsknob.php";
 		loczone[$location[The Haunted Conservatory]] = "place.php?whichplace=manor1";
@@ -1456,20 +1419,37 @@ buffer buildTracker() {
 		loczone[$location[The Icy Peak]] = "place.php?whichplace=mclargehuge";
 		loczone[$location[Inside the Palindome]] = "place.php?whichplace=plains";
 		loczone[$location[Madness Bakery]] = "place.php?whichplace=town_right";
-		loczone[$location[The Old Landfill]] = "place.php?whichplace=plains";
+		loczone[$location[The Old Landfill]] = "place.php?whichplace=woods";
 		loczone[$location[The Overgrown Lot]] = "place.php?whichplace=town_wrong";
 		loczone[$location[The Skeleton Store]] = "place.php?whichplace=town_market";
 		loczone[$location[The Smut Orc Logging Camp]] = "place.php?whichplace=orc_chasm";
 		loczone[$location[The Spooky Forest]] = "woods.php";
 		
+		item[location] locit;
+		locit[$location[Cobb's Knob Treasury]] = $item[Mr. Screege's spectacles];
+		locit[$location[The Haunted Conservatory]] = $item[Spookyraven signet];
+		locit[$location[The Haunted Gallery]] = $item[Carpathian longsword];
+		locit[$location[The Haunted Kitchen]] = $item[frigid derringer];
+		locit[$location[The Haunted Wine Cellar]] = $item[Unfortunato's foolscap];
+		locit[$location[The Icy Peak]] = $item[burnt snowpants];
+		locit[$location[Inside the Palindome]] = $item[Liam's mail];
+		locit[$location[Madness Bakery]] = $item[smoldering bagel punch];
+		locit[$location[The Old Landfill]] = $item[tie-dyed fannypack];
+		locit[$location[The Overgrown Lot]] = $item[haunted bindle];
+		locit[$location[The Skeleton Store]] = $item[fleshy lump];
+		locit[$location[The Smut Orc Logging Camp]] = $item[standards and practices guide];
+		locit[$location[The Spooky Forest]] = $item[ghostly reins];
+		
 		result.append("<tr><td>");
-		result.append("Ghost Busting");
+		result.append("<span style=\"color: fuchsia\">Ghost Busting</span>");
 		result.append(" - ");
 		result.append("<a target=mainpane href=\"");
-		result.append(loczone[to_location(get_property("ghostLocation"))]);
+		result.append(loczone[gloc]);
 		result.append("\">");
-		result.append(get_property("ghostLocation"));
+		result.append(to_string(gloc));
 		result.append("</a>");
+		result.append(" - ");
+		result.append(ItemReport(locit[gloc]));
 		result.append("</td></tr>");
 	}
 	
