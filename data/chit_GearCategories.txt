@@ -56,7 +56,7 @@ rollover	Adventures	PvP: false, Drunk: true
 rollover	Adventures, PVP Fights	PvP: true, Drunk: true
 
 # Manual lists
-DRUNK	Drunkula's wineglass	Manual: true
+DRUNK	Drunkula's wineglass	Manual: true, Drunk: true
 Wow	World's Best Adventurer sash	Manual: true
 astral	astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol, astral mask, astral pet sweater, astral shirt	Manual: true
 
