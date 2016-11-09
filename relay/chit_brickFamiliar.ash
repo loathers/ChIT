@@ -1471,7 +1471,8 @@ void bakeFamiliar() {
 				info += 'Delevel';
 				break;
 			}
-			info = '<a target=mainpane title="Configure your Mini-Crimbot" href="main.php?action=minicrimbot">' + parseMods(info) + '</a>';
+			info = '<a target=mainpane title="Configure your Mini-Crimbot" href="main.php?action=minicrimbot">'
+				+ (info == ""? "configure": parseMods(info)) + '</a>';
 		break;
 	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
 		info = '<a class="visit blue-link" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">' + to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels</a>, ' + info;
