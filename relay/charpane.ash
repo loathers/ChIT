@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17127; // get_campground() now works for the Fallout Shelter
+since r17457; // added sprinkles to KoLmafia
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -1928,6 +1928,17 @@ void addGhostBusting(buffer result) {
 	}
 }
 
+// if KoL adds sprinkle count, do that here also.
+void addSprinkles(buffer result) {
+	if(chitSource["stats"].contains_text("Sprinkles:")) {
+		result.append('<tr>');
+		result.append('<td class="label">Sprinkles</td><td class="info">');
+		result.append(available_amount($item[sprinkles]));
+		result.append('</td>');
+		result.append('</tr>');
+	}
+}
+
 void addCIQuest(buffer result) {
 	boolean active_quest(string prop) { return get_property(prop) == "started" ||  get_property(prop).contains_text("step"); }
 	int current, final;
@@ -2542,6 +2553,9 @@ void bakeStats() {
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
+			
+			if(available_amount($item[sprinkles]) > 0)
+				result.addSprinkles();
 			
 			// Quest updates should be shown if the tracker brick is not in use.
 			boolean tracker;
