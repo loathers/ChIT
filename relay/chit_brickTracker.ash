@@ -562,7 +562,7 @@ buffer buildTracker() {
 			result.append(", ");
 			result.append(ItemReport($item[photograph of an ostrich egg],"photo of ostrich egg"));
 			result.append(", ");
-			result.append(ItemReport($item[&quot;I Love Me\, Vol. I&quot;],"I Love Me"));
+			result.append(ItemReport($item[[7262]&quot;I Love Me\, Vol. I&quot;],"I Love Me"));
 			result.append(", ");
 			result.append(ItemReport($item[stunt nuts]));
 		}
@@ -753,9 +753,9 @@ buffer buildTracker() {
 		result.append("<tr><td>");
 		result.append("<a target=mainpane href=\"beach.php\">Beach</a>");
 		result.append(" - Open the Pyramid: ");
-		result.append(ItemReport($item[Staff of Fats], "Staff of Fats, "));
-		result.append(ItemReport($item[ancient amulet], "amulet, "));
-		result.append(ItemReport($item[Eye of Ed], "Eye of Ed"));
+		result.append(ItemReport($item[[7964]Staff of Fats], "Staff of Fats, "));
+		result.append(ItemReport($item[[7963]ancient amulet], "amulet, "));
+		result.append(ItemReport($item[[7962]Eye of Ed], "Eye of Ed"));
 		result.append("</td></tr>");
 	
 	}
