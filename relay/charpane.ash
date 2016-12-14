@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17457; // added sprinkles to KoLmafia
+since r17526; // handle proper item disambiguation for I Love Me, Staff of Fats, ancient amulet & Eye of Ed
 
 import "zlib.ash";
 import "chit_global.ash";
