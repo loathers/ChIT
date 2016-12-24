@@ -896,7 +896,7 @@ void bakeEffects() {
 		result.append('<table id="chit_effects" class="chit_brick nospace">');
 		result.append('<thead><tr><th colspan="4"><img src="');
 		result.append(imagePath);
-		result.append('effects.png">Effects</th></tr></thead>');
+		result.append('effects.png" id="stretch">Effects</th></tr></thead>');
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
@@ -3318,7 +3318,7 @@ $(window).unload(function () {\
 $(document).ready(function () {\
 	if (sessionStorage.getItem('chit.scroll') !== '') {\
 		var scrolls = JSON.parse(sessionStorage.getItem('chit.scroll'));\
-		console.log(\"scrolls\", scrolls);\
+		//console.log(\"scrolls\", scrolls);\
 		for (var key in scrolls) {\
 			$('#' + key).scrollTop(scrolls[key])\
 		}\

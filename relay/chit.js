@@ -149,9 +149,30 @@ $(document).ready(function () {
 		
 	});
 	
+	
 	$(window).resize();
 	$(window).resize(); // This is redundant, but soolar added it in r420 and it is necessary.
+
 	
+	var curRoof = document.getElementById("chit_roof");
+	window.sessionStorage.chit_roof_height = $('#chit_roof').height();
+	function toggle_stretch ()
+	{
+		if (window.sessionStorage.chit_roof_height == $('#chit_roof').height())
+		{
+			curRoof.style.height = "0px";
+			$(window).resize();
+		}
+		else
+		{
+			curRoof.style.height = window.sessionStorage.chit_roof_height+"px";
+			$(window).resize();
+		}
+	}
+	
+	var stretch = document.getElementById("stretch");
+	if (stretch) { stretch.addEventListener("click", function() { toggle_stretch(); }); }
+
 }); 
 
 // Now for KoLmafia's Familiar Picker, with a small change: Familiar change goes through Mafia so that a new familiar item may be automatically equipped
