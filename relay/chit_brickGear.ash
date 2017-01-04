@@ -79,9 +79,9 @@ string get_option(string reason, string option) {
 	return defaults[option];
 }
 
-int foldable_amount(item it, string reason);
+int foldable_amount(item it, string reason, boolean hagnk);
 
-int chit_available(item it, string reason, boolean foldcheck)
+int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
 {
 	int available = item_amount(it) + closet_amount(it);
 	if(to_boolean(reason.get_option("create")))
@@ -91,16 +91,19 @@ int chit_available(item it, string reason, boolean foldcheck)
 	
 	if(pulls_remaining() == -1)
 		available += storage_amount(it);
-	else if(pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
+	else if(hagnk && pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
 		available += min(pulls_remaining(), storage_amount(it));
 	available += equipped_amount(it);
 	
 	if(foldcheck)
-		available += foldable_amount(it, reason);
+		available += foldable_amount(it, reason, hagnk);
 	
 	return available;
 }
 
+int chit_available(item it, string reason, boolean hagnk) {
+	return chit_available(it, reason, hagnk, true);
+}
 int chit_available(item it, string reason)
 {
 	return chit_available(it, reason, true);
@@ -111,11 +114,11 @@ int chit_available(item it)
 	return chit_available(it, "");
 }
 
-int foldable_amount(item it, string reason) {
+int foldable_amount(item it, string reason, boolean hagnk) {
 	int amount = 0;
 	foreach foldable, i in get_related(it, "fold")
 		if(foldable != it)
-			amount += chit_available(foldable, reason, false);
+			amount += chit_available(foldable, reason, hagnk, false);
 	
 	return amount;
 }
@@ -268,6 +271,8 @@ void addFavGear() {
 									break;
 							}
 					}
+					if(weapon_hands(it) > 1)
+						score /= 2;
 					if(score > 0)
 						cat.list[it] = score;
 				}
@@ -574,7 +579,7 @@ void pickerGear(slot s) {
 		} else if(boolean_modifier(it, "Free Pull") && available_amount(it) > 0) {
 			action = "free pull";
 			cmd = "equip ";
-		} else if(foldable_amount(it, reason) > 0) {
+		} else if(foldable_amount(it, reason, false) > 0) {
 			action = "fold";
 			cmd = "fold " + it + "; equip ";
 		} else if(storage_amount(it) > 0 && pulls_remaining() == -1) { // Out of ronin (or in aftercore), prefer pulls to creation
@@ -590,6 +595,17 @@ void pickerGear(slot s) {
 			danger_level = 2;
 			action_description += '(' + pulls_remaining() + ' left)';
 			cmd = "pull " + it + "; equip ";
+		} else if(foldable_amount(it, reason, true) > 0) {
+			item to_fold;
+			foreach foldable, i in get_related(it, "fold")
+				if(storage_amount(foldable) > 0) {
+					to_fold = foldable;
+					break;
+				}
+			action = "pull & fold";
+			danger_level = 2;
+			action_description += '(' + pulls_remaining() + ' left)';
+			cmd = "pull " + to_fold + "; fold " + it + "; equip ";
 		} else // no options were found, give up
 			return false;
 		
