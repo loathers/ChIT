@@ -704,6 +704,11 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		}
 		break;
+	case $familiar[Optimistic Candle]:
+		if(get_property("optimisticCandleProgress").to_int() > 24) {
+			iconInfo.append("Wax soon!");
+			return STATUS_ALLDROPS;
+		}
 	case $familiar[Intergnat]:
 		int status = STATUS_NORMAL;
 		string demon = get_property("demonName12");
