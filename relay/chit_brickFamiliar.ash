@@ -709,6 +709,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			iconInfo.append("Wax soon!");
 			return STATUS_ALLDROPS;
 		}
+		break;
 	case $familiar[Intergnat]:
 		int status = STATUS_NORMAL;
 		string demon = get_property("demonName12");
