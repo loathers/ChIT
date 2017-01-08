@@ -896,7 +896,7 @@ void bakeEffects() {
 		result.append('<table id="chit_effects" class="chit_brick nospace">');
 		result.append('<thead><tr><th colspan="4"><img src="');
 		result.append(imagePath);
-		result.append('effects.png" id="stretch">Effects</th></tr></thead>');
+		result.append('effects.png" class="chit_walls_stretch">Effects</th></tr></thead>');
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
@@ -1564,7 +1564,7 @@ void bakeModifiers() {
 	result.append('<table id="chit_modifiers" class="chit_brick nospace">');
 	result.append('<thead><tr><th colspan="2"><img src="');
 	result.append(imagePath);
-	result.append('modifiers.png">');
+	result.append('modifiers.png" class="chit_walls_stretch">');
 	result.append('Modifiers</th></tr>');
 	result.append('</thead>');
 
@@ -2288,7 +2288,7 @@ void bakeOrgans() {
 	result.append('<table id="chit_organs" class="chit_brick nospace">');
 	result.append('<thead><tr><th colspan="3"><img src="');
 	result.append(imagePath);
-	result.append('organs.png">Consumption</th></tr>');
+	result.append('organs.png" class="chit_walls_stretch">Consumption</th></tr>');
 	result.append('</thead>');
 
 	result.addStomach(true);
