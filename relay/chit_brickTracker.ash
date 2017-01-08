@@ -81,7 +81,7 @@ buffer buildTracker() {
 	result.append("<table id=chit_tracker class=\"chit_brick nospace\"><tr><th>");
 	result.append("<img src=\"");
 	result.append(imagePath);
-	result.append("tracker.png\">");
+	result.append("tracker.png\"  class=\"chit_walls_stretch\">");
 	result.append("<a target=mainpane href=\"questlog.php\">Quest Tracker</a></th></tr>");
 	
 	//Add Tracker for each available quest
