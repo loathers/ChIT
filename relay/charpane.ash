@@ -654,7 +654,7 @@ buff parseBuff(string source) {
 	}
 	
 	// Check Mirror picker
-	if($effects[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.eff)
+	if($effects[[1553]Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.eff)
 		columnTurns = '<a target="mainpane" href="skills.php?pwd='+my_hash()+'&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">&infin;</a>';
 
 	//Add spoiler info
@@ -835,7 +835,7 @@ void bakeEffects() {
 
 	// Sneaky Pete should check the mirror and fix his hair
 	boolean need_hairdo() {
-		foreach e in $effects[Slicked-Back Do, Pompadour, Cowlick, Fauxhawk]
+		foreach e in $effects[[1553]Slicked-Back Do, Pompadour, Cowlick, Fauxhawk]
 			if(have_effect(e) > 0) return false;
 		return true;
 	}
@@ -877,7 +877,7 @@ void bakeEffects() {
 		total += 1;
 	}
 	intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
-	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[Blood Sugar Sauce Magic], "Blood Sugar");
+	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[[1458]Blood Sugar Sauce Magic], "Blood Sugar");
 
 	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');

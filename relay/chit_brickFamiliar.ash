@@ -744,7 +744,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		}
 		break;
 	case $familiar[Space Jellyfish]:
-		if(!get_property("_seaJellyHarvested").to_boolean()) {
+		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7) {
 			iconInfo.append("Sea jelly available");
 			return STATUS_ALLDROPS;
 		}
@@ -1527,7 +1527,7 @@ void bakeFamiliar() {
 		info = b;
 		break;
 	case $familiar[Space Jellyfish]:
-		if(!get_property("_seaJellyHarvested").to_boolean())
+		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7)
 			info = '<a class="visit blue-link" target="mainpane" title="To the sea!" ' +
 				'href="place.php?whichplace=thesea&action=thesea_left2">Sea jelly available</a>';
 		break;
