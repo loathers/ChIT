@@ -155,23 +155,24 @@ $(document).ready(function () {
 
 	
 	var curRoof = document.getElementById("chit_roof");
-	window.sessionStorage.chit_roof_height = $('#chit_roof').height();
+	var originalRoofHeight = $('#chit_roof').height();
 	function toggle_stretch ()
 	{
-		if (window.sessionStorage.chit_roof_height == $('#chit_roof').height())
+		if (originalRoofHeight == $('#chit_roof').height())
 		{
 			curRoof.style.height = "0px";
 			$(window).resize();
 		}
 		else
 		{
-			curRoof.style.height = window.sessionStorage.chit_roof_height+"px";
+			curRoof.style.height = originalRoofHeight+"px";
 			$(window).resize();
 		}
 	}
 	
-	var stretch = document.getElementById("stretch");
-	if (stretch) { stretch.addEventListener("click", function() { toggle_stretch(); }); }
+	$(".chit_walls_stretch").live("click", function(e) {
+		toggle_stretch();
+	});
 
 }); 
 

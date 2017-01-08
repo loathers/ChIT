@@ -985,9 +985,10 @@ void bakeGear() {
 	buffer result;
 
 	result.append('<table id="chit_gear" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label"><a class="visit" target="mainpane" href="./inventory.php?which=2"><img src="');
+	result.append('<tr><th class="label"><img  class="chit_walls_stretch" src="');
 	result.append(imagePath);
-	result.append('equipment.png">Gear</a></th></tr>');
+	result.append('equipment.png">');
+	result.append('<a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
 	
 	result.addGear();
 
