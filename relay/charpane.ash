@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17526; // handle proper item disambiguation for I Love Me, Staff of Fats, ancient amulet & Eye of Ed
+since r17650; // Track Space Jellyfish drops
 
 import "zlib.ash";
 import "chit_global.ash";
