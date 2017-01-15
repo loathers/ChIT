@@ -1533,10 +1533,8 @@ void bakeFamiliar() {
 		info = b;
 		break;
 	case $familiar[Space Jellyfish]:
-		info += get_property("_spaceJellyfishDrops")+" jelly sucked";
 		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7)
-			info += (length(info) == 0? "": ", ")
-				+ '<a class="visit blue-link" target="mainpane" title="To the sea!" href="'
+			info += '<a class="visit blue-link" target="mainpane" title="To the sea!" href="'
 				+ (get_property("questS01OldGuy") == "unstarted"? 'oldman.php': 'place.php?whichplace=thesea&action=thesea_left2')
 				+ '">Sea jelly available</a>';
 		break;

@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17650; // Track Space Jellyfish drops
+since r17678; // Mafia now natively annotates the Space Jellyfish
 
 import "zlib.ash";
 import "chit_global.ash";
