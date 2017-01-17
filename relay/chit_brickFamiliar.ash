@@ -747,7 +747,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 		int spaceJellyfishDrops = to_int(get_property("_spaceJellyfishDrops"));
 		iconInfo.append(spaceJellyfishDrops+" jelly sucked");
 		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7) {
-			iconInfo.append("Sea jelly available");
+			iconInfo.append(", Sea jelly available");
 			return STATUS_ALLDROPS;
 		}
 		if(spaceJellyfishDrops == 0)
@@ -1512,9 +1512,16 @@ void bakeFamiliar() {
 				info = ", " + info;
 			
 			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
-			string demon = get_property("demonName12");
-			if(length(demon) < 5 || substring(demon,0,5) != "Neil ")
-				info += ', <span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
+		}
+		string demon = get_property("demonName12");
+		if(length(demon) < 5 || substring(demon,0,5) != "Neil ")
+			info += ', <span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
+		if(!can_interact() && available_amount($item[scroll of ancient forbidden unspeakable evil]) == 0)
+			info += ", AFUE scroll";
+		if(!can_interact() && available_amount($item[thin black candle]) < 3) {
+			info += ", ";
+			info += to_string(3 - available_amount($item[thin black candle]));
+			info += " candles";
 		}
 		break;
 	case $familiar[Fist Turkey]:
