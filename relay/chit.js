@@ -156,6 +156,15 @@ $(document).ready(function () {
 	
 	var curRoof = document.getElementById("chit_roof");
 	var originalRoofHeight = $('#chit_roof').height();
+
+	function finalResize()
+	{
+		$(window).resize();
+		originalRoofHeight = $('#chit_roof').height();
+	}
+	
+	window.setTimeout(finalResize, 500);
+	
 	function toggle_stretch ()
 	{
 		if (originalRoofHeight == $('#chit_roof').height())
@@ -173,13 +182,6 @@ $(document).ready(function () {
 	$(".chit_walls_stretch").live("click", function(e) {
 		toggle_stretch();
 	});
-	
-	function finalResize()
-	{
-		$(window).resize();
-	}
-	
-	window.setTimeout(finalResize, 500);
 
 }); 
 
