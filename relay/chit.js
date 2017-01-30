@@ -173,6 +173,13 @@ $(document).ready(function () {
 	$(".chit_walls_stretch").live("click", function(e) {
 		toggle_stretch();
 	});
+	
+	function finalResize()
+	{
+		$(window).resize();
+	}
+	
+	window.setTimeout(finalResize, 500);
 
 }); 
 
