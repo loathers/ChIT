@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17678; // Mafia now natively annotates the Space Jellyfish
+since r17807; // Basic Gelatinous Noob tracking
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -2045,6 +2045,23 @@ void addKa(buffer result) {
 		result.append('<img title="Ka Coins" style="max-width:14px;padding-left:3px;" src="/images/itemimages/kacoin.gif"></td></tr>');
 }
 
+void addNoob(buffer result) {
+	int noobSkillCount = get_property("_noobSkillCount").to_int();
+	int maxNoobSkills = my_level() + 2 + get_property("noobDeferredPoints").to_int();
+	string absorbDisplay = noobSkillCount + " / " + maxNoobSkills;
+	result.append('<tr><td class="label">Absorb</td><td class="info">');
+	result.append(absorbDisplay);
+	result.append('</td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		result.append('<td class="progress"><div class="progressbox" title="');
+		result.append(absorbDisplay);
+		result.append('"><div class="progressbar" style="width:');
+		result.append(to_string(100.0 * noobSkillCount / maxNoobSkills));
+		result.append('%"></div></div></td></td>');
+	}
+	result.append('</tr>');
+}
+
 void addRadSick(buffer result) {
 	int sickness = current_rad_sickness();
 	if(sickness > 0) {
@@ -2536,6 +2553,9 @@ void bakeStats() {
 				break;
 			case $class[Ed]:
 				result.addKa();
+				break;
+			case $class[Gelatinous Noob]:
+				result.addNoob();
 				break;
 			}
 			
