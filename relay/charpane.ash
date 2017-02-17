@@ -2060,6 +2060,13 @@ void addNoob(buffer result) {
 		result.append('%"></div></div></td></td>');
 	}
 	result.append('</tr>');
+	matcher equipment = create_matcher('<a class="togglegnoob".*</script>', chitSource["gelNoob"]);
+	if(find(equipment)) {
+		string enchant = equipment.group(0).replace_string(' class="small nounder"', ' style="text-decoration:underline;"');
+		result.append('<tr><td colspan="'+(to_boolean(vars["chit.stats.showbars"])? 3: 2)+'" class="label"><center>');
+		result.append(enchant);
+		result.append('</center></td></tr>');
+	}
 }
 
 void addRadSick(buffer result) {
@@ -3445,15 +3452,13 @@ boolean parsePage(buffer original) {
 	} else return vprint("CHIT: Error parsing start of charpane", "red", -1);
 	
 	//Footer: Includes everything after the close body tag
-	parse = create_matcher("(</body></html>.*)", source);
-	if(find(parse)) {
+	if(find(parse = create_matcher("(</body></html>.*)", source))) {
 		chitSource["footer"] = parse.group(1);
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error parsing footer", "red", -1);
 	
 	// Quests: May or may not be present
-	parse = create_matcher('(<center id="nudgeblock">.*?(?:</script>|</tr></table><p></center>))', source);
-	if(find(parse)) {
+	if(find(parse = create_matcher('(<center id="nudgeblock">.*?(?:</script>|</tr></table><p></center>))', source))) {
 		chitSource["quests"] = parse.group(1);
 		source = parse.replace_first("");
 	}
@@ -3473,8 +3478,7 @@ boolean parsePage(buffer original) {
 		return get_property("lastAdventure").to_location();
 	}
 	// Recent Adventures: May or may not be present
-	parse = create_matcher('<center><font size=2>.+?Last Adventure:.+?target=mainpane href="[^"]+">([^<]+)</a>.+?</center>', source);
-	if(find(parse)) {
+	if(find(parse = create_matcher('<center><font size=2>.+?Last Adventure:.+?target=mainpane href="[^"]+">([^<]+)</a>.+?</center>', source))) {
 		chitSource["trail"] = parse.group(0);
 		lastLoc = parse.group(1).parseLoc();  // Parse out last location for use by other functions
 		source = parse.replace_first("");
@@ -3497,8 +3501,7 @@ boolean parsePage(buffer original) {
 	}
 
 	// Old Man's Bathtub Adventure. May or may not be present
-	parse = create_matcher("<table>(<tr><td class=small align=right><b>Crew:</b>.+?)</table>", source);
-	if(find(parse)) {
+	if(find(parse = create_matcher("<table>(<tr><td class=small align=right><b>Crew:</b>.+?)</table>", source))) {
 		chitSource["bathtub"] = parse.group(1);
 		source = parse.replace_first("");
 	}
@@ -3515,18 +3518,22 @@ boolean parsePage(buffer original) {
 	}
 	
 	// Pasta Thrall?
-	parse = create_matcher('(<center><font size=2><b>Pasta Thrall:</b></font>.+?</font>)', source);
-	if(find(parse)) {
+	if(find(parse = create_matcher('(<center><font size=2><b>Pasta Thrall:</b></font>.+?</font>)', source))) {
 		chitSource["thrall"] = parse.group(1);
 		source = parse.replace_first("");
 	}
 
 	// Refresh Link: <center><font size=1>[<a href="charpane.php">refresh</a>]</font>
-	parse = create_matcher("(<center><font.+?refresh.+?</font>)", source);
-	if(find(parse)) {
+	if(find(parse = create_matcher("(<center><font.+?refresh.+?</font>)", source))) {
 		chitSource["refresh"] = parse.group(1);
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error Parsing Refresh", "red", -1);
+	
+	// Gelatinous Noob
+	if(my_path() == "Gelatinous Noob" && find(parse = create_matcher('<span class=small><b>Absorptions:.+?</script><br>', source))) {
+		chitSource["gelNoob"] = parse.group(0);
+		source = parse.replace_first("");
+	}
 	
 	//Whatever is left
 	chitSource["wtfisthis"] = source;
