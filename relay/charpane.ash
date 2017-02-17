@@ -2047,7 +2047,7 @@ void addKa(buffer result) {
 
 void addNoob(buffer result) {
 	int noobSkillCount = get_property("_noobSkillCount").to_int();
-	int maxNoobSkills = my_level() + 2 + get_property("noobDeferredPoints").to_int();
+	int maxNoobSkills = my_level() + 2 + get_property("noobPoints").to_int();
 	string absorbDisplay = noobSkillCount + " / " + maxNoobSkills;
 	result.append('<tr><td class="label">Absorb</td><td class="info">');
 	result.append(absorbDisplay);
@@ -2062,7 +2062,9 @@ void addNoob(buffer result) {
 	result.append('</tr>');
 	matcher equipment = create_matcher('<a class="togglegnoob".*</script>', chitSource["gelNoob"]);
 	if(find(equipment)) {
-		string enchant = equipment.group(0).replace_string(' class="small nounder"', ' style="text-decoration:underline;"');
+		string enchant = equipment.group(0)
+			.replace_string(' class="small nounder"', ' style="text-decoration:underline;"')
+			.replace_string('padding: 1em; ', 'padding: 0.4em; ');
 		result.append('<tr><td colspan="'+(to_boolean(vars["chit.stats.showbars"])? 3: 2)+'" class="label"><center>');
 		result.append(enchant);
 		result.append('</center></td></tr>');
