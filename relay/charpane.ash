@@ -2060,7 +2060,8 @@ void addNoob(buffer result) {
 		result.append('%"></div></div></td></td>');
 	}
 	result.append('</tr>');
-	matcher equipment = create_matcher('<a class="togglegnoob".*</script>', chitSource["gelNoob"]);
+	matcher equipment = create_matcher('<a class="togglegnoob".*?none;">(.+)</div>.*</script>', chitSource["gelNoob"]);
+	// KoL change: Capture group is now empty when enchantments aren't absorbed. Probably should remove check on following line for contains_text().
 	if(find(equipment) && !equipment.group(0).contains_text("(You haven't absorbed any enchanted equipment.)")) {
 		string enchant = equipment.group(0)
 			.replace_string(' class="small nounder"', ' style="text-decoration:underline;"')

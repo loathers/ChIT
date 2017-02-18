@@ -1515,14 +1515,11 @@ void bakeFamiliar() {
 		}
 		string demon = get_property("demonName12");
 		if(length(demon) < 5 || substring(demon,0,5) != "Neil ")
-			info += ', <span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
+			info += (length(info) > 0? ', ':'') + '<span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
 		if(!can_interact() && available_amount($item[scroll of ancient forbidden unspeakable evil]) == 0)
-			info += ", AFUE scroll";
-		if(!can_interact() && available_amount($item[thin black candle]) < 3) {
-			info += ", ";
-			info += to_string(3 - available_amount($item[thin black candle]));
-			info += " candles";
-		}
+			info += (length(info) > 0? ', ':'') + "AFUE scroll";
+		if(!can_interact() && available_amount($item[thin black candle]) < 3)
+			info += (length(info) > 0? ', ':'') + to_string(3 - available_amount($item[thin black candle])) + " candles";
 		break;
 	case $familiar[Fist Turkey]:
 		int muscgains = to_int(get_property("_turkeyMuscle"));
