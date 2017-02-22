@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17807; // Basic Gelatinous Noob tracking
+since r17845; // my_absorbs()
 
 import "zlib.ash";
 import "chit_global.ash";
@@ -2046,9 +2046,8 @@ void addKa(buffer result) {
 }
 
 void addNoob(buffer result) {
-	int noobSkillCount = get_property("_noobSkillCount").to_int();
 	int maxNoobSkills = my_level() + 2;
-	string absorbDisplay = noobSkillCount + " / " + maxNoobSkills;
+	string absorbDisplay = my_absorbs() + " / " + maxNoobSkills;
 	result.append('<tr><td class="label">Absorb</td><td class="info">');
 	result.append(absorbDisplay);
 	result.append('</td>');
@@ -2056,7 +2055,7 @@ void addNoob(buffer result) {
 		result.append('<td class="progress"><div class="progressbox" title="');
 		result.append(absorbDisplay);
 		result.append('"><div class="progressbar" style="width:');
-		result.append(to_string(100.0 * noobSkillCount / maxNoobSkills));
+		result.append(to_string(100.0 * my_absorbs() / maxNoobSkills));
 		result.append('%"></div></div></td></td>');
 	}
 	result.append('</tr>');
