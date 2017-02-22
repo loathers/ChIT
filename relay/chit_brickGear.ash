@@ -4,6 +4,25 @@ boolean [item] favGear;
 float [string, item] recommendedGear;
 boolean [string] forceSections;
 
+float equip_modifier(item it, string mod) {
+	if(my_path() == "Gelatinous Noob") return 0;
+	switch(it) {
+	case $item[your cowboy boots]:
+		return equipped_item($slot[bootskin]).numeric_modifier(mod)
+			+ equipped_item($slot[bootspur]).numeric_modifier(mod);
+	case $item[over-the-shoulder Folder Holder]:
+		float modtot;
+		foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
+			modtot += equipped_item(sl).numeric_modifier(mod);
+		return modtot;
+	}
+	return numeric_modifier(it, mod);
+}
+float equip_modifier(item it, string mod, int weight) {
+	if(weight == 0) return 0;
+	return equip_modifier(it, mod) * weight;
+}
+	
 string gearName(item it) {
 	string name = to_string(it);
 	string notes = "";
@@ -261,7 +280,7 @@ void addFavGear() {
 						if(mod.mod == "flatval")
 							score += mod.multiplier;
 						else
-							score += numeric_modifier(it, mod.mod) * mod.multiplier;
+							score += equip_modifier(it, mod.mod) * mod.multiplier;
 					}
 					foreach attr,i,val in cat.attributes {
 							switch(attr) {
@@ -782,37 +801,19 @@ void pickerGear(slot s) {
 			add_gear_section(section, recommendedGear[section]);
 	}
 	
-	float mod_val(item it, string mod) {
-		switch(it) {
-		case $item[your cowboy boots]:
-			return equipped_item($slot[bootskin]).numeric_modifier(mod)
-				+ equipped_item($slot[bootspur]).numeric_modifier(mod);
-		case $item[over-the-shoulder Folder Holder]:
-			float modtot;
-			foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
-				modtot += equipped_item(sl).numeric_modifier(mod);
-			return modtot;
-		}
-		return numeric_modifier(it, mod);
-	}
-	float mod_val(item it, string mod, int weight) {
-		if(weight == 0) return 0;
-		return mod_val(it, mod) * weight;
-	}
-	
 	// Which gear is more desirable?
 	int gear_weight(item it) {
 		float weight;
 		
 		switch(item_type(it)) {
 		case "chefstaff":
-			weight = numeric_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
+			weight = equip_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
 			break;
 		case "accessory":
-			# weight = get_power(it) + mod_val(it, "Item Drop", 6) + mod_val(it, "Monster Level", my_level() < 13? 4: 0)
-				# + (mod_val(it, "MP Regen Max") + mod_val(it, "MP Regen Min")) * 5;
-			weight = get_power(it) + numeric_modifier(it, "Item Drop") * 6 + numeric_modifier(it, "Monster Level") * (my_level() < 13? 4: 0)
-				+ (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 5;
+			# weight = get_power(it) + equip_modifier(it, "Item Drop", 6) + equip_modifier(it, "Monster Level", my_level() < 13? 4: 0)
+				# + (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 5;
+			weight = get_power(it) + equip_modifier(it, "Item Drop") * 6 + equip_modifier(it, "Monster Level") * (my_level() < 13? 4: 0)
+				+ (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 5;
 			break;
 		case "club":
 			if(my_class() == $class[Seal Clubber])
@@ -847,20 +848,20 @@ void pickerGear(slot s) {
 		case $stat[Muscle]:
 			if(weapon_type(it) == $stat[Moxie])
 				weight *= 0.5;
-			weight += numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min");
-			weight += numeric_modifier(it, "Muscle") * 2;
-			weight += numeric_modifier(it, "Muscle Percent") * my_basestat($stat[Muscle]) / 50;
+			weight += equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min");
+			weight += equip_modifier(it, "Muscle") * 2;
+			weight += equip_modifier(it, "Muscle Percent") * my_basestat($stat[Muscle]) / 50;
 			break;
 		case $stat[Mysticality]:
-			weight += (numeric_modifier(it, "MP Regen Max") + numeric_modifier(it, "MP Regen Min")) * 2;
-			weight += numeric_modifier(it, "Spell Damage") * 3;
-			weight += numeric_modifier(it, "Spell Damage Percent");
+			weight += (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 2;
+			weight += equip_modifier(it, "Spell Damage") * 3;
+			weight += equip_modifier(it, "Spell Damage Percent");
 			break;
 		case $stat[Moxie]:
 			if(weapon_type(it) != $stat[Moxie] && !(have_skill($skill[Tricky Knifework]) && item_type(it) == "knife"))
 				weight *= 0.5;
-			weight += numeric_modifier(it, "Moxie") * 3;
-			weight += numeric_modifier(it, "Moxie Percent") * my_basestat($stat[Moxie]) / 33.3;
+			weight += equip_modifier(it, "Moxie") * 3;
+			weight += equip_modifier(it, "Moxie Percent") * my_basestat($stat[Moxie]) / 33.3;
 			break;
 		}
 
