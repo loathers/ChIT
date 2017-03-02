@@ -2046,7 +2046,7 @@ void addKa(buffer result) {
 }
 
 void addNoob(buffer result) {
-	int maxNoobSkills = my_level() + 2;
+	int maxNoobSkills = min(my_level() + 2, 15);
 	string absorbDisplay = my_absorbs() + " / " + maxNoobSkills;
 	result.append('<tr><td class="label">Absorb</td><td class="info">');
 	result.append(absorbDisplay);
@@ -2368,9 +2368,9 @@ void bakeStats() {
 		if(vars["chit.kol.coolimages"].to_boolean() && index_of(health, "Extreme Meter:") > -1) {
 			matcher extreme = create_matcher("Extreme Meter.*?otherimages/(.*?)><", health);
 			if(find(extreme)) {
-				result.append('<tr style="height:'+(to_int(char_at(extreme.group(1), 8)) * 69 - 23)+'px;"><td colspan="'+ (showBars? 3: 2) +'"><center>');
+				result.append('<tr style="max-height:'+(to_int(char_at(extreme.group(1), 8)) * 69 - 23)+'px;"><td colspan="'+ (showBars? 3: 2) +'"><center>');
 				// extmeter1, extmeter2, extmeter3: width=200 height = 50,125,200 = 60x - 20. (176x44, 176x110, 176x176 = ) (height *.92 = 46, 115, 184 = 69x-23)
-				result.append('<img style="width:95%;border:0px" src=images/otherimages/'+extreme.group(1)+'>');
+				result.append('<img style="max-width:95%;border:0px" src=images/otherimages/'+extreme.group(1)+'>');
 				result.append('</center></td></tr>');
 			}
 		}
