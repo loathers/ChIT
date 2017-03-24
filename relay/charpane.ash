@@ -1,13 +1,55 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17845; // my_absorbs()
-
-import "zlib.ash";
+since r17892; // Veracity added ASH support for doing interesting things with properties
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
 import "chit_brickTerminal.ash";
+
+// Set default values for configuration properties. These values will be used if there is no existing property
+// For more information refer to documentation in /data/chit_ReadMe.txt
+setvar("chit.autoscroll", true);
+setvar("chit.checkversion", false);
+setvar("chit.currencies", "item", "rad,Source essence,BACON,cop dollar");
+setvar("chit.currencies.showmany", false);
+setvar("chit.character.avatar", true);
+setvar("chit.character.title", true);
+setvar("chit.clan.display", "away"); // Valid values are on,off,away. Away will only display clan if chit.clan.home is not blank.
+setvar("chit.clan.home", "");
+setvar("chit.disable", false);
+setvar("chit.familiar.anti-gollywog", true);
+setvar("chit.familiar.hiddengear", "");
+setvar("chit.familiar.protect", false);
+setvar("chit.familiar.showlock", false);
+setvar("chit.familiar.hats", "item", "spangly sombrero,sugar chapeau,chef's hat,party hat");
+setvar("chit.familiar.pants", "item", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,studded leather boxer shorts,monster pants,sugar shorts");
+setvar("chit.familiar.weapons", "item", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
+setvar("chit.effects.classicons", "none");
+setvar("chit.effects.describe", true);
+setvar("chit.effects.modicons", true);
+setvar("chit.effects.showicons", true);
+setvar("chit.effects.usermap",false);
+setvar("chit.gear.display.in-run", "favorites:pull=true:create=true, astral, item, -combat, +combat, quest:pull=true:create=true, today, ML:amount=2, path, prismatic, res, resistance:amount=2, charter, rollover, DRUNK, Wow, exp");
+setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
+setvar("chit.gear.layout", "default");
+setvar("chit.gear.favorites", "item", "Pantsgiving,your cowboy boots,gold detective badge,Mr. Screege's spectacles,KoL Con 13 snowglobe,ghostly reins,training helmet,over-the-shoulder Folder Holder,Spelunker's whip,The Jokester's gun,protonic accelerator pack");
+setvar("chit.helpers.dancecard", true);
+setvar("chit.helpers.semirare", true);
+setvar("chit.helpers.spookyraven", true);
+setvar("chit.helpers.wormwood", "stats,spleen");
+setvar("chit.helpers.xiblaxian", true);
+setvar("chit.kol.coolimages", true);
+setvar("chit.effects.layout", "songs,buffs,intrinsics");
+setvar("chit.floor.layout", "update,familiar");
+setvar("chit.roof.layout", "character,stats,gear");
+setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
+setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
+setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
+setvar("chit.quests.hide", false);
+setvar("chit.stats.showbars", true);
+setvar("chit.thrall.showname", false);
+setvar("chit.toolbar.moods", true);
 
 /************************************************************************************
 CHaracter Info Toolbox
@@ -2107,7 +2149,8 @@ void addLiver(buffer result, boolean showBars) {
 		result.addOrgan("Liver", showBars, my_inebriety(), inebriety_limit(), have_effect($effect[Ode to Booze]) > 0);
 }
 void addSpleen(buffer result, boolean showBars) {
-	result.addOrgan("Spleen", showBars, my_spleen_use(), spleen_limit(), false);
+	if(spleen_limit() > 0)
+		result.addOrgan("Spleen", showBars, my_spleen_use(), spleen_limit(), false);
 }
 
 void bakeSubStats() {
@@ -2317,9 +2360,12 @@ void bakeOrgans() {
 	result.append('organs.png" class="chit_walls_stretch">Consumption</th></tr>');
 	result.append('</thead>');
 
-	result.addStomach(true);
-	result.addLiver(true);
-	result.addSpleen(true);
+	if(can_eat() || can_drink() || spleen_limit() > 0) {
+		result.addStomach(true);
+		result.addLiver(true);
+		result.addSpleen(true);
+	} else
+		result.append('<tr><td colspan="3">You have no real organs! <br> OMG!</td></tr>');
 	
 	result.append('</table>');
 	chitBricks["organs"] = result.to_string();
@@ -2736,7 +2782,7 @@ void allCurrency(buffer result) {
 	}
 
 	boolean showMany = to_boolean(vars["chit.currencies.showmany"]);
-	string chitCurrency = showmany ? get_property("chitCurrency") : get_property("_chitCurrency");
+	string chitCurrency = showmany ? get_property("chit.currencies.showmany.choices") : get_property("_chit.currency");
 	string [int] dispCurrencies = split_string(chitCurrency, ",");
 	item current = to_item(dispCurrencies[0]);
 	
@@ -2749,7 +2795,7 @@ void allCurrency(buffer result) {
 	result.append('<ul>');
 	
 	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
-	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\),\\s*") {
+	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\)[,|]\\s*") {
 		item it = to_item(cur);
 		if(amount_of(it) > 0 && !(currencies contains it)) {
 			currencies[it] = true;
@@ -2757,13 +2803,13 @@ void allCurrency(buffer result) {
 			if(displayedCurrencies[it]) result.append(' class="current"');
 			result.append('><a href="/KoLmafia/sideCommand?cmd=');
 			if(showMany) {
-				result.append(url_encode("set chitCurrency="));
+				result.append(url_encode("set chit.currencies.showmany.choices = "));
 				if(list_contains(chitCurrency,cur,","))
 					result.append(list_remove(chitCurrency,cur,","));
 				else
 					result.append(list_add(chitCurrency,cur,","));
 			} else {
-				result.append(url_encode("set _chitCurrency="));
+				result.append(url_encode("set _chit.currency = "));
 				result.append(it);
 			}
 			result.append('&pwd=');
@@ -3096,7 +3142,8 @@ void bakeCharacter() {
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
-	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || (vars["chit.clan.display"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
+	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || 
+	  (vars["chit.clan.home"] != "" && vars["chit.clan.display"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
 		result.append('<br /><span style="font-weight:normal">');
 		result.append(get_clan_name());
 		result.append('</span>');
@@ -3869,76 +3916,15 @@ buffer modifyPage(buffer source) {
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
 	if(vars["chit.disable"]=="true")
 		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
-	//Set default values for zlib variables
-	setvar("chit.checkversion", false);
-	setvar("chit.autoscroll", true);
-	setvar("chit.disable", false);
-	setvar("chit.currencies", "rad,source essence,BACON,cop dollar");
-	setvar("chit.currencies.showmany", false);
-	setvar("chit.character.avatar", true);
-	setvar("chit.character.title", true);
-	setvar("chit.clan.display", "off"); // Valid values are on,off,away
-	setvar("chit.clan.home", "");
-	setvar("chit.quests.hide", false);
-	setvar("chit.familiar.hats", "spangly sombrero,sugar chapeau,Chef's Hat,party hat");
-	setvar("chit.familiar.pants", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts");
-	setvar("chit.familiar.weapons", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
-	setvar("chit.familiar.protect", false);
-	setvar("chit.familiar.showlock", false);
-	setvar("chit.familiar.anti-gollywog", true);
-	setvar("chit.familiar.hiddengear", "");
-	setvar("chit.effects.classicons", "none");
-	setvar("chit.effects.showicons", true);
-	setvar("chit.effects.modicons", true);
-	setvar("chit.effects.layout", "songs,buffs,intrinsics");
-	setvar("chit.effects.usermap",false);
-	setvar("chit.effects.describe",true);
-	setvar("chit.helpers.wormwood", "stats,spleen");
-	setvar("chit.helpers.dancecard", true);
-	setvar("chit.helpers.semirare", true);
-	setvar("chit.helpers.spookyraven", true);
-	setvar("chit.helpers.xiblaxian", true);
-	setvar("chit.kol.coolimages", true);
-	setvar("chit.roof.layout", "character,stats,gear");
-	setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
-	setvar("chit.floor.layout", "update,familiar");
-	setvar("chit.stats.showbars", true);
-	setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
-	setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-	setvar("chit.toolbar.moods", "true");
-	string gearDispInRunDefault = "favorites:amount=all:pull=true:create=true, astral:amount=all, item, -combat, +combat, quest:amount=all:pull=true:create=true, today:amount=all:create=false, ML, path:amount=all, prismatic, res, charter:amount=all, rollover, DRUNK:amount=all, Wow:amount=all, resistance:amount=3";
-	setvar("chit.gear.display.in-run", gearDispInRunDefault);
-	setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
-	setvar("chit.gear.display.in-run.defaults", "create=false, pull=false, amount=1");
-	setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
-	setvar("chit.gear.layout", "default");
-	setvar("chit.gear.favorites", "");
-	setvar("chit.thrall.showname", false);
-	
-	// Check var version.
-	int varVer = get_property("chitVarVer").to_int();
-	if(varVer < 3) {
-		if(!vars["chit.walls.layout"].contains_text("vykea")) {
-			if(vars["chit.walls.layout"].contains_text("effects"))
-				vars["chit.walls.layout"] = vars["chit.walls.layout"].replace_string("effects", "vykea,effects");
-			else 
-				vars["chit.walls.layout"] += ",vykea";
-		}
-		if(!(vars["chit.roof.layout"].contains_text("gear") || vars["chit.stats.layout"].contains_text("gear")))
-			vars["chit.roof.layout"] += ",gear";
-		updatevars();
-		set_property("chitVarVer", "3");
-	}
-	// Update in-run gear display IF it has not been changed from the old default
-	if(varVer < 4) {
-		if(vars["chit.gear.display.in-run"] == "favorites:amount=all:pull=true:create=true, astral:amount=all, item, meat, ML, exp, initiative, quest:amount=all:pull=true:create=true, path:amount=all, prismatic, res, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all, Wow:amount=all") {
-			vars["chit.gear.display.in-run"] = gearDispInRunDefault;
-			updatevars();
-		}
-		set_property("chitVarVer", "4");
+		
+	if(property_exists("chitVarVer"))		// This is no longer being used since zlib vars were migrated to vProps.
+		remove_property("chitVarVer");
+	if(property_exists("chitCurrency")) {	// This is being given a new name in line with existing vProps.
+		set_property("chit.currencies.showmany.choices", get_property("chitCurrency"));
+		remove_property("chitCurrency");
 	}
 	
-	//Check for updates (once a day)
+	//Check for updates (once a day) if chit.checkversion is true.
 	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit") && get_property("_svnUpdated") == "false") {
 		if(get_property("_chitSVNatHead").length() == 0)
 			set_property("_chitSVNatHead", svn_at_head("mafiachit"));
