@@ -102,6 +102,7 @@ Taco Elf window end	alias:"Taco Elf window )", style:"color:#007C29;font-style:i
 WoL Monster window begin	alias:"( Western wanderer", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
 WoL Monster window end	alias:"Western wanderer )", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
 Digitize Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
+Enamorang Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
 
 #He-Boulder Major Rays
 Everything Looks Blue	style:"color:blue"

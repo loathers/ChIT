@@ -3,6 +3,7 @@
 boolean [item] favGear;
 float [string, item] recommendedGear;
 boolean [string] forceSections;
+boolean aftercore = qprop("questL13Final");
 
 float equip_modifier(item it, string mod) {
 	if(my_path() == "Gelatinous Noob") return 0;
@@ -68,26 +69,31 @@ string gearName(item it) {
 	return name;
 }
 
-boolean aftercore = qprop("questL13Final");
-string [string] defaults;
-string defaults_str = vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"];
-foreach i,opt in split_string(defaults_str, ", ?") {
-	string [int] spl = split_string(opt," ?= ?");
-	if(spl.count() == 2)
-		defaults[spl[0]] = spl[1];
-}
+string [string] defaults = 
+	aftercore? string [string] {
+		"create": "true",
+		"pull": "true",
+		"amount": "1",
+	}: string [string] {
+		"create": "false",
+		"pull": "false",
+		"amount": "all",
+	};
 string [string,string] reason_options;
-foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
-	string [string] options;
-	string [int] spl = split_string(s,":");
-	if(spl.count() > 1) {
-		for i from 1 to spl.count() - 1 {
-			string [int] opt = split_string(spl[i], " ?= ?");
-			if(opt.count() == 2)
-				options[opt[0]] = opt[1];
+
+void gear_display_options() {
+	foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
+		string [string] options;
+		string [int] spl = split_string(s,":");
+		if(spl.count() > 1) {
+			for i from 1 to spl.count() - 1 {
+				string [int] opt = split_string(spl[i], " ?= ?");
+				if(opt.count() == 2)
+					options[opt[0]] = opt[1];
+			}
 		}
+		reason_options[spl[0]] = options;
 	}
-	reason_options[spl[0]] = options;
 }
 
 string get_option(string reason, string option) {
@@ -181,8 +187,8 @@ void addGear(item it, string reason)
 	addGear(it, reason, 1);
 }
 
-void addFavGear() {	
-	boolean aftercore = (get_property("questL13Final") == "finished");
+void addFavGear() {
+	gear_display_options();
 
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
@@ -349,10 +355,9 @@ void addFavGear() {
 			addGear(cat.list, cat.name);
 		}
 	}
-		
 	
 	// manual favorites
-	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\),\\s*") {
+	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\)[,|]\\s*") {
 		item it = to_item(fav.replace_string("\\,", ","));
 		favGear[it] = true;
 		addGear(it, "favorites");
