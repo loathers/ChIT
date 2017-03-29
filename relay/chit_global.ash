@@ -30,6 +30,10 @@ boolean [item] to_list(string list) {
 	boolean [item] retval;
 	foreach i, it in split_string(list, "[,|]")
 		retval[ to_item(it) ] = true;
+		
+	// In case there is no item in the list, or something doesn't parse as an item
+	remove retval[ $item[none] ];
+	
 	return retval;
 }
 

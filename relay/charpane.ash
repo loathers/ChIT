@@ -1502,7 +1502,7 @@ void bakeToolbar() {
 	void addDisable(buffer result, int i) {
 		buffer button;
 		button.append('<li><a href="');
-		button.append(sideCommand("zlib chit.disable = true"));
+		button.append(sideCommand("set chit.disable = true"));
 		button.append('" title="Disable ChIT"><img');
 		if(i == 0)
 			button.append(' style="height:11px;width:11px;vertical-align:bottom;margin:0px -4px -3px -8px;"');
@@ -2827,7 +2827,7 @@ void allCurrency(buffer result) {
 	}
 	result.append('<li class="currency_edit"><a onclick=\'var currencies = prompt("Edit displayed currencies: (Items that you have none of will not be displayed)", "');
 	result.append(vars["chit.currencies"]);
-	result.append('"); if(currencies!=null) { window.location.href = "/KoLmafia/sideCommand?cmd=zlib+chit.currencies+=+" + currencies.replace(/ /g,"+") + "&pwd=');
+	result.append('"); if(currencies!=null) { window.location.href = "/KoLmafia/sideCommand?cmd=set+chit.currencies+=+" + currencies.replace(/ /g,"+") + "&pwd=');
 	result.append(my_hash());
 	result.append('"; }\'>Edit List</a></li></ul>');
 	
@@ -3915,7 +3915,7 @@ buffer modifyPage(buffer source) {
 	if(source.length() < 6)
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
 	if(vars["chit.disable"]=="true")
-		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('zlib chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
+		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('set chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
 		
 	if(property_exists("chitVarVer"))		// This is no longer being used since zlib vars were migrated to vProps.
 		remove_property("chitVarVer");
