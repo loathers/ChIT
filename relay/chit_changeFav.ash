@@ -1,8 +1,7 @@
 import "charpane.ash";
 
-void main(string choice, string item_name) {
+void main(string choice, item it) {
 	string name = "chit.gear.favorites";
-	item it = to_item(item_name);
 	boolean [item] list = to_list(vars[name]);
 	
 	if(choice == "add")
