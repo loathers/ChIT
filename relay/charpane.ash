@@ -49,7 +49,7 @@ setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
-setvar("chit.toolbar.moods", true);
+setvar("chit.toolbar.moods", "true");
 
 /************************************************************************************
 CHaracter Info Toolbox
