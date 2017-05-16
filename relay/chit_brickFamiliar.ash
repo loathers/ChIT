@@ -1318,6 +1318,7 @@ void bakeFamiliar() {
 	case "Avatar of Jarlsberg": FamJarlsberg(); return;
 	case "Avatar of Sneaky Pete": FamPete(); return;
 	case "Actually Ed the Undying": FamEd(); return;
+	case "License to Adventure": return;
 	}
 
 	string source = chitSource["familiar"];
