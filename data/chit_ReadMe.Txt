@@ -5,6 +5,7 @@ By Chez up to v 0.6.0 -- All hail Chez! After that a bunch of people assumed con
 How do I edit the following settings?
 
 1. You can edit their default values by editing them at the top of \svn\mafiachit\relay\charpane.ash
+   To propogate those changes to the working copy you then enter the following command in the gCLI tab: svn sync
    Defaults are used for all characters unless a preference is set for a specific character by the following method.
 2. You can override the default by making a character specific setting with the set command in the CLI. Examples:
    set chit.clan.home = Hardcore Nation
