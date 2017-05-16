@@ -3957,7 +3957,7 @@ buffer modifyPage(buffer source) {
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 )
 		inValhalla = true;
 	
-	if( contains_text(source, "<hr width=50%>") ) {
+	if( contains_text(source, "<hr width=50%><table") ) { // In "License to Adventure" there is <hr width=50%><center>
 		isCompact = true;
 		vprint("CHIT: Compact Character Pane not supported", "blue", 1);
 	}
