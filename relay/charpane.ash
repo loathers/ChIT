@@ -2133,14 +2133,17 @@ void addRadSick(buffer result) {
 	}
 }
 
-void addLI11(buffer result) {
-	matcher pounds = create_matcher("(\\d+) &pound; SC to spend", chitSource["wtfisthis"]);
-	string capital = pounds.find()? pounds.group(1): "0";
-	result.append('<tr><td class="label"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq" title="Visit LI-11">LI-11</a></td><td class="info" title="social capital"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq" title="Visit LI-11">');
-	result.append(capital);
-	if(to_boolean(vars["chit.stats.showbars"]))
-		result.append('</a></td><td style="float:left; font-size:110%;"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq" title="Visit LI-11">');
-	result.append('&nbsp;&pound; SC</a></td></tr>');
+void addLI_11(buffer result) {
+	matcher pounds = create_matcher("(\\d+ &pound; SC) to spend", chitSource["wtfisthis"]);
+	result.append('<tr><td class="label"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq" title="Visit LI-11">LI-11</a></td>');
+	if(pounds.find()) {
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('<td>&nbsp;</td>');
+		result.append('<td class="info" style="text-align:center;" title="social capital"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq">');
+		result.append(pounds.group(1));
+		result.append('</a></td>');
+	}
+	result.append('</tr>');
 }
 
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
@@ -2635,7 +2638,7 @@ void bakeStats() {
 				result.addRadSick();
 				break;
 			case "License to Adventure":
-				result.addLI11();
+				result.addLI_11();
 			}
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
