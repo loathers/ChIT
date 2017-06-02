@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r17892; // Veracity added ASH support for doing interesting things with properties
+since r18069; // KG Briefcase
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";

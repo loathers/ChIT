@@ -527,6 +527,11 @@ void pickerGear(slot s) {
 				picker.append('</a></td></tr>');
 			}
 			break;
+		case $item[Kremlin's Greatest Briefcase]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="place.php?whichplace=kgb">Examine the briefcase.</a></td></tr>');
+			break;
 	}
 	
 	void add_favorite_button(buffer result, item it) {
