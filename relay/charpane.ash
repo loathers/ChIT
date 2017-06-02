@@ -2740,6 +2740,10 @@ void allCurrency(buffer result) {
 		if(link != "")
 			result.append('</a>');
 	}
+
+	void addCurrencyIcon(buffer result, item currency, string title, string url) {
+		result.addCurrencyIcon(currency, '<a title="' + title + '" target="mainpane" href="' + url + '">');
+	}
 	
 	void addCurrency(buffer result, item currency) {
 		if(displayedCurrencies[currency])
@@ -2760,35 +2764,47 @@ void allCurrency(buffer result) {
 				result.addCurrencyIcon(currency, item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "");
 				result.addCurrency($item[disassembled clover]);
 				break;
+			case $item[hobo nickel]:
+				result.addCurrencyIcon(currency, "Wander on over to hobopolis", "clan_hobopolis.php");
+				break;
+			case $item[Freddy Kruegerand]:
+				result.addCurrencyIcon(currency, "Visit The Terrified Eagle Inn", "shop.php?whichshop=dv");
+				break;
 			case $item[Beach Buck]:
-				result.addCurrencyIcon(currency, '<a title="Take a trip to Spring Break Beach" target="mainpane" href="place.php?whichplace=airport_sleaze">');
+				result.addCurrencyIcon(currency, "Take a trip to Spring Break Beach", "place.php?whichplace=airport_sleaze");
 				break;
 			case $item[Coinspiracy]:
-				result.addCurrencyIcon(currency, '<a title="Down the hatch to the Conspiracy Island bunker" target="mainpane" href="place.php?whichplace=airport_spooky_bunker">');
+				result.addCurrencyIcon(currency, "Down the hatch to the Conspiracy Island bunker", "place.php?whichplace=airport_spooky_bunker");
 				break;
 			case $item[FunFunds&trade;]:
-				result.addCurrencyIcon(currency, '<a title="Buy some souvenirs at the Dinsey Company Store" target="mainpane" href="shop.php?whichshop=landfillstore">');
+				result.addCurrencyIcon(currency, "Buy some souvenirs at the Dinsey Company Store", "shop.php?whichshop=landfillstore");
 				break;
 			case $item[Volcoino]:
-				result.addCurrencyIcon(currency, '<a title="Boogie right on down to Disco GiftCo" target="mainpane" href="shop.php?whichshop=infernodisco">');
+				result.addCurrencyIcon(currency, "Boogie right on down to Disco GiftCo", "shop.php?whichshop=infernodisco");
 				break;
 			case $item[Wal-Mart gift certificate]:
-				result.addCurrencyIcon(currency, '<a title="Browse the goods at Wal-Mart" target="mainpane" href="shop.php?whichshop=glaciest">');
+				result.addCurrencyIcon(currency, "Browse the goods at Wal-Mart", "shop.php?whichshop=glaciest");
 				break;
 			case $item[rad]:
-				result.addCurrencyIcon(currency, '<a title="Fiddle with your genes" target="mainpane" href="shop.php?whichshop=mutate">');
+				result.addCurrencyIcon(currency, "Fiddle with your genes", "shop.php?whichshop=mutate");
 				break;
 			case $item[source essence]:
 				string termlink = 'campground.php?action=terminal';
 				if(my_path() == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
-				result.addCurrencyIcon(currency, '<a title="Boot up the Source Terminal" target="mainpane" href="' + termlink + '">');
+				result.addCurrencyIcon(currency, "Boot up the Source Terminal", "' + termlink + '");
 				break;
 			case $item[BACON]:
-				result.addCurrencyIcon(currency, '<a title="Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES" target="mainpane" href="shop.php?whichshop=bacon">');
+				result.addCurrencyIcon(currency, "Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
 				break;
 			case $item[cop dollar]:
-				result.addCurrencyIcon(currency, '<a title="Visit the quartermaster" target="mainpane" href="shop.php?whichshop=detective">');
+				result.addCurrencyIcon(currency, "Visit the quartermaster", "shop.php?whichshop=detective");
+				break;
+			case $item[sprinkles]:
+				result.addCurrencyIcon(currency, "Take a tour of Gingerbread City", "place.php?whichplace=gingerbreadcity");
+				break;
+			case $item[Spacegate Research]:
+				result.addCurrencyIcon(currency, "Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
 				break;
 			default:
 				result.addCurrencyIcon(currency, "");
