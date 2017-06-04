@@ -2828,7 +2828,7 @@ void allCurrency(buffer result) {
 	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
 	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\)[,|]\\s*") {
 		item it = to_item(cur);
-		if(amount_of(it) > 0 && !(currencies contains it)) {
+		if((amount_of(it) > 0 || list_contains(chitCurrency,cur,",")) && !(currencies contains it)) {
 			currencies[it] = true;
 			result.append('<li');
 			if(displayedCurrencies[it]) result.append(' class="current"');
