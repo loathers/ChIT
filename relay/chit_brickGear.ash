@@ -955,6 +955,10 @@ int dangerLevel(item it) {
 			} else
 				return 2;
 			break;
+		case $item[sea chaps]: case $item[sea cowboy hat]:
+			if(get_property("lassoTraining") == "expertly")
+				return 1;
+			break;
 	}
 	return 0;
 }
