@@ -107,7 +107,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		hiddengear[to_item(famequip)] = true;
 	
 	void addEquipment(item it, string cmd) {
-		if (!(addeditems contains it) && !(hiddengear contains it)) {
+		if (!(addeditems contains it) && (!(hiddengear contains it) || equipped_amount(it) > 0)) {
 			string hover;
 			string cli;
 			string action = to_string(it);
