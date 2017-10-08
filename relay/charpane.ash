@@ -2834,6 +2834,8 @@ void allCurrency(buffer result) {
 	// This is to avoid weird behavior when coming from previous versions of chit
 	if(chitCurrency.starts_with("none"))
 		chitCurrency = chitCurrency.replace_string("none", "meat");
+	else if(chitCurrency == "")
+		chitCurrency = "meat";
 	string [int] dispCurrencies = split_string(chitCurrency, "\\|");
 	item current = to_item(dispCurrencies[0]);
 	
