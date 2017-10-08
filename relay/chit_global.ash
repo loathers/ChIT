@@ -194,18 +194,20 @@ boolean list_contains(string list, string needle, string glue) {
 }
 boolean list_contains(string list, string needle) { return list_contains(list, needle, ", "); }
 // adds a unique entry to a glue-delimited list (and so won't add if already exists), returns modified list
-string list_add(string list, string add, string glue) {
+string list_add(string list, string add, string glue, string gluepat) {
    if (length(list) == 0) return add;
-   if (list_contains(list,add,glue)) return list;
+   if (list_contains(list,add,gluepat)) return list;
    return list+glue+add;
 }
+string list_add(string list, string add, string glue) { return list_add(list, add, glue, glue); }
 string list_add(string list, string add) { return list_add(list, add, ", "); }
 // removes any matching entries from a glue-delimited list, returns modified list
-string list_remove(string list, string del, string glue) {
+string list_remove(string list, string del, string glue, string gluepat) {
    string[int] bits;
-   foreach i,b in split_string(list, glue) if (b != del) bits[i] = b;
+   foreach i,b in split_string(list, gluepat) if (b != del) bits[i] = b;
    return join(bits,glue);
 }
+string list_remove(string list, string del, string glue) { return list_remove(list, del, glue, glue); }
 string list_remove(string list, string del) { return list_remove(list, del, ", "); }
 
 /*****************************************************
