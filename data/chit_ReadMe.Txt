@@ -10,6 +10,7 @@ How do I edit the following settings?
 2. You can override the default by making a character specific setting with the set command in the CLI. Examples:
    set chit.clan.home = Hardcore Nation
    set chit.stats.layout = muscle,myst,moxie|hp,mp,axel|mcd|terminal|trail,florist
+   enter "prefref chit" in the CLI to see a list of all properties and their current values
 **************************************
 
 CHIT allows you to customize the layout of your charpane (Let's call it your House).
@@ -161,11 +162,17 @@ chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in afte
    Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
-   Default: source essence,BACON,cop dollar
+   Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
+chit.currencies.special: List of special case currencies to display when mousing over your meat (or other active currency)
+   Default: asdonmartinfuel
+      At the moment, asdonmartinfuel is the only such currency
 chit.currencies.showmany: Whether or not to enable showing several currencies at once
    If this is true, clicking currencies in the dropdown list will add or remove them from the list of displayed currencies
      Otherwise, it will simply set whatever you clicked to be the current currency
    Default: false
+chit.currencies.showmany.choices: What currencies to presently display
+   Only relevant if chit.currencies.showmany is set to true
+   Should be a | delimited list
 -------------------------------------------------------------------------------------
 HELPERS are displayed when certain counters reaches 0. 
 They will present you with a list of relevant adventure locations. 

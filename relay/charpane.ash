@@ -11,8 +11,10 @@ import "chit_brickTerminal.ash";
 // For more information refer to documentation in /data/chit_ReadMe.txt
 setvar("chit.autoscroll", true);
 setvar("chit.checkversion", false);
-setvar("chit.currencies", "item", "rad,Source essence,BACON,cop dollar");
+setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research");
+setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
+setvar("chit.currencies.showmany.choices", "meat");
 setvar("chit.character.avatar", true);
 setvar("chit.character.title", true);
 setvar("chit.clan.display", "away"); // Valid values are on,off,away. Away will only display clan if chit.clan.home is not blank.
@@ -2706,153 +2708,171 @@ void bakeStats() {
 // Based on fancy currency relay override for charpane by DeadNed (#1909053)
 // http://kolmafia.us/showthread.php?12311-Fancy-Currency-(Charpane-override)
 void allCurrency(buffer result) {
-	string amount_of(item it) {
-		if(it == $item[none])
-			return formatInt(my_meat());
-		return formatInt(item_amount(it));
-	}
-	
-	string name_of(item it) {
-		if(it == $item[none])
-			return "Meat";
-		return to_string(it);
-	}
-	
-	string image_of(item it) {
-		if(it == $item[none])
-			return "meat.gif";
-		return it.image;
-	}
-	
-	boolean [item] displayedCurrencies;
-	
-	void addCurrencyIcon(buffer result, item currency, string link) {
-		result.append(link);
-		result.append('<img class="currency_icon" src="/images/itemimages/');
-		result.append(image_of(currency));
-		result.append('" alt="');
-		result.append(name_of(currency));
-		if(link == "") {
-			result.append('" class="hand" title="');
-			result.append(name_of(currency));
-		}
-		result.append('" />');
-		if(link != "")
-			result.append('</a>');
+	record chit_currency {
+		string name;
+		string tag;
+		string icon;
+		int amount;
+		string link;
+		item it;
+	};
+
+	boolean [string] displayedCurrencies;
+
+	chit_currency constructCurrency(string name, string tag, string icon, int amount, string link, item it) {
+		chit_currency curr;
+		curr.name = name;
+		curr.tag = tag;
+		curr.icon = icon;
+		curr.amount = amount;
+		curr.link = link;
+		curr.it = it;
+		return curr;
 	}
 
-	void addCurrencyIcon(buffer result, item currency, string title, string url) {
-		result.addCurrencyIcon(currency, '<a title="' + title + '" target="mainpane" href="' + url + '">');
+	chit_currency constructCurrency(string name, string tag, string icon, int amount, string link) {
+		return constructCurrency(name, tag, icon, amount, link, $item[none]);
 	}
-	
-	void addCurrency(buffer result, item currency) {
-		if(displayedCurrencies[currency])
-			return;
-		
-		displayedCurrencies[currency] = true;
-		
-		result.append('<span class="currency_amount">');
-		result.append(amount_of(currency));
-		result.append('</span>');
-		
-		switch(currency) {
+
+	string constructLink(string title, string url) {
+		return '<a title="' + title + '" target="mainpane" href="' + url + '">';
+	}
+
+	string getCurrencyItemLink(item it) {
+		switch(it) {
 			case $item[disassembled clover]:
-				result.addCurrencyIcon(currency, item_amount($item[ten-leaf clover]) > 0 ? '<a title="disassemble a clover" href="' + sideCommand("use 1 ten-leaf clover") + '">' : "");
-				result.addCurrency($item[ten-leaf clover]);
-				break;
+				return item_amount($item[ten-leaf clover]) > 0 ? '<a title="disassemble a clover" href="' + sideCommand("use 1 ten-leaf clover") + '">' : "";
 			case $item[ten-leaf clover]:
-				result.addCurrencyIcon(currency, item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "");
-				result.addCurrency($item[disassembled clover]);
-				break;
+				return item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "";
 			case $item[hobo nickel]:
-				result.addCurrencyIcon(currency, "Wander on over to hobopolis", "clan_hobopolis.php");
-				break;
+				return constructLink("Wander on over to hobopolis", "clan_hobopolis.php");
 			case $item[Freddy Kruegerand]:
-				result.addCurrencyIcon(currency, "Visit The Terrified Eagle Inn", "shop.php?whichshop=dv");
-				break;
+				return constructLink("Visit The Terrified Eagle Inn", "shop.php?whichshop=dv");
 			case $item[Beach Buck]:
-				result.addCurrencyIcon(currency, "Take a trip to Spring Break Beach", "place.php?whichplace=airport_sleaze");
-				break;
+				return constructLink("Take a trip to Spring Break Beach", "place.php?whichplace=airport_sleaze");
 			case $item[Coinspiracy]:
-				result.addCurrencyIcon(currency, "Down the hatch to the Conspiracy Island bunker", "place.php?whichplace=airport_spooky_bunker");
-				break;
+				return constructLink("Down the hatch to the Conspiracy Island bunker", "place.php?whichplace=airport_spooky_bunker");
 			case $item[FunFunds&trade;]:
-				result.addCurrencyIcon(currency, "Buy some souvenirs at the Dinsey Company Store", "shop.php?whichshop=landfillstore");
-				break;
+				return constructLink("Buy some souvenirs at the Dinsey Company Store", "shop.php?whichshop=landfillstore");
 			case $item[Volcoino]:
-				result.addCurrencyIcon(currency, "Boogie right on down to Disco GiftCo", "shop.php?whichshop=infernodisco");
-				break;
+				return constructLink("Boogie right on down to Disco GiftCo", "shop.php?whichshop=infernodisco");
 			case $item[Wal-Mart gift certificate]:
-				result.addCurrencyIcon(currency, "Browse the goods at Wal-Mart", "shop.php?whichshop=glaciest");
-				break;
+				return constructLink("Browse the goods at Wal-Mart", "shop.php?whichshop=glaciest");
 			case $item[rad]:
-				result.addCurrencyIcon(currency, "Fiddle with your genes", "shop.php?whichshop=mutate");
-				break;
+				return constructLink("Fiddle with your genes", "shop.php?whichshop=mutate");
 			case $item[source essence]:
 				string termlink = 'campground.php?action=terminal';
 				if(my_path() == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
-				result.addCurrencyIcon(currency, "Boot up the Source Terminal", "' + termlink + '");
-				break;
+				return constructLink("Boot up the Source Terminal", "' + termlink + '");
 			case $item[BACON]:
-				result.addCurrencyIcon(currency, "Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
-				break;
+				return constructLink("Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
 			case $item[cop dollar]:
-				result.addCurrencyIcon(currency, "Visit the quartermaster", "shop.php?whichshop=detective");
-				break;
+				return constructLink("Visit the quartermaster", "shop.php?whichshop=detective");
 			case $item[sprinkles]:
-				result.addCurrencyIcon(currency, "Take a tour of Gingerbread City", "place.php?whichplace=gingerbreadcity");
-				break;
+				return constructLink("Take a tour of Gingerbread City", "place.php?whichplace=gingerbreadcity");
 			case $item[Spacegate Research]:
-				result.addCurrencyIcon(currency, "Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
-				break;
+				return constructLink("Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
 			default:
-				result.addCurrencyIcon(currency, "");
+				return "";
+		}
+	}
+
+	chit_currency getCurrency(string name) {
+		switch(name) {
+			case "meat": case "none": // none supported for backwards compatibility
+				return constructCurrency("Meat", "meat", "meat.gif", my_meat(), "");
+			case "asdonmartinfuel":
+				return constructCurrency("Asdon Martin fuel", name, "tank.gif", get_fuel(),
+					constructLink("Fuel up your sweet spy car.", "campground.php?action=fuelconvertor"));
+			default:
+				item it = to_item(name);
+				return constructCurrency(it.to_string(), it.to_string(), it.image, it.item_amount(), getCurrencyItemLink(it), it);
+		}
+	}
+
+	void addCurrencyIcon(buffer result, chit_currency curr) {
+		result.append(curr.link);
+		result.append('<img class="currency_icon" src="/images/itemimages/');
+		result.append(curr.icon);
+		result.append('" alt="');
+		result.append(curr.name);
+		if(curr.link == "") {
+			result.append('" class="hand" title="');
+			result.append(curr.name);
+		}
+		result.append('" />');
+		if(curr.link != "")
+			result.append('</a>');
+	}
+
+	void addCurrency(buffer result, chit_currency curr) {
+		if(displayedCurrencies[curr.tag])
+			return;
+		
+		displayedCurrencies[curr.tag] = true;
+		
+		result.append('<span class="currency_amount">');
+		result.append(formatInt(curr.amount));
+		result.append('</span>');
+		
+		result.addCurrencyIcon(curr);
+
+		switch(curr.it) {
+			case $item[disassembled clover]:
+				result.addCurrency(getCurrency($item[ten-leaf clover]));
+				break;
+			case $item[ten-leaf clover]:
+				result.addCurrency(getCurrency($item[disassembled clover]));
 				break;
 		}
 	}
 
-	boolean showMany = to_boolean(vars["chit.currencies.showmany"]);
-	string chitCurrency = showmany ? get_property("chit.currencies.showmany.choices") : get_property("_chit.currency");
-	string [int] dispCurrencies = split_string(chitCurrency, ",");
+	boolean showMany = to_boolean(get_property("chit.currencies.showmany"));
+	string chitCurrency = showmany ? vars["chit.currencies.showmany.choices"] : get_property("_chit.currency");
+	// Currencies used to require and underlying item, and meat was handled as $item[none].
+	// This is to avoid weird behavior when coming from previous versions of chit
+	if(chitCurrency.starts_with("none"))
+		chitCurrency = chitCurrency.replace_string("none", "meat");
+	string [int] dispCurrencies = split_string(chitCurrency, "\\|");
 	item current = to_item(dispCurrencies[0]);
 	
 	result.append('<div style="float:left" class="hand"><ul id="chit_currency"><li>');
 	foreach i,curr in dispCurrencies {
 		result.append('<span class="currency_block">');
-		result.addCurrency(to_item(curr));
+		result.addCurrency(getCurrency(curr));
 		result.append('</span>');
 	}
 	result.append('<ul>');
 	
-	boolean [item] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
-	foreach x,cur in split_string("none,"+vars["chit.currencies"], "\\s*(?<!\\\\)[,|]\\s*") {
-		item it = to_item(cur);
-		if((amount_of(it) > 0 || list_contains(chitCurrency,cur,",")) && !(currencies contains it)) {
-			currencies[it] = true;
+	boolean [string] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
+	foreach x,curtag in split_string("meat|"+vars["chit.currencies"]+"|"+vars["chit.currencies.special"], "\\s*(?<!\\\\)[,|]\\s*") {
+		chit_currency curr = getCurrency(curtag);
+		if((curr.amount > 0 || list_contains(chitCurrency,curr.tag,"\\|")) && !(currencies contains curr.tag)) {
+			currencies[curr.tag] = true;
 			result.append('<li');
-			if(displayedCurrencies[it]) result.append(' class="current"');
+			if(displayedCurrencies[curr.tag]) result.append(' class="current"');
 			result.append('><a href="/KoLmafia/sideCommand?cmd=');
 			if(showMany) {
 				result.append(url_encode("set chit.currencies.showmany.choices = "));
-				if(list_contains(chitCurrency,cur,","))
-					result.append(list_remove(chitCurrency,cur,","));
+				if(list_contains(chitCurrency,curr.tag,"\\s*(?<!\\\\)[,|]\\s*"))
+					result.append(list_remove(chitCurrency,curr.tag,"|","\\s*(?<!\\\\)[,|]\\s*"));
 				else
-					result.append(list_add(chitCurrency,cur,","));
+					result.append(list_add(chitCurrency,curr.tag,"|","\\s*(?<!\\\\)[,|]\\s*"));
 			} else {
 				result.append(url_encode("set _chit.currency = "));
-				result.append(it);
+				result.append(curr.tag);
 			}
 			result.append('&pwd=');
 			result.append(my_hash());
 			result.append('" title="');
-			result.append(name_of(it));
+			result.append(curr.name);
 			result.append('" alt="');
-			result.append(name_of(it));
+			result.append(curr.name);
 			result.append('"><span>');
-			result.append(amount_of(it));
+			result.append(curr.amount);
 			result.append('</span><img src="/images/itemimages/');
-			result.append(image_of(it));
+			result.append(curr.icon);
 			result.append('"></a></li>');
 		}
 	}
