@@ -31,6 +31,7 @@ Inside each area you can place any of the following "bricks":
    helpers:    Adventure helpers (described in more detail below)
    thrall:     Displays current Pasta Thrall, if you are a Pastamancer
    vykea:      Displays current VYKEA companion, if you have one
+   horsery:    Displays your current horse, and allows you to conveniently switch 
    terminal:   Displays your source terminal skills and allows you to swap them (not available for the toolbar, not recommended for the floor)
    effects:    List of current effects (Not available in toolbar)
    organs:     similar to stats, but only shows spleen, stomach and liver (more useful when used in the toolbar)
@@ -45,7 +46,7 @@ chit.roof.layout: Comma-separated list of bricks to place in your roof
    Default: character,stats,gear
 
 chit.walls.layout: Comma-separated list of bricks to place in your walls
-   Default: helpers,thrall,vykea,effects
+   Default: helpers,thrall,vykea,effects,horsery
 
 chit.floor.layout: Comma-separated list of bricks to place in your floor
    Default: update,familiar
@@ -162,7 +163,7 @@ chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in afte
    Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
-   Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
+   Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
 chit.currencies.special: List of special case currencies to display when mousing over your meat (or other active currency)
    Default: asdonmartinfuel
       At the moment, asdonmartinfuel is the only such currency
