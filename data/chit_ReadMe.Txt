@@ -163,7 +163,7 @@ chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in afte
    Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
-   Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
+   Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|X|O
 chit.currencies.special: List of special case currencies to display when mousing over your meat (or other active currency)
    Default: asdonmartinfuel
       At the moment, asdonmartinfuel is the only such currency
