@@ -12,7 +12,7 @@ import "chit_brickHorsery.ash";
 // For more information refer to documentation in /data/chit_ReadMe.txt
 setvar("chit.autoscroll", true);
 setvar("chit.checkversion", false);
-setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|X|O");
+setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research");
 setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
 setvar("chit.currencies.showmany.choices", "meat");
@@ -2775,9 +2775,9 @@ void allCurrency(buffer result) {
 			case $item[Spacegate Research]:
 				return constructLink("Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
 			case $item[X]: case $item[giant X]:
-				return constructLink("eXpend some X's", "shop.php?whichshop=xo");
+				return constructLink("eXpend some Xes", "shop.php?whichshop=xo");
 			case $item[O]: case $item[giant O]:
-				return constructLink("blOw some O's", "shop.php?whichshop=xo");
+				return constructLink("blOw some Os", "shop.php?whichshop=xo");
 			default:
 				return "";
 		}

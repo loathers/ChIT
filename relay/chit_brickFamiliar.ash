@@ -1543,6 +1543,13 @@ void bakeFamiliar() {
 				+ (get_property("questS01OldGuy") == "unstarted"? 'oldman.php': 'place.php?whichplace=thesea&action=thesea_left2')
 				+ '">Sea jelly available</a>';
 		break;
+	case $familiar[XO Skeleton]:
+		int xs = item_amount($item[X]);
+		int os = item_amount($item[O]);
+		info += '<a class="visit" target="mainpane" title="eXpend some Xes and blOw some Os!" '
+			+ 'href="shop.php?whichshop=xo">' + xs + (xs == 1 ? ' X' : " Xes") + ', ' + os + (os == 1 ? ' O' : " Os")
+			+ "</a>";
+		break;
 	}
 	
 	//Get equipment info
