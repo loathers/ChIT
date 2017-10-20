@@ -6,12 +6,13 @@ import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to 
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
 import "chit_brickTerminal.ash";
+import "chit_brickHorsery.ash";
 
 // Set default values for configuration properties. These values will be used if there is no existing property
 // For more information refer to documentation in /data/chit_ReadMe.txt
 setvar("chit.autoscroll", true);
 setvar("chit.checkversion", false);
-setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research");
+setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research");
 setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
 setvar("chit.currencies.showmany.choices", "meat");
@@ -47,7 +48,7 @@ setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-setvar("chit.walls.layout", "helpers,thrall,vykea,effects");
+setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
@@ -3797,6 +3798,7 @@ void bakeBricks() {
 						case "gear":		bakeGear();			break;
 						case "vykea":		bakeVYKEA();		break;
 						case "terminal":	bakeTerminal();		break;
+						case "horsery":		bakeHorsery();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
