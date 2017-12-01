@@ -478,6 +478,11 @@ int hasDrops(item it) {
 			if(ghostLoc != "" || turnsToGhost <= 0)
 				return 1;
 			break;
+		case $item[Kremlin's Greatest Briefcase]:
+			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
+			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
+			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
+			return darts + drinks + clicks;
 	}
 	
 	return 0;
@@ -1339,6 +1344,10 @@ void bakeFamiliar() {
 		actortype = famtype;
 		if(myfam == $familiar[Fancypants Scarecrow])
 			famtype = "Fancy Scarecrow"; // Name is too long when there's info added
+		// Put the mumming trunk icon before the familiar type name
+		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592.*?</a>', source);
+		if(find(mummingmatcher))
+			famtype = group(mummingmatcher) + " " + famtype;
 	}
 	
 	//Get Familiar Name

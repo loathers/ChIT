@@ -61,6 +61,14 @@ string gearName(item it) {
 			else if(runs < 9) notes = "50% free run";
 			else notes = "20% free run";
 			break;
+		case $item[Kremlin's Greatest Briefcase]:
+			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
+			if(darts > 0) notes = darts + " darts";
+			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
+			if(drinks > 0) notes += (notes == "" ? "" : ", ") + drinks + " drinks";
+			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
+			if(clicks > 0) notes += (notes == "" ? "" : ", ") + clicks + " clicks";
+			break;
 	}
 	
 	if(notes != "")
