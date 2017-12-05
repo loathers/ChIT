@@ -130,6 +130,8 @@ int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
 	
 	if(foldcheck)
 		available += foldable_amount(it, reason, hagnk);
+	if(it == $item[pantogram pants] && available == 0 && item_amount($item[portable pantogram]) > 0)
+		available = 1;
 	
 	return available;
 }
@@ -602,6 +604,7 @@ void pickerGear(slot s) {
 		string cmd;
 		string action = "";
 		string action_description = "";
+		string cmd_override = "";
 		
 		if(!take_action) {
 			// Leave action and cmd blank.
@@ -643,6 +646,9 @@ void pickerGear(slot s) {
 			danger_level = 2;
 			action_description += '(' + pulls_remaining() + ' left)';
 			cmd = "pull " + to_fold + "; fold " + it + "; equip ";
+		} else if(it == $item[pantogram pants] && available_amount(it) == 0 && item_amount($item[portable pantogram]) > 0) {
+			action = "conjure";
+			cmd_override = '/inv_use.php?pwd=' + my_hash() + '&which=3&whichitem=9573" target="mainpane';
 		} else // no options were found, give up
 			return false;
 		
@@ -650,6 +656,8 @@ void pickerGear(slot s) {
 		displayedItems[it] = true;
 		
 		string command = sideCommand(cmd + s + " " + it);
+		if(cmd_override != "")
+			command = cmd_override;
 		
 		switch(vars["chit.gear.layout"]) {
 		case "experimental":
