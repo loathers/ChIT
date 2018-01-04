@@ -69,6 +69,21 @@ string gearName(item it) {
 			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
 			if(clicks > 0) notes += (notes == "" ? "" : ", ") + clicks + " clicks";
 			break;
+		case $item[deceased crimbo tree]:
+			int needles = to_int(get_property("_garbageTreeCharge"));
+			if(needles > 0)
+				notes = needles + " needles";
+			break;
+		case $item[broken champagne bottle]:
+			int ounces = to_int(get_property("_garbageChampagneCharge"));
+			if(ounces > 0)
+				notes = ounces + " ounces";
+			break;
+		case $item[makeshift garbage shirt]:
+			int scraps = to_int(get_property("_garbageShirtCharge"));
+			if(scraps > 0)
+				notes = scraps + " scraps";
+			break;
 	}
 	
 	if(notes != "")

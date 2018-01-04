@@ -483,6 +483,15 @@ int hasDrops(item it) {
 			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
 			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
 			return darts + drinks + clicks;
+		case $item[deceased crimbo tree]:
+			int needles = to_int(get_property("_garbageTreeCharge"));
+			return needles;
+		case $item[broken champagne bottle]:
+			int ounces = to_int(get_property("_garbageChampagneCharge"));
+			return ounces;
+		case $item[makeshift garbage shirt]:
+			int scraps = to_int(get_property("_garbageShirtCharge"));
+			return scraps;
 	}
 	
 	return 0;
