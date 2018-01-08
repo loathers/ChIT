@@ -444,6 +444,9 @@ int hasBjornDrops(familiar f) {
 		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDropsCrown",1);
 		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDropsCrown",2);
 		case $familiar[trick-or-treating tot]: return checkDrops("_hoardedCandyDropsCrown",3);
+		case $familiar[optimistic candle]: return checkDrops("_optimisticCandleDropsCrown",3);
+		case $familiar[garbage fire]: return checkDrops("_garbageFireDropsCrown",3);
+		case $familiar[twitching space critter]: return checkDrops("_spaceFurDropsCrown",1);
 	}
 	
 	return 0;
@@ -797,6 +800,16 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 				case $familiar[trick-or-treating tot]:
 					if(dropsLeft > 1) iconInfo.append("candies");
 					else iconInfo.append("candy");
+					break;
+				case $familiar[optimistic candle]:
+					iconInfo.append("wax");
+					break;
+				case $familiar[garbage fire]:
+					iconInfo.append("newspaper");
+					if(dropsLeft > 1) iconInfo.append("s");
+					break;
+				case $familiar[twitching space critter]:
+					iconInfo.append("fur");
 					break;
 			}
 		}
