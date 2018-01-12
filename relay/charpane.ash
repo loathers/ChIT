@@ -2765,7 +2765,7 @@ void allCurrency(buffer result) {
 				string termlink = 'campground.php?action=terminal';
 				if(my_path() == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
-				return constructLink("Boot up the Source Terminal", "' + termlink + '");
+				return constructLink("Boot up the Source Terminal", termlink);
 			case $item[BACON]:
 				return constructLink("Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
 			case $item[cop dollar]:
