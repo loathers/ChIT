@@ -495,6 +495,10 @@ int hasDrops(item it) {
 		case $item[makeshift garbage shirt]:
 			int scraps = to_int(get_property("_garbageShirtCharge"));
 			return scraps;
+		case $item[mafia middle finger ring]:
+			if(get_property("_mafiaMiddleFingerRingUsed").to_boolean() == false)
+				return 1;
+			break;
 	}
 	
 	return 0;
