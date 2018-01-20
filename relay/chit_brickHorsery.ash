@@ -48,8 +48,7 @@ void addHorse(buffer result, int num) {
 	string link = "";
 	string linkend = "";
 	if(num != currHorse()) {
-		link = '<a class="change" href="' + sideCommand("place.php?whichplace=town_right&action=town_horsery ; " +
-			"choice.php?whichchoice=1266&pwd=" + my_hash() + "&option=" + num) + '">';
+		link = '<a class="change" href="' + sideCommand("horsery " + num) + '">';
 		linkend = '</a>';
 	}
 	result.append('<tr class="pickitem');
