@@ -727,6 +727,12 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		}
 		break;
+	case $familiar[Garbage Fire]:
+		if(get_property("garbageFireProgress").to_int() > 24) {
+			iconInfo.append("Garbage soon!");
+			return STATUS_ALLDROPS;
+		}
+		break;
 	case $familiar[Intergnat]:
 		int status = STATUS_NORMAL;
 		string demon = get_property("demonName12");
