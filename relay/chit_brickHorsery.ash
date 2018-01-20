@@ -6,12 +6,11 @@
 
 int currHorse() {
 	switch(get_property("_horsery")) {
-		case "": return 0;
-		case "Initiative: +10": return 1;
-		case "Combat Rate: -5": return 2;
-		case "Cold Resistance +1, Hot Resistant +1, Sleaze Resistance +1, Spooky Resistance +1, Stench Resistance +1":
-			return 4;
-		default: return 3;
+		case "normal horse": return 1;
+		case "dark horse": return 2;
+		case "crazy horse": return 3;
+		case "pale horse": return 4;
+		default: return 0;
 	}
 }
 
@@ -21,28 +20,19 @@ string horseName(int horseNum) {
 		case 2: return "Dark";
 		case 3: return "Crazy";
 		case 4: return "Pale";
-		default: return "soolar messed up";
+		default: return "No";
 	}
 }
 
 // the thing the horse does that's not in _horsery
 string horseBonus(int horseNum) {
 	switch(horseNum) {
-		case 1: return "HP/MP Regen";
-		case 2: return "Extra Meat";
-		case 3: return "Random Buffs";
-		case 4: return "Spooky Damage";
-		default: return "soolar broke something";
-	}
-}
-
-string horseSummary(int horseNum) {
-	switch(horseNum) {
-		case 1: return "regen, +init";
-		case 2: return "meat, -combat";
-		case 3: return "crazy!";
-		case 4: return "spooky, +res";
-		default: return "soolar is bad";
+		case 1: return "HP/MP Regen, Initiative: +10";
+		case 2: return "Extra Meat, Combat Rate: -5";
+		case 3: return "Random Buffs, Muscle: " + get_property("_horseryCrazyMus") + "%, Mysticality: " +
+			get_property("_horseryCrazyMys") + "%, Moxie: " + get_property("_horseryCrazyMox") + "%";
+		case 4: return "Spooky Damage, Prismatic Resistance +1";
+		default: return "Nothing";
 	}
 }
 
@@ -76,7 +66,7 @@ void addHorse(buffer result, int num) {
 		result.append("<b>Hostle</b> a ");
 	result.append(horseName(num));
 	result.append(' Horse<br /><span class="descline">');
-	result.append(horseSummary(num));
+	result.append(parseMods(horseBonus(num)));
 	result.append('</span>');
 	result.append(linkend);
 	result.append('</td></tr>');
@@ -114,7 +104,7 @@ void bakeHorsery() {
 	else {
 		result.append('<td class="icon" title="Your Horse"><img src="' + horseImage(num) + '" /></td>');
 		result.append('<td class="info" colspan="3"><a class="chit_launcher" rel="chit_pickerhorsery"><b>' + horseName(num) + ' Horse</b><br />');
-		result.append(horseBonus(num) + ", " + parseMods(get_property("_horsery")) + '</a></td>');
+		result.append(parseMods(horseBonus(num)) + '</a></td>');
 	}
 
 	result.append('</tr></tbody></table>');
