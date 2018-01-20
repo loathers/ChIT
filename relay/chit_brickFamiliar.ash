@@ -1583,14 +1583,11 @@ void bakeFamiliar() {
 	case $familiar[XO Skeleton]:
 		int xs = item_amount($item[X]);
 		int os = item_amount($item[O]);
-		matcher m = create_matcher("\\d/9", info);
-		m.find();
-		string xprog = m.group();
-		m.find();
-		string yprog = m.group();
+		string xprog = get_property("xoSkeleltonXProgress");
+		string yprog = get_property("xoSkeleltonOProgress");
 		info = '<a class="visit" target="mainpane" title="eXpend some Xes and blOw some Os!" '
-			+ 'href="shop.php?whichshop=xo">' +  xs + (xs == 1 ? ' X' : " Xes") + ' (' + xprog + '), '
-			+ os + (os == 1 ? ' O' : " Os") + ' (' + yprog + ')</a>';
+			+ 'href="shop.php?whichshop=xo">' +  xs + (xs == 1 ? ' X' : " Xes") + ' (' + xprog + '/9), '
+			+ os + (os == 1 ? ' O' : " Os") + ' (' + yprog + '/9)</a>';
 		break;
 	}
 	
