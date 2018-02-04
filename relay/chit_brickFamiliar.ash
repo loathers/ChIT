@@ -781,6 +781,14 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		if(spaceJellyfishDrops < 3)
 			return STATUS_HASDROPS;
+		break;
+	case $familiar[XO Skeleton]:
+		int hugs = 11 - get_property("_xoHugsUsed").to_int();
+		if(hugs > 0) {
+			iconInfo.append(hugs + " hug" + (hugs == 1 ? "" : "s"));
+			return STATUS_HASDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
@@ -1587,11 +1595,14 @@ void bakeFamiliar() {
 	case $familiar[XO Skeleton]:
 		int xs = item_amount($item[X]);
 		int os = item_amount($item[O]);
+		int hugs = 11 - get_property("_xoHugsUsed").to_int();
 		string xprog = get_property("xoSkeleltonXProgress");
 		string yprog = get_property("xoSkeleltonOProgress");
 		info = '<a class="visit" target="mainpane" title="eXpend some Xes and blOw some Os!" '
 			+ 'href="shop.php?whichshop=xo">' +  xs + (xs == 1 ? ' X' : " Xes") + ' (' + xprog + '/9), '
 			+ os + (os == 1 ? ' O' : " Os") + ' (' + yprog + '/9)</a>';
+		if(hugs > 0)
+			info = hugs + " hug" + (hugs == 1 ? "" : "s") + ", " + info;
 		break;
 	}
 	
