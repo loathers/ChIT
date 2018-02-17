@@ -3087,8 +3087,10 @@ void bakeCharacter() {
 	}
 	
 	string myGuild() {
-		if(my_path() == "Nuclear Autumn")
-			return "shop.php?whichshop=mutate";
+		switch(my_path()) {
+			case "Nuclear Autumn": return "shop.php?whichshop=mutate";
+			case "Pocket Familiars": return "shop.php?whichshop=pokefam";
+		}
 		switch(my_class()) {
 		case $class[Seal Clubber]:
 		case $class[Turtle Tamer]:
