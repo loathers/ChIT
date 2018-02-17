@@ -1355,6 +1355,16 @@ void FamEd() {
 	pickerServant();
 }
 
+# <b><a href="famteam.php" target="mainpane" style="text-decoration:none">Active Team</a></b><br /><br /><img align="absmiddle" src=/images/itemimages/familiar32.gif>&nbsp;6655321 (Lvl 4)<br /><img align="absmiddle" src=/images/itemimages/familiar34.gif>&nbsp;Baxanne (Lvl 4)<br /><img align="absmiddle" src=/images/itemimages/familiar20.gif>&nbsp;Bufferson (Lvl 5)<br /><br /><a href="famteam.php" target="mainpane">Manage Team</a>
+void FamPoke()
+{
+	buffer result;
+	result.append('<table id="chit_familiar" class="chit_brick nospace"><tr><td>');
+	result.append(chitSource["familiar"]);
+	result.append('</td></tr></table>');
+	chitBricks["familiar"] = result;
+}
+
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -1364,6 +1374,7 @@ void bakeFamiliar() {
 	case "Avatar of Sneaky Pete": FamPete(); return;
 	case "Actually Ed the Undying": FamEd(); return;
 	case "License to Adventure": return;
+	case "Pocket Familiars": FamPoke(); return;
 	}
 
 	string source = chitSource["familiar"];
