@@ -1304,7 +1304,7 @@ void pickerThrall() {
 }
 
 void bakeThrall() {
-	if(my_class() != $class[Pastamancer] || my_path() == "Nuclear Autumn") return;
+	if(my_class() != $class[Pastamancer] || my_path() == "Nuclear Autumn" || my_path() == "Pocket Familiars") return;
 	buffer result;
 	void bake(string lvl, string name, string type, string img) {
 		if(to_boolean(vars["chit.thrall.showname"])) {

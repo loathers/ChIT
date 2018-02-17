@@ -1377,10 +1377,19 @@ void FamPoke()
 		result.append(f.to_string());
 		result.append('</td></tr>');
 	}
-	matcher famMatcher = create_matcher("familiar(\\d+)\\.gif", chitSource["familiar"]);
+	matcher famMatcher = create_matcher("itemimages/(.*?\\.gif)", chitSource["familiar"]);
 	while(find(famMatcher))
 	{
-		addPokeFam(famMatcher.group(1).to_int().to_familiar());
+		familiar f = $familiar[none];
+		foreach fam in $familiars[]
+		{
+			if(fam.image == famMatcher.group(1))
+			{
+				f = fam;
+				break;
+			}
+		}
+		addPokeFam(f);
 	}
 	result.append('</table>');
 	chitBricks["familiar"] = result;
