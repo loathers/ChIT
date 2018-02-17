@@ -795,6 +795,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
+	boolean pokeFam = (my_path() == "Pocket Familiars");
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
@@ -803,6 +804,8 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	int status = STATUS_NORMAL;
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
+	if(pokeFam && !isBjorn)
+		dropsLeft = 0;
 	
 	if(dropsLeft > 0) {
 		iconInfo.append(dropsLeft);
@@ -838,7 +841,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 			status = STATUS_HASDROPS;
 	}
 	
-	if(!isBjorn) {
+	if(!isBjorn && !pokeFam) {
 		int fightsLeft = f.fights_limit - f.fights_today;
 		if(fightsLeft > 0)
 		{
@@ -862,7 +865,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	
 	string blackForestState = get_property("questL11Black");
 	// You should probably bring a bird with you if you don't have a hatchling and you're looking for the black market
-	if(!isBjorn && (f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow])) {
+	if(!isBjorn && !pokeFam && (f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow])) {
 		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) 
 			status = STATUS_GOOD;
 		else
@@ -1359,10 +1362,29 @@ void FamEd() {
 void FamPoke()
 {
 	buffer result;
-	result.append('<table id="chit_familiar" class="chit_brick nospace"><tr><td>');
-	result.append(chitSource["familiar"]);
-	result.append('</td></tr></table>');
+	result.append('<table id="chit_familiar" class="chit_brick nospace"><tr>');
+	result.append('<th colspan="2"><a href="famteam.php" target="mainpane" title="Manage Team">Active Team</a></th></tr>');
+	void addPokeFam(familiar f)
+	{
+		result.append('<tr');
+		result.append('><td class="icon">');
+		result.addFamiliarIcon(f, false, false);
+		result.append('</td><td>');
+		result.append(f.name);
+		result.append(' (Lvl ');
+		result.append(f.poke_level);
+		result.append(')<br />');
+		result.append(f.to_string());
+		result.append('</td></tr>');
+	}
+	matcher famMatcher = create_matcher("familiar(\\d+)\\.gif", chitSource["familiar"]);
+	while(find(famMatcher))
+	{
+		addPokeFam(famMatcher.group(1).to_int().to_familiar());
+	}
+	result.append('</table>');
 	chitBricks["familiar"] = result;
+
 }
 
 void bakeFamiliar() {
