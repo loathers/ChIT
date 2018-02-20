@@ -187,7 +187,7 @@ void addTerminal(buffer result) {
 
 void bakeTerminal() {
 	// Nothing to do if you don't have the terminal
-	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal])) {
+	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal]) && !($strings[Pocket Familiars] contains my_path())) {
 		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
 			chips[chip] = true;
 		
