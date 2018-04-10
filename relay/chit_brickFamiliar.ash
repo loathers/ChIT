@@ -499,6 +499,13 @@ int hasDrops(item it) {
 			if(get_property("_mafiaMiddleFingerRingUsed").to_boolean() == false)
 				return 1;
 			break;
+		case $item[FantasyRealm G. E. M.]:
+			matcher m = create_matcher("(\\d+) hours? remaining", chitSource["fantasyRealm"]);
+			if(find(m)) {
+				int hours = m.group(1).to_int();
+				return hours;
+			}
+			break;
 	}
 	
 	return 0;

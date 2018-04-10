@@ -12,7 +12,7 @@ import "chit_brickHorsery.ash";
 // For more information refer to documentation in /data/chit_ReadMe.txt
 setvar("chit.autoscroll", true);
 setvar("chit.checkversion", false);
-setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research");
+setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
 setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
 setvar("chit.currencies.showmany.choices", "meat");
@@ -2059,6 +2059,15 @@ void addWalfordBucket(buffer result) {
 	}
 }
 
+void addFantasyRealm(buffer result) {
+	// TODO: Don't display this if Rubees are an active currency (add logic to conveniently check active currencies...)
+	if(have_equipped($item[FantasyRealm G. E. M.])) {
+		result.append('<tr><td class="label"><a href="shop.php?whichshop=fantasyrealm" target=mainpane title="Spend Rubees&trade;">Rubees</a></td><td class="info">');
+		result.append(item_amount($item[Rubee&trade;]));
+		result.append('</td></tr>');
+	}
+}
+
 void addAud(buffer result) {
 	matcher parseAud = create_matcher("Aud:</td><td align=left>(.+?)</td>", chitSource["stats"]);
 	if(parseAud.find()) {
@@ -2660,6 +2669,8 @@ void bakeStats() {
 				result.addCIQuest();
 				result.addWalfordBucket();
 			}
+
+			result.addFantasyRealm();
 		}
 		
 		result.append("</tbody>");
@@ -2778,6 +2789,8 @@ void allCurrency(buffer result) {
 				return constructLink("eXpend some Xes", "shop.php?whichshop=xo");
 			case $item[O]: case $item[giant O]:
 				return constructLink("blOw some Os", "shop.php?whichshop=xo");
+			case $item[Rubee&trade;]:
+				return constructLink("Spend Rubees&trade;", "shop.php?whichshop=fantasyrealm");
 			default:
 				return "";
 		}
@@ -3642,6 +3655,12 @@ boolean parsePage(buffer original) {
 	// Gelatinous Noob
 	if(my_path() == "Gelatinous Noob" && find(parse = create_matcher('<span class=small><b>Absorptions:.+?</script><br>', source))) {
 		chitSource["gelNoob"] = parse.group(0);
+		source = parse.replace_first("");
+	}
+
+	// FantasyRealm tracker
+	if(find(parse = create_matcher('<table>.+?<img src="[^"]+/itemimages/fr_gem.gif"></center>.+?Spend Rubees&trade;.+?</table>', source))) {
+		chitSource["fantasyRealm"] = parse.group(0);
 		source = parse.replace_first("");
 	}
 	
