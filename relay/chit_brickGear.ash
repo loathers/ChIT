@@ -84,6 +84,14 @@ string gearName(item it) {
 			if(scraps > 0)
 				notes = scraps + " scraps";
 			break;
+		case $item[FantasyRealm G. E. M.]:
+			matcher m = create_matcher("(\\d+) hours? remaining", chitSource["fantasyRealm"]);
+			if(find(m)) {
+				int hours = m.group(1).to_int();
+				if(hours > 0)
+					notes = hours + " hours";
+			}
+			break;
 	}
 	
 	if(notes != "")
@@ -556,6 +564,11 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="place.php?whichplace=kgb">Examine the briefcase.</a></td></tr>');
+			break;
+		case $item[FantasyRealm G. E. M.]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="place.php?whichplace=realm_fantasy">Visit FantasyRealm.</a></td></tr>');
 			break;
 	}
 	
