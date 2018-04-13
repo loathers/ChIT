@@ -250,6 +250,14 @@ void addFavGear() {
 			addGear($item[remorseless knife], "charter");
 	}
 	
+	// FantasyRealm equipment
+	if(equipped_amount($item[FantasyRealm G. E. M.]) > 0) {
+		forceAddGear($items[LyleCo premium magnifying glass, LyleCo premium monocle], "FantasyRealm");
+		// recommend the hats if you aren't wearing one
+		if(equipped_amount($item[FantasyRealm Mage's Hat]) + equipped_amount($item[FantasyRealm Rogue's Mask]) + equipped_amount($item[FantasyRealm Warrior's Helm]) == 0)
+			forceAddGear($items[FantasyRealm Mage's Hat, FantasyRealm Rogue's Mask, FantasyRealm Warrior's Helm], "FantasyRealm");
+	}
+	
 	// Miscellaneous
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
