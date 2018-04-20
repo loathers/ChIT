@@ -1373,6 +1373,32 @@ void FamPoke()
 	result.append('<th colspan="2"><a href="famteam.php" target="mainpane" title="Manage Team">Active Team</a></th></tr>');
 	void addPokeFam(familiar f)
 	{
+		int getStrength()
+		{
+			if(f == $familiar[none])
+				return 0;
+			switch(f.poke_level)
+			{
+				case 1: return 1;
+				case 2: return f.poke_level_2_power;
+				case 3: return f.poke_level_3_power;
+				case 4: case 5: return f.poke_level_4_power;
+				default: return 0;
+			}
+		}
+		int getHP()
+		{
+			if(f == $familiar[none])
+				return 0;
+			switch(f.poke_level)
+			{
+				case 1: return 2;
+				case 2: return f.poke_level_2_hp;
+				case 3: return f.poke_level_3_hp;
+				case 4: case 5: return f.poke_level_4_hp;
+				default: return 0;
+			}
+		}
 		result.append('<tr');
 		result.append('><td class="icon">');
 		result.addFamiliarIcon(f, false, false);
@@ -1381,7 +1407,18 @@ void FamPoke()
 		result.append(' (Lvl ');
 		result.append(f.poke_level);
 		result.append(')<br />');
-		result.append(f.to_string());
+		for(int i = 0; i < getStrength(); ++i)
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/blacksword.gif" />');
+		for(int i = 0; i < getHP(); ++i)
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/blackheart.gif" />');
+		if(f.poke_attribute.contains_text("Armor"))
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/whiteshield.gif" />');
+		if(f.poke_attribute.contains_text("Regenerating"))
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/plus.gif" />');
+		if(f.poke_attribute.contains_text("Smart"))
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/spectacles.gif" />');
+		if(f.poke_attribute.contains_text("Spiked"))
+			result.append('<img style="height:20px;width:20px" src="/images/itemimages/spikycollar.gif" />');
 		result.append('</td></tr>');
 	}
 	matcher famMatcher = create_matcher("itemimages/(.*?\\.gif)", chitSource["familiar"]);
