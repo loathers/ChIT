@@ -252,7 +252,7 @@ void addFavGear() {
 	
 	// FantasyRealm equipment
 	if(equipped_amount($item[FantasyRealm G. E. M.]) > 0) {
-		forceAddGear($items[LyleCo premium magnifying glass, LyleCo premium monocle], "FantasyRealm");
+		forceAddGear($items[LyleCo premium magnifying glass, LyleCo premium monocle, charged druidic orb, dragon slaying sword], "FantasyRealm");
 		// recommend the hats if you aren't wearing one
 		if(equipped_amount($item[FantasyRealm Mage's Hat]) + equipped_amount($item[FantasyRealm Rogue's Mask]) + equipped_amount($item[FantasyRealm Warrior's Helm]) == 0)
 			forceAddGear($items[FantasyRealm Mage's Hat, FantasyRealm Rogue's Mask, FantasyRealm Warrior's Helm], "FantasyRealm");
