@@ -167,7 +167,7 @@ void term_link(buffer result) {
 // Part of terminal block that can be included in stats for a smaller footprint
 void addTerminal(buffer result) {
 	// Nothing to do if you don't have the terminal
-	if(get_campground() contains $item[Source terminal] && be_good($item[Source terminal])) {
+	if(get_campground() contains $item[Source terminal] && is_unrestricted($item[Source terminal])) {
 		foreach i,chip in split_string(get_property("sourceTerminalChips"), ",")
 			chips[chip] = true;
 		
