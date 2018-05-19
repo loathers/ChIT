@@ -959,7 +959,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	boolean tryAddFamiliar(familiar f, string reason) {
 		if(f == current)
 			return true;
-		if(have_familiar(f) && is_unrestricted(f) && !famsAdded[f]) {
+		if(have_familiar(f) && be_good(f) && !famsAdded[f]) {
 			if(!anyIcons) {
 				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
 				anyIcons = true;
