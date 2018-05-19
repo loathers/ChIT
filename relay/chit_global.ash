@@ -157,7 +157,7 @@ boolean be_good(item johnny) {
       case "Way of the Surprising Fist": if ($slots[weapon,off-hand] contains johnny.to_slot()) return false; break;
       case "KOLHS": if (johnny.inebriety > 0 && !contains_text(johnny.notes, "KOLHS")) return false; break;
       case "Zombie Slayer": if (johnny.fullness > 0 && !contains_text(johnny.notes, "Zombie Slayer")) return false; break;
-      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
+      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return $items[source terminal] contains johnny; break;
    }
    if (class_modifier(johnny,"Class") != $class[none] && class_modifier(johnny,"Class") != my_class()) return false;
    return is_unrestricted(johnny);
