@@ -184,6 +184,9 @@ int foldable_amount(item it, string reason, boolean hagnk) {
 void addGear(item it, string reason, float score)
 {
 	class gear_class = class_modifier(it,"Class");
+
+	if(vars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path() == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
+		return;
 	
 	if(is_unrestricted(it) && can_equip(it) && chit_available(it, reason) > 0
 		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
