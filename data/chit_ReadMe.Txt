@@ -161,6 +161,10 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
 chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in aftercore instead of in-run
    When these options are not explicitly provided for a category, the defaults are: create=false, pull=false, amount=1
    Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
+
+chit.gear.ignoreG-Lover: Whether or not to avoid hiding G-less gear in G-Lover
+   With this set to false, only quest items without G's will be recommended
+   Default: false
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
    Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
