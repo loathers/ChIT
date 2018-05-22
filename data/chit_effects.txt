@@ -24,6 +24,7 @@ Donho's Bubbly Ballad	type:"at", alias:"Donho's Bubbly Ballad"
 Cringle's Curative Carol	type:"at", alias:"Cringle's Curative Carol"
 Inigo's Incantation of Inspiration	type:"at", alias:"Inigo's"
 Rolando's Rondo of Resisto	type:"at", alias:"Rondo of Resisto"
+Paul's Passionate Pop Song	type:"at", alias:"Passionate Pop Song"
 
 #Turtle Tamer Buffs
 Ghostly Shell	type:"tt"
