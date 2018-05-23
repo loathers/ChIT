@@ -691,6 +691,9 @@ buff parseBuff(string source) {
 			}
 		}
 	}
+
+	if(myBuff.eff != $effect[none] && my_path() == "G-Lover" && myBuff.eff.to_lower_case().index_of("g") < 0)
+		style = "background-color:lightgray";
 	
 	// Flavour of Magic picker!
 	if($effects[Spirit of Cayenne, Spirit of Peppermint, Spirit of Garlic, Spirit of Wormwood, Spirit of Bacon Grease] contains myBuff.eff) {
