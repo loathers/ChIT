@@ -692,7 +692,7 @@ buff parseBuff(string source) {
 		}
 	}
 
-	if(myBuff.eff != $effect[none] && my_path() == "G-Lover" && myBuff.eff.to_lower_case().index_of("g") < 0)
+	if(myBuff.eff != $effect[none] && my_path() == "G-Lover" && !($effects[Ode to Booze, Ultrahydrated] contains myBuff.eff) && myBuff.eff.to_lower_case().index_of("g") < 0)
 		style = "background-color:lightgray";
 	
 	// Flavour of Magic picker!
