@@ -3181,6 +3181,7 @@ void bakeCharacter() {
 		case "Avatar of West of Loathing": return "West of Loathing";
 		case "The Source": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=town_wrong&action=townwrong_oracle'>The Source</a>";
 		case "Nuclear Autumn": return "<a target='mainpane' style='font-weight:normal;' href='campground.php'>Nuclear Autumn</a>";
+		case "G-Lover": return "<a target='mainpane' style='font-weight:normal;' href='shop.php?whichshop=glover'>G-Lover</a>";
 		}
 		return my_path();
 	}
