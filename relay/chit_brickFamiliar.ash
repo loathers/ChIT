@@ -796,6 +796,13 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_HASDROPS;
 		}
 		break;
+	case $familiar[God Lobster]:
+		int godfights = 3 - get_property("_godLobsterFights").to_int();
+		if(godfights > 0) {
+			iconInfo.append(godfights + " challenge" + (godfights == 1 ? "" : "s"));
+			return STATUS_HASDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
@@ -1689,6 +1696,12 @@ void bakeFamiliar() {
 			+ os + (os == 1 ? ' O' : " Os") + ' (' + yprog + '/9)</a>';
 		if(hugs > 0)
 			info = hugs + " hug" + (hugs == 1 ? "" : "s") + ", " + info;
+		break;
+	case $familiar[God Lobster]:
+		int godfights = 3 - get_property("_godLobsterFights").to_int();
+		if(godfights > 0)
+			info += '<a target=mainpane href="main.php?fightgodlobster=1" title="Challenge the God Lobster">'
+				+ godfights + " challenge" + (godfights == 1 ? "" : "s") + '</a>';
 		break;
 	}
 	
