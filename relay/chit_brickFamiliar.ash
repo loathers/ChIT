@@ -1703,6 +1703,10 @@ void bakeFamiliar() {
 			info += '<a target=mainpane href="main.php?fightgodlobster=1" title="Challenge the God Lobster">'
 				+ godfights + " challenge" + (godfights == 1 ? "" : "s") + '</a>';
 		break;
+	case $familiar[Cat Burglar]:
+		if(source.index_of('<a target=mainpane href=main.php?heist=1>heist time!</a>') != -1)
+			info = '<a target=mainpane href=main.php?heist=1>heist time!</a>';
+		break;
 	}
 	
 	//Get equipment info
