@@ -1055,7 +1055,13 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		danger_level = (is100 == current) ? 2 : -1;
 	picker.append('<tr class="pickitem"><td class="icon"><a target=mainpane class="visit done" href="familiar.php">');
 	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium", danger_level);
-	picker.append('</a></td><td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');
+	picker.append('</a></td>');
+	
+	picker.append('<td class="icon"><a target=charpane class="change" href="'+sideCommand("familiar none")+'">');
+	picker.append('<img src='+familiar_image($familiar[none])+' title="Use no familiar" />');
+	picker.append('</a></td>');
+	
+	picker.append('<td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');
 	picker.append('Visit Your Terrarium');
 	picker.append('</a></td></tr>');
 	picker.addLoader("Changing familiar...");
