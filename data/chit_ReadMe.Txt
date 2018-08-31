@@ -32,6 +32,7 @@ Inside each area you can place any of the following "bricks":
    thrall:     Displays current Pasta Thrall, if you are a Pastamancer
    vykea:      Displays current VYKEA companion, if you have one
    horsery:    Displays your current horse, and allows you to conveniently switch 
+   boombox:    Displays your boombox setting, and allows you to conveniently switch 
    terminal:   Displays your source terminal skills and allows you to swap them (not available for the toolbar, not recommended for the floor)
    effects:    List of current effects (Not available in toolbar)
    organs:     similar to stats, but only shows spleen, stomach and liver (more useful when used in the toolbar)
@@ -46,7 +47,7 @@ chit.roof.layout: Comma-separated list of bricks to place in your roof
    Default: character,stats,gear
 
 chit.walls.layout: Comma-separated list of bricks to place in your walls
-   Default: helpers,thrall,vykea,effects,horsery
+   Default: helpers,thrall,vykea,effects,horsery,boombox
 
 chit.floor.layout: Comma-separated list of bricks to place in your floor
    Default: update,familiar
