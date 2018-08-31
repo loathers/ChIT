@@ -7,6 +7,7 @@ import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
 import "chit_brickTerminal.ash";
 import "chit_brickHorsery.ash";
+import "chit_brickBoombox.ash";
 
 // Set default values for configuration properties. These values will be used if there is no existing property
 // For more information refer to documentation in /data/chit_ReadMe.txt
@@ -49,7 +50,7 @@ setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery");
+setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery,boombox");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
@@ -3832,6 +3833,7 @@ void bakeBricks() {
 						case "vykea":		bakeVYKEA();		break;
 						case "terminal":	bakeTerminal();		break;
 						case "horsery":		bakeHorsery();		break;
+						case "boombox":		bakeBoombox();		break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
