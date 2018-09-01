@@ -56,7 +56,8 @@ chit.toolbar.layout: Comma-separated list of bricks to place in the toolbar
    Special values:
       disable - a brick you can add here which is actually a small button to disable ChIT.
    Default: trail,quests,modifiers,elements,organs
-
+*************************************************************************************
+Each brick may have an icon at the top left in it's title bar.  When the icon is clicked, the contents of the walls will (temporarily) "stretch" over the roof space.  Click a brick icon again (any one will do) to restore your view of the roof.  The roof will also be restored on any reload of the character pane.
 *************************************************************************************
 The following preferences further refine the content and appearance of individual bricks
 *************************************************************************************
@@ -272,7 +273,7 @@ Chez offers many thanks to:
    Bale, from whose CounterChecker script I stole some ideas and code
    All the countless KoLMafia devs and contributors, whose work make all our little pet projects possible
    Ereinion and Caprosmaster, for helping with initial testing and feedback
-   Icons from http://www.famfamfam.com/lab/icons/silk/
+   Icons from http://www.famfamfam.com/lab/icons/silk/ & https://www.flaticon.com/
 Bale also wants to offer thanks to:
    AlbinoRhino who has helped me with javascript, html and css when it exceeded my ability
    ckb who wrote the tracker brick and added display and parsing for effects descriptions

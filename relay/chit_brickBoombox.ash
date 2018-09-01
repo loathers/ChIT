@@ -126,7 +126,10 @@ void bakeBoombox() {
 	int num = currBoombox();
 
 	result.append('<table id="chit_boombox" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" ');
+	result.append('<tr><th class="label" colspan="4"><img class="chit_walls_stretch" src="');
+	result.append(imagePath);
+	result.append('music.png">');
+	result.append('<a class="visit" target="mainpane" ');
 	result.append('href="inv_use.php?which=3&whichitem=9919&pwd=' + my_hash() +'">SongBoom&trade; BoomBox</a></th></tr><tr>');
 
 	result.append('<td class="icon" title="Current Song"><img src="' + boomboxImage(num) + '" /></td>');

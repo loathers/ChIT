@@ -94,7 +94,10 @@ void bakeHorsery() {
 	int num = currHorse();
 
 	result.append('<table id="chit_horsery" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="4"><a class="visit" target="mainpane" ');
+	result.append('<tr><th class="label" colspan="4"><img  class="chit_walls_stretch" src="');
+	result.append(imagePath);
+	result.append('horse2.png">');
+	result.append('<a class="visit" target="mainpane" ');
 	result.append('href="place.php?whichplace=town_right&action=town_horsery">Horsery</a></th></tr><tr>');
 
 	if(num == 0) {
