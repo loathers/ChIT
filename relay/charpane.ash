@@ -1154,11 +1154,12 @@ void bakeTrail() {
 		url = target.group(1);
 	if(url == "place.php?whichplace=town_right" && source.contains_text("Investigating a Plaintive Telegram"))
 		url = "place.php?whichplace=town_right&action=townright_ltt";
-	result.append('<tr><th><a class="visit" target="mainpane" href="');
-	result.append(url);
-	result.append('"><img src="');
+	result.append('<tr><th><img class="chit_walls_stretch" src="');
 	result.append(imagePath);
-	result.append('trail.png">Last Adventure</a></th></tr>');
+	result.append('trail.png">');
+	result.append('<a class="visit" target="mainpane" href="');
+	result.append(url);
+	result.append('">Last Adventure</a></th></tr>');
 	
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
