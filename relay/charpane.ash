@@ -20,7 +20,7 @@ setvar("chit.currencies.showmany.choices", "meat");
 setvar("chit.character.avatar", true);
 setvar("chit.character.title", true);
 setvar("chit.clan.display", "away"); // Valid values are on,off,away. Away will only display clan if chit.clan.home is not blank.
-setvar("chit.clan.home", "");
+setvar("chit.clan.home", "Do Not Apply");
 setvar("chit.disable", false);
 setvar("chit.familiar.anti-gollywog", true);
 setvar("chit.familiar.hiddengear", "");
@@ -34,10 +34,10 @@ setvar("chit.effects.describe", true);
 setvar("chit.effects.modicons", true);
 setvar("chit.effects.showicons", true);
 setvar("chit.effects.usermap",false);
-setvar("chit.gear.display.in-run", "favorites:pull=true:create=true, astral, item, -combat, +combat, quest:pull=true:create=true, today, ML:amount=2, path, prismatic, res, resistance:amount=2, charter, rollover, DRUNK, Wow, exp");
-setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
+setvar("chit.gear.display.in-run", "favorites:pull=true:create=true, astral, item, -combat, +combat, quest:pull=true:create=true, today:pull=true:create=true, ML:amount=2, path, prismatic, res, resistance:amount=2, charter, rollover, DRUNK, Wow, exp");
+setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=true, rollover, DRUNK:amount=all");
 setvar("chit.gear.layout", "default");
-setvar("chit.gear.favorites", "item", "Pantsgiving,your cowboy boots,gold detective badge,Mr. Screege's spectacles,KoL Con 13 snowglobe,ghostly reins,training helmet,over-the-shoulder Folder Holder,Spelunker's whip,The Jokester's gun,protonic accelerator pack");
+setvar("chit.gear.favorites", "item", "source shades,Pantsgiving,your cowboy boots,gold detective badge,Mr. Screege's spectacles,ghostly reins,Bag o' Tricks,bottle-rocket crossbow,Buddy Bjorn,Camp Scout backpack,Elvish sunglasses,evil flaming eyeball pendant,flaming juggler's balls,flaming pink shirt,haiku katana,ice baby,ice pick,ice sickle,ice skates,jewel-eyed wizard hat,liar's pants,mayfly bait necklace,Mr. Accessory,Mr. Accessory Jr.,Sister Accessory,naughty fortune teller,navel ring of navel gazing,Operation Patriot Shield,origami pasties,origami riding crop,over-the-shoulder Folder Holder,Pantsgiving,pilgrim shield,protonic accelerator pack,Spooky Putty ball,Spooky Putty leotard,Spooky Putty mitre,Spooky Putty snake,Travoltan trousers,V for Vivala mask,Ass-Stompers of Violence,Brand of Violence,Novelty Belt Buckle of Violence,Lens of Violence,Pigsticker of Violence,Jodhpurs of Violence,Cold Stone of Hatred,Girdle of Hatred,Staff of Simmering Hatred,Pantaloons of Hatred,Fuzzy Slippers of Hatred,Lens of Hatred,Treads of Loathing,Scepter of Loathing,Belt of Loathing,Goggles of Loathing,Stick-Knife of Loathing,Jeans of Loathing,Pocket Square of Loathing,carpe,codpiece,troutsers,bass clarinet,fish hatchet,tunac");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.helpers.dancecard", true);
 setvar("chit.helpers.semirare", true);
@@ -45,12 +45,12 @@ setvar("chit.helpers.spookyraven", true);
 setvar("chit.helpers.wormwood", "stats,spleen");
 setvar("chit.helpers.xiblaxian", true);
 setvar("chit.kol.coolimages", true);
-setvar("chit.effects.layout", "songs,buffs,intrinsics");
+setvar("chit.effects.layout", "songs,intrinsics,buffs");
 setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery,boombox");
+setvar("chit.walls.layout", "helpers,thrall,vykea,horsery,boombox,trail,effects");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
@@ -1154,11 +1154,13 @@ void bakeTrail() {
 		url = target.group(1);
 	if(url == "place.php?whichplace=town_right" && source.contains_text("Investigating a Plaintive Telegram"))
 		url = "place.php?whichplace=town_right&action=townright_ltt";
-	result.append('<tr><th><a class="visit" target="mainpane" href="');
-	result.append(url);
-	result.append('"><img src="');
+	result.append('<tr><th><img class="chit_walls_stretch" src="');
 	result.append(imagePath);
-	result.append('trail.png">Last Adventure</a></th></tr>');
+	result.append('trail.png">');
+	
+	result.append('<a class="visit" target="mainpane" href="');
+	result.append(url);
+	result.append('">Last Adventure</a></th></tr>');
 	
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
