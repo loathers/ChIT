@@ -116,7 +116,7 @@ Gaze of the Trickster God	style:"color:green"
 Gaze of the Volcano God	style:"color:red"
 
 #On the Trail
-On The Trail	alias:"", style:"font-weight:bold"
+On the Trail	alias:"", style:"font-weight:bold"
 
 #Miscelaneous common stuff to shorten
 Go Get 'Em, Tiger!	alias:"Get 'Em Tiger"
