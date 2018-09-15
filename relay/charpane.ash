@@ -3371,7 +3371,7 @@ void bakeQuests() {
 	//result.append('<div id="nudgeblock">');
 	result.append('<table id="nudges" class="chit_brick nospace">');
 
-	result.append('<tr><th><img src="');
+	result.append('<tr><th><img class="chit_walls_stretch" src="');
 	result.append(imagePath);
 	result.append('quests.png"><a target="mainpane" href="questlog.php">Current Quests</a></th></tr>');
 
