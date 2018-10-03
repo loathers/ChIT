@@ -92,6 +92,32 @@ string gearName(item it) {
 					notes = hours + " hours";
 			}
 			break;
+		case $item[latte lovers member's mug]:
+			name = "latte";
+			int refills = 3 - get_property("_latteRefillsUsed").to_int();
+			if(refills > 0)
+				notes = refills;
+			else
+				notes = "no";
+			notes += " refill";
+			if(refills != 1)
+				notes += "s";
+			string [int] latteThings;
+			if(!get_property("_latteBanishUsed").to_boolean())
+				latteThings[latteThings.count()] = "throw";
+			if(!get_property("_latteCopyUsed").to_boolean())
+				latteThings[latteThings.count()] = "share";
+			if(!get_property("_latteDrinkUsed").to_boolean())
+				latteThings[latteThings.count()] = "gulp";
+			if(latteThings.count() > 0) {
+				notes += ", ";
+				for(int i = 0; i < latteThings.count(); ++i) {
+					notes += latteThings[i];
+					if(i < latteThings.count() - 1)
+						notes += "/";
+				}
+				notes += " available";
+			}
 	}
 	
 	if(notes != "")
@@ -580,6 +606,14 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="place.php?whichplace=realm_fantasy">Visit FantasyRealm.</a></td></tr>');
+			break;
+		case $item[latte lovers member's mug]:
+			int refills = 3 - get_property("_latteRefillsUsed").to_int();
+			if(refills > 0) {
+				start_option(in_slot, true);
+				picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+					'href="main.php?latte=1">Get a refill.</a></td></tr>');
+			}
 			break;
 	}
 	

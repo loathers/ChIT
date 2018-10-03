@@ -506,6 +506,13 @@ int hasDrops(item it) {
 				return hours;
 			}
 			break;
+		case $item[latte lovers member's mug]:
+			int refills = 3 - get_property("_latteRefillsUsed").to_int();
+			if(refills > 0 || !get_property("_latteBanishUsed").to_boolean() ||
+					!get_property("_latteCopyUsed").to_boolean() ||
+					!get_property("_latteDrinkUsed").to_boolean())
+				return 1;
+			break;
 	}
 	
 	return 0;
