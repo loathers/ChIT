@@ -1720,6 +1720,58 @@ void bakeFamiliar() {
 		if(source.index_of('<a target=mainpane href=main.php?heist=1>heist time!</a>') != -1)
 			info = '<a target=mainpane href=main.php?heist=1>heist time!</a>';
 		break;
+	case $familiar[Robortender]:
+		string [int] roboDrinks = split_string(get_property("_roboDrinks"), ",");
+		float lepLev = 1;
+		string res = "";
+		foreach i,s in roboDrinks {
+			string addition = "";
+			switch(s) {
+				case "literal grasshopper": addition = "+3 musc/com"; break;
+				case "eighth plague": addition = "+5 musc/com"; break;
+				case "double entendre": addition = "0.5xFairy"; break;
+				case "single entendre": addition = "1xFairy"; break;
+				case "Phlegethon": addition = "hot damage"; break;
+				case "reverse Tantalus": addition = "hot damage!"; break;
+				case "Siberian sunrise": addition = "cold damage"; break;
+				case "elemental caipiroska": addition = "cold damage!"; break;
+				case "mentholated wine": addition = "candy"; break;
+				case "Feliz Navidad": addition = "candy!"; break;
+				case "low tide martini": addition = "aquatic"; break;
+				case "Bloody Nora": addition = "aquatic!"; break;
+				case "shroomtini": addition = "+3 mox/com"; break;
+				case "moreltini": addition = "+5 mox/com"; break;
+				case "morning dew": addition = "mp"; break;
+				case "hell in a bucket": addition = "mp!"; break;
+				case "whiskey squeeze": addition = "junk"; break;
+				case "Newark": addition = "junk!"; break;
+				case "great old fashioned": addition = "spooky damage"; break;
+				case "R'lyeh": addition = "spooky damage!"; break;
+				case "Gnomish sagngria": addition = "phys damage"; break;
+				case "Gnollish sangria": addition = "phys damage!"; break;
+				case "vodka stinger": addition = "stench damage"; break;
+				case "vodka barracuda": addition = "stench damage!"; break;
+				case "extremely slippery nipple": addition = "hp"; break;
+				case "Mysterious Island iced tea": addition = "hp!"; break;
+				case "piscatini": lepLev = 1.5; break;
+				case "drive-by shooting": lepLev = 2; break;
+				case "Churchill": addition = "sleaze damage"; break;
+				case "gunner's daughter": addition = "sleaze damage!"; break;
+				case "soilzerac": addition = "+3 myst/com"; break;
+				case "dirt julep": addition = "+5 myst/com"; break;
+				case "London frog": break; // wiki doesn't know what this one does
+				case "Simepore slime": addition = "1xPotato"; break;
+				case "nothingtini": addition = "delevels"; break;
+				case "Phil Collins": addition = "delevels!"; break;
+				default: addition = "what"; break;
+			}
+			if(addition != "") {
+				res += ", " + addition;
+			}
+		}
+		// get rid of the .0 when it's 1 or 2
+		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
+		break;
 	}
 	
 	//Get equipment info
