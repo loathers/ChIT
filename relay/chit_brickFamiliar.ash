@@ -1763,7 +1763,6 @@ void bakeFamiliar() {
 				case "Simepore slime": addition = "1xPotato"; break;
 				case "nothingtini": addition = "delevels"; break;
 				case "Phil Collins": addition = "delevels!"; break;
-				default: addition = "what"; break;
 			}
 			if(addition != "") {
 				res += ", " + addition;
