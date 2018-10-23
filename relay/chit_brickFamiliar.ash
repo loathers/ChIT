@@ -470,8 +470,11 @@ int hasDrops(item it) {
 			if(get_property("_firedJokestersGun").to_boolean() == false)
 				return 1;
 			break;
-		case $item[navel ring of navel gazing]:
 		case $item[Greatest American Pants]:
+			if(get_property("_gapBuffs").to_int() < 5)
+				return 1;
+			// intentional fallthrough
+		case $item[navel ring of navel gazing]:
 			int runs = to_int(get_property("_navelRunaways"));
 			if(runs < 9) return 9 - runs;
 			break;
