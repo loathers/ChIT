@@ -60,6 +60,8 @@ string gearName(item it) {
 			else if(runs < 6) notes = "80% free run";
 			else if(runs < 9) notes = "50% free run";
 			else notes = "20% free run";
+			if(it == $item[Greatest American Pants] && get_property("_gapBuffs").to_int() < 5)
+				notes += ", " + (5 - get_property("_gapBuffs").to_int()) + " super powers";
 			break;
 		case $item[Kremlin's Greatest Briefcase]:
 			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
@@ -440,7 +442,7 @@ void pickerEdpiece() {
 	
 	string current = get_property("edPiece");
 	
-	void addJewel(buffer buf, string jewel, string desc, string icon) {
+	void addJewel(string jewel, string desc, string icon) {
 		string jewelLink = '<a class="change" href="' + sideCommand("edpiece " + jewel) + '">';
 		
 		picker.append('<tr class="pickitem');
@@ -474,17 +476,52 @@ void pickerEdpiece() {
 		picker.append('</td></tr>');
 	}
 	
-	picker.addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
-	picker.addJewel("owl", "Myst +20, +2 Myst exp", "owl");
-	picker.addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
-	picker.addJewel("hyena", "+20 Monster Level", "lionface");
-	picker.addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
-	picker.addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
-	picker.addJewel("fish", "Lets you breathe underwater", "fish");
+	addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
+	addJewel("owl", "Myst +20, +2 Myst exp", "owl");
+	addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
+	addJewel("hyena", "+20 Monster Level", "lionface");
+	addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
+	addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
+	addJewel("fish", "Lets you breathe underwater", "fish");
 	
 	picker.addLoader("Cool jewels!");
 	picker.append('</table></div>');
 	chitPickers["edpiece"] = picker;
+}
+
+void pickerGAP() {
+	buffer picker;
+	picker.pickerStart("gap", "Activate a Superpower");
+	
+	void addSuperpower(string power, string desc, string icon, int duration) {
+		string powerLink = '<a class="change" href="' + sideCommand("gap " + power) + '">';
+
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.append(powerLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('.gif" title="Activate Super ');
+		picker.append(power);
+		picker.append('" /></a></td><td colspan="2">');
+		picker.append(powerLink);
+		picker.append('<b>Activate</b> Super ');
+		picker.append(power);
+		picker.append('<br /><space class="descline">');
+		picker.append(parseMods(desc, true));
+		picker.append(' (');
+		picker.append(duration);
+		picker.append(' turns)</span></a></td></tr>');
+	}
+
+	addSuperpower("Skill", "Combat Skills/Spells cost 0 MP", "snowflakes", 5);
+	addSuperPower("Structure", "+500 DA, +5 Prismatic resistance", "wallshield", 10);
+	addSuperPower("Vision", "+25% Item Drops", "xrayspecs", 20);
+	addSuperPower("Speed", "+100% Moxie", "fast", 20);
+	addSuperPower("Accuracy", "+30% Crit Chance", "reticle", 10);
+	
+	picker.addLoader("Loading Superpowers...");
+	picker.append('</table></div>');
+	chitPickers["gap"] = picker;
 }
 
 void pickerGear(slot s) {
@@ -613,6 +650,16 @@ void pickerGear(slot s) {
 				start_option(in_slot, true);
 				picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 					'href="main.php?latte=1">Get a refill.</a></td></tr>');
+			}
+			break;
+		case $item[Greatest American Pants]:
+			if(get_property("_gapBuffs").to_int() < 5) {
+				pickerGAP();
+				start_option(in_slot, false);
+				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickergap" href="#">');
+				picker.append('Activate Super Power (');
+				picker.append(5 - get_property("_gapBuffs").to_int());
+				picker.append(' left)</a></td></tr>');
 			}
 			break;
 	}
