@@ -715,8 +715,10 @@ buff parseBuff(string source) {
 		effectAlias = myBuff.effectName;
 	
 	// Add spoiler info that mafia doesn't provide
-	if(myBuff.effectName.contains_text("Romantic Monster window"))
+	if(myBuff.effectName.contains_text("Romantic Monster window")) {
 		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
+		effectAlias += " #" + (4 - get_property("_romanticFightsLeft").to_int());
+	}
 	else if(myBuff.effectName.contains_text("Digitize Monster"))
 		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster") + " #" +
                   (to_int(get_property("_sourceTerminalDigitizeMonsterCount")) + 1);
