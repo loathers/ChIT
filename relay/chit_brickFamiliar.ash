@@ -447,6 +447,8 @@ int hasBjornDrops(familiar f) {
 		case $familiar[optimistic candle]: return checkDrops("_optimisticCandleDropsCrown",3);
 		case $familiar[garbage fire]: return checkDrops("_garbageFireDropsCrown",3);
 		case $familiar[twitching space critter]: return checkDrops("_spaceFurDropsCrown",1);
+		case $familiar[Machine Elf]: return checkDrops("_abstractionDropsCrown",25);
+		case $familiar[Adventurous Spelunker]: return checkDrops("_oreDropsCrown",6);
 	}
 	
 	return 0;
@@ -834,7 +836,19 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	if(dropsLeft > 0) {
 		iconInfo.append(dropsLeft);
 		iconInfo.append(" ");
-		if(f.drop_item != $item[none])
+		// certain familiars drop different things in the crown/bjorn
+		if(isBjorn && $familiars[Machine Elf, Adventurous Spelunker] contains f) {
+			switch(f) {
+				case $familiar[Machine Elf]:
+					iconInfo.append("abstraction");
+					if(dropsLeft > 1) iconInfo.append("s");
+					break;
+				case $familiar[Adventurous Spelunker]:
+					iconInfo.append("ore");
+					break;
+			}
+		}
+		else if(f.drop_item != $item[none])
 			iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
 		else {
 			if(f.drop_name != "") {
