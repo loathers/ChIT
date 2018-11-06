@@ -288,6 +288,14 @@ void addFavGear() {
 		if(equipped_amount($item[FantasyRealm Mage's Hat]) + equipped_amount($item[FantasyRealm Rogue's Mask]) + equipped_amount($item[FantasyRealm Warrior's Helm]) == 0)
 			forceAddGear($items[FantasyRealm Mage's Hat, FantasyRealm Rogue's Mask, FantasyRealm Warrior's Helm], "FantasyRealm");
 	}
+
+	// "I Voted!" Sticker, for free wanderers only
+	if((total_turns_played() % 11 == 1) &&
+		(total_turns_played() != get_property("lastVoteMonsterTurn").to_int()) &&
+		(get_property("_voteFreeFights").to_int() < 3))
+	{
+		forceAddGear($item[&quot;I Voted!&quot; sticker], "free wanderer");
+	}
 	
 	// Miscellaneous
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();

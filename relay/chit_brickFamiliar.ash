@@ -518,6 +518,12 @@ int hasDrops(item it) {
 					!get_property("_latteDrinkUsed").to_boolean())
 				return 1;
 			break;
+		case $item[&quot;I Voted!&quot; sticker]:
+			if((total_turns_played() % 11 == 1) &&
+				(total_turns_played() != get_property("lastVoteMonsterTurn").to_int()) &&
+				(get_property("_voteFreeFights").to_int() < 3))
+				return 1;
+			break;
 	}
 	
 	return 0;
