@@ -291,10 +291,9 @@ void addFavGear() {
 
 	// "I Voted!" Sticker, for free wanderers only
 	if((total_turns_played() % 11 == 1) &&
-		(total_turns_played() != get_property("lastVoteMonsterTurn").to_int()) &&
-		(get_property("_voteFreeFights").to_int() < 3))
-	{
-		forceAddGear($item[&quot;I Voted!&quot; sticker], "free wanderer");
+		(total_turns_played() != get_property("lastVoteMonsterTurn").to_int())) {
+		boolean voteFree = get_property("_voteFreeFights").to_int() < 3;
+		forceAddGear($item[&quot;I Voted!&quot; sticker], voteFree ? "free wanderer" : "wanderer");
 	}
 	
 	// Miscellaneous
