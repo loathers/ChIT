@@ -1741,7 +1741,7 @@ void bakeFamiliar() {
 		break;
 	case $familiar[Cat Burglar]:
 		if(source.index_of('<a target=mainpane href=main.php?heist=1>heist time!</a>') != -1)
-			info = '<a target=mainpane href=main.php?heist=1>heist time!</a>';
+			info += '<br><a target=mainpane href=main.php?heist=1>heist time!</a>';
 		break;
 	case $familiar[Robortender]:
 		string [int] roboDrinks = split_string(get_property("_roboDrinks"), ",");
