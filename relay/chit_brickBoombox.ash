@@ -124,6 +124,7 @@ void bakeBoombox() {
 
 	buffer result;
 	int num = currBoombox();
+	int drop_charge = 11 - get_property("_boomBoxFights").to_int();
 
 	result.append('<table id="chit_boombox" class="chit_brick nospace"><tbody>');
 	result.append('<tr><th class="label" colspan="4"><img class="chit_walls_stretch" src="');
@@ -133,8 +134,9 @@ void bakeBoombox() {
 	result.append('href="inv_use.php?which=3&whichitem=9919&pwd=' + my_hash() +'">SongBoom&trade; BoomBox</a></th></tr><tr>');
 
 	result.append('<td class="icon" title="Current Song"><img src="' + boomboxImage(num) + '" /></td>');
-	result.append('<td class="info" colspan="3"><a class="chit_launcher" rel="chit_pickerboombox"><b>' + boomboxSong(num) + '</b><br />');
-	result.append(parseMods(boomboxBonus(num)) + '<br />');
+	result.append('<td class="info" colspan="3"><a title="Pick a new song" class="chit_launcher" rel="chit_pickerboombox"><b>' + boomboxSong(num) + '</b><br />');
+	result.append(parseMods(boomboxBonus(num)) + '</a><br />');
+	result.append(drop_charge + ' fights to next drop <br />');
 
 	result.append('</tr></tbody></table>');
 
