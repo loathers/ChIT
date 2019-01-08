@@ -586,4 +586,78 @@ string parseEff(effect ef) { return parseEff(ef, true); }
 
 
 
+/*****************************************************
+	Latte support
+*****************************************************/
+
+string latteDropName(location l) {
+	switch(l) {
+		case $location[The Mouldering Mansion]: return "ancient";
+		case $location[The Overgrown Lot]: return "basil";
+		case $location[Whitey's Grove]: return "belgian";
+		case $location[The Bugbear Pen]: return "bug-thistle";
+		case $location[Madness Bakery]: return "butternut";
+		case $location[The Black Forest]: return "cajun";
+		case $location[The Haunted Billiards Room]: return "chalk";
+		case $location[The Dire Warren]: return "carrot";
+		case $location[Barrrney's Barrr]: return "carrrdamom";
+		case $location[The Haunted Kitchen]: return "chili";
+		case $location[The Sleazy Back Alley]: return "cloves";
+		case $location[The Haunted Boiler Room]: return "coal";
+		case $location[The Icy Peak]: return "cocoa";
+		case $location[Battlefield (No Uniform)]: return "diet";
+		case $location[Itznotyerzitz Mine]: return "dwarf";
+		case $location[The Feeding Chamber]: return "filth";
+		case $location[The Road to the White Citadel]: return "flour";
+		case $location[The Fungal Nethers]: return "fungus";
+		case $location[The Hidden Park]: return "grass";
+		case $location[Cobb's Knob Barracks]: return "greasy";
+		case $location[The Daily Dungeon]: return "healing";
+		case $location[The Dark Neck of the Woods]: return "hellion";
+		case $location[Wartime Frat House (Hippy Disguise)]: return "greek";
+		case $location[The Old Rubee Mine]: return "grobold";
+		case $location[The Bat Hole Entrance]: return "guarna";
+		case $location[1st Floor, Shiawase-Mitsuhama Building]: return "gunpowder";
+		case $location[Hobopolis Town Square]: return "hobo";
+		case $location[The Haunted Library]: return "ink";
+		case $location[Wartime Hippy Camp (Frat Disguise)]: return "kombucha";
+		case $location[The Defiled Niche]: return "lihc";
+		case $location[The Arid, Extra-Dry Desert]: return "lizard";
+		case $location[Cobb's Knob Laboratory]: return "mega";
+		case $location[The Unquiet Garves]: return "mold";
+		case $location[The Briniest Deepests]: return "msg";
+		case $location[The Haunted Pantry]: return "noodles";
+		case $location[The Ice Hole]: return "norwhal";
+		case $location[The Old Landfill]: return "oil";
+		case $location[The Haunted Gallery]: return "paint";
+		case $location[The Stately Pleasure Dome]: return "paradise";
+		case $location[The Spooky Forest]: return "rawhide";
+		case $location[The Brinier Deepers]: return "rock";
+		case $location[The Briny Deeps]: return "salt";
+		case $location[Noob Cave]: return "sandalwood";
+		case $location[Cobb's Knob Kitchens]: return "sausage";
+		case $location[The Hole in the Sky]: return "space";
+		case $location[The Copperhead Club]: return "squash";
+		case $location[The Caliginous Abyss]: return "squamous";
+		case $location[The VERY Unquiet Garves]: return "teeth";
+		case $location[The Middle Chamber]: return "venom";
+		case $location[The Dark Elbow of the Woods]: return "vitamins";
+		case $location[The Dark Heart of the Woods]: return "wing";
+		default: return "";
+	}
+}
+
+boolean latteDropAvailable(location l) {
+	// obviously no latte drops are available if you don't HAVE a latte
+	if(available_amount($item[latte lovers member's mug]) == 0)
+		return false;
+	string latteDrop = latteDropName(l);
+	if(latteDrop == "")
+		return false;
+	return !get_property("latteUnlocks").contains_text(latteDrop);
+}
+
+boolean isImportantOffhand(item it) {
+	return $items[UV-resistant compass, ornate dowsing rod, unstable fulminate, wine bomb] contains it;
+}
 
