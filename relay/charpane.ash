@@ -39,6 +39,7 @@ setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, c
 setvar("chit.gear.layout", "default");
 setvar("chit.gear.favorites", "item", "Pantsgiving,your cowboy boots,gold detective badge,Mr. Screege's spectacles,KoL Con 13 snowglobe,ghostly reins,training helmet,over-the-shoulder Folder Holder,Spelunker's whip,The Jokester's gun,protonic accelerator pack");
 setvar("chit.gear.ignoreG-Lover", false);
+setvar("chit.gear.lattereminder", true);
 setvar("chit.helpers.dancecard", true);
 setvar("chit.helpers.semirare", true);
 setvar("chit.helpers.spookyraven", true);
@@ -3019,10 +3020,10 @@ void pickOutfit() {
 			noGearBrick = false;
 	if(noGearBrick) {
 		foreach it in favGear
-			special.addGear(it, gearName(it));
+			special.addGear(it, gearName(it, it.to_slot()));
 		foreach reason in recommendedGear
 			foreach it in recommendedGear[reason]
-				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + gearName(it));
+				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + gearName(it, it.to_slot()));
 
 		if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 			special.addGear("equip acc3 Talisman o\' Namsilat;equip acc1 Mega+Gem", "Talisman & Mega Gem");
