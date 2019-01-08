@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r18925; // latte
+since r19060; // Sausage-o-Matic
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
