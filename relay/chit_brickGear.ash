@@ -24,7 +24,7 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 	
-string gearName(item it) {
+string gearName(item it, slot s) {
 	string name = to_string(it);
 	string notes = "";
 
@@ -121,7 +121,15 @@ string gearName(item it) {
 				notes += " available";
 			}
 	}
-	
+
+	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
+		if(it != $item[latte lovers member's mug] && !it.isImportantOffhand()) {
+			if(notes != "")
+				notes += ", ";
+			notes += "latte unlock available!";
+		}
+	}
+
 	if(notes != "")
 		name += " (" + notes + ")";
 
@@ -289,13 +297,17 @@ void addFavGear() {
 			forceAddGear($items[FantasyRealm Mage's Hat, FantasyRealm Rogue's Mask, FantasyRealm Warrior's Helm], "FantasyRealm");
 	}
 
-	// "I Voted!" Sticker, for free wanderers only
+	// "I Voted!" Sticker, for wanderers only
 	if((total_turns_played() % 11 == 1) &&
 		(total_turns_played() != get_property("lastVoteMonsterTurn").to_int())) {
 		boolean voteFree = get_property("_voteFreeFights").to_int() < 3;
 		forceAddGear($item[&quot;I Voted!&quot; sticker], voteFree ? "free wanderer" : "wanderer");
 	}
-	
+
+	// latte, if an unlock is available
+	if(my_location().latteDropAvailable())
+		forceAddGear($item[latte lovers member's mug], "latte unlock");
+
 	// Miscellaneous
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
@@ -531,6 +543,8 @@ void pickerGAP() {
 	chitPickers["gap"] = picker;
 }
 
+int dangerLevel(item it, slot s);
+
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
@@ -565,7 +579,7 @@ void pickerGear(slot s) {
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
 		picker.append(it.descid);
 		picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
-		picker.addItemIcon(it, "Click for item description", 0, modify_image);
+		picker.addItemIcon(it, "Click for item description", dangerLevel(it, s), modify_image);
 		picker.append('</a></td>');
 	}
 	
@@ -692,7 +706,7 @@ void pickerGear(slot s) {
 		picker.append('<td><a class="change" href="');
 		picker.append(sideCommand("unequip " + s));
 		picker.append('"><span style="font-weight:bold;">unequip</span> ');
-		picker.append(gearName(in_slot));
+		picker.append(gearName(in_slot, s));
 		picker.append('</a></td><td>');
 		picker.add_favorite_button(in_slot);
 		picker.append('</td></tr>');
@@ -727,7 +741,7 @@ void pickerGear(slot s) {
 	boolean [item] displayedItems;
 	
 	boolean add_gear_option(buffer b, item it, string reason) {
-		int danger_level = 0;
+		int danger_level = dangerLevel(it, s);
 		string cmd;
 		string action = "";
 		string action_description = "";
@@ -813,7 +827,7 @@ void pickerGear(slot s) {
 			b.append(' ');
 			b.append(action_description);
 			b.append('</span> ');
-			b.append(gearName(it));
+			b.append(gearName(it, s));
 			if(take_action)
 				b.append('</a>');
 			b.append('</div></div>');
@@ -835,7 +849,7 @@ void pickerGear(slot s) {
 			}
 			b.append('>');
 			if(take_action)
-				b.addItemIcon(it,gearName(it) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+				b.addItemIcon(it,gearName(it, s) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
 			else
 				b.addItemIcon(it,'&#013;Right click for description',danger_level);
 			if(take_action)
@@ -865,7 +879,7 @@ void pickerGear(slot s) {
 			b.append(' ');
 			b.append(action_description);
 			b.append('</span> ');
-			b.append(gearName(it));
+			b.append(gearName(it, s));
 			if(reason != "favorites") {
 				b.append(' (');
 				b.append(reason);
@@ -1083,7 +1097,9 @@ void pickerGear(slot s) {
 	chitPickers["gear" + s] = picker;
 }
 
-int dangerLevel(item it) {
+
+// slot needed for weapons being used in off-hand
+int dangerLevel(item it, slot s) {
 	switch(it) {
 		case $item[Mega Gem]:
 			return (qprop("questL11Palindome") ? 2 : -1);
@@ -1102,6 +1118,11 @@ int dangerLevel(item it) {
 			if(get_property("lassoTraining") == "expertly")
 				return 1;
 			break;
+	}
+	// latte reminder
+	if(s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
+		if(it != $item[latte lovers member's mug] && !it.isImportantOffhand())
+			return 1;
 	}
 	return 0;
 }
@@ -1128,7 +1149,7 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s)), dangerLevel(equipped_item(s)));
+		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s), s), dangerLevel(equipped_item(s), s));
 		result.append('</a></span>');
 		pickerGear(s);
 	}

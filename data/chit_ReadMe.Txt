@@ -167,6 +167,12 @@ chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in afte
 chit.gear.ignoreG-Lover: Whether or not to avoid hiding G-less gear in G-Lover
    With this set to false, only quest items without G's will be recommended
    Default: false
+
+chit.gear.lattereminder: Whether to warn when not using latte and a latte unlock is available
+   With this set to true, if you are adventuring in a zone where a latte unlock can be acquired
+   that you have no acquired yet (and you have a latte) all other off-hands will be highlighted in
+   orange, except for important offhands like the UV-resistant compass and the unstable fulminate.
+   Default: true
 -------------------------------------------------------------------------------------
 chit.currencies: List of currencies other than meat to display when mousing over your meat (or other active currency)
    Default: disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research
