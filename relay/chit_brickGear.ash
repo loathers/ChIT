@@ -120,6 +120,26 @@ string gearName(item it, slot s) {
 				}
 				notes += " available";
 			}
+			break;
+		case $item[Lil' Doctor&trade; bag]:
+			int otoscopes = 3 - get_property("_otoscopeUsed").to_int();
+			int reflexes = 3 - get_property("_reflexHammerUsed").to_int();
+			int xrays = 3 - get_property("_chestXRayUsed").to_int();
+			if(otoscopes > 0)
+				notes = otoscopes + " otoscope" + (otoscopes == 1 ? "" : "s");
+			if(reflexes > 0)
+			{
+				if(notes != "")
+					notes += ", ";
+				notes += reflexes + " hammer" + (reflexes == 1 ? "" : "s");
+			}
+			if(xrays > 0)
+			{
+				if(notes != "")
+					notes += ", ";
+				notes += xrays + " x-ray" + (xrays == 1 ? "" : "s");
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {

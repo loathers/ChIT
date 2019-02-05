@@ -524,6 +524,8 @@ int hasDrops(item it) {
 				(get_property("_voteFreeFights").to_int() < 3))
 				return 1;
 			break;
+		case $item[Lil' Doctor&trade; bag]:
+			return 9 - get_property("_otoscopeUsed").to_int() - get_property("_reflexHammerUsed").to_int() - get_property("_chestXRayUsed").to_int();
 	}
 	
 	return 0;
