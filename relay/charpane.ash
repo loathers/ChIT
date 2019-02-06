@@ -1257,6 +1257,10 @@ void pickerThrall() {
 		result.append(color(s));
 		result.append('">');
 		result.append(url);
+		result.append('<span style="float:left;color:#707070">');
+		result.append('level ');
+		result.append(t.level);
+		result.append('</span> ');
 		result.append('<b>');
 		result.append(t);
 		result.append('</b> <span style="float:right;color:#707070">');
