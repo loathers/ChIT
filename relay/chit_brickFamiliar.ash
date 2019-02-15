@@ -1495,6 +1495,7 @@ void bakeFamiliar() {
 	case "Actually Ed the Undying": FamEd(); return;
 	case "License to Adventure": return;
 	case "Pocket Familiars": FamPoke(); return;
+	case "Dark Gyffte": return;
 	}
 
 	string source = chitSource["familiar"];
