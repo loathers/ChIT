@@ -1484,6 +1484,38 @@ void FamPoke()
 	chitBricks["familiar"] = result;
 
 }
+ 
+# Thanks to Cannonfire40 for FamVampyre!
+# <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
+void FamVampyre() {
+	buffer result;
+	void bake(string name, string desc, string img) {
+		result.append('<table id="chit_familiar" class="chit_brick nospace"><tbody>');
+		result.append('<tr><th class="label" colspan="4" title="Ensorcelee">');
+		result.append('Ensorcelee');
+		result.append('</th></tr>');
+		result.append('<tr><td title="Your Ensorcelee"><img src="' + img + '" width="50px" height="50px" /></td>');
+		result.append('<td class="info" colspan="3">');
+		if (name == "") {
+			result.append('You have no ensorcelee, go get one!');
+		} else {
+			result.append('<b>' + name + '</b>');
+			result.append('<br>');
+			result.append('<font color=blue><b>'+desc+'</font></b>');
+		}
+		result.append('</td>');
+		result.append('</tr>');
+		result.append('</tbody></table>');
+	}
+
+	matcher id = create_matcher('https://s3.amazonaws.com/images.kingdomofloathing.com/(.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
+	if(id.find())
+		bake(id.group(2), id.group(3), "/images/"+id.group(1));
+	else
+		bake("", "", "/images/itemimages/blank.gif");
+
+	chitBricks["familiar"] = result;
+}
 
 void bakeFamiliar() {
 
@@ -1495,7 +1527,8 @@ void bakeFamiliar() {
 	case "Actually Ed the Undying": FamEd(); return;
 	case "License to Adventure": return;
 	case "Pocket Familiars": FamPoke(); return;
-	case "Dark Gyffte": return;
+	case "Dark Gyffte": FamVampyre(); return;  // FIXME: Actual path name "Darke Gyffte", workaround for mafia for now.
+	case "Darke Gyffte": FamVampyre(); return;
 	}
 
 	string source = chitSource["familiar"];
