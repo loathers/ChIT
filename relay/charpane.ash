@@ -3567,6 +3567,7 @@ boolean parsePage(buffer original) {
 		+ "|<a target=mainpane href=main.php\\?action=motorcycle>.*?</b>"  // Avatar of Sneaky Pete
 		+ "|<p><font size=2><b>Servant:</b>.*?</p>"  // Ed the Undying
 		+ '|<b><a href="famteam.php".*?Manage Team</a>' // Pocket Familiars
+		+ "|<p><font size=2><b>Ensorcelee:</b><br><img src=.*?</b>" // Darke Gyffte
 		+ ")", source);
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
