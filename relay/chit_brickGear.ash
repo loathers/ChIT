@@ -707,7 +707,7 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="inventory.php?action=grind"><b>Grind</b> (' + available_amount($item[magical sausage casing]).formatInt() + ' casings available):<br />');
-			picker.append(get_property("_sausageGrinderUnits").to_int().formatInt() + " / " + (111 * (1 + get_property("_sausagesMade").to_int())).formatInt() + " units.<br />");
+			picker.append(get_property("sausageGrinderUnits").to_int().formatInt() + " / " + (111 * (1 + get_property("_sausagesMade").to_int())).formatInt() + " units.<br />");
 			picker.append(get_property("_sausagesEaten").to_int().formatInt() + "/23 sausages eaten today.<br />");
 			picker.append(get_property("_sausageFights").to_int().formatInt() + " goblins encountered today.");
 			picker.append('</a></td></tr>');
