@@ -2543,6 +2543,8 @@ void bakeStats() {
 	}
 	
 	void addMP() {
+		if(my_class() == $class[Vampyre])
+			return;
 		if(my_path() == "Zombie Slayer") {
 			string HordeLink = get_property("baleUr_ZombieAuto") == ""? '<a href="skills.php" target="mainpane" title="Use Horde Skills">'
 				// If using Universal_recovery, add link to recover Horde
