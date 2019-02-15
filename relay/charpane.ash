@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19092; // Doctor bag
+since r19096; // Vampyre
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -3143,6 +3143,8 @@ void bakeCharacter() {
 		case $class[Beanslinger]:
 		case $class[Snake Oiler]:
 			return "chit_WestGuild.php";
+		case $class[Vampyre]:
+			return "campground.php";
 		}
 		return "town.php";
 	}
