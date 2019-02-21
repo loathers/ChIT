@@ -629,6 +629,14 @@ buff parseBuff(string source) {
 		if(parse.group(8) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
+			void turnOff(effect toDisable, skill toUse) {
+				if(myBuff.eff == toDisable) {
+					columnTurns = '<a href="' + sideCommand("cast " + toUse.to_string()) + '" title="Cast ' + toUse.to_string() + '">&infin;</a>';
+				}
+			}
+			turnOff($effect[Wolf Form], $skill[Wolf Form]);
+			turnOff($effect[Mist Form], $skill[Mist Form]);
+			turnOff($effect[Bats Form], $skill[Flock of Bats Form]);
 		} else
 			myBuff.effectTurns = parse.group(8).to_int();
 		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
@@ -928,11 +936,14 @@ void bakeEffects() {
 			result.append('" title="Cast ');
 			result.append(to_string(sk));
 			result.append('">00</a></td></tr>');
+			total += 1;
 		}
-		total += 1;
 	}
 	intrinsics.lack_effect($skill[Iron Palm Technique], $effect[Iron Palms], "Iron Palms");
 	intrinsics.lack_effect($skill[Blood Sugar Sauce Magic], $effect[[1458]Blood Sugar Sauce Magic], "Blood Sugar");
+	intrinsics.lack_effect($skill[Wolf Form], $effect[Wolf Form], "Wolf Form");
+	intrinsics.lack_effect($skill[Mist Form], $effect[Mist Form], "Mist Form");
+	intrinsics.lack_effect($skill[Flock of Bats Form], $effect[Bats Form], "Bats Form");
 
 	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');
