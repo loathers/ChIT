@@ -1488,6 +1488,8 @@ void FamPoke()
 # Thanks to Cannonfire40 for FamVampyre!
 # <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
 void FamVampyre() {
+	if(!have_skill($skill[Ensorcel]))
+		return;
 	buffer result;
 	void bake(string name, string desc, string img) {
 		result.append('<table id="chit_familiar" class="chit_brick nospace"><tbody>');
