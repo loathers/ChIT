@@ -733,6 +733,8 @@ buff parseBuff(string source) {
                   (to_int(get_property("_sourceTerminalDigitizeMonsterCount")) + 1);
 	else if(myBuff.effectName.contains_text("Enamorang Monster"))
 		effectAlias = "Enamoranged " + get_property("enamorangMonster");
+	else if(myBuff.effectName.contains_text("Latte Monster"))
+		effectAlias = "Latte " + get_property("_latteMonster");
 	
 	//Replace effect icons, if enabled
 	string [string] classmap;
