@@ -2096,6 +2096,27 @@ void addFantasyRealm(buffer result) {
 	}
 }
 
+void addPirateRealm(buffer result) {
+	if(have_equipped($item[PirateRealm eyepatch])) {
+		matcher parse = create_matcher('^<b>Guns:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>(\\d+)</td>$', chitSource["pirateRealm"]);
+		if(find(parse)) {
+			void addThing(string thing, int group) {
+				result.append('<tr><td class="label">');
+				result.append(thing);
+				result.append('</td><td class="info">');
+				result.append(parse.group(group));
+				result.append('</td></tr>');
+			}
+			addThing("Guns", 1);
+			addThing("Grub", 2);
+			addThing("Grog", 3);
+			addThing("Glue", 4);
+			addThing("Gold", 5);
+			addThing("Fun", 6);
+		}
+	}
+}
+
 void addAud(buffer result) {
 	matcher parseAud = create_matcher("Aud:</td><td align=left>(.+?)</td>", chitSource["stats"]);
 	if(parseAud.find()) {
@@ -2701,6 +2722,7 @@ void bakeStats() {
 			}
 
 			result.addFantasyRealm();
+			result.addPirateRealm();
 		}
 		
 		result.append("</tbody>");
@@ -3695,6 +3717,13 @@ boolean parsePage(buffer original) {
 	// FantasyRealm tracker
 	if(find(parse = create_matcher('<table>.+?<img src="[^"]+/itemimages/fr_gem.gif"></center>.+?Spend Rubees&trade;.+?</table>', source))) {
 		chitSource["fantasyRealm"] = parse.group(0);
+		source = parse.replace_first("");
+	}
+
+	// PirateRealm tracker
+	parse = create_matcher('<b>Guns:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>\\d+</td>', source);
+	if(find(parse)) {
+		chitSource["pirateRealm"] = parse.group(0);
 		source = parse.replace_first("");
 	}
 	
