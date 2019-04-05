@@ -319,8 +319,8 @@ void addFavGear() {
 
 	// PirateRealm equipment
 	if(equipped_amount($item[PirateRealm eyepatch]) > 0) {
-		forceAddGear($items[PirateRealm party hat, cursed compass, bloody harpoon, Red Roger's red right hand, Red Roger's red right foot], "PirateRealm");
-		// TODO: Add Red Roger's red left hand, left foot once mafia supports it
+		forceAddGear($items[PirateRealm party hat, cursed compass, bloody harpoon, Red Roger's red right hand], "PirateRealm");
+		// TODO: Add Red Roger's red left hand, left foot, right foot once mafia supports it
 	}
 
 	// "I Voted!" Sticker, for wanderers only
