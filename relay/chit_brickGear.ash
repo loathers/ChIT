@@ -317,6 +317,12 @@ void addFavGear() {
 			forceAddGear($items[FantasyRealm Mage's Hat, FantasyRealm Rogue's Mask, FantasyRealm Warrior's Helm], "FantasyRealm");
 	}
 
+	// PirateRealm equipment
+	if(equipped_amount($item[PirateRealm eyepatch]) > 0) {
+		forceAddGear($items[PirateRealm party hat, cursed compass, bloody harpoon, Red Roger's red right hand, Red Roger's red right foot], "PirateRealm");
+		// TODO: Add Red Roger's red left hand, left foot once mafia supports it
+	}
+
 	// "I Voted!" Sticker, for wanderers only
 	if((total_turns_played() % 11 == 1) &&
 		(total_turns_played() != get_property("lastVoteMonsterTurn").to_int())) {
@@ -684,6 +690,11 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="place.php?whichplace=realm_fantasy">Visit FantasyRealm.</a></td></tr>');
+			break;
+		case $item[PirateRealm eyepatch]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="place.php?whichplace=realm_pirate">Visit PirateRealm.</a></td></tr>');
 			break;
 		case $item[latte lovers member's mug]:
 			int refills = 3 - get_property("_latteRefillsUsed").to_int();
