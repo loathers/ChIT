@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19151; // PirateRealm
+since r19156; // PirateRealm
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
