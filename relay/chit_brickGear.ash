@@ -140,6 +140,12 @@ string gearName(item it, slot s) {
 				notes += xrays + " x-ray" + (xrays == 1 ? "" : "s");
 			}
 			break;
+		case $item[Red Roger's red left foot]:
+			notes = "island";
+			break;
+		case $item[Red Roger's red right foot]:
+			notes = "sailing";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
@@ -1161,6 +1167,20 @@ int dangerLevel(item it, slot s) {
 	// latte reminder
 	if(s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
 		if(it != $item[latte lovers member's mug] && !it.isImportantOffhand())
+			return 1;
+	}
+
+	// pirate hat reminder
+	if(s == $slot[hat] && item_amount($item[PirateRealm party hat]) > 0 && equipped_amount($item[PirateRealm party hat]) == 0 && equipped_amount($item[PirateRealm eyepatch]) > 0) {
+		if(it != $item[PirateRealm party hat])
+			return 1;
+	}
+	item rlf = $item[Red Roger's red left foot];
+	item rrf = $item[Red Roger's red right foot];
+	// pirate foot reminder
+	if($slots[acc1, acc2, acc3] contains s && item_amount(rlf) > 0 && item_amount(rrf) > 0 && equipped_amount(rlf) + equipped_amount(rrf) == 0 && equipped_amount($item[PirateRealm eyepatch]) > 0)
+	{
+		if(!($items[PirateRealm eyepatch, Red Roger's red left foot, Red Roger's red right foot] contains it))
 			return 1;
 	}
 	return 0;
