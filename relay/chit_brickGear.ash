@@ -574,6 +574,40 @@ void pickerGAP() {
 	chitPickers["gap"] = picker;
 }
 
+void pickerForceUpgrade() {
+	buffer picker;
+	picker.pickerStart("theforce", "Pick an upgrade");
+
+	void addUpgrade(int upgrade, string name, string desc, string icon) {
+		string upgradeLink = '<a class="change" href="' + sideCommand('ashq visit_url("main.php?action=may4", false); visit_url("choice.php?pwd=&whichchoice=1386&option=' + upgrade.to_string() + '");') + '">';
+
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.append(upgradeLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('.gif" title="Install ');
+		picker.append(name);
+		picker.append(' (');
+		picker.append(desc);
+		picker.append(')" /></a></td><td colspan="2">');
+		picker.append(upgradeLink);
+		picker.append('<b>Install</b> ');
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span></a></td></tr>');
+	}
+
+	addUpgrade(1, "Enhanced Kaiburr Crystal", "15-20 MP regen", "crystal");
+	addUpgrade(2, "Purple Beam Crystal", "+20 Monster Level", "nacrystal1");
+	addUpgrade(3, "Force Resistance Multiplier", "+3 Prismatic Res", "wonderwall");
+	addUpgrade(4, "Empathy Chip", "+10 Familiar Weight", "spiritorb");
+
+	picker.addLoader("Applying upgrade...");
+	picker.append('</table></div>');
+	chitPickers["theforce"] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -727,6 +761,13 @@ void pickerGear(slot s) {
 			picker.append(get_property("_sausagesEaten").to_int().formatInt() + "/23 sausages eaten today.<br />");
 			picker.append(get_property("_sausageFights").to_int().formatInt() + " goblins encountered today.");
 			picker.append('</a></td></tr>');
+			break;
+		case $item[Fourth of May Cosplay Saber]:
+			if(get_property("_saberMod") == "0") {
+				pickerForceUpgrade();
+				start_option(in_slot, true);
+				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickertheforce" href="#">Install daily upgrade</a></td></tr>');
+			}
 			break;
 	}
 	
