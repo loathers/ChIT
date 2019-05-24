@@ -146,6 +146,12 @@ string gearName(item it, slot s) {
 		case $item[Red Roger's red right foot]:
 			notes = "sailing";
 			break;
+		case $item[Fourth of May Cosplay Saber]:
+			int forceUses = 5 - get_property("_saberForceUses").to_int();
+			if(forceUses > 0) {
+				notes = forceUses + " force uses";
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
