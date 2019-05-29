@@ -825,6 +825,12 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_HASDROPS;
 		}
 		break;
+	case $familiar[Mini-Adventurer]:
+		if(get_property("miniAdvClass").to_int() == 0) {
+			iconInfo.append("No class selected!");
+			return STATUS_ALLDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
