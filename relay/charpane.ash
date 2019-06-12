@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19227; // Fourth of May Cosplay Saber force tracking
+since r19287; // change to effect image proxy
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -925,8 +925,8 @@ void bakeEffects() {
 		if(have_skill(sk) && have_effect(ef) == 0 && my_class() == sk.class) {
 			result.append('<tr class="effect">');
 			if(vars["chit.effects.showicons"] == "true" && !isCompact) {
-				result.append('<td class="icon"><img height=20 width=20 src="/images/');
-				result.append(ef.image.substring(36));
+				result.append('<td class="icon"><img height=20 width=20 src="/images/itemimages/');
+				result.append(ef.image);
 				result.append('" onClick=\'javascript:poop("desc_skill.php?whichskill=');
 				result.append(to_int(sk));
 				result.append('&self=true","skill", 350, 300)\'></td>');
