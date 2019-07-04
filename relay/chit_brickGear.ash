@@ -775,6 +775,11 @@ void pickerGear(slot s) {
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickertheforce" href="#">Install daily upgrade</a></td></tr>');
 			}
 			break;
+		case $item[Beach Comb]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="main.php?comb=1"><b>Comb</b> beach</a></td></tr>');
+			break;
 	}
 	
 	void add_favorite_button(buffer result, item it) {
