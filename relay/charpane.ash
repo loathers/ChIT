@@ -1732,7 +1732,9 @@ void bakeModifiers() {
 	result.append('</tr>');
 	result.append('</tbody>');
 
-	result.append('<tbody><tr><td class="label">Elemental Resistance</td>');
+	result.append('<tbody>');
+	result.append('<tr>');
+	result.append('<td class="label">Elemental Resistance</td>');
 	result.append('<td class="info">');
 	foreach ele in $elements[hot, cold, spooky, stench, sleaze]
 	{
@@ -1749,7 +1751,48 @@ void bakeModifiers() {
 			result.append(' / ');
 		}
 	}
-	result.append('</td></tr>');
+	result.append('</td>');
+	result.append('</tr>');
+	result.append('<tr>');
+	result.append('<td class="label">Elemental Damage</td>');
+	result.append('<td class="info">');
+	foreach ele in $elements[hot, cold, spooky, stench, sleaze]
+	{
+		result.append('<span class="mod');
+		result.append(ele.to_string().substring(0, 1).to_upper_case());
+		result.append(ele.to_string().substring(1));
+		result.append('" title="');
+		result.append(ele.to_string());
+		result.append(' damage">+');
+		result.append(numeric_modifier(ele.to_string() + " Damage").to_int());
+		result.append('</span>');
+		if(ele != $element[sleaze])
+		{
+			result.append(' / ');
+		}
+	}
+	result.append('</td>');
+	result.append('</tr>');
+	result.append('<tr>');
+	result.append('<td class="label">Elemental Spell Damage</td>');
+	result.append('<td class="info">');
+	foreach ele in $elements[hot, cold, spooky, stench, sleaze]
+	{
+		result.append('<span class="mod');
+		result.append(ele.to_string().substring(0, 1).to_upper_case());
+		result.append(ele.to_string().substring(1));
+		result.append('" title="');
+		result.append(ele.to_string());
+		result.append(' spell damage">+');
+		result.append(numeric_modifier(ele.to_string() + " Spell Damage").to_int());
+		result.append('</span>');
+		if(ele != $element[sleaze])
+		{
+			result.append(' / ');
+		}
+	}
+	result.append('</td>');
+	result.append('</tr>');
 	result.append('</tbody>');
 
 		
