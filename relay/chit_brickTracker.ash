@@ -35,11 +35,9 @@ buffer buildTracker() {
 	}
 	
 	
-	
 	string EquipReport(item it) {
 		return "<a href=\"" + sideCommand("equip "+it) + "\">Equip</a> " + ItemReport(have_equipped(it),to_string(it));
 	}
-	
 	
 	
 	string DecoMods(string ss) {
@@ -69,13 +67,6 @@ buffer buildTracker() {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
 	// Start building our table
 	buffer result;
 	result.append("<table id=chit_tracker class=\"chit_brick nospace\"><tr><th>");
@@ -83,6 +74,15 @@ buffer buildTracker() {
 	result.append(imagePath);
 	result.append("tracker.png\"  class=\"chit_walls_stretch\">");
 	result.append("<a target=mainpane href=\"questlog.php\">Quest Tracker</a></th></tr>");
+	
+	if (my_path()=="Live. Ascend. Repeat.") {
+		result.append("<tr><td>");
+		result.append("Turncount: [ <b>");
+		result.append(my_turncount());
+		result.append("</b> ]");
+		result.append("</td></tr>");
+	}
+	
 	
 	//Add Tracker for each available quest
 	//G for Guild. S for Sea. F for Familiar. I for Item. M for Miscellaneous 
@@ -95,6 +95,7 @@ buffer buildTracker() {
 			result.append("<a target=mainpane href=\"bhh.php\">Bounty</a>");
 			result.append(" - ");
 			result.append(bhit);
+			result.append("</td></tr>");
 		}
 	}
 	
@@ -163,7 +164,7 @@ buffer buildTracker() {
 				result.append("<span class=modStench>Stench</span> Res: "+stenchres);
 			}
 		}
-		if (available_amount($item[Spookyraven billiards room key])>0) {
+		if (item_amount($item[Spookyraven billiards room key])>0 && item_amount($item[[7302]Spookyraven library key])==0) {
 		int pool = get_property("poolSkill").to_int()										// Training this run. 
 			+ numeric_modifier("Pool Skill")														// Equipment and effects. 
 			+ min(floor(get_property("poolSharkCount").to_int() ** 0.5 * 2), 10)		// Semirare boost. 
@@ -327,7 +328,7 @@ buffer buildTracker() {
 		result.append("<tr><td>");
 		result.append("<a target=mainpane href=\"place.php?whichplace=desertbeach\">Beach</a> - Find a boat to the Island");
 		result.append("</td></tr>");
-	} else if (!have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
+	} else if (false && !have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0 && available_amount($item[Talisman o' Namsilat])==0) {
 		result.append("<tr><td>");
 		result.append("<a target=mainpane href=\"island.php\">Pirate's Cove</a>");
 		result.append(" - Find the Swashbuckling Getup: ");
@@ -340,7 +341,7 @@ buffer buildTracker() {
 	//L7.5ish: pirates, questM12Pirate
 	//step1, step2, step3, step4 = insults
 	//step5 = fcle
-	if (have_outfit("Swashbuckling Getup") && available_amount($item[Pirate Fledges])==0) {
+	if ( false && have_outfit("Swashbuckling Getup") && (available_amount($item[Pirate Fledges])==0 && available_amount($item[Talisman o' Namsilat])==0) ) {
 		result.append("<tr><td>");
 		if (get_property("questM12Pirate")=="step5") {
 			int itdrop = to_int(numeric_modifier("Item Drop"));
@@ -401,9 +402,6 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-	
-	
-	
 	
 	
 	string twinPeak() {
@@ -472,10 +470,6 @@ buffer buildTracker() {
 	}
 	
 	
-	
-	
-	
-	
 	//L10: SOCK, Giants Castle, questL10Garbage
 	if (Started("questL10Garbage")) {
 		result.append("<tr><td>");
@@ -496,11 +490,12 @@ buffer buildTracker() {
 			} else if (get_property("lastCastleGroundUnlock").to_int()==my_ascensions()) {
 				result.append(" - Explore the ground floor");
 			} else {
-				result.append(" - Find you way upstairs");
+				result.append(" - Find your way upstairs");
 			}
 		}
 		result.append("</td></tr>");
 	}
+	
 	
 	//L11: MacGuffin, questL11MacGuffin
 	if (Started("questL11MacGuffin")) {
@@ -527,7 +522,7 @@ buffer buildTracker() {
 	}
 	
 	//Get pirate fledges from island.php
-	if (Started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted") {
+	if (false && Started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted" &&  available_amount($item[Talisman o' Namsilat])==0) {
 		result.append("<tr><td>");
 		if (available_amount($item[pirate fledges])==0) {
 			result.append("<a target=mainpane href=\"island.php\">Island</a>");
@@ -541,7 +536,40 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-		
+	
+	//L11: questL11Shen, questL11Ron
+	if (Started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted" &&  available_amount($item[Talisman o' Namsilat])==0) {
+		result.append("<tr><td>");
+		result.append("Find the "+ItemReport($item[Talisman o' Namsilat]));
+		result.append("<br>");
+		if (Started("questL11Shen")) {
+			result.append("<a target=mainpane href=\"place.php?whichplace=town_wrong.php\">Copperhead Club</a>");
+			result.append("<br>");
+			result.append("Get the "+ItemReport($item[Copperhead Charm]));
+			if (get_property("shenQuestItem")!="") {
+				result.append(" - Find Shen's artifact: ");
+				result.append(ItemReport(to_item(get_property("shenQuestItem"))));
+			}
+			result.append("<br>");
+		}
+		if (Started("questL11Ron")) {
+			result.append("<a target=mainpane href=\"place.php?whichplace=zeppelin\">The Red Zeppelin</a>");
+			result.append("<br>");
+			result.append("Get the "+ItemReport($item[Copperhead Charm (rampant)]));
+			switch (get_property("questL11Ron")) {
+			case "started": case "step1": case "step2":
+				result.append(" - Clear the Protestors: "+get_property("zeppelinProtestors")+"/80");
+				break;
+			case "step3": case "step4": case "step5":
+				result.append(" - Find and kill Ron Copperhead");
+				result.append("<br>");
+				break;
+			}
+			
+		}
+		result.append("</td></tr>");
+	}
+	
 	//L11: questL11Palindome
 	if (Started("questL11Palindome")) {
 		result.append("<tr><td>");
@@ -565,6 +593,8 @@ buffer buildTracker() {
 			result.append(ItemReport($item[[7262]&quot;I Love Me\, Vol. I&quot;],"I Love Me"));
 			result.append(", ");
 			result.append(ItemReport($item[stunt nuts]));
+			result.append("<br>Defeat Dudes: ");
+			result.append(ItemReport(get_property("palindomeDudesDefeated").to_int()>=5,get_property("palindomeDudesDefeated")+"/5"));
 		}
 		if (get_property("questL11Palindome") == "step1") {
 			result.append("<br>Obtain: ");
@@ -710,7 +740,6 @@ buffer buildTracker() {
 		}
 		result.append("</td></tr>");
 	}
-	
 	
 	
 	//L11: questL11Desert
@@ -872,10 +901,14 @@ buffer buildTracker() {
 				result.append("no current telescope info");
 			}
 			else {
-				result.append("Init, ");
-				result.append(DecoMods(get_property("nsChallenge1")));
+				result.append("Init: ");
+				result.append(ItemReport(round(initiative_modifier())>=400,round(initiative_modifier())+"/400"));
 				result.append(", ");
-				result.append(DecoMods(get_property("nsChallenge2")));
+				result.append(DecoMods(get_property("nsChallenge1"))+": ");
+				result.append(ItemReport(my_buffedstat(to_stat(get_property("nsChallenge1")))>=600,my_buffedstat(to_stat(get_property("nsChallenge1")))+"/600"));
+				result.append(", ");
+				result.append(DecoMods(get_property("nsChallenge2"))+": ");
+				result.append(ItemReport(round(numeric_modifier(get_property("nsChallenge2")+" damage")+numeric_modifier(get_property("nsChallenge2")+" spell damage"))>=100,round(numeric_modifier(get_property("nsChallenge2")+" damage")+numeric_modifier(get_property("nsChallenge2")+" spell damage"))+"/100"));
 				result.append("<br>");
 				result.append("Hedges: ");
 				result.append(DecoMods(get_property("nsChallenge3")));
@@ -1481,8 +1514,6 @@ buffer buildTracker() {
 		result.append(ItemReport($item[no spoon]));
 		result.append("</td></tr>");
 	}
-	
-	
 	
 	result.append("</table>");
 	return result;
