@@ -528,6 +528,8 @@ int hasDrops(item it) {
 			return 9 - get_property("_otoscopeUsed").to_int() - get_property("_reflexHammerUsed").to_int() - get_property("_chestXRayUsed").to_int();
 		case $item[Fourth of May Cosplay Saber]:
 			return 5 - get_property("_saberForceUses").to_int();
+		case $item[Beach Comb]:
+			return 11 - get_property("_freeBeachWalksUsed").to_int();
 	}
 	
 	return 0;
