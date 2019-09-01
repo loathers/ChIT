@@ -152,6 +152,12 @@ string gearName(item it, slot s) {
 				notes = forceUses + " force uses";
 			}
 			break;
+		case $item[Beach Comb]:
+			int beachCombs = 11 - get_property("_freeBeachWalksUsed").to_int();
+			if(beachCombs > 0) {
+				notes = beachCombs + " free combs";
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
