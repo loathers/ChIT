@@ -3332,7 +3332,7 @@ void bakeCharacter() {
 		result.append(imagePath);
 		result.append('select_outfit.png"></a></div>');
 	}
-	result.append('<a target="mainpane" href="charsheet.php">');
+	result.append('<a href="https://www.reddit.com/r/kol/comments/d0cq9s/allegations_of_misconduct_by_asymmetric_members/">Jick needs to apologize and take responsibility for his abuse.</a><br /><a target="mainpane" href="charsheet.php">');
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
