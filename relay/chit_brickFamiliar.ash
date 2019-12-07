@@ -1842,6 +1842,9 @@ void bakeFamiliar() {
 		// get rid of the .0 when it's 1 or 2
 		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
 		break;
+		case $familiar[Red-Nosed Snapper]:
+		info += '<a target=mainpane href=familiar.php?action=guideme&pwd='+my_hash()+'>guide me!</a>';
+		break;
 	}
 	
 	//Get equipment info

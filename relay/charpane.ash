@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19361; // Beach Comb
+since r19635; // Red-Nosed Snapper
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -3332,7 +3332,7 @@ void bakeCharacter() {
 		result.append(imagePath);
 		result.append('select_outfit.png"></a></div>');
 	}
-	result.append('<a href="https://www.reddit.com/r/kol/comments/d0cq9s/allegations_of_misconduct_by_asymmetric_members/">Jick needs to apologize and take responsibility for his abuse.</a><br /><a target="mainpane" href="charsheet.php">');
+	result.append('<a target="mainpane" href="charsheet.php">');
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
