@@ -1562,7 +1562,7 @@ void bakeFamiliar() {
 		if(myfam == $familiar[Fancypants Scarecrow])
 			famtype = "Fancy Scarecrow"; // Name is too long when there's info added
 		// Put the mumming trunk icon before the familiar type name
-		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592.*?</a>', source);
+		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592.*?</a>', source); #"
 		if(find(mummingmatcher))
 			famtype = group(mummingmatcher) + " " + famtype;
 	}
@@ -1843,7 +1843,8 @@ void bakeFamiliar() {
 		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
 		break;
 		case $familiar[Red-Nosed Snapper]:
-		info += '<a target=mainpane href=familiar.php?action=guideme&pwd='+my_hash()+'>guide me!</a>';
+		info += get_property("redSnapperProgress")+'/11 to <span style="color:blue; font-size:100%; font-weight:bold;">'+get_property("redSnapperPhylum")+'</span>';
+		info += ' • <a target=mainpane href=familiar.php?action=guideme&pwd='+my_hash()+'>guide me!</a>';
 		break;
 	}
 	
