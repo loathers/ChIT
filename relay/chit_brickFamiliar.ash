@@ -1843,7 +1843,6 @@ void bakeFamiliar() {
 		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
 		break;
 		case $familiar[Red-Nosed Snapper]:
-		info += get_property("redSnapperProgress")+'/11 to <span style="color:blue; font-size:100%; font-weight:bold;">'+get_property("redSnapperPhylum")+'</span>';
 		info += ' • <a target=mainpane href=familiar.php?action=guideme&pwd='+my_hash()+'>guide me!</a>';
 		break;
 	}
