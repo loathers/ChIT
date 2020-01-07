@@ -620,6 +620,44 @@ void pickerForceUpgrade() {
 	chitPickers["theforce"] = picker;
 }
 
+void pickerPillKeeper() {
+	buffer picker;
+	picker.pickerStart("pillkeeper", "Pop a pill");
+
+	void addPill(string pill, string desc, string command, string icon) {
+		string pillLink = '<a class="change" href="' + sideCommand("pillkeeper " + command) + '">';
+
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.append(pillLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('.gif" title="Take ');
+		picker.append(pill);
+		picker.append(' (');
+		picker.append(desc);
+		picker.append(')" /></a></td><td colspan="2">');
+		picker.append(pillLink);
+		picker.append('<b>Take</b> ');
+		picker.append(pill);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span></a></td></tr>');
+	}
+
+	addPill("Explodinall", "Force all item drops from your next fight", "explode", "goldenlight");
+	addPill("Extendicillin", "Double the duration of your next potion", "extend", "potion1");
+	addPill("Sneakisol", "Force a non-combat", "noncombat", "clarabell");
+	addPill("Rainbowolin", "Stupendous resistance to all elements (30 turns)", "element", "rrainbow");
+	addPill("Hulkien", "+100% to all stats (30 turns)", "stat", "getbig");
+	addPill("Fidoxene", "All your familiars are at least 20 lbs (30 turns)", "familiar", "pill5");
+	addPill("Surprise Me", "Force a semi-rare. Even repeats!", "semirare", "spreadsheet");
+	addPill("Telecybin", "Adventure Randomly! (30 turns)", "random", "calendar");
+
+	picker.addLoader("Popping pills!");
+	picker.append('</table></div>');
+	chitPickers["pillkeeper"] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -785,6 +823,11 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="main.php?comb=1"><b>Comb</b> beach</a></td></tr>');
+			break;
+		case $item[Eight Days a Week Pill Keeper]:
+			pickerPillKeeper();
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
 			break;
 	}
 	
