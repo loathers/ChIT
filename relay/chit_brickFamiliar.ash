@@ -1529,6 +1529,60 @@ void FamVampyre() {
 	chitBricks["familiar"] = result;
 }
 
+void pickerSnapper() {
+	buffer picker;
+	picker.pickerStart("snapper", "Guide me!");
+
+	void addPhylum(phylum phy, string phylumPlural, item get, string desc) {
+		if(phylumPlural == "")
+			phylumPlural = phy.to_string() + "s";
+
+		string phyLinkName = (phy == $phylum[mer-kin]) ? "merkin" : phy.to_string();
+		string guideLink = '<a class="change" href="' + sideCommand("ashq visit_url('familiar.php?action=guideme&pwd'); visit_url('choice.php?pwd&whichchoice=1396&option=1&cat=" + phyLinkName + "')") + '">';
+
+		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
+		picker.append(get.descid);
+		picker.append(',0,event); return false;" onclick="descitem(');
+		picker.append(get.descid);
+		picker.append(',0,event)"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(phy.image);
+		picker.append('" title="Click for item description of snapper drop" /></a></td><td colspan="2">');
+		picker.append(guideLink);
+		picker.append('<b>Guide</b> me towards ');
+		picker.append(phylumPlural);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span></a></td></tr>');
+	}
+
+	addPhylum($phylum[beast], "", $item[patch of extra-warm fur], "Potion, 20 turns of Superhuman Cold Resistance");
+	addPhylum($phylum[bug], "", $item[a bug's lymph], "Spleen size 1, 60 turns of HP +100% and 8-10 HP Regen");
+	addPhylum($phylum[constellation], "", $item[micronova], "Combat item, yellow ray");
+	addPhylum($phylum[construct], "", $item[industrial lubricant], "Spleen size 1, 30 turns of +150% init");
+	addPhylum($phylum[demon], "", $item[infernal snowball], "Potion, 20 turns of Superhuman Hot Resistance");
+	addPhylum($phylum[dude], "", $item[human musk], "Combat item, all day banish (first 3 free)");
+	addPhylum($phylum[elemental], "elementals", $item[livid energy], "Spleen size 1, 60 turns of +50% MP and 3-5 MP Regen");
+	addPhylum($phylum[elf], "elves", $item[peppermint syrup], "Potion, 20 turns of +50% Candy Drops");
+	addPhylum($phylum[fish], "fish", $item[fish sauce], "Spleen size 1, 30 turns of Fishy");
+	addPhylum($phylum[goblin], "", $item[guffin], "Food size 3, awesome quality");
+	addPhylum($phylum[hippy], "hippies", $item[organic potpourri], "Potion, 20 turns of Superhuman Stench Resistance");
+	addPhylum($phylum[hobo], "", $item[beggin' cologne], "Spleen size 1, 60 turns of +100% Meat");
+	addPhylum($phylum[horror], "", $item[powdered madness], "Combat item, free kill (up to 5 a day)");
+	addPhylum($phylum[humanoid], "", $item[vial of humanoid growth hormone], "Spleen size 1, 30 turns of +50% Muscle Gains");
+	addPhylum($phylum[mer-kin], "mer-kin", $item[mer-kin eyedrops], "Potion, 20 turns of +30% Underwater Item Drops");
+	addPhylum($phylum[orc], "", $item[boot flask], "Booze size 3, awesome quality");
+	addPhylum($phylum[penguin], "", $item[envelope full of meat], "Usable for ~1k meat");
+	addPhylum($phylum[pirate], "", $item[Shantix&trade;], "Spleen size 1, 30 turns of +50% Moxie Gains");
+	addPhylum($phylum[plant], "", $item[goodberry], "Combat item, full HP recovery");
+	addPhylum($phylum[slime], "", $item[extra-strength goo], "Potion, 20 turns of Superhuman Sleaze Resistance");
+	addPhylum($phylum[undead], "undead", $item[unfinished pleasure], "Potion, 20 turns of Superhuman Spooky Resistance");
+	addPhylum($phylum[weird], "weirdos", $item[non-Euclidean angle], "Spleen size 1, 30 turns of +50% Mysticality Gains");
+
+	picker.addLoader("Changing guidance");
+	picker.append('</table></div>');
+	chitPickers["snapper"] = picker;
+}
+
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -1842,8 +1896,9 @@ void bakeFamiliar() {
 		// get rid of the .0 when it's 1 or 2
 		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
 		break;
-		case $familiar[Red-Nosed Snapper]:
-		info += ' • <a target=mainpane href=familiar.php?action=guideme&pwd='+my_hash()+'>guide me!</a>';
+	case $familiar[Red-Nosed Snapper]:
+		pickerSnapper();
+		info += ' &bull; <a class="chit_launcher done" rel="chit_pickersnapper" href="#">guide me!</a>';
 		break;
 	}
 	
