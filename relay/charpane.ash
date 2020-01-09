@@ -650,7 +650,7 @@ buff parseBuff(string source) {
 	string effectAlias = myBuff.effectName;
 	
 	// TEMPORARY FIX FOR %birdname% ISSUE IN BLESSING OF THE BIRD
-	columnArrow = columnArrow.replace_string("%", "");
+	columnArrow = columnArrow.replace_string("%birdname%", "birdname");
 	// Add MP or item cost to increase effect
 	matcher howUp = create_matcher("cmd\\=((cast 1 )?(.+?))&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
