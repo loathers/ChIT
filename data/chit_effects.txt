@@ -133,3 +133,7 @@ Transpondent	href:"spaaace.php?arrive=1"
 Absinthe-Minded	href:"wormwood.php"
 Down the Rabbit Hole	href:"place.php?whichplace=rabbithole"
 Dis Abled	href:"suburbandis.php"
+
+#Rewritten effect descriptions
+Video... Games?	desc:"EVERYTHING +5"
+Eldritch Attunement	desc:"Tentacles every fight"
