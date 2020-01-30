@@ -577,8 +577,6 @@ string parseEff(effect ef, boolean span) {
 		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
 		if(wafe.find()) return wafe.group(1);
 		return "You're just over them"; 
-	case $effect[Video... Games?]:
-		return "EVERYTHING +5";
 	}
 
 	# return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
