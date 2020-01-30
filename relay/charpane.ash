@@ -608,7 +608,7 @@ buff parseBuff(string source) {
 	boolean showIcons = (vars["chit.effects.showicons"]=="false" || isCompact)? false: true;
 
 	string columnIcon, columnTurns, columnArrow;
-	string spoiler, style;
+	string spoiler, style, desc;
 
 	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
@@ -675,7 +675,7 @@ buff parseBuff(string source) {
 	
 	//Apply any styling/renaming as specified in effects map
 	if(chitEffectsMap contains myBuff.effectName) {
-		matcher pattern = create_matcher('(type|alias|style|href|image):"([^"]*)', chitEffectsMap[myBuff.effectName]);
+		matcher pattern = create_matcher('(type|alias|style|href|image|desc):"([^"]*)', chitEffectsMap[myBuff.effectName]);
 		while(pattern.find()) {
 			switch(pattern.group(1)) {
 			case "type":
@@ -699,6 +699,9 @@ buff parseBuff(string source) {
 					columnIcon = columnIcon.replace_string(myBuff.effectImage, image);
 					myBuff.effectImage = image;
 				}
+				break;
+			case "desc":
+				desc = pattern.group(2);
 				break;
 			}
 		}
@@ -760,7 +763,12 @@ buff parseBuff(string source) {
 	if(length(style) > 0)
 		result.append(' style="' + style + '"');
 	if(!to_boolean(vars["chit.effects.describe"])) {
-		string efMod = parseEff(myBuff.eff, false);
+		string efMod;
+		if(length(desc) > 0) {
+			efMod = desc;
+		} else {
+			efMod = parseEff(myBuff.eff, false);
+		}
 		if(length(efMod)>0) {
 			result.append(' title="');
 			result.append(efMod);
@@ -778,7 +786,12 @@ buff parseBuff(string source) {
 	
 	//ckb: Add modification details for buffs and effects
 	if(to_boolean(vars["chit.effects.describe"])) {
-		string efMod = parseEff(myBuff.eff);
+		string efMod;
+		if(length(desc) > 0) {
+			efMod = parseMods(desc);
+		} else {
+			efMod = parseEff(myBuff.eff);
+		}
 		if(length(efMod)>0) {
 			result.append('<br><span class="efmods">');
 			result.append(efMod);
