@@ -157,12 +157,18 @@ chit.gear.display.in-run: Comma delimited list of categories to display in the g
       amount=(any numeric value, or "all"): how many items to display in this category (from best to worst, when applicable). "all" "0" or any negative number will just display everything.
       pull=(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
       create=(true/false): whether to display items when you could make them but don't have any made
-   When these options are not explicitly provided for a category, the defaults are: create=false, pull=false, amount=1
+   When these options are not explicitly provided for a category, the defaults are decided by chit.gear.display.in-run.defaults
    Default: favorites:amount=all:pull=true:create=true, astral:amount=all, item, -combat, +combat, quest:amount=all:pull=true:create=true, today:amount=all:create=false, ML, path:amount=all, prismatic, res, resistance:amount=2, charter:amount=all, rollover, DRUNK:amount=all, Wow:amount=all, exp
 
+chit.gear.display.in-run.defaults: The default values for the options in chit.gear.display.in-run when not provided
+   Follows the same rules as the valid options section listed above in chit.gear.display.in-run
+   Default: create=false, pull=false, amount=all
+
 chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in aftercore instead of in-run
-   When these options are not explicitly provided for a category, the defaults are: create=false, pull=false, amount=1
    Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
+
+chit.gear.display.aftercore.defaults: Same as chit.gear.display.in-run.defaults, but for aftercore
+   Default: create=true, pull=true, amount=1
 
 chit.gear.ignoreG-Lover: Whether or not to avoid hiding G-less gear in G-Lover
    With this set to false, only quest items without G's will be recommended
