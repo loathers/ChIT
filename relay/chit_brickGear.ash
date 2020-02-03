@@ -63,7 +63,7 @@ string gearName(item it, slot s) {
 			if(it == $item[Greatest American Pants] && get_property("_gapBuffs").to_int() < 5)
 				notes += ", " + (5 - get_property("_gapBuffs").to_int()) + " super powers";
 			break;
-		case $item[Kremlin's Greatest Briefcase]:
+		case $item[Kremlin\'s Greatest Briefcase]:
 			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
 			if(darts > 0) notes = darts + " darts";
 			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
@@ -94,7 +94,7 @@ string gearName(item it, slot s) {
 					notes = hours + " hours";
 			}
 			break;
-		case $item[latte lovers member's mug]:
+		case $item[latte lovers member\'s mug]:
 			name = "latte";
 			int refills = 3 - get_property("_latteRefillsUsed").to_int();
 			if(refills > 0)
@@ -121,7 +121,7 @@ string gearName(item it, slot s) {
 				notes += " available";
 			}
 			break;
-		case $item[Lil' Doctor&trade; bag]:
+		case $item[Lil\' Doctor&trade; bag]:
 			int otoscopes = 3 - get_property("_otoscopeUsed").to_int();
 			int reflexes = 3 - get_property("_reflexHammerUsed").to_int();
 			int xrays = 3 - get_property("_chestXRayUsed").to_int();
@@ -140,10 +140,10 @@ string gearName(item it, slot s) {
 				notes += xrays + " x-ray" + (xrays == 1 ? "" : "s");
 			}
 			break;
-		case $item[Red Roger's red left foot]:
+		case $item[Red Roger\'s red left foot]:
 			notes = "island";
 			break;
-		case $item[Red Roger's red right foot]:
+		case $item[Red Roger\'s red right foot]:
 			notes = "sailing";
 			break;
 		case $item[Fourth of May Cosplay Saber]:
@@ -161,7 +161,7 @@ string gearName(item it, slot s) {
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
-		if(it != $item[latte lovers member's mug] && !it.isImportantOffhand()) {
+		if(it != $item[latte lovers member\'s mug] && !it.isImportantOffhand()) {
 			if(notes != "")
 				notes += ", ";
 			notes += "latte unlock available!";
@@ -174,16 +174,9 @@ string gearName(item it, slot s) {
 	return name;
 }
 
-string [string] defaults = 
-	aftercore? string [string] {
-		"create": "true",
-		"pull": "true",
-		"amount": "1",
-	}: string [string] {
-		"create": "false",
-		"pull": "false",
-		"amount": "all",
-	};
+string [string] defaults;
+boolean defaults_initialized = false;
+
 string [string,string] reason_options;
 
 void gear_display_options() {
@@ -206,6 +199,15 @@ string get_option(string reason, string option) {
 		return "all";
 	if(reason != "" && reason_options[reason,option] != "")
 		return reason_options[reason,option];
+
+	if(!defaults_initialized) {
+		foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
+			string [int] spl = split_string(s, "=");
+			defaults[spl[0]] = spl[1];
+		}
+		defaults_initialized = true;
+	}
+
 	return defaults[option];
 }
 
@@ -305,10 +307,10 @@ void addFavGear() {
 		addGear($item[continuum transfunctioner], "quest");
 	
 	if(get_property("ghostLocation") == "Inside the Palindome")
-		forceAddGear($item[Talisman o' Namsilat], "ghost");
+		forceAddGear($item[Talisman o\' Namsilat], "ghost");
 	
 	// Ascension specific quest items
-	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris's key]) + available_amount($item[Jarlsberg's key]) + available_amount($item[Sneaky Pete's key]); }
+	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris\'s key]) + available_amount($item[Jarlsberg\'s key]) + available_amount($item[Sneaky Pete\'s key]); }
 	if(!aftercore && get_property("dailyDungeonDone") == "false" && total_keys() < 3)
 		addGear($item[ring of Detect Boring Doors], "quest");
 	
@@ -349,7 +351,7 @@ void addFavGear() {
 
 	// latte, if an unlock is available
 	if(my_location().latteDropAvailable())
-		forceAddGear($item[latte lovers member's mug], "latte unlock");
+		forceAddGear($item[latte lovers member\'s mug], "latte unlock");
 
 	// Miscellaneous
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
