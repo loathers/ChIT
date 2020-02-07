@@ -667,6 +667,8 @@ buff parseBuff(string source) {
 					upCost = rain_cost(upSkill)+' drops to cast '+upSkill;
 				else if(lightning_cost(upSkill) > 0)
 					upCost = lightning_cost(upSkill)+' bolts to cast '+upSkill;
+				else if(hp_cost(upSkill) > 0)
+					upCost = hp_cost(upSkill)+' hp to cast '+upSkill;
 			} else upCost = "You lack the skill: "+howUp.group(3);
 		}
 		columnArrow = columnArrow.replace_string('Increase rounds of', upCost+'\nIncrease rounds of');
