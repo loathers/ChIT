@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19724; // Bird calendar fix was at some point before this and I don't want to look in to exactly when
+since r19725; // Powerful glove battery tracking
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";

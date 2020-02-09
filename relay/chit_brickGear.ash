@@ -158,6 +158,10 @@ string gearName(item it, slot s) {
 				notes = beachCombs + " free combs";
 			}
 			break;
+		case $item[Powerful Glove]:
+			int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
+			notes = batteryLeft + "% battery";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
@@ -660,6 +664,46 @@ void pickerPillKeeper() {
 	chitPickers["pillkeeper"] = picker;
 }
 
+void pickerPowerfulGlove() {
+	buffer picker;
+	picker.pickerStart("powerfulglove", "Cheat at life");
+
+	void addCheat(skill cheat, string desc, boolean combat) {
+		string cheatLink = '<a class="change" href="' + sideCommand("cast 1 " + cheat.to_string()) + '">';
+
+		picker.append('<tr class="pickitem');
+		if(combat) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		if(!combat) picker.append(cheatLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(cheat.image);
+		picker.append('" title="');
+		picker.append(cheat.to_string());
+		picker.append(' (');
+		picker.append(desc);
+		picker.append(')" /></a></td><td colspan="2">');
+		if(!combat) {
+			picker.append(cheatLink);
+			picker.append('<b>ENTER</b> ');
+		}
+		picker.append(cheat.to_string());
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		if(combat) picker.append('<br />(Available in combat)');
+		picker.append('</span></a></td></tr>');
+	}
+
+	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)", false);
+	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)", false);
+	if(get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)
+		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)", true);
+	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)", true);
+
+	picker.addLoader("Entering cheat code!");
+	picker.append('</table></div>');
+	chitPickers["powerfulglove"] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -830,6 +874,14 @@ void pickerGear(slot s) {
 			pickerPillKeeper();
 			start_option(in_slot, false);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
+			break;
+		case $item[Powerful Glove]:
+			int batteryUsed = get_property("_powerfulGloveBatteryPowerUsed").to_int();
+			if(batteryUsed < 100) {
+				pickerPowerfulGlove();
+				start_option(in_slot, false);
+				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpowerfulglove" href="#">Enter a cheat code!</a></td></tr>');
+			}
 			break;
 	}
 	
