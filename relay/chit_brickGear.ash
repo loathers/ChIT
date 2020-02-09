@@ -871,9 +871,11 @@ void pickerGear(slot s) {
 				'href="main.php?comb=1"><b>Comb</b> beach</a></td></tr>');
 			break;
 		case $item[Eight Days a Week Pill Keeper]:
-			pickerPillKeeper();
-			start_option(in_slot, false);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
+			if(!get_property("_freePillKeeperUsed").to_boolean() || (spleen_limit() - my_spleen_use() >= 3)) {
+				pickerPillKeeper();
+				start_option(in_slot, false);
+				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
+			}
 			break;
 		case $item[Powerful Glove]:
 			int batteryUsed = get_property("_powerfulGloveBatteryPowerUsed").to_int();
