@@ -666,7 +666,8 @@ void pickerPillKeeper() {
 
 void pickerPowerfulGlove() {
 	buffer picker;
-	picker.pickerStart("powerfulglove", "Cheat at life");
+	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
+	picker.pickerStart("powerfulglove", "Cheat at life (" + batteryLeft + "% left)");
 
 	void addCheat(skill cheat, string desc, boolean combat) {
 		string cheatLink = '<a class="change" href="' + sideCommand("cast 1 " + cheat.to_string()) + '">';
@@ -695,7 +696,7 @@ void pickerPowerfulGlove() {
 
 	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)", false);
 	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)", false);
-	if(get_property("_powerfulGloveBatteryPowerUsed").to_int() <= 90)
+	if(batteryLeft >= 10)
 		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)", true);
 	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)", true);
 
