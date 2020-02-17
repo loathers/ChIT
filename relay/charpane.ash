@@ -3294,6 +3294,8 @@ void bakeCharacter() {
 			return "chit_WestGuild.php";
 		case $class[Vampyre]:
 			return "campground.php";
+		case $class[Plumber]:
+			return "place.php?whichplace=mario";
 		}
 		return "town.php";
 	}
