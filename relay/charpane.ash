@@ -2259,7 +2259,7 @@ void addNoob(buffer result) {
 }
 
 void addCoins(buffer result) {
-	result.append('<tr><td class="label">Coins</td><td class="info">');
+	result.append('<tr><td class="label"><a target=mainpane href="place.php?whichplace=mario" title="Visit the Mushroom District">Coins</a></td><td class="info">');
 	result.append(formatInt(item_amount($item[Coin])));
 	if(to_boolean(vars["chit.stats.showbars"]))
 		result.append('</td><td><div title="Coins" style="float:left"><img style="max-width:14px;padding-left:3px;" onClick="descitem(196730418,0, event);" src="/images/itemimages/mario_coin.gif"></td></tr>');
