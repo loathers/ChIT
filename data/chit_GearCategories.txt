@@ -88,6 +88,7 @@ path	pool skimmer, lightning rod, thunder down underwear, famous blue raincoat, 
 path	Random Monster Modifiers	Path: One Crazy Random Summer
 path	Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos and Chickpeas, Hellfire Spicy Beans, Frigid Northern Beans, World's Blackest-Eyed Peas, Trader Olaf's Exotic Stinkbeans, Pork 'n' Pork 'n' Pork 'n' Beans, Shrub's Premium Baked Beans	Manual: true, Path: Avatar of West of Loathing
 path	lead umbrella	Manual: true, Path: Nuclear Autumn
+path	hammer, heavy hammer, [10462]fire flower, bonfire flower, work boots, fancy boots, back shell, spiky back shell, bony back shell, cape, power pants	Manual: true, Path: Path of the Plumber
 
 # Bounty hunting stuff
 bounty	pirate fledges	Manual: true, Bounty: warrrrrt, Force: true
