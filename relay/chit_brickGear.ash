@@ -162,6 +162,9 @@ string gearName(item it, slot s) {
 			int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
 			notes = batteryLeft + "% battery";
 			break;
+		case $item[[10462]fire flower]:
+			name = "fire flower";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
