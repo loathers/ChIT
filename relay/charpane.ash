@@ -2673,8 +2673,7 @@ void bakeStats() {
 		if(my_class() == $class[Vampyre])
 			return;
 		if(my_class() == $class[Plumber]) {
-			//matcher pp = create_matcher('alt="Power Points"></td><td valign=center>(\\d+) / (\\d+)</td>', health);
-			matcher pp = create_matcher('alt="Power Points"><br><span class=black>(\\d+) / (\\d+)</span></td>', health);
+			matcher pp = create_matcher('alt="Power Points"><.+?>(\\d+) / (\\d+)(?:</span>)?</td>', health);
 			if(find(pp)) {
 				int ppcurr = pp.group(1).to_int();
 				int ppmax = pp.group(2).to_int();
