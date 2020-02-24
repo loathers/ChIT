@@ -165,6 +165,10 @@ string gearName(item it, slot s) {
 		case $item[[10462]fire flower]:
 			name = "fire flower";
 			break;
+		case $item[vampyric cloake]:
+			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
+			notes = transformsLeft + " transformations";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
