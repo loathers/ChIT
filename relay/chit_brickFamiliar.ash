@@ -536,6 +536,9 @@ int hasDrops(item it) {
 			int uses = (spleen_limit() - my_spleen_use()) / 3;
 			if(!get_property("_freePillKeeperUsed").to_boolean()) ++uses;
 			return uses;
+		case $item[vampyric cloake]:
+			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
+			return transformsLeft;
 	}
 	
 	return 0;
