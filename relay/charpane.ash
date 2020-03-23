@@ -2625,7 +2625,7 @@ void bakeStats() {
 		}
 	}
 	
-	int severity(int current, int limit, float red) {
+	int severity_hpmp(int current, int limit, float red) {
 		float ratio = to_float(current) / limit;
 		if(ratio < red)
 			return 3;
@@ -2660,10 +2660,10 @@ void bakeStats() {
 		if(showBars) {
 			if(health.contains_text("restore+HP")) {
 				result.append('<td class="progress"><a href="' + sideCommand("restore hp") + '">' 
-					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
+					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
 			} else {
 				result.append('<td class="progress">' 
-					+ progressCustom(my_hp(), my_maxhp(), "auto", severity(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</td>');
+					+ progressCustom(my_hp(), my_maxhp(), "auto", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</td>');
 			}
 		}
 		result.append('</tr>');
@@ -2682,7 +2682,7 @@ void bakeStats() {
 				result.append("MP: " + my_mp() + " / " + my_maxmp());
 				result.append('">PP</td><td class="info">' + ppcurr + '&nbsp;/&nbsp;' + ppmax + '</td>');
 				if(showBars) {
-					result.append('<td class="progress">' + progressCustom(ppcurr, ppmax, "auto", severity(ppcurr, ppmax, 0), false) + '</td>');
+					result.append('<td class="progress">' + progressCustom(ppcurr, ppmax, "auto", severity_hpmp(ppcurr, ppmax, 0), false) + '</td>');
 				}
 				result.append('</tr>');
 			}
@@ -2719,10 +2719,10 @@ void bakeStats() {
 		if(showBars) {
 			if(health.contains_text("restore+MP")) {
 				result.append('<td class="progress"><a href="' + sideCommand("restore mp") + '">'
-					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
+					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
 			} else {
 				result.append('<td class="progress">' 
-					+ progressCustom(my_mp(), my_maxmp(), "auto", severity(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</td>');
+					+ progressCustom(my_mp(), my_maxmp(), "auto", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</td>');
 			}
 		}
 		result.append('</tr>');
