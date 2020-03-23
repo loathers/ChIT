@@ -52,7 +52,7 @@ a.blue-link:hover {
 }
 #chit_roof {
 	overflow-x:hidden;
-	overflow-y:auto;
+	overflow-y:hidden;
 	margin:2px 2px -2px 2px;
 }
 #chit_walls {
