@@ -134,8 +134,9 @@ $(document).ready(function () {
 		
 		if (walls && (roofHeight >= availableHeight)) {
 			walls.css("bottom", (floorOffset + floorHeight + pad) + "px");
+			roof.css("overflow-y","auto");
 		}
-
+		
 		
 		else if (walls && (roofHeight < availableHeight)) {
 			walls.css("bottom", (floorOffset + floorHeight + pad) + "px");
