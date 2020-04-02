@@ -85,14 +85,17 @@ chit.stats.showbars: Shows or hides progress bars
 chit.quests.hide: Don't display Quest Nudges when you don't have any active quests (true/false)
    Default: false (standard KoL behaviour)            
 -------------------------------------------------------------------------------------
-chit.familiar.hats: Comma-separated list of hats to include with a Hatrack as your current familiar
-   Default: spangly sombrero,sugar chapeau
+chit.familiar.hats: Vertical bar (|) separated list of hats to include with a Hatrack as your current familiar
+   Default: spangly sombrero|sugar chapeau
 
-chit.familiar.weapons: Comma-separated list of weapons to include with a Disembodied Hand as your current familiar
-   Default: time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella
+chit.familiar.weapons: Vertical bar (|) separated list of weapons to include with a Disembodied Hand as your current familiar
+   Default: time sword|batblade|Hodgman's whackin' stick|astral mace|Maxwell's Silver Hammer|goatskin umbrella
 
-chit.familiar.pants: Comma-separated list of pants to include with a Fancypants Scarecrow as your current familiar
-   Default: spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,Studded leather boxer shorts,Monster pants,Sugar shorts
+chit.familiar.pants: Vertical bar (|) separated list of pants to include with a Fancypants Scarecrow as your current familiar
+   Default: spangly mariachi pants|double-ice britches|BRICKO pants|pin-stripe slacks|Studded leather boxer shorts|Monster pants|Sugar shorts
+
+chit.familiar.off-hands: Vertical bar (|) separated list of off-hands to include with a Left-Hand Man as your current familiar
+   Default: Kramco Sausage-o-Matic&trade;|latte lovers member's mug|A Light that Never Goes Out|Half a Purse
 
 chit.familiar.protect: Removes all familiar-switching links from the charpane when you're on a 100% run
    (You have to go to your campsite->terraium to change familiars, or use chat commands)
@@ -101,9 +104,9 @@ chit.familiar.anti-gollywog: Colorize the Crimbo Shrub's image so that it doesn'
    Default: true
 chit.familiar.hiddengear: Comma delimited list of generic familiar equipment to hide from the familiar gear picker.
 -------------------------------------------------------------------------------------
-chit.gear.favorites: Comma-separated list of equipment that you have set as a personal favorite.
+chit.gear.favorites: Vertical bar (|) separated list of equipment that you have set as a personal favorite.
    You can change this all you should need to via the gear picker, so you shouldn't edit this one manually.
-   Default: Just some random items I like.
+   Default: Pantsgiving|your cowboy boots|gold detective badge|Mr. Screege's spectacles|KoL Con 13 snowglobe|ghostly reins|training helmet|over-the-shoulder Folder Holder|Spelunker's whip|The Jokester's gun|protonic accelerator pack
 
 chit.gear.layout: The layout to use for the gear picker.
    Options include:
