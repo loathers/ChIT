@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r19744; // letsacore support
+since r19950; // Left-Hand Man
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -26,9 +26,10 @@ setvar("chit.familiar.anti-gollywog", true);
 setvar("chit.familiar.hiddengear", "");
 setvar("chit.familiar.protect", false);
 setvar("chit.familiar.showlock", false);
-setvar("chit.familiar.hats", "item", "spangly sombrero,sugar chapeau,chef's hat,party hat");
-setvar("chit.familiar.pants", "item", "spangly mariachi pants,double-ice britches,BRICKO pants,pin-stripe slacks,studded leather boxer shorts,monster pants,sugar shorts");
-setvar("chit.familiar.weapons", "item", "time sword,batblade,Hodgman's whackin' stick,astral mace,Maxwell's Silver Hammer,goatskin umbrella,grassy cutlass,dreadful glove,Stick-Knife of Loathing,Work is a Four Letter Sword");
+setvar("chit.familiar.hats", "item", "spangly sombrero|sugar chapeau|chef's hat|party hat");
+setvar("chit.familiar.pants", "item", "spangly mariachi pants|double-ice britches|BRICKO pants|pin-stripe slacks|studded leather boxer shorts|monster pants|sugar shorts");
+setvar("chit.familiar.weapons", "item", "time sword|batblade|Hodgman's whackin' stick|astral mace|Maxwell's Silver Hammer|goatskin umbrella|grassy cutlass|dreadful glove|Stick-Knife of Loathing|Work is a Four Letter Sword");
+setvar("chit.familiar.off-hands", "item", "Kramco Sausage-o-Matic&trade;|latte lovers member's mug|A Light that Never Goes Out|Half a Purse");
 setvar("chit.effects.classicons", "none");
 setvar("chit.effects.describe", true);
 setvar("chit.effects.modicons", true);
@@ -39,7 +40,7 @@ setvar("chit.gear.display.in-run.defaults", "create=false, pull=false, amount=al
 setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
 setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
 setvar("chit.gear.layout", "default");
-setvar("chit.gear.favorites", "item", "Pantsgiving,your cowboy boots,gold detective badge,Mr. Screege's spectacles,KoL Con 13 snowglobe,ghostly reins,training helmet,over-the-shoulder Folder Holder,Spelunker's whip,The Jokester's gun,protonic accelerator pack");
+setvar("chit.gear.favorites", "item", "Pantsgiving|your cowboy boots|gold detective badge|Mr. Screege's spectacles|KoL Con 13 snowglobe|ghostly reins|training helmet|over-the-shoulder Folder Holder|Spelunker's whip|The Jokester's gun|protonic accelerator pack");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
 setvar("chit.helpers.dancecard", true);
