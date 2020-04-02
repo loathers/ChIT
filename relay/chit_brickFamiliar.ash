@@ -297,7 +297,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	void pickSlot(string slottype) {
 		string pref = vars["chit.familiar."+slottype];
 		if (pref != "") {
-			string [int] equipmap = split_string(pref, ",");
+			string [int] equipmap = split_string(pref, "\\|");
 			item equip;
 			foreach i in equipmap {
 				equip = to_item(equipmap[i]);
@@ -410,6 +410,11 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			picker.addLoader("Changing Weapons...");
 			pickSlot("weapons");
 			if(count(addeditems) == 0) picker.addSadFace(sadMessage("weapons", myfam));
+			break;
+		case $familiar[Left-Hand Man]:
+			picker.addLoader("Changing Off-hands...");
+			pickSlot("off-hands");
+			if(count(addeditems) == 0) picker.addSadFace(sadMessage("off-hands", myfam));
 			break;
 		case $familiar[comma chameleon]:
 			picker.addLoader("Changing Equipment...");
@@ -551,6 +556,7 @@ string familiar_image(familiar f) {
 	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
+	case $familiar[Left-Hand Man]: return "/images/itemimages/lhmlarva.gif";
 	
 	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
 		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
