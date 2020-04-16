@@ -52,7 +52,7 @@ setvar("chit.kol.coolimages", true);
 setvar("chit.effects.layout", "songs,buffs,intrinsics");
 setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
-setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|trail,florist");
+setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery,boombox");
 setvar("chit.quests.hide", false);
@@ -2571,6 +2571,7 @@ void addTrail(buffer result) {
 void bakeStats() {
 
 	string health = chitSource["health"]; 
+	string stats = chitSource["stats"];
 	buffer result;
 	boolean showBars = to_boolean(vars["chit.stats.showbars"]);
 	boolean checkExtra = true;
@@ -2744,6 +2745,20 @@ void bakeStats() {
 		}
 	}
 	
+	//<tr><td align=right>Drippy Juice:</td><td align=left><b><font color=black><span alt="Drippy Juice" title="Drippy Juice">10 &micro;g.</span></font></td></tr>
+	void addDrippyJuice() {
+		if (index_of(stats, "Drippy Juice:") > -1) {
+			matcher dripMatcher = create_matcher("Drippy Juice:</td><td align=left><b><font color=black><span alt=\"Drippy Juice\" title=\"Drippy Juice\">(.+?)</span></font></td></tr>", stats);
+			if	( find(dripMatcher) ) {
+				string dripAmt = dripMatcher.group(1);
+				result.append('<tr>');
+				result.append('<td class="label" colspan="2">Drippy Juice:</td>');
+				result.append('<td class="info">' + dripAmt + '</td>');
+				result.append('</tr>');
+			}
+		}
+	}
+	
 	boolean contains_stat(string section) {
 		if(section.contains_text("mainstat")) return true;
 		switch(my_primestat()) {
@@ -2772,6 +2787,7 @@ void bakeStats() {
 				case "mp": 		addMP(); 			break;
 				case "axel": 	addAxel(); 			break;
 				case "mcd": 	result.addMCD(); 	break;
+				case "drip":	addDrippyJuice(); 	break;
 				case "trail": 	result.addTrail();	break;
 				case "gear": 	result.addGear();	break;
 				default:
