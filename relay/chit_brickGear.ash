@@ -893,6 +893,11 @@ void pickerGear(slot s) {
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpowerfulglove" href="#">Enter a cheat code!</a></td></tr>');
 			}
 			break;
+		case $item[Guzzlr tablet]:
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="inventory.php?tap=guzzlr"><b>Tap</b> tablet</a></td></tr>');
+			break;
 	}
 	
 	void add_favorite_button(buffer result, item it) {
