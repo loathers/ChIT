@@ -2752,7 +2752,7 @@ void bakeStats() {
 			if	( find(dripMatcher) ) {
 				string dripAmt = dripMatcher.group(1);
 				result.append('<tr>');
-				result.append('<td class="label" colspan="2">Drippy Juice:</td>');
+				result.append('<td class="label" colspan="2"><a href="place.php?whichplace=dripfacility" target="mainpane" title="Visit The Drip Facility">Drippy Juice</a></td>');
 				result.append('<td class="info">' + dripAmt + '</td>');
 				result.append('</tr>');
 			}
