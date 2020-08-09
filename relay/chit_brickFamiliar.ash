@@ -1919,7 +1919,11 @@ void bakeFamiliar() {
 		info += ' &bull; <a class="chit_launcher done" rel="chit_pickersnapper" href="#">guide me!</a>';
 		break;
 	case $familiar[Melodramedary]:
-		info = get_property("camelSpit") + "% spit";
+		int spit = get_property("camelSpit").to_int();
+		if(spit >= 100)
+			info += "Ready to spit";
+		else
+			info += spit.to_string() + "% spit";
 		break;
 	}
 	
