@@ -223,17 +223,20 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		if(equipped_item($slot[familiar]) == $item[Snow Suit]) {
 			pickerSnowsuit();
 			string suiturl = '<a class="chit_launcher done" rel="chit_pickersnowsuit" href="#" title="Decorate your Snow Suit\'s face">';
-			int faceIndex = index_of(chitSource["familiar"], "itemimages/snow");
-			string face = substring(chitSource["familiar"], faceIndex + 11, faceIndex + 24);
-			if(have_effect($effect[SOME PIGS]) > 0)
-				face = "snowsuit.gif";
 			picker.append('<tr class="pickitem"><td class="fold">');
 			picker.append(suiturl);
 			picker.append('Decorate Snow Suit<br /><span class="descline">Choose a Face</span></a></td><td class="icon">');
 			picker.append(suiturl);
 			picker.append('<img src="/images/itemimages/');
-			picker.append(face);
-			picker.append('"></a></td></tr>');
+			switch(get_property("snowsuit")) {
+				case "eyebrows": picker.append("snowface1"); break;
+				case "smirk": picker.append("snowface2"); break;
+				case "nose": picker.append("snowface3"); break;
+				case "goatee": picker.append("snowface4"); break;
+				case "hat": picker.append("snowface5"); break;
+				default: picker.append("snowsuit"); break;
+			}
+			picker.append('.gif"></a></td></tr>');
 		}
 	
 		//Most common equipment for current familiar
@@ -1933,9 +1936,14 @@ void bakeFamiliar() {
 			equiptype = to_string(famitem);
 			// If using snow suit, find the current face & add carrot drop info
 			if(famitem == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
-				int snowface = index_of(source, "itemimages/snow");
-				equipimage = substring(source, snowface + 11, snowface + 24);
-				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
+				switch(get_property("snowsuit")) {
+					case "eyebrows": equipimage = "snowface1.gif"; break;
+					case "smirk": equipimage = "snowface2.gif"; break;
+					case "nose": equipimage = "snowface3.gif"; break;
+					case "goatee": equipimage = "snowface4.gif"; break;
+					case "hat": equipimage = "snowface5.gif"; break;
+					default: equipimage = "snowsuit.gif"; break;
+				}
 			} else
 				equipimage = famitem.image;
 		}
