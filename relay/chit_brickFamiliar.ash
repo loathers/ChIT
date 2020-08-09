@@ -84,7 +84,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			mod = create_matcher('^ *, *', mod).replace_first("");
 			// Last touch ups
 			mod = mod.replace_string("Fam Weight", "Weight");
-			if(famitem == $item[Snow Suit] && equipped_item($slot[familiar]) != $item[Snow Suit])
+			if(famitem == $item[Snow Suit])
 				mod += (length(mod) == 0? "(": " (") + get_property("_carrotNoseDrops")+"/3 carrots)";
 			if(length(mod) > 1)
 				return mod;
@@ -1918,6 +1918,9 @@ void bakeFamiliar() {
 		pickerSnapper();
 		info += ' &bull; <a class="chit_launcher done" rel="chit_pickersnapper" href="#">guide me!</a>';
 		break;
+	case $familiar[Melodramedary]:
+		info = get_property("camelSpit") + "% spit";
+		break;
 	}
 	
 	//Get equipment info
@@ -1944,6 +1947,7 @@ void bakeFamiliar() {
 					case "hat": equipimage = "snowface5.gif"; break;
 					default: equipimage = "snowsuit.gif"; break;
 				}
+				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
 			} else
 				equipimage = famitem.image;
 		}
