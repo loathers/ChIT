@@ -643,8 +643,11 @@ buff parseBuff(string source) {
 		} else
 			myBuff.effectTurns = parse.group(8).to_int();
 		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
-		if(parse.group(9) != "")
-			columnArrow = parse.group(9).replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
+		if(parse.group(9) != "") {
+			columnArrow = parse.group(9);
+			if(columnArrow.contains_text("up.gif"))
+				columnArrow = columnArrow.replace_string("/images/", imagePath).replace_string("up.gif", "up.png");
+		}
 		else if(parse.group(1) != "" ) {
 			doArrows = true;			// In case they were disabled in KoLmafia. Make a column for it.
 			columnArrow = parse.group(1);
