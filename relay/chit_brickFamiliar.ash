@@ -851,6 +851,12 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		}
 		break;
+	case $familiar[Melodramedary]:
+		if(get_property("camelSpit").to_int() >= 100) {
+			iconInfo.append("Ready to spit!");
+			return STATUS_ALLDROPS;
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
