@@ -2304,6 +2304,19 @@ void addLI_11(buffer result) {
 	result.append('</tr>');
 }
 
+void addGoo(buffer result) {
+	matcher goo = create_matcher("<td align=right>Goo:</td><td align=left><b>(\\d+)</b>", chitSource["stats"]);
+	if(goo.find()) {
+		result.append('<tr><td class="label">Goo</td>');
+		result.append('<td class="info">');
+		result.append(goo.group(1));
+		result.append('</td>');
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('<td>&nbsp;</td>');
+		result.append('</tr>');
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -2834,6 +2847,10 @@ void bakeStats() {
 				break;
 			case "License to Adventure":
 				result.addLI_11();
+				break;
+			case "Grey Goo":
+				result.addGoo();
+				break;
 			}
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
