@@ -1442,7 +1442,8 @@ void addCurrentMood(buffer result, boolean picker) {
 	void addPick(buffer prefix) {
 		if(picker)
 			prefix.append('<tr class="pickitem"><td class="info"><a class="visit" ');
-		prefix.append('<a ');
+		else
+			prefix.append('<a ');
 	}
 	string source = chitSource["mood"];
 	if(contains_text(source, "save+as+mood")) {
