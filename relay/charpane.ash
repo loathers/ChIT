@@ -1924,16 +1924,67 @@ void addFury(buffer result) {
 	}
 }
 
+void pickerSoulSauce() {
+	buffer picker;
+	picker.pickerStart("soulsauce", "Spend Soul Sauce");
+	picker.addLoader("Performing Saucery...");
+	
+	void addSauceSkill(skill sk, string desc) {
+		desc += " (" + sk.soulsauce_cost() + " sauce)";
+		boolean canAfford = my_soulsauce() >= sk.soulsauce_cost();
+		string link = '<a class="change" href="' + sideCommand("cast 1 " + sk) + '">';
+		string linkEnd = '</a>';
+		if(sk.combat || !canAfford) {
+			link = '';
+			linkEnd = '';
+		}
+		picker.append('<tr class="pickitem');
+		if(sk.combat || !canAfford) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		picker.append(link);
+		picker.append('<a class="done" onclick=\'javascript:poop("desc_skill.php?whichskill=');
+		picker.append(sk.to_int());
+		picker.append('&self=true","skill", 350, 300)\' href="#"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(sk.image);
+		picker.append('" title="Pop out the super detailed soulsauce skill description" /></a></td><td colspan="2">');
+		picker.append(link);
+		if(!sk.combat && canAfford) picker.append('<b>Cast</b> ');
+		picker.append(sk);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		if(sk.combat) picker.append('<br />(Available in combat)');
+		picker.append('</span>');
+		picker.append(linkEnd);
+		picker.append('</td></tr>');
+	}
+
+	addSauceSkill($skill[Soul Food], "Restore 15 MP");
+	addSauceSkill($skill[Soul Rotation], "+30% init for 10 adventures");
+	addSauceSkill($skill[Soul Funk], "Passive stench damage for 10 adventures");
+	addSauceSkill($skill[Soul Bubble], "Stun monster for 3-4 rounds");
+	addSauceSkill($skill[Soul Finger], "Delevel monster significantly");
+	addSauceSkill($skill[Soul Blaze], "Deal massive hot damage");
+
+	picker.append('</table></div>');
+	chitPickers["soulsauce"] = picker;
+}
+
 void addSauce(buffer result) {
-	result.append('<tr><td class="label">Sauce</td><td class="info">');
+	pickerSoulSauce();
+	string pickerLink = '<a class="chit_launcher done" rel="chit_pickersoulsauce" href="#">';
+	result.append('<tr><td class="label">');
+	result.append(pickerLink);
+	result.append('Sauce</a></td><td class="info">');
 	result.append(my_soulsauce());
 	result.append('</td>');
 	if(to_boolean(vars["chit.stats.showbars"])) {
-		result.append('<td class="progress"><div class="progressbox" title="');
+		result.append('<td class="progress">');
+		result.append(pickerLink);
+		result.append('<div class="progressbox" title="');
 		result.append(my_soulsauce());
 		result.append(' / 100"><div class="progressbar" style="width:');
 		result.append(my_soulsauce());
-		result.append('%"></div></div></td></td>');
+		result.append('%"></div></div></a></td>');
 	}
 	result.append('</tr>');
 }
