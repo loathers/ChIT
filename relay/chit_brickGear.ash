@@ -676,36 +676,32 @@ void pickerPowerfulGlove() {
 	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
 	picker.pickerStart("powerfulglove", "Cheat at life (" + batteryLeft + "% left)");
 
-	void addCheat(skill cheat, string desc, boolean combat) {
+	void addCheat(skill cheat, string desc) {
 		string cheatLink = '<a class="change" href="' + sideCommand("cast 1 " + cheat.to_string()) + '">';
 
 		picker.append('<tr class="pickitem');
-		if(combat) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		if(!combat) picker.append(cheatLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		if(cheat.combat) picker.append(' currentitem');
+		picker.append('"><td class="icon"><a class="done" onclick=\'javascript:poop("desc_skill.php?whichskill=');
+		picker.append(cheat.to_int());
+		picker.append('&self=true","skill", 350, 300)\' href="#"><img class="chit_icon" src="/images/itemimages/');
 		picker.append(cheat.image);
-		picker.append('" title="');
-		picker.append(cheat.to_string());
-		picker.append(' (');
-		picker.append(desc);
-		picker.append(')" /></a></td><td colspan="2">');
-		if(!combat) {
+		picker.append('" title="Pop out skill description" /></a></td><td colspan="2">');
+		if(!cheat.combat) {
 			picker.append(cheatLink);
 			picker.append('<b>ENTER</b> ');
 		}
 		picker.append(cheat.to_string());
 		picker.append('<br /><span class="descline">');
 		picker.append(desc);
-		if(combat) picker.append('<br />(Available in combat)');
+		if(cheat.combat) picker.append('<br />(Available in combat)');
 		picker.append('</span></a></td></tr>');
 	}
 
-	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)", false);
-	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)", false);
+	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)");
+	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)");
 	if(batteryLeft >= 10)
-		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)", true);
-	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)", true);
+		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)");
+	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)");
 
 	picker.addLoader("Entering cheat code!");
 	picker.append('</table></div>');
