@@ -1319,7 +1319,7 @@ void FamBoris() {
 # <font size=2><b>Companion:</b><br>(none)
 void FamJarlsberg() {
 	string famimage, famname, famtype, actortype, equiptype;
-	matcher companion = create_matcher('images/(.*?\\.gif).*?<b>([^<]*)</b><br>([^<]*).*?<br>(.*?font>)', chitSource["familiar"]);
+	matcher companion = create_matcher('images/(.*?\\.gif).*?<b>([^<]*[^<\\s])\\s*</b><br>([^<]*).*?<br>(.*?font>)', chitSource["familiar"]);
 	if(find(companion)) {
 		famimage = companion.group(1);
 		famname = companion.group(2);
