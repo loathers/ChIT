@@ -735,6 +735,17 @@ buff parseBuff(string source) {
 	if(length(effectAlias) == 0)
 		effectAlias = myBuff.effectName;
 	
+	boolean [effect] turtleBlessings = $effects[
+		Blessing of the War Snapper,
+		Blessing of She-Who-Was,
+		Blessing of the Storm Tortoise,
+	];
+	boolean [effect] grandTurtleBlessings = $effects[
+		Grand Blessing of the War Snapper,
+		Grand Blessing of She-Who-Was,
+		Grand Blessing of the Storm Tortoise,
+	];
+
 	// Add spoiler info that mafia doesn't provide
 	if(myBuff.effectName.contains_text("Romantic Monster window")) {
 		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
@@ -749,6 +760,30 @@ buff parseBuff(string source) {
 		effectAlias = "Latte " + get_property("_latteMonster");
 		columnIcon = columnIcon.replace_string(myBuff.effectImage, "lattecup1.gif");
 		myBuff.effectImage = "lattecup1.gif";
+	}
+	else if(turtleBlessings contains myBuff.eff || grandTurtleBlessings contains myBuff.eff) {
+		boolean isGrand = grandTurtleBlessings contains myBuff.eff;
+		int speedUps = 0;
+		foreach it in $items[bakelite badge, Ouija Board\, Ouija Board, spirit bell] {
+			if(equipped_amount(it) > 0) {
+				if(it == $item[Ouija Board\, Ouija Board] && equipped_item($slot[off-hand]) != it)
+					continue;
+				++speedUps;
+			}
+		}
+		int totalNeededToUpgrade() {
+			switch(speedUps) {
+			case 0: return isGrand ? 100 : 30; // 70 from grand to glorious
+			case 1: return isGrand ? 60 : 20; // 40 from grand to glorious
+			case 2: return isGrand ? 50 : 15; // 35 from grand to glorious
+			case 3: return isGrand ? 40 : 10; // TODO: Confirm this
+			default: return isGrand ? 30 : 5; // This is not yet reachable, just future-proofing
+			}
+		}
+		int turnsSoFar = get_property("turtleBlessingTurns").to_int();
+		effectAlias += ' <span title="This number may be inaccurate if you wear blessing speedup items for part of the process but not all">(' + turnsSoFar + "/" + totalNeededToUpgrade() + ")</span>";
+		if(speedUps >= 3)
+			effectAlias += ' <span class="efmods">(This is a guess. Please send confirmation for or against to Soolar the Second (#2463557))</span>';
 	}
 	
 	//Replace effect icons, if enabled
