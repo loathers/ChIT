@@ -169,6 +169,11 @@ string gearName(item it, slot s) {
 			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
 			notes = transformsLeft + " transformations";
 			break;
+		case $item[Cargo Cultist Shorts]:
+			boolean pocketEmptied = get_property("_cargoPocketEmptied").to_boolean();
+			if(!pocketEmptied)
+				notes = "pocket pickable";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
@@ -893,6 +898,17 @@ void pickerGear(slot s) {
 			start_option(in_slot, false);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="inventory.php?tap=guzzlr"><b>Tap</b> tablet</a></td></tr>');
+			break;
+		case $item[Cargo Cultist Shorts]:
+			if(!get_property("_cargoPocketEmptied").to_boolean()) {
+				start_option(in_slot, false);
+				string [int] pocketsEmptied = get_property("cargoPocketsEmptied").split_string(",");
+				int pocketsLeft = 666 - pocketsEmptied.count();
+				picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+					'href="inventory.php?action=pocket"><b>Pick</b> pocket (');
+				picker.append(pocketsLeft);
+				picker.append(' left)</a></td></tr>');
+			}
 			break;
 	}
 	

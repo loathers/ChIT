@@ -547,6 +547,8 @@ int hasDrops(item it) {
 		case $item[vampyric cloake]:
 			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
 			return transformsLeft;
+		case $item[Cargo Cultist Shorts]:
+			return get_property("_cargoPocketEmptied").to_boolean() ? 0 : 1;
 	}
 	
 	return 0;
