@@ -713,6 +713,119 @@ void pickerPowerfulGlove() {
 	chitPickers["powerfulglove"] = picker;
 }
 
+string retroHeroToIcon(string hero) {
+	switch(hero) {
+		case "muscle":
+		case "vampire":
+			return "Retrocape1.gif";
+		case "mysticality":
+		case "heck":
+			return "Retrocape2.gif";
+		case "moxie":
+		case "robot":
+			return "Retrocape3.gif";
+	}
+	abort("Unrecognized hero " + hero);
+	return "";
+}
+
+void pickerRetroSuperCapeMeta() {
+	buffer picker;
+	picker.pickerStart("retrosupercapemeta", "Switch up your cape");
+
+	void addCombo(string name, string hero, string mode, boolean enabled) {
+		string configLink = '<a class="change" href="' + sideCommand("retrocape " + hero + " " + mode) + '">';
+
+		picker.append('<tr class="pickitem');
+		if(!enabled) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(retroHeroToIcon(hero));
+		picker.append('" /></td><td colspan="2">');
+		picker.append(configLink);
+		picker.append('<b>CONFIGURE</b> ');
+		picker.append(name);
+		picker.append('</a></td></tr>');
+	}
+
+	addCombo("for mainstat exp", my_primestat().to_string().to_lower_case(), "thrill", true);
+	addCombo("to yellow ray", "heck", "kiss", have_effect($effect[Everything Looks Yellow]) == 0);
+	addCombo("to purge evil", "vampire", "kill", true);
+	addCombo("to resist elements", "vampire", "hold", true);
+	addCombo("to spooky lantern", "heck", "kill", true);
+	addCombo("to stun enemies", "heck", "hold", true);
+
+	picker.addLoader("Configuring your cape...");
+	picker.append('</table></div>');
+	chitPickers["retrosupercapemeta"] = picker;
+}
+
+void pickerRetroSuperCapeAll() {
+	buffer pickerHero, pickerVampire, pickerHeck, pickerRobot;
+
+	void addHero(string name, string desc, string picker) {
+		pickerHero.append('<tr class="pickitem"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		pickerHero.append(retroHeroToIcon(picker));
+		pickerHero.append('" /></td><td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercape');
+		pickerHero.append(picker);
+		pickerHero.append('" href="#"><b>PICK</b> ');
+		pickerHero.append(name);
+		pickerHero.append('<br /><span class="descline">');
+		pickerHero.append(parseMods(desc, true));
+		pickerHero.append('</span></a></td></tr>');
+	}
+
+	void addMode(buffer picker, string name, string desc, string hero, string nameShort, boolean parse) {
+		picker.append('<tr class="pickitem"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(retroHeroToIcon(hero));
+		picker.append('" /></td><td colspan="2"><a class="change" href="');
+		picker.append(sideCommand("retrocape " + hero + " " + nameShort));
+		picker.append('"><b>PICK</b> ');
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(parse ? parseMods(desc, true) : desc);
+		picker.append('</span></a></td></tr>');
+	}
+
+	// Hero picker
+	pickerHero.pickerStart("retrosupercapeall", "Pick a hero");
+	addHero("Vampire Slicer", "Muscle +30%, Maximum HP +50", "vampire");
+	addHero("Heck General", "Mysticality +30%, Maximum MP +50", "heck");
+	addHero("Robot Police", "Moxie +30%, Maximum HP/MP +25", "robot");
+	pickerHero.addLoader("Picking mode...");
+	pickerHero.append('</table></div>');
+	chitPickers["retrosupercapeall"] = pickerHero;
+
+	// Vampire picker
+	pickerVampire.pickerStart("retrosupercapevampire", "Pick a mode");
+	pickerVampire.addMode("Hold Me", "Serious Resistance to All Elements (+3)", "vampire", "hold", true);
+	pickerVampire.addMode("Thrill Me", "+3 Muscle Stats Per Fight", "vampire", "thrill", true);
+	pickerVampire.addMode("Kiss Me", "Allows vampiric smooching (HP drain)", "vampire", "kiss", false);
+	pickerVampire.addMode("Kill Me", "Lets you instantly kill undead foes with a sword (reduces evil in Cyrpt)", "vampire", "kill", false);
+	pickerVampire.addLoader("Configuring your cape...");
+	pickerVampire.append('</table></div>');
+	chitPickers["retrosupercapevampire"] = pickerVampire;
+
+	// Heck picker
+	pickerHeck.pickerStart("retrosupercapeheck", "Pick a mode");
+	pickerHeck.addMode("Hold Me", "Stuns foes at the start of combat", "heck", "hold", false);
+	pickerHeck.addMode("Thrill Me", "+3 Mysticality Stats Per Fight", "heck", "thrill", true);
+	pickerHeck.addMode("Kiss Me", "Lets you unleash the Devil's kiss (100 turn cooldown yellow ray)", "heck", "kiss", false);
+	pickerHeck.addMode("Kill Me", "A Heck Clown will make your spells spookier (Spooky lantern)", "heck", "kill", false);
+	pickerHeck.addLoader("Configuring your cape...");
+	pickerHeck.append('</table></div>');
+	chitPickers["retrosupercapeheck"] = pickerHeck;
+
+	// Robot picker
+	pickerRobot.pickerStart("retrosupercaperobot", "Pick a mode");
+	pickerRobot.addMode("Hold Me", "Allows you to handcuff opponents (Delevel attack)", "robot", "hold", false);
+	pickerRobot.addMode("Thrill Me", "+3 Moxie Stats Per Fight", "robot", "thrill", true);
+	pickerRobot.addMode("Kiss Me", "Enable a Sleaze attack", "robot", "kiss", false);
+	pickerRobot.addMode("Kill Me", "Lets you perform a super-accurate attack with a gun (guaranteed crit)", "robot", "kill", false);
+	pickerRobot.addLoader("Configuring your cape...");
+	pickerRobot.append('</table></div>');
+	chitPickers["retrosupercaperobot"] = pickerRobot;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -909,6 +1022,14 @@ void pickerGear(slot s) {
 				picker.append(pocketsLeft);
 				picker.append(' left)</a></td></tr>');
 			}
+			break;
+		case $item[unwrapped knock-off retro superhero cape]:
+			pickerRetroSuperCapeMeta();
+			pickerRetroSuperCapeAll();
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapemeta" href="#">Change to optimal setups!</a></td></tr>');
+			start_option(in_slot, false);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup!</a></td></tr>');
 			break;
 	}
 	
