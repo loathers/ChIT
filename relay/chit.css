@@ -245,9 +245,18 @@ tr.florist :first-line {
 	width:45px;
 	vertical-align:middle;
 }
+#chit_character tr td.avatarRobo {
+	height:75px;
+	width:75px;
+	position:relative;
+}
 #chit_character tr td.avatar img {
 	height:75px;
 	width:auto;
+}
+#chit_character tr td.avatarRobo img {
+	height:75px;
+	width:75px;
 }
 #chit_character tr td.label {
 	font-weight:bold;
