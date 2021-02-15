@@ -3387,9 +3387,21 @@ void bakeCharacter() {
 	//Avatar
 	string myAvatar;
 	if(vars["chit.character.avatar"] != "false") {
-		matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><img.+?</a>)', source);
-		if(avatarMatcher.find())
-			myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
+		if(my_path_id() != 41) { // you robot
+			matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><img.+?</a>)', source);
+			if(avatarMatcher.find())
+				myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
+		}
+		else {
+			matcher avatarMatcher = create_matcher('<table align=center><tr><td><a class=\'([^\']+)\'.+?(<div .+?</div></a>)', source);
+			if(avatarMatcher.find()) {
+				myAvatar = '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(1) + '">' + avatarMatcher.group(2);
+				avatarMatcher = create_matcher('<div[^>]+>', myAvatar);
+				if(avatarMatcher.find()) {
+					myAvatar = avatarMatcher.replace_first("<div>");
+				}
+			}
+		}
 	}
 	
 	//Outfit
@@ -3549,7 +3561,9 @@ void bakeCharacter() {
 	
 	result.append('<tr>');
 	if(myAvatar != "") {
-		result.append('<td rowspan="4" class="avatar">');
+		result.append('<td rowspan="4" class="avatar');
+		if(my_path_id() == 41) result.append(' avatarRobo'); // you robot
+		result.append('">');
 		result.append(myAvatar);
 		result.append('</td>');
 		# result.append('<td rowspan="4" class="avatar"><a href="#" class="chit_launcher" rel="chit_pickeroutfit" title="Select Outfit">' + myAvatar + '</a></td>');
