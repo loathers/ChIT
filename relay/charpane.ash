@@ -3419,6 +3419,10 @@ void bakeCharacter() {
 			case "Nuclear Autumn": return "shop.php?whichshop=mutate";
 			case "Pocket Familiars": return "shop.php?whichshop=pokefam";
 		}
+		// TODO: Move this in to my_path() block once mafia supports it
+		if(my_path_id() == 41) { // you robot
+			return "campground.php";
+		}
 		switch(my_class()) {
 		case $class[Seal Clubber]:
 		case $class[Turtle Tamer]:
