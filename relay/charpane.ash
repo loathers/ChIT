@@ -613,7 +613,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style, desc;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?(\\d+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -2079,7 +2079,7 @@ void addEnlightenment(buffer result) {
 }
 
 void addHooch(buffer result) {
-	matcher hooch = create_matcher("Hooch:</td><td align=left><b>(\\d+) / (\\d+)</b>", chitSource["stats"]);
+	matcher hooch = create_matcher("Hooch:</td><td align=left><b>([\\d,]+) / ([\\d,]+)</b>", chitSource["stats"]);
 	if(hooch.find()) {
 		int my_hooch = hooch.group(1).to_int();
 		int max_hooch = hooch.group(2).to_int();
@@ -2273,7 +2273,7 @@ void addFantasyRealm(buffer result) {
 
 void addPirateRealm(buffer result) {
 	if(have_equipped($item[PirateRealm eyepatch])) {
-		matcher parse = create_matcher('^<b>Guns:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>(\\d+)</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>(\\d+)</td>$', chitSource["pirateRealm"]);
+		matcher parse = create_matcher('^<b>Guns:</b></td><td class=small>([\\d,]+)</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>([\\d,]+)</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>([\\d,]+)</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>([\\d,]+)</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>([\\d,]+)</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>([\\d,]+)</td>$', chitSource["pirateRealm"]);
 		if(find(parse)) {
 			void addThing(string thing, int group) {
 				result.append('<tr><td class="label">');
@@ -2379,7 +2379,7 @@ void addRadSick(buffer result) {
 }
 
 void addLI_11(buffer result) {
-	matcher pounds = create_matcher("(\\d+ &pound; SC) to spend", chitSource["wtfisthis"]);
+	matcher pounds = create_matcher("([\\d,]+ &pound; SC) to spend", chitSource["wtfisthis"]);
 	result.append('<tr><td class="label"><a target="mainpane" href="place.php?whichplace=town_right&action=town_bondhq" title="Visit LI-11">LI-11</a></td>');
 	if(pounds.find()) {
 		if(to_boolean(vars["chit.stats.showbars"]))
@@ -2392,7 +2392,7 @@ void addLI_11(buffer result) {
 }
 
 void addGoo(buffer result) {
-	matcher goo = create_matcher("<td align=right>Goo:</td><td align=left><b>(\\d+)</b>", chitSource["stats"]);
+	matcher goo = create_matcher("<td align=right>Goo:</td><td align=left><b>([\\d,]+)</b>", chitSource["stats"]);
 	if(goo.find()) {
 		result.append('<tr><td class="label">Goo</td>');
 		result.append('<td class="info">');
@@ -2401,6 +2401,28 @@ void addGoo(buffer result) {
 		if(to_boolean(vars["chit.stats.showbars"]))
 			result.append('<td>&nbsp;</td>');
 		result.append('</tr>');
+	}
+}
+
+void addRoboStuff(buffer result) {
+	// todo: add a chitSource section for this when mafia supports the path
+	matcher energy = create_matcher('itemimages/jigawatts.gif title="Energy" alt="Energy"></td><td valign=center>([\\d,]+)</td>', chitSource["health"]);
+	if(energy.find()) {
+		result.append('<tr><td class="label">Energy</td><td class="info">');
+		result.append(energy.group(1));
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('</td><td><div title="Energy" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/jigawatts.gif"></td></tr>');
+		else
+			result.append('<img title="Energy" style="max-width:14px;padding-left:3px;" src="/images/itemimages/jigawatts.gif"></td></tr>');
+	}
+	matcher scrap = create_matcher('itemimages/scrap.gif" /></td><td align=left><b>([\\d,]+)</b></td></tr>', chitSource["wtfisthis"]);
+	if(scrap.find()) {
+		result.append('<tr><td class="label">Scrap</td><td class="info">');
+		result.append(scrap.group(1));
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('</td><td><div title="Scrap" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/scrap.gif"></td></tr>');
+		else
+			result.append('<img title="Scrap" style="max-width:14px;padding-left:3px;" src="/images/itemimages/scrap.gif"></td></tr>');
 	}
 }
 
@@ -2718,7 +2740,7 @@ void bakeStats() {
 	
 	void addBathtub() {
 		if(chitSource contains "bathtub") {
-			matcher tub = create_matcher("<b>(Crew|Crayons|Bubbles):</b></td><td class=small>(\\d+)</td>", chitSource["bathtub"]);
+			matcher tub = create_matcher("<b>(Crew|Crayons|Bubbles):</b></td><td class=small>([\\d,]+)</td>", chitSource["bathtub"]);
 			while(find(tub)) {
 				result.append('<tr>');
 				result.append('<td class="label">'+tub.group(1)+'</td>');
@@ -2800,7 +2822,7 @@ void bakeStats() {
 
 			#<img src=http://images.kingdomofloathing.com/otherimages/zombies/horde_15.gif width=167 height=100 alt="Horde (23 zombie(s))" title="Horde (23 zombie(s))"><br>Horde: 23<center>
 			if(vars["chit.kol.coolimages"].to_boolean()) {
-				matcher horde = create_matcher("(zombies/.*?\\.gif).*?Horde:\\s*(\\d+)", health);
+				matcher horde = create_matcher("(zombies/.*?\\.gif).*?Horde:\\s*([\\d,]+)", health);
 				if(find(horde)) {
 					# image: 167 x 100 pixels
 					result.append('<tr style="height:100px;"><td colspan="'+ (showBars? 3: 2) +'"><center><img src=images/otherimages/' + horde.group(1) + ' style="width:100%; border:0px"></center></td></tr>');
@@ -2939,6 +2961,11 @@ void bakeStats() {
 				result.addGoo();
 				break;
 			}
+
+			// TODO: Move this in to my_path() block when mafia supports You Robot
+			// it's harmless to have it out because it searches the page, but it's still
+			// wasted processing time, so...
+			result.addRoboStuff();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
@@ -3548,7 +3575,7 @@ void bakeCharacter() {
 	result.append(myLifeStyle());
 	result.append('</td>');
 	if(hippy_stone_broken() && index_of(chitSource["health"], "peevpee.php") > 0) {
-		matcher fites = create_matcher("PvP Fights Remaining.+?black>(\\d+)</span>", chitSource["health"]);
+		matcher fites = create_matcher("PvP Fights Remaining.+?black>([\\d,]+)</span>", chitSource["health"]);
 		if(fites.find())
 			result.append('<td><div class="chit_resource"><div title="PvP Fights Remaining" style="float:right"><span>' 
 				+ fites.group(1) + '</span><a href="peevpee.php" target="mainpane">'
@@ -3926,11 +3953,15 @@ boolean parsePage(buffer original) {
 	// Mood, Buffs, Intrinsic Effects
 	parse = create_matcher('<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>)'
 		+ '(?:.*?<b><font size=2>(?:Intrinsics|Effects):(.+?)?(<table><tr><td.+?</td></tr></table>))?'
-		+ '(?:.*?(?:Recently Expired Effects.+?</tr>)(.+?</tr></table>))?' 			// This is a KoL option
 		, source);
 	if(find(parse)) {
-		chitSource["mood"] = parse.group(1) + parse.group(3); 						// Only one of those might contain useful data
-		chitSource["effects"] = parse.group(2) + parse.group(4) + parse.group(5); 	// Effects plus Instrinsics, plus recently expired effects
+		chitSource["mood"] = parse.group(1) + parse.group(3); 		// Only one of those might contain useful data
+		chitSource["effects"] = parse.group(2) + parse.group(4); 	// Effects plus Instrinsics, plus recently expired effects
+		source = parse.replace_first("");
+	}
+	parse = create_matcher('Recently Expired Effects.+?</tr>(.+?</tr></table>)', source); // This is a KoL option
+	if(find(parse)) {
+		chitSource["effects"] += parse.group(1);
 		source = parse.replace_first("");
 	}
 	
@@ -3959,7 +3990,7 @@ boolean parsePage(buffer original) {
 	}
 
 	// PirateRealm tracker
-	parse = create_matcher('<b>Guns:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>\\d+</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>\\d+</td>', source);
+	parse = create_matcher('<b>Guns:</b></td><td class=small>[\\d,]+</td></tr><tr><td class=small align=right><b>Grub:</b></td><td class=small>[\\d,]+</td></tr><tr><td class=small align=right><b>Grog:</b></td><td class=small>[\\d,]+</td></tr><tr><td class=small align=right><b>Glue:</b></td><td class=small>[\\d,]+</td></tr><tr><td class=small align=right><b>Gold:</b></td><td class=small>[\\d,]+</td></tr><tr><td class=small align=right><b>Fun:</b></td><td class=small>[\\d,]+</td>', source);
 	if(find(parse)) {
 		chitSource["pirateRealm"] = parse.group(0);
 		source = parse.replace_first("");
