@@ -8,6 +8,7 @@ import "chit_brickTracker.ash";
 import "chit_brickTerminal.ash";
 import "chit_brickHorsery.ash";
 import "chit_brickBoombox.ash";
+import "chit_brickRobo.ash";
 
 // Set default values for configuration properties. These values will be used if there is no existing property
 // For more information refer to documentation in /data/chit_ReadMe.txt
@@ -2406,7 +2407,7 @@ void addGoo(buffer result) {
 
 void addRoboStuff(buffer result) {
 	// todo: add a chitSource section for this when mafia supports the path
-	matcher energy = create_matcher('itemimages/jigawatts.gif title="Energy" alt="Energy"></td><td valign=center>([\\d,]+)</td>', chitSource["health"]);
+	matcher energy = create_matcher('itemimages/jigawatts.gif title="Energy" alt="Energy">(?:</td><td valign=center>|<br><span class=black>)([\\d,]+)(?:</span>)?</td>', chitSource["health"]);
 	if(energy.find()) {
 		result.append('<tr><td class="label">Energy</td><td class="info">');
 		result.append(energy.group(1));
@@ -3393,13 +3394,15 @@ void bakeCharacter() {
 				myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
 		}
 		else {
-			matcher avatarMatcher = create_matcher('<table align=center><tr><td><a class=\'([^\']+)\'.+?(<div .+?</div></a>)', source);
+			matcher avatarMatcher = create_matcher('<table align=center><tr><td><a class=\'([^\']+)\'.+?(<div .+?</div>)(?:</div>)?</a>', source);
 			if(avatarMatcher.find()) {
-				myAvatar = '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(1) + '">' + avatarMatcher.group(2);
-				avatarMatcher = create_matcher('<div[^>]+>', myAvatar);
-				if(avatarMatcher.find()) {
-					myAvatar = avatarMatcher.replace_first("<div>");
+				myAvatar = avatarMatcher.group(2);
+				matcher divFix = create_matcher('<div[^>]+>', myAvatar);
+				if(divFix.find()) {
+					myAvatar = divFix.replace_first("<div>");
 				}
+				chitSource["robavatar"] = myAvatar;
+				myAvatar = '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(1) + '">' + myAvatar + '</a>';
 			}
 		}
 	}
@@ -4176,6 +4179,7 @@ void bakeBricks() {
 						case "terminal":	bakeTerminal();		break;
 						case "horsery":		bakeHorsery();		break;
 						case "boombox":		bakeBoombox();		break;
+						case "robo":		bakeRobo();			break;
 						
 						// Reserved words
 						case "helpers": case "update": break;
