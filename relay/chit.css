@@ -919,3 +919,34 @@ table.chit_picker tr.chit_pickerblock  .chit_icon {
 .chit_favbutton img {
 	float:left;
 }
+
+/* For the robo brick*/
+.robrickavatar {
+	position:relative;
+	width:75px;
+	height:75px;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
+.robrickavatar img {
+	width:75px;
+	height:75px;
+	position:absolute;
+	top:0;
+	left:0;
+	right:0;
+	bottom:0;
+}
+.chit_robopickericon {
+	width:55px;
+	height:55px;
+	position:relative;
+}
+.chit_robopickericon img {
+	width:50px;
+	height:50px;
+	position:absolute;
+	top:0;
+	left:0;
+}
