@@ -583,6 +583,8 @@ int NO_MODIFY = 0;
 int MODIFY = 1;
 int FORCE_MODIFY = 2; // Some items only want to be modified in special cases, like the edpiece
 
+string retroHeroToIcon(string hero);
+
 string item_image(item it, int modify_image)
 {
 	if(it == $item[none])
@@ -600,6 +602,8 @@ string item_image(item it, int modify_image)
 				if(my_enthroned_familiar() != $familiar[none])
 					return familiar_image(my_enthroned_familiar());
 				break;
+			case $item[unwrapped knock-off retro superhero cape]:
+				return "/images/itemimages/" + retroHeroToIcon(get_property("retroCapeSuperhero"));
 		}
 	}
 	
@@ -1520,7 +1524,8 @@ void FamPoke()
 	chitBricks["familiar"] = result;
 
 }
- 
+
+ 
 # Thanks to Cannonfire40 for FamVampyre!
 # <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
 void FamVampyre() {
