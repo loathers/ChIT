@@ -734,17 +734,28 @@ void pickerRetroSuperCapeMeta() {
 	picker.pickerStart("retrosupercapemeta", "Switch up your cape");
 
 	void addCombo(string name, string hero, string mode, boolean enabled) {
-		string configLink = '<a class="change" href="' + sideCommand("retrocape " + hero + " " + mode) + '">';
+		boolean active = false;
+		if(get_property("retroCapeSuperhero") == hero && get_property("retroCapeWashingInstructions") == mode) {
+			enabled = false;
+			active = true;
+		}
 
 		picker.append('<tr class="pickitem');
 		if(!enabled) picker.append(' currentitem');
 		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
 		picker.append(retroHeroToIcon(hero));
 		picker.append('" /></td><td colspan="2">');
-		picker.append(configLink);
-		picker.append('<b>CONFIGURE</b> ');
+		if(active) {
+			picker.append('<b>CURRENT</b>: ');
+		}
+		else {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("retrocape " + hero + " " + mode));
+			picker.append('"><b>CONFIGURE</b> ');
+		}
 		picker.append(name);
-		picker.append('</a></td></tr>');
+		if(!active) picker.append('</a>');
+		picker.append('</td></tr>');
 	}
 
 	addCombo("for mainstat exp", my_primestat().to_string().to_lower_case(), "thrill", true);
@@ -775,15 +786,27 @@ void pickerRetroSuperCapeAll() {
 	}
 
 	void addMode(buffer picker, string name, string desc, string hero, string nameShort, boolean parse) {
-		picker.append('<tr class="pickitem"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		boolean active = get_property("retroCapeSuperhero") == hero && get_property("retroCapeWashingInstructions") == nameShort;
+
+		picker.append('<tr class="pickitem');
+		if(active) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
 		picker.append(retroHeroToIcon(hero));
-		picker.append('" /></td><td colspan="2"><a class="change" href="');
-		picker.append(sideCommand("retrocape " + hero + " " + nameShort));
-		picker.append('"><b>PICK</b> ');
+		picker.append('" /></td><td colspan="2">');
+		if(!active) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("retrocape " + hero + " " + nameShort));
+			picker.append('"><b>PICK</b> ');
+		}
+		else {
+			picker.append('<b>CURRENT</b>: ');
+		}
 		picker.append(name);
 		picker.append('<br /><span class="descline">');
 		picker.append(parse ? parseMods(desc, true) : desc);
-		picker.append('</span></a></td></tr>');
+		picker.append('</span>');
+		if(active) picker.append('</a>');
+		picker.append('</td></tr>');
 	}
 
 	// Hero picker
