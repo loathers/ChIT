@@ -1049,9 +1049,9 @@ void pickerGear(slot s) {
 		case $item[unwrapped knock-off retro superhero cape]:
 			pickerRetroSuperCapeMeta();
 			pickerRetroSuperCapeAll();
-			start_option(in_slot, false);
+			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapemeta" href="#">Change to optimal setups!</a></td></tr>');
-			start_option(in_slot, false);
+			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup!</a></td></tr>');
 			break;
 	}
