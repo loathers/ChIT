@@ -1516,10 +1516,26 @@ int dangerLevel(item it, slot s) {
 void addGear(buffer result) {
 	addFavGear();
 	void addSlot(slot s) {
+		string badSlot(string reason) {
+			return '<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="' + reason + '"></span>';
+		}
+
 		switch(s) {
+		case $slot[hat]:
+			if(my_path() == "You, Robot" && get_property("youRobotTop") != "4") {
+				result.append(badSlot("Need Mannequin Head"));
+				return;
+			}
+			break;
 		case $slot[shirt]:
 			if(!have_skill($skill[Torso Awaregness]) && !have_skill($skill[Best Dressed])) {
-				result.append('<span><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Torso Unawaregness"></span>');
+				result.append(badSlot("Torso Unawaregness"));
+				return;
+			}
+			break;
+		case $slot[weapon]:
+			if(my_path() == "You, Robot" && get_property("youRobotLeft") != "4") {
+				result.append(badSlot("Need Vice Grips"));
 				return;
 			}
 			break;
@@ -1527,6 +1543,16 @@ void addGear(buffer result) {
 			if(weapon_hands(equipped_item($slot[weapon])) > 1) {
 				result.append('<span><a class="chit_launcher" rel="chit_pickergearoff-hand" href="#"><img class="chit_icon" src="/images/itemimages/antianti.gif" title="Not enough hands"></a></span>');
 				pickerGear(s);
+				return;
+			}
+			else if(my_path() == "You, Robot" && get_property("youRobotRight") != "4") {
+				result.append(badSlot("Need Omni-Claw"));
+				return;
+			}
+			break;
+		case $slot[pants]:
+			if(my_path() == "You, Robot" && get_property("youRobotBottom") != "4") {
+				result.append(badSlot("Need Robo-Legs"));
 				return;
 			}
 			break;
