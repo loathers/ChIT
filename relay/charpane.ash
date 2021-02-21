@@ -1,6 +1,6 @@
 script "Character Info Toolbox";
 notify "Bale";
-since r20492; // Retro Superhero Cape
+since r20649; // You, Robot
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -55,7 +55,7 @@ setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-setvar("chit.walls.layout", "helpers,thrall,vykea,effects,horsery,boombox");
+setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
@@ -2961,12 +2961,10 @@ void bakeStats() {
 			case "Grey Goo":
 				result.addGoo();
 				break;
+			case "You, Robot":
+				result.addRoboStuff();
+				break;
 			}
-
-			// TODO: Move this in to my_path() block when mafia supports You Robot
-			// it's harmless to have it out because it searches the page, but it's still
-			// wasted processing time, so...
-			result.addRoboStuff();
 			
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
@@ -3388,7 +3386,7 @@ void bakeCharacter() {
 	//Avatar
 	string myAvatar;
 	if(vars["chit.character.avatar"] != "false") {
-		if(my_path_id() != 41) { // you robot
+		if(my_path() != "You, Robot") {
 			matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><img.+?</a>)', source);
 			if(avatarMatcher.find())
 				myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
@@ -3433,10 +3431,7 @@ void bakeCharacter() {
 		switch(my_path()) {
 			case "Nuclear Autumn": return "shop.php?whichshop=mutate";
 			case "Pocket Familiars": return "shop.php?whichshop=pokefam";
-		}
-		// TODO: Move this in to my_path() block once mafia supports it
-		if(my_path_id() == 41) { // you robot
-			return "campground.php";
+			case "You, Robot": return "campground.php";
 		}
 		switch(my_class()) {
 		case $class[Seal Clubber]:
@@ -3565,7 +3560,7 @@ void bakeCharacter() {
 	result.append('<tr>');
 	if(myAvatar != "") {
 		result.append('<td rowspan="4" class="avatar');
-		if(my_path_id() == 41) result.append(' avatarRobo'); // you robot
+		if(my_path() == "You, Robot") result.append(' avatarRobo');
 		result.append('">');
 		result.append(myAvatar);
 		result.append('</td>');
