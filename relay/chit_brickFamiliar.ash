@@ -1944,6 +1944,12 @@ void bakeFamiliar() {
 		else
 			info += spit.to_string() + "% spit";
 		break;
+	case $familiar[Ghost of Crimbo Commerce]:
+		string ghostItem = get_property("commerceGhostItem");
+		if(ghostItem != "") {
+			info += "Buy " + ghostItem + "!";
+		}
+		break;
 	}
 	
 	//Get equipment info
