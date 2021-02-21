@@ -1626,6 +1626,12 @@ void bakeFamiliar() {
 	case "Pocket Familiars": FamPoke(); return;
 	case "Dark Gyffte": FamVampyre(); return;  // FIXME: Actual path name "Darke Gyffte", workaround for mafia for now.
 	case "Darke Gyffte": FamVampyre(); return;
+	case "You, Robot":
+		if(get_property("youRobotTop") != "2") {
+			// can't use familiars in this path without a bird cage
+			return;
+		}
+		break;
 	}
 
 	string source = chitSource["familiar"];
