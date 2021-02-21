@@ -1,8 +1,5 @@
 // picker for body parts in the path You, Robot
 
-boolean roboPopulated = true;
-string [int] roboParts;
-
 void addRobavatar(buffer result, string override, int overrideTo) {
     string robavatar = chitSource["robavatar"];
     matcher parts = create_matcher('<img src=".*?/robot/([^\\.]+).png"', robavatar);
@@ -17,10 +14,6 @@ void addRobavatar(buffer result, string override, int overrideTo) {
                 result.append(parts.group(1));
             }
             result.append('.png" />');
-
-            if(!roboPopulated) {
-                roboParts[roboParts.count()] = parts.group(1);
-            }
         }
         else {
             print("something went wrong with roboavatar processing!", "red");
@@ -29,37 +22,33 @@ void addRobavatar(buffer result, string override, int overrideTo) {
 }
 
 void addRobavatar(buffer result) {
-    roboParts.clear();
-    roboPopulated = false;
     addRobavatar(result, "", 0);
-    roboPopulated = true;
 }
 
 int roboPartNumber;
 string roboPartType;
 
 void addRoboOption(buffer picker, string name, string desc, int scrap) {
-    boolean isActive = false;
-    foreach i, part in roboParts {
-        matcher m = create_matcher(roboPartType + "(\\d)", part);
-        if(m.find() && m.group(1) == roboPartNumber.to_string()) {
-            isActive = true;
-        }
-    }
-
+    string capitalizedPart = roboPartType.substring(0, 1).to_upper_case() + roboPartType.substring(1);
+    boolean isActive = get_property("youRobot" + capitalizedPart).to_int() == roboPartNumber;
+    boolean isUnavailable = isActive || my_robot_scraps() < scrap;
 
     picker.append('<tr class="pickitem');
-    if(isActive) picker.append(' currentitem');
+    if(isUnavailable) picker.append(' currentitem');
     picker.append('"><td class="chit_robopickericon">');
-    picker.addRobavatar(roboPartType, roboPartNumber++);
+    picker.addRobavatar(roboPartType, roboPartNumber);
     picker.append('</td><td>');
     if(isActive) {
         picker.append('<b>Current:</b> ');
     }
+    else if(isUnavailable) {
+        picker.append('<b>Too Expensive:</b> ');
+    }
     else {
-        string cmd = 'echo commands coming soon!';
-        // TODO: Add when mafia hopefully adds robo configuration cli commands
-        // or do it yourself in a bit if they don't
+        string cmd = 'ashq visit_url("place.php?whichplace=scrapheap&action=sh_configure", false); '
+            + 'visit_url("choice.php?whichchoice=1445&show=' + roboPartType + '", false); '
+            + 'visit_url("choice.php?part=' + roboPartType + '&pwd&whichchoice=1445&show='
+            + roboPartType + '&p=' + roboPartNumber + '&option=1", true);';
         picker.append('<a class="change" href="');
         picker.append(sideCommand(cmd));
         picker.append('"><b>Choose</b> ');
@@ -70,8 +59,9 @@ void addRoboOption(buffer picker, string name, string desc, int scrap) {
     picker.append(' (');
     picker.append(scrap.to_string());
     picker.append(' scrap)</span>');
-    if(!isActive) picker.append('</a>');
+    if(!isUnavailable) picker.append('</a>');
     picker.append('</td></tr>');
+    ++roboPartNumber;
 }
 
 void pickerRoboTop() {
@@ -159,7 +149,7 @@ void pickerRoboBottom() {
 
 void bakeRobo() {
     // Nothing to do if you aren't a robot
-    if(my_path_id() != 41) {
+    if(my_path() != "You, Robot") {
         return;
     }
     buffer result;
@@ -172,10 +162,10 @@ void bakeRobo() {
     result.append('cog.png" />Reassemble Thyself</a><th></tr>');
 
     result.append('<tr><td colspan="4"><a class="chit_launcher" rel="chit_pickerrobotop" href="#">Top Attachment</a></td></tr>');
-    result.append('<tr><td><a class="chit_launcher" rel="chit_pickerroboleft" href="#">Left Arm</a></td>');
+    result.append('<tr><td><a class="chit_launcher" rel="chit_pickerroboleft" href="#">Left<br />Arm</a></td>');
     result.append('<td colspan="2" class="robrickavatar">');
     result.addRobavatar();
-    result.append('</td><td><a class="chit_launcher" rel="chit_pickerroboright" href="#">Right Arm</a></td></tr>');
+    result.append('</td><td><a class="chit_launcher" rel="chit_pickerroboright" href="#">Right<br />Arm</a></td></tr>');
     result.append('<tr><td colspan="4"><a class="chit_launcher" rel="chit_pickerrobobottom" href"#">Propulsion System</a></td></tr>');
 
     result.append('</tbody></table>');

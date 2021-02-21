@@ -30,6 +30,7 @@ Inside each area you can place any of the following "bricks":
    tracker:    Detailed ascension related quest information
    helpers:    Adventure helpers (described in more detail below)
    thrall:     Displays current Pasta Thrall, if you are a Pastamancer
+   robo:       Provides an interface to reassemble yourself in the path You, Robot
    vykea:      Displays current VYKEA companion, if you have one
    horsery:    Displays your current horse, and allows you to conveniently switch 
    boombox:    Displays your boombox setting, and allows you to conveniently switch 
@@ -47,7 +48,7 @@ chit.roof.layout: Comma-separated list of bricks to place in your roof
    Default: character,stats,gear
 
 chit.walls.layout: Comma-separated list of bricks to place in your walls
-   Default: helpers,thrall,vykea,effects,horsery,boombox
+   Default: helpers,thrall,robo,vykea,effects,horsery,boombox
 
 chit.floor.layout: Comma-separated list of bricks to place in your floor
    Default: update,familiar
