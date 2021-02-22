@@ -16,7 +16,7 @@ void addRobavatar(buffer result, string override, int overrideTo) {
             result.append('.png" />');
         }
         else {
-            print("something went wrong with roboavatar processing!", "red");
+            //print("something went wrong with roboavatar processing!", "red");
         }
     }
 }
