@@ -104,6 +104,9 @@ chit.familiar.protect: Removes all familiar-switching links from the charpane wh
 chit.familiar.anti-gollywog: Colorize the Crimbo Shrub's image so that it doesn't look like a gollywog
    Default: true
 chit.familiar.hiddengear: Comma delimited list of generic familiar equipment to hide from the familiar gear picker.
+   Default: 
+chit.familiar.iconize-weirdos: Should we display familiars like melodramedary as their hatchling images instead?
+   Default: false
 -------------------------------------------------------------------------------------
 chit.gear.favorites: Vertical bar (|) separated list of equipment that you have set as a personal favorite.
    You can change this all you should need to via the gear picker, so you shouldn't edit this one manually.

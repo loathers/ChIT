@@ -867,6 +867,30 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 	return STATUS_NORMAL;
 }
 
+string getWeirdoSpanContents(familiar f) {
+	if(vars["chit.familiar.iconize-weirdos"].to_boolean()) {
+		return "";
+	}
+
+	buffer result;
+
+	switch(f) {
+		case $familiar[Melodramedary]:
+			result.append('<img src="/images/otherimages/camelfam_left.gif" border=0 />');
+			for(int i = 0; i < f.familiar_weight() / 5; ++i) {
+				result.append('<img src="/images/otherimages/camelfam_middle.gif" border=0 />');
+			}
+			result.append('<img src="/images/otherimages/camelfam_right.gif" border=0 />');
+			break;
+	}
+
+	return result.to_string();
+}
+
+boolean isWeirdo(familiar f) {
+	return f.getWeirdoSpanContents() != "";
+}
+
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
 	boolean pokeFam = (my_path() == "Pocket Familiars");
@@ -964,8 +988,12 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		else
 			status = STATUS_GOOD;
 	}
-	
-	result.append('<img class="chit_icon');
+
+	boolean isWeirdo = f.isWeirdo();
+
+	result.append('<');
+	result.append(isWeirdo ? 'span' : 'img');
+	result.append(' class="chit_icon');
 	switch(status) {
 	case STATUS_HASDROPS:
 		result.append(' hasdrops');
@@ -980,8 +1008,10 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		result.append(' danger');
 		break;
 	}
-	result.append('" src="');
-	result.append(familiar_image(f));
+	if(isWeirdo) {
+		result.append(' chit_');
+		result.append(f.to_string().to_lower_case());
+	}
 	if(title) {
 		result.append('" title="');
 		result.append(f.name);
@@ -998,7 +1028,16 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 			result.append(')');
 		}
 	}
-	result.append('" />');
+	if(isWeirdo) {
+		result.append('">');
+		result.append(f.getWeirdoSpanContents());
+		result.append('</span>');
+	}
+	else {
+		result.append('" src="');
+		result.append(familiar_image(f));
+		result.append('" />');
+	}
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
@@ -2049,7 +2088,9 @@ void bakeFamiliar() {
 		result.append('<th width="30" title="' + chargeTitle + '">' + charges + '</th>');
 	}
 	result.append('</tr><tr>');
-	result.append('<td class="icon" title="' + hover_famicon + '">');
+	result.append('<td class="');
+	if(myfam.isWeirdo()) result.append('weird');
+	result.append('icon" title="' + hover_famicon + '">');
 	if (protect) {
 		result.addFamiliarIcon(myfam, false, false);
 	} else {
