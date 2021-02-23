@@ -179,6 +179,12 @@ table.chit_brick tr td.icon  img{
 	width:30px;
 	height:30px;
 }
+table.chit_brick tr td.weirdicon {
+	background-color:white;
+	border:0px;
+	padding:3px;
+	width:auto !important;
+}
 table.chit_brick tr td.clancy  img{
 	background-color:white;
 	padding:3px;
@@ -883,19 +889,38 @@ img.chit_icon {
   border:1px solid #D0D0D0 !important;
   margin:1px !important;
 }
+span.chit_icon {
+	border:1px solid #D0D0D0 !important;
+	margin:1px !important;
+}
 img.chit_icon.alldrops {
+	border-color:#B300FF !important;
+}
+span.alldrops {
 	border-color:#B300FF !important;
 }
 img.chit_icon.hasdrops {
 	border-color:blue !important;
 }
+span.hasdrops {
+	border-color:blue !important;
+}
 img.chit_icon.good {
+	border-color:green !important;
+}
+span.good {
 	border-color:green !important;
 }
 img.chit_icon.warning {
 	border-color:orange !important;
 }
+span.warning {
+	border-color:orange !important;
+}
 img.chit_icon.danger {
+	border-color:red !important;
+}
+span.danger {
 	border-color:red !important;
 }
 table.chit_picker tr.chit_pickerblock {
@@ -949,4 +974,15 @@ table.chit_picker tr.chit_pickerblock  .chit_icon {
 	position:absolute;
 	top:0;
 	left:0;
+}
+
+/* Melodramedary */
+span.chit_melodramedary {
+	display:flex;
+	position:relative;
+}
+
+span.chit_melodramedary img {
+	width:auto !important;
+	height:auto !important;
 }
