@@ -1,22 +1,14 @@
 // picker for body parts in the path You, Robot
 
 void addRobavatar(buffer result, string override, int overrideTo) {
-    string robavatar = chitSource["robavatar"];
-    matcher parts = create_matcher('<img src=".*?/robot/([^\\.]+).png"', robavatar);
-    foreach part in $strings[left, right, top, bottom, body] {
-        if(parts.find()) {
+    foreach partCapitalized in $strings[Left, Right, Top, Bottom, Body] {
+        string part = partCapitalized.to_lower_case();
+        int partNum = (override == part) ? overrideTo : get_property("youRobot" + partCapitalized).to_int();
+        if(partNum > 0) {
             result.append('<img src="/images/otherimages/robot/');
-            if(part == override) {
-                result.append(part);
-                result.append(overrideTo);
-            }
-            else {
-                result.append(parts.group(1));
-            }
+            result.append(part);
+            result.append(partNum);
             result.append('.png" />');
-        }
-        else {
-            //print("something went wrong with roboavatar processing!", "red");
         }
     }
 }
