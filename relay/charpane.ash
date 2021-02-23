@@ -3918,7 +3918,7 @@ boolean parsePage(buffer original) {
 	} else return vprint("CHIT: Error parsing footer", "red", -1);
 	
 	// Quests: May or may not be present
-	if(find(parse = create_matcher('(<center id="nudgeblock">.*?(?:</script>|</tr></table><p></center>))', source))) {
+	if(find(parse = create_matcher('(<center id="nudgeblock">.*?(?:</script>|</tr></table>(?:</div>)?<p></center>))', source))) {
 		chitSource["quests"] = parse.group(1);
 		source = parse.replace_first("");
 	}
