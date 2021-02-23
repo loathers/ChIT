@@ -3399,7 +3399,6 @@ void bakeCharacter() {
 				if(divFix.find()) {
 					myAvatar = divFix.replace_first("<div>");
 				}
-				chitSource["robavatar"] = myAvatar;
 				myAvatar = '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(1) + '">' + myAvatar + '</a>';
 			}
 		}
