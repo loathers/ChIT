@@ -561,7 +561,6 @@ string familiar_image(familiar f) {
 	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
-	case $familiar[Left-Hand Man]: return "/images/itemimages/lhmlarva.gif";
 	
 	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
 		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
@@ -1010,7 +1009,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	}
 	if(isWeirdo) {
 		result.append(' chit_');
-		result.append(f.to_string().to_lower_case());
+		result.append(f.to_string().to_lower_case().replace_string(" ", ""));
 	}
 	if(title) {
 		result.append('" title="');
@@ -1986,7 +1985,8 @@ void bakeFamiliar() {
 	case $familiar[Ghost of Crimbo Commerce]:
 		string ghostItem = get_property("commerceGhostItem");
 		if(ghostItem != "") {
-			info += "Buy " + ghostItem + "!";
+			info += 'Buy <a target=mainpane href="mall.php?justitems=0&pudnuggler=%22' +
+				ghostItem.url_encode() + '%22">' + ghostItem + '</a>!';
 		}
 		break;
 	}
