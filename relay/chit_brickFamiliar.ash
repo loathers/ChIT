@@ -881,6 +881,14 @@ string getWeirdoSpanContents(familiar f) {
 			}
 			result.append('<img src="/images/otherimages/camelfam_right.gif" border=0 />');
 			break;
+		case $familiar[Left-Hand Man]:
+			if(vars["chit.familiar.lefty-beta"].to_boolean()) {
+				matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
+				if(leftyMatcher.find()) {
+					result.append(leftyMatcher.group(1));
+				}
+			}
+			break;
 	}
 
 	return result.to_string();
