@@ -866,7 +866,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 	return STATUS_NORMAL;
 }
 
-string getWeirdoSpanContents(familiar f) {
+string getWeirdoDivContents(familiar f) {
 	if(vars["chit.familiar.iconize-weirdos"].to_boolean()) {
 		return "";
 	}
@@ -882,11 +882,9 @@ string getWeirdoSpanContents(familiar f) {
 			result.append('<img src="/images/otherimages/camelfam_right.gif" border=0 />');
 			break;
 		case $familiar[Left-Hand Man]:
-			if(vars["chit.familiar.lefty-beta"].to_boolean()) {
-				matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
-				if(leftyMatcher.find()) {
-					result.append(leftyMatcher.group(1));
-				}
+			matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
+			if(leftyMatcher.find()) {
+				result.append(leftyMatcher.group(1));
 			}
 			break;
 	}
@@ -895,7 +893,7 @@ string getWeirdoSpanContents(familiar f) {
 }
 
 boolean isWeirdo(familiar f) {
-	return f.getWeirdoSpanContents() != "";
+	return f.getWeirdoDivContents() != "";
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
@@ -999,7 +997,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	boolean isWeirdo = f.isWeirdo();
 
 	result.append('<');
-	result.append(isWeirdo ? 'span' : 'img');
+	result.append(isWeirdo ? 'div' : 'img');
 	result.append(' class="chit_icon');
 	switch(status) {
 	case STATUS_HASDROPS:
@@ -1037,8 +1035,8 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	}
 	if(isWeirdo) {
 		result.append('">');
-		result.append(f.getWeirdoSpanContents());
-		result.append('</span>');
+		result.append(f.getWeirdoDivContents());
+		result.append('</div>');
 	}
 	else {
 		result.append('" src="');
