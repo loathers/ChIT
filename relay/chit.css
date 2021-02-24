@@ -889,38 +889,38 @@ img.chit_icon {
   border:1px solid #D0D0D0 !important;
   margin:1px !important;
 }
-span.chit_icon {
+div.chit_icon {
 	border:1px solid #D0D0D0 !important;
 	margin:1px !important;
 }
 img.chit_icon.alldrops {
 	border-color:#B300FF !important;
 }
-span.alldrops {
+div.alldrops {
 	border-color:#B300FF !important;
 }
 img.chit_icon.hasdrops {
 	border-color:blue !important;
 }
-span.hasdrops {
+div.hasdrops {
 	border-color:blue !important;
 }
 img.chit_icon.good {
 	border-color:green !important;
 }
-span.good {
+div.good {
 	border-color:green !important;
 }
 img.chit_icon.warning {
 	border-color:orange !important;
 }
-span.warning {
+div.warning {
 	border-color:orange !important;
 }
 img.chit_icon.danger {
 	border-color:red !important;
 }
-span.danger {
+div.danger {
 	border-color:red !important;
 }
 table.chit_picker tr.chit_pickerblock {
@@ -977,18 +977,18 @@ table.chit_picker tr.chit_pickerblock  .chit_icon {
 }
 
 /* Melodramedary */
-span.chit_melodramedary {
+div.chit_melodramedary {
 	display:flex;
 	position:relative;
 }
 
-span.chit_melodramedary img {
+div.chit_melodramedary img {
 	width:auto !important;
 	height:auto !important;
 }
 
 /* Left-Hand Man */
-span.chit_left-handman {
+div.chit_left-handman {
 	position:relative;
 	width:30px;
 	height:50px;
