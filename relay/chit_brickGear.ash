@@ -1528,8 +1528,8 @@ void addGear(buffer result) {
 			}
 			break;
 		case $slot[shirt]:
-			if(!have_skill($skill[Torso Awaregness]) && !have_skill($skill[Best Dressed])) {
-				result.append(badSlot("Torso Unawaregness"));
+			if(!have_skill($skill[Torso Awareness]) && !have_skill($skill[Best Dressed])) {
+				result.append(badSlot("Torso Unawareness"));
 				return;
 			}
 			break;
