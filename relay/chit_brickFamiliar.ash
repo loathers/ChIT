@@ -17,7 +17,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 					generic[ count(generic) ] = it;
 			}
 	}
-	
+
 	string fam_equip(item famitem) {
 		string ave(string l, string h) {
 			float m = (to_int(l) + to_int(h)) / 2.0;
@@ -31,7 +31,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				return to_string(m, "%+,.0f");
 			return to_string(m, "%+,.1f");
 		}
-		
+
 		switch(famitem) {
 		case $item[none]:
 			return "";
@@ -66,7 +66,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		case $item[filthy child leash]:
 			return "Passive stench damage";
 		}
-		
+
 		if(famitem != $item[none]) {
 			string mod = parseMods(string_modifier(famitem,"Evaluated Modifiers"));
 			// Effects for Scarecrow and Hatrack
@@ -105,7 +105,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	boolean [item] hiddengear;
 	foreach i,famequip in split_string(vars["chit.familiar.hiddengear"], "\\s*(?<!\\\\),\\s*")
 		hiddengear[to_item(famequip)] = true;
-	
+
 	void addEquipment(item it, string cmd) {
 		if (!(addeditems contains it) && (!(hiddengear contains it) || equipped_amount(it) > 0)) {
 			string hover;
@@ -137,7 +137,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 					hover = "Equip Clancy with his " + it.to_string();
 					cli = "use "+it;
 					break;
-				default:	
+				default:
 					hover = "Equip " + it.to_string();
 					cli = "equip familiar "+it;
 			}
@@ -166,16 +166,16 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		string famname = my_path() == "Avatar of Boris"? "Clancy": myfam.name;
 		return "You don't have any "+it+" for your " + fam + ".<br><br>Poor "+famname;
 	}
-	
+
 	void pickerSnowsuit() {
 		buffer picker;
 		picker.pickerStart("snowsuit", "Tailor the Snow Suit");
-		
+
 		string current = get_property("snowsuit");
-		
+
 		void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
 			string faceLink = '<a class="change" href="' + sideCommand("snowsuit " + face) + '">';
-			
+
 			picker.append('<tr class="pickitem');
 			if(face == current) picker.append(' currentitem');
 			picker.append('"><td class="icon">');
@@ -205,18 +205,18 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			if(face != current) picker.append('</a>');
 			picker.append('</td></tr>');
 		}
-		
+
 		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
 		picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2", false);
 		picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3", to_int(get_property("_carrotNoseDrops")) < 3);
 		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
 		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
-		
+
 		picker.addLoader("Rearranging your familiar's face!");
 		picker.append('</table></div>');
 		chitPickers["snowsuit"] = picker;
 	}
-	
+
 	void pickEquipment() {
 
 		// First add a decorate link if you are using a Snow Suit
@@ -238,7 +238,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			}
 			picker.append('.gif"></a></td></tr>');
 		}
-	
+
 		//Most common equipment for current familiar
 		item common = familiar_equipment(myfam);
 		boolean havecommon = false;
@@ -259,7 +259,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				addEquipment(foldable, "fold");
 			}
 		}
-		
+
 		//Generic equipment
 		foreach n, piece in generic {
 			if (allmystuff contains piece) {
@@ -288,7 +288,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 				addEquipment(shield, "make");
 			}
 		}
-			
+
 		//Check rest of inventory
 		foreach thing in allmystuff {
 			if ( (item_type(thing) == "familiar equipment") && (can_equip(thing))) {
@@ -318,13 +318,13 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			}
 		}
 	}
-	
+
 	void pickClancy() {
 		foreach instrument in $items[Clancy's sackbut,Clancy's crumhorn,Clancy's lute]
 			if(allmystuff contains instrument)
 				addEquipment(instrument, "clancy");
 	}
-	
+
 	void pickChameleon() {
 		string mods;
 		//Scan inventory
@@ -336,9 +336,9 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			}
 		}
 	}
-	
+
 	picker.pickerStart("famgear", "Equip Thy Familiar Well");
-	
+
 	//Feeding time
 	string [familiar] feedme;
 	feedme[$familiar[Slimeling]] = "Mass Slime";
@@ -397,7 +397,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			}
 		}
 	}
-	
+
 	switch (myfam) {
 		case $familiar[Mad Hatrack]:
 			picker.addLoader("Changing Hats...");
@@ -440,7 +440,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	picker.append('</table></div>');
 
 	chitPickers["equipment"] = picker;
-		
+
 }
 
 int checkDrops(string counter_prop, int limit) {
@@ -458,7 +458,7 @@ int hasBjornDrops(familiar f) {
 		case $familiar[Machine Elf]: return checkDrops("_abstractionDropsCrown",25);
 		case $familiar[Adventurous Spelunker]: return checkDrops("_oreDropsCrown",6);
 	}
-	
+
 	return 0;
 }
 
@@ -549,8 +549,11 @@ int hasDrops(item it) {
 			return transformsLeft;
 		case $item[Cargo Cultist Shorts]:
 			return get_property("_cargoPocketEmptied").to_boolean() ? 0 : 1;
+		case $item[backup camera]:
+			// 5 extra uses in You, Robot
+			return (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 	}
-	
+
 	return 0;
 }
 
@@ -561,12 +564,12 @@ string familiar_image(familiar f) {
 	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
 	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
 	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
-	
+
 	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
 		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
 			return imagePath + 'crimboshrub_fxx_ckb.gif';
 		break;
-	
+
 	case $familiar[Happy Medium]:
 		switch(f.image) {
 			case "medium_1.gif": return imagePath + 'medium_blue.gif';
@@ -605,7 +608,7 @@ string item_image(item it, int modify_image)
 				return "/images/itemimages/" + retroHeroToIcon(get_property("retroCapeSuperhero"));
 		}
 	}
-	
+
 	if(modify_image == FORCE_MODIFY)
 	{
 		switch(it)
@@ -637,14 +640,14 @@ void addItemIcon(buffer result, item it, string title, int danger_level, int mod
 	result.append('<img class="chit_icon');
 	if(hasDrops(it) > 0)
 		result.append(' hasdrops');
-		
+
 	if(danger_level == 1)
 		result.append(' warning');
 	else if(danger_level > 1)
 		result.append(' danger');
 	else if(danger_level < 0)
 		result.append(' good');
-	
+
 	result.append('" src="');
 	result.append(item_image(it, modify_image));
 	result.append('" title="');
@@ -663,10 +666,10 @@ void addItemIcon(buffer result, item it, string title) {
 
 int hasDrops(familiar f) {
 	int drops = 0;
-	
+
 	if(f.drops_limit > 0)
 		drops += f.drops_limit - f.drops_today;
-	
+
 	return drops;
 }
 
@@ -902,14 +905,14 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
-	
+
 	buffer iconInfo;
 	int status = STATUS_NORMAL;
 
 	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
 	if(pokeFam && !isBjorn)
 		dropsLeft = 0;
-	
+
 	if(dropsLeft > 0) {
 		iconInfo.append(dropsLeft);
 		iconInfo.append(" ");
@@ -949,13 +952,13 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 					break;
 			}
 		}
-		
+
 		if(f.drops_today == 0 && need_drop(f))
 			status = STATUS_ALLDROPS;
 		else
 			status = STATUS_HASDROPS;
 	}
-	
+
 	if(!isBjorn && !pokeFam) {
 		int fightsLeft = f.fights_limit - f.fights_today;
 		if(fightsLeft > 0)
@@ -967,26 +970,26 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 			if(fightsLeft != 1)
 				iconInfo.append("s");
 		}
-		
+
 		int specialStatus = iconInfoSpecial(f, iconInfo);
 		if(specialStatus > status)
 			status = specialStatus;
 	}
-	
+
 	if(reason != "") {
 		iconInfo.append(", recommended for ");
 		iconInfo.append(reason);
 	}
-	
+
 	string blackForestState = get_property("questL11Black");
 	// You should probably bring a bird with you if you don't have a hatchling and you're looking for the black market
 	if(!isBjorn && !pokeFam && (f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow])) {
-		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0) 
+		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0)
 			status = STATUS_GOOD;
 		else
 			status = STATUS_DANGER;
 	}
-	
+
 	if(is100 != $familiar[none]) {
 		if(is100 != f)
 			status = STATUS_DANGER;
@@ -1066,7 +1069,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 
 	buffer picker;
 	picker.pickerStart(cmd, display);
-	
+
 	if(is100 != $familiar[none])
 	{
 		picker.append('<tr class="pickitem"><td colspan="3">Careful, you are currently in a 100% run with ');
@@ -1075,10 +1078,10 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		picker.append(is100);
 		picker.append('</td></tr>');
 	}
-	
+
 	boolean anyIcons = false;
 	boolean [familiar] famsAdded;
-	
+
 	boolean tryAddFamiliar(familiar f, string reason) {
 		if(f == current)
 			return true;
@@ -1097,19 +1100,19 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		}
 		return famsAdded[f];
 	}
-	
+
 	boolean tryAddFamiliar(familiar f) {
 		return tryAddFamiliar(f, "");
 	}
-	
+
 	foreach f in favorite_familiars()
 		tryAddFamiliar(f);
-		
+
 	boolean recIf(boolean condition, familiar fam, string reason) {
 		if(condition) return tryAddFamiliar(fam, reason);
 		return false;
 	}
-	
+
 	void recIf(boolean condition, boolean [familiar] fams, string reason) {
 		if(condition) {
 			foreach fam in fams {
@@ -1118,18 +1121,18 @@ void pickerFamiliar(familiar current, string cmd, string display)
 			}
 		}
 	}
-		
+
 	// Familiars recommended for quests
 	string nsQuest = get_property("questL13Final");
 	boolean needSkinHelper = (nsQuest == "step6" && available_amount($item[beehive]) < 1);
 	string orcChasm = get_property("questL09Topping");
 	boolean highlandsTime = (orcChasm == "step1" || orcChasm == "step2");
-	
-	if(cmd == "familiar") { 
+
+	if(cmd == "familiar") {
 		string blackForestState = get_property("questL11Black");
 		boolean needGuide = (($strings[started, step1] contains blackForestState) && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
 		recIf(needGuide, $familiars[Reconstituted Crow, Reassembled Blackbird], "black forest");
-		
+
 		// Probably incomplete list of reasons you'd want the purse rat
 		boolean [familiar] mlFams = $familiars[Purse Rat]; // There's only one atm that I know of but who knows what the future holds
 		// Typical tavern, you might want to bring the purse rat to up rat king chance
@@ -1137,16 +1140,16 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		recIf(to_int(get_property("cyrptCrannyEvilness")) > 26, mlFams, "ghuol whelps");
 		recIf(highlandsTime && to_float(get_property("oilPeakProgress")) > 0, mlFams, "oil peak");
 		recIf(available_amount($item[unstable fulminate]) > 0, mlFams, "wine bomb");
-		
+
 		// Maybe incomplete list of reasons you'd want an init familiar
 		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
 		recIf(to_int(get_property("cyrptAlcoveEvilness")) > 26, initFams, "modern zmobie");
 		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & 7) == 7) && (initiative_modifier() < 40), initFams, "twin peaks");
 		recIf(nsQuest != "unstarted" && to_int(get_property("nsContestants1")) < 0, initFams, "init test");
-		
+
 		// The Imitation Crab is incredibly useful for tower killing the wall of skin
 		recIf(needSkinHelper, $familiars[Imitation Crab, Sludgepuppy, Mini-Crimbot, Warbear Drone], "wall of skin");
-		
+
 		boolean [familiar] resFams = $familiars[Exotic Parrot];
 		boolean kitchenTime = get_property("questM20Necklace") == "started" && to_int(get_property("writingDesksDefeated")) == 0 && get_property("chateauMonster") != "writing desk";
 		boolean cantTakeTheHeat = numeric_modifier("Hot Resistance") < 9 || numeric_modifier("Stench Resistance") < 9; // or the stench...
@@ -1155,28 +1158,28 @@ void pickerFamiliar(familiar current, string cmd, string display)
 		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
 		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "surviving a-boo clues");
 		recIf(nsQuest == "step4", resFams, "hedge maze");
-		
+
 		recIf(get_property("questM03Bugbear") == "step2", $familiars[Flaming Gravy Fairy, Frozen Gravy Fairy, Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], "felonia");
 	}
 	else {
 		// Recommendations for the crown/bjorn
 		recIf(needSkinHelper, $familiars[Frumious Bandersnatch, Howling Balloon Monkey, Baby Mutant Rattlesnake, Mutant Cactus Bud], "wall of skin");
 	}
-	
+
 	if(anyIcons)
 		picker.append('</td></tr>');
-	
+
 	int danger_level = 0;
 	if(is100 != $familiar[none])
 		danger_level = (is100 == current) ? 2 : -1;
 	picker.append('<tr class="pickitem"><td class="icon"><a target=mainpane class="visit done" href="familiar.php">');
 	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium", danger_level);
 	picker.append('</a></td>');
-	
+
 	picker.append('<td class="icon"><a target=charpane class="change" href="'+sideCommand("familiar none")+'">');
 	picker.append('<img src='+familiar_image($familiar[none])+' title="Use no familiar" />');
 	picker.append('</a></td>');
-	
+
 	picker.append('<td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');
 	picker.append('Visit Your Terrarium');
 	picker.append('</a></td></tr>');
@@ -1192,7 +1195,7 @@ void pickerCompanion(string famname, string famtype) {
 		companion [$skill[Radish Horse]] = $item[cosmic vegetable];
 		companion [$skill[Hippotatomous]] = $item[cosmic potato];
 		companion [$skill[Cream Puff]] = $item[cosmic Cream];
-	
+
 	string companionImg(skill s) {
 		switch(s) {
 		case $skill[Egg Man]: return "jarl_eggman";
@@ -1202,7 +1205,7 @@ void pickerCompanion(string famname, string famtype) {
 		}
 		return "blank";
 	}
-	
+
 	void addCompanion(buffer result, skill s, boolean gotfood) {
 		string hover = "Play with " + s +"<br />";
 		if(gotfood)
@@ -1224,7 +1227,7 @@ void pickerCompanion(string famname, string famtype) {
 
 	buffer picker;
 	picker.pickerStart("companion", "Summon thy Companion");
-	
+
 	// Check for all companions
 	picker.addLoader("Summoning Companion...");
 	boolean sad = true;
@@ -1239,7 +1242,7 @@ void pickerCompanion(string famname, string famtype) {
 		else
 			picker.addSadFace("Poor "+famname+" has no other food to play with.");
 	}
-	
+
 	picker.append('</table></div>');
 	chitPickers["equipment"] = picker;
 }
@@ -1294,12 +1297,12 @@ void pickerServant() {
 		else
 			picker.addSadFace("Poor " + my_servant().name + " has no other servants for company.");
 	}
-	
+
 	// Link to Servant's Quarters
 	picker.append('<tr class="pickitem"><td colspan=2 class="make"><a class="change" style="border-top: 1px solid gray; padding: 3px 0px 3px 0px;" onclick="javascript:location.reload();" target=mainpane href="place.php?whichplace=edbase&action=edbase_door"><b>Go to the Servant\'s Quarters</b></a></td></tr>');
-	
+
 	picker.append('</table></div>');
-	
+
 	chitPickers["servants"] = picker;
 }
 
@@ -1314,7 +1317,7 @@ void FamBoris() {
 	// Does Clancy want attention?
 	matcher att = create_matcher("Minstrel</font><br><a target=mainpane href=(.*?)>", source);
 	if(find(att)) clancyLink = att.group(1);
-	
+
 	// What is Clancy equipped with?
 	if(famimage.contains_text("_1"))
 		equiptype = "Clancy's sackbut";
@@ -1323,19 +1326,19 @@ void FamBoris() {
 	else if(famimage.contains_text("_3"))
 		equiptype = "Clancy's lute";
 	equipimage = equiptype.to_item().image;
-	
+
 	string info = '<br><span style="color:#606060;font-weight:normal">Level ' + famweight + ' Minstrel';
 	switch(equiptype) {
 	case "Clancy's sackbut": info += "<br><br>Restore HP/MP</span>"; break;
 	case "Clancy's crumhorn": info += "<br><br>Increase Exp</span>"; break;
 	case "Clancy's lute": info += "<br><br>Phat Loot!</span>"; break;
 	}
-	
-	
+
+
 	//Finally start some output
 	buffer result;
 	result.append('<table id="chit_familiar" class="chit_brick nospace">');
-	
+
 	result.append('</tr><tr>');
 	result.append('<td class="clancy" title="Your Faithful Minstrel">');
 	#result.append('<img src="/images/' + famimage + '" width=50 height=100 border=0>');
@@ -1357,7 +1360,7 @@ void FamBoris() {
 	result.append('">');
 	result.append('</a></td>');
 	result.append('</tr>');
-	
+
 	result.append('</table>');
 	chitBricks["familiar"] = result;
 
@@ -1388,7 +1391,7 @@ void FamJarlsberg() {
 	result.append('<tr><th colspan="2" title="Companion">');
 	result.append(actortype);
 	result.append('</th></tr>');
-	
+
 	result.append('<tr><td class="companion" title="Playing with this food">');
 	result.append('<a class="chit_launcher" rel="chit_pickercompanion" href="#">');
 	result.append('<img src="images/adventureimages/' );
@@ -1398,7 +1401,7 @@ void FamJarlsberg() {
 	result.append(equiptype);
 	result.append('</a></td>');
 	result.append('</tr></table>');
-	
+
 	chitBricks["familiar"] = result;
 
 	//Add Companion Picker
@@ -1441,7 +1444,7 @@ void FamPete() {
 	result.append(famimage);
 	result.append('"></a></td>');
 	result.append('</tr></table>');
-	
+
 	chitBricks["familiar"] = result;
 }
 
@@ -1464,7 +1467,7 @@ void FamEd() {
 			result.append(type);
 		}
 		result.append('</a></th></tr>');
-		
+
 		result.append('<tr><td class="icon" title="Servant">');
 		result.append('<a class="chit_launcher" rel="chit_pickerservant" href="#">');
 		result.append('<img title="Release thy Servant" src=');
@@ -1483,13 +1486,13 @@ void FamEd() {
 		}
 		result.append('</tr></table>');
 	}
-	
+
 	matcher id = create_matcher('mainpane">.+? src="([^"]+)"', chitSource["familiar"]);
 	if(id.find())
 		bake(my_servant().level, my_servant().name, my_servant(), id.group(1));
 	else
 		bake(0, "No Servant", $servant[none], "/images/itemimages/blank.gif");
-	
+
 	chitBricks["familiar"] = result;
 	pickerServant();
 }
@@ -1569,7 +1572,7 @@ void FamPoke()
 
 }
 
- 
+
 # Thanks to Cannonfire40 for FamVampyre!
 # <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
 void FamVampyre() {
@@ -1687,7 +1690,7 @@ void bakeFamiliar() {
 	boolean isFed = source.contains_text('</a></b>, the <i>extremely</i> well-fed <b>');
 	string weight_title = "Buffed Weight";
 	string name_followup = "";
-	
+
 	familiar myfam = my_familiar();
 	item famitem = $item[none];
 
@@ -1701,13 +1704,13 @@ void bakeFamiliar() {
 		if(find(mummingmatcher))
 			famtype = group(mummingmatcher) + " " + famtype;
 	}
-	
+
 	//Get Familiar Name
 	matcher nameMatcher = create_matcher("<b><font size=2>(.*?)</a></b>, the", source);
 	if (find(nameMatcher)){
 		famname = group(nameMatcher, 1);
 	}
-	
+
 	//Drops
 	matcher dropMatcher = create_matcher("<b>Familiar:</b>\\s*(\?:<br>)?\\s*\\((.*?)\\)</font>", source);
 	if (find(dropMatcher)){
@@ -1872,7 +1875,7 @@ void bakeFamiliar() {
 		if(item_amount($item[BACON]) > 0) {
 			if(length(info) > 0)
 				info = ", " + info;
-			
+
 			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
 		}
 		string demon = get_property("demonName12");
@@ -1996,7 +1999,7 @@ void bakeFamiliar() {
 		}
 		break;
 	}
-	
+
 	//Get equipment info
 	if(myfam == $familiar[Comma Chameleon]) {
 		famitem = $item[none];
@@ -2026,7 +2029,7 @@ void bakeFamiliar() {
 				equipimage = famitem.image;
 		}
 	}
-	
+
 	// Charges
 	if (famitem == $item[sugar shield]) {
 		charges = to_string( 31 - to_int(get_property("sugarCounter4183")));
@@ -2060,18 +2063,18 @@ void bakeFamiliar() {
 			famstyle = famstyle + "color:red;";
 		}
 	}
-	
+
 	//Add final touches to additional info
 	if (info != "") {
 		info = '<br><span style="color:#606060;font-weight:normal">(' + info + ')</span>';
 	}
-	
+
 	//Add base weight to weight title
 	int base_weight = familiar_weight(myfam);
 	weight_title += " (Base Weight: " + base_weight + " lb";
 	if(base_weight > 1) weight_title += "s";
 	weight_title += ")";
-	
+
 	//Finally start some output
 	buffer result;
 	result.append('<table id="chit_familiar" class="chit_brick nospace">');
@@ -2081,7 +2084,7 @@ void bakeFamiliar() {
 		result.append('<tr>');
 	}
 	result.append('<th width="40" title="'+ weight_title +'" style="color:blue">' + famweight + '</th>');
-	
+
 	if (protect) {
 		result.append('<th title="' + hover + '">' + famname);
 	} else {
@@ -2133,7 +2136,7 @@ void bakeFamiliar() {
 		result.append('</td>');
 	}
 	result.append('</tr>');
-	
+
 	//Add Progress bar if we have one
 	matcher progMatcher = create_matcher("<table title='(.*?)' cellpadding=0", source);
 	if (find(progMatcher)) {
@@ -2151,6 +2154,6 @@ void bakeFamiliar() {
 	if (myfam != $familiar[none]) {
 		pickerFamiliarGear(myfam, famitem, isFed);
 	}
-	
+
 	pickerFamiliar(myfam, "familiar", "Change familiar");
 }
