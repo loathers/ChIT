@@ -23,7 +23,7 @@ float equip_modifier(item it, string mod, int weight) {
 	if(weight == 0) return 0;
 	return equip_modifier(it, mod) * weight;
 }
-	
+
 string gearName(item it, slot s) {
 	string name = to_string(it);
 	string notes = "";
@@ -236,18 +236,18 @@ int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
 		available += creatable_amount(it);
 	if(available == 0 && boolean_modifier(it, "Free Pull"))
 		available += available_amount(it);
-	
+
 	if(pulls_remaining() == -1)
 		available += storage_amount(it);
 	else if(hagnk && pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
 		available += min(pulls_remaining(), storage_amount(it));
 	available += equipped_amount(it);
-	
+
 	if(foldcheck)
 		available += foldable_amount(it, reason, hagnk);
 	if(it == $item[pantogram pants] && available == 0 && item_amount($item[portable pantogram]) > 0)
 		available = 1;
-	
+
 	return available;
 }
 
@@ -269,7 +269,7 @@ int foldable_amount(item it, string reason, boolean hagnk) {
 	foreach foldable, i in get_related(it, "fold")
 		if(foldable != it)
 			amount += chit_available(foldable, reason, hagnk, false);
-	
+
 	return amount;
 }
 
@@ -279,7 +279,7 @@ void addGear(item it, string reason, float score)
 
 	if(vars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path() == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
 		return;
-	
+
 	if(is_unrestricted(it) && can_equip(it) && chit_available(it, reason) > 0
 		&& !(have_equipped(it) && string_modifier(it, "Modifiers").contains_text("Single Equip"))
 		&& (gear_class == $class[none] || gear_class == my_class() || (it == $item[Hand that Rocks the Ladle] && have_skill($skill[Utensil Twist]))))
@@ -321,18 +321,18 @@ void addFavGear() {
 	// Certain quest items need to be equipped to enter locations
 	if(available_amount($item[digital key]) + creatable_amount($item[digital key]) < 1 && get_property("questL13Final") != "finished")
 		addGear($item[continuum transfunctioner], "quest");
-	
+
 	if(get_property("ghostLocation") == "Inside the Palindome")
 		forceAddGear($item[Talisman o\' Namsilat], "ghost");
-	
+
 	// Ascension specific quest items
 	int total_keys() { return available_amount($item[fat loot token]) + available_amount($item[Boris\'s key]) + available_amount($item[Jarlsberg\'s key]) + available_amount($item[Sneaky Pete\'s key]); }
 	if(!aftercore && get_property("dailyDungeonDone") == "false" && total_keys() < 3)
 		addGear($item[ring of Detect Boring Doors], "quest");
-	
+
 	if(get_property("questL13Final") == "step6" && available_amount($item[beehive]) < 1)
 		forceAddGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
-		
+
 
 	// Charter zone quest equipment
 	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
@@ -344,7 +344,7 @@ void addFavGear() {
 		else if(get_property("walfordBucketItem") == "blood")
 			addGear($item[remorseless knife], "charter");
 	}
-	
+
 	// FantasyRealm equipment
 	if(equipped_amount($item[FantasyRealm G. E. M.]) > 0) {
 		forceAddGear($items[LyleCo premium magnifying glass, LyleCo premium monocle, charged druidic orb, dragon slaying sword], "FantasyRealm");
@@ -373,7 +373,7 @@ void addFavGear() {
 	int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
 		forceAddGear($item[protonic accelerator pack], "ghost");
-	
+
 	// Find varous stuff instead of hardcoding lists
 	static {
 		record modifier {
@@ -429,7 +429,7 @@ void addFavGear() {
 			vprint("CHIT: chit_GearCategories.txt could not be loaded", "red", 1);
 		foreach name,mods,attrs in categories
 			newCategory(name, mods, attrs);
-		
+
 		foreach it in $items[] {
 			foreach i,cat in catList {
 				if(!to_boolean(cat.attributes["Manual", 0])) {
@@ -462,7 +462,7 @@ void addFavGear() {
 			}
 		}
 	}
-	
+
 	foreach i,cat in catList {
 		boolean ok = true;
 		boolean force = false;
@@ -507,7 +507,7 @@ void addFavGear() {
 			addGear(cat.list, cat.name);
 		}
 	}
-	
+
 	// manual favorites
 	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\)[,|]\\s*") {
 		item it = to_item(fav.replace_string("\\,", ","));
@@ -519,12 +519,12 @@ void addFavGear() {
 void pickerEdpiece() {
 	buffer picker;
 	picker.pickerStart("edpiece", "Adorn thy crown");
-	
+
 	string current = get_property("edPiece");
-	
+
 	void addJewel(string jewel, string desc, string icon) {
 		string jewelLink = '<a class="change" href="' + sideCommand("edpiece " + jewel) + '">';
-		
+
 		picker.append('<tr class="pickitem');
 		if(jewel == current)  picker.append(' currentitem');
 		picker.append('"><td class="icon">');
@@ -555,7 +555,7 @@ void pickerEdpiece() {
 		if(jewel != current) picker.append('</a>');
 		picker.append('</td></tr>');
 	}
-	
+
 	addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
 	addJewel("owl", "Myst +20, +2 Myst exp", "owl");
 	addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
@@ -563,7 +563,7 @@ void pickerEdpiece() {
 	addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
 	addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
 	addJewel("fish", "Lets you breathe underwater", "fish");
-	
+
 	picker.addLoader("Cool jewels!");
 	picker.append('</table></div>');
 	chitPickers["edpiece"] = picker;
@@ -572,7 +572,7 @@ void pickerEdpiece() {
 void pickerGAP() {
 	buffer picker;
 	picker.pickerStart("gap", "Activate a Superpower");
-	
+
 	void addSuperpower(string power, string desc, string icon, int duration) {
 		string powerLink = '<a class="change" href="' + sideCommand("gap " + power) + '">';
 
@@ -598,7 +598,7 @@ void pickerGAP() {
 	addSuperPower("Vision", "+25% Item Drops", "xrayspecs", 20);
 	addSuperPower("Speed", "+100% Moxie", "fast", 20);
 	addSuperPower("Accuracy", "+30% Crit Chance", "reticle", 10);
-	
+
 	picker.addLoader("Loading Superpowers...");
 	picker.append('</table></div>');
 	chitPickers["gap"] = picker;
@@ -849,6 +849,51 @@ void pickerRetroSuperCapeAll() {
 	chitPickers["retrosupercaperobot"] = pickerRobot;
 }
 
+void pickerBackupCamera() {
+	buffer picker;
+	picker.pickerStart("backupcamera", "Configure your camera");
+
+	void addSetting(string name, string desc, string command, string icon) {
+		boolean active = get_property("backupCameraMode") == command;
+		boolean needsVerb = !name.starts_with('<b>');
+
+		picker.append('<tr class="pickitem');
+		if(active) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('" /></td><td colspan="2">');
+		if(active) {
+			picker.append('<b>Current</b>: ');
+		}
+		else {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("backupcamera " + command));
+			picker.append('">');
+			if(needsVerb) picker.append('<b>Toggle</b> to ');
+		}
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(!active) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	if(get_property("backupCameraReverserEnabled").to_boolean()) {
+		addSetting("<b>Disable</b> reverser", "Make everything confusing", "reverser off", "backcamera.gif");
+	}
+	else {
+		addSetting("<b>Enable</b> reverser", "Make everything look normal", "reverser on", "backcamera.gif");
+	}
+	addSetting("Infrared Spectrum", "+50% Meat Drops", "meat", "meat.gif");
+	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
+	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
+
+	picker.addLoader("Configuring your camera...");
+	picker.append('</table></div>');
+	chitPickers["backupcamera"] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -857,7 +902,7 @@ void pickerGear(slot s) {
 
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s);
-	
+
 	boolean good_slot(slot s, item it) {
 		if(to_slot(it) == s) return true;
 		switch(s) {
@@ -877,7 +922,7 @@ void pickerGear(slot s) {
 		}
 		return false;
 	}
-	
+
 	boolean any_options = false;
 	// for use with custom context suggestions
 	void start_option(item it, int modify_image) {
@@ -888,11 +933,11 @@ void pickerGear(slot s) {
 		picker.addItemIcon(it, "Click for item description", dangerLevel(it, s), modify_image);
 		picker.append('</a></td>');
 	}
-	
+
 	void start_option(item it, boolean modify_image) {
 		start_option(it, modify_image ? MODIFY : NO_MODIFY);
 	}
-	
+
 	// give configurable gear some love if it's in slot
 	item fold_from(item original) {
 		foreach it in get_related(in_slot, "fold")
@@ -1054,8 +1099,13 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup!</a></td></tr>');
 			break;
+		case $item[backup camera]:
+			pickerBackupCamera();
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera</a></td></tr>');
+			break;
 	}
-	
+
 	void add_favorite_button(buffer result, item it) {
 		result.append('<a class="change chit_favbutton" href="');
 		if(favGear contains it) {
@@ -1070,7 +1120,7 @@ void pickerGear(slot s) {
 			result.append('control_add_blue.png"></a>');
 		}
 	}
-	
+
 	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
 		start_option(in_slot,true);
@@ -1108,16 +1158,16 @@ void pickerGear(slot s) {
 		}
 		picker.append('</td></tr>');
 	}
-	
+
 	boolean [item] displayedItems;
-	
+
 	boolean add_gear_option(buffer b, item it, string reason) {
 		int danger_level = dangerLevel(it, s);
 		string cmd;
 		string action = "";
 		string action_description = "";
 		string cmd_override = "";
-		
+
 		if(!take_action) {
 			// Leave action and cmd blank.
 		} else if(item_amount(it) > 0) { // can just plain old equip it
@@ -1163,14 +1213,14 @@ void pickerGear(slot s) {
 			cmd_override = '/inv_use.php?pwd=' + my_hash() + '&which=3&whichitem=9573" target="mainpane';
 		} else // no options were found, give up
 			return false;
-		
+
 		any_options = true;
 		displayedItems[it] = true;
-		
+
 		string command = sideCommand(cmd + s + " " + it);
 		if(cmd_override != "")
 			command = cmd_override;
-		
+
 		switch(vars["chit.gear.layout"]) {
 		case "experimental":
 			b.append('<div class="chit_flexitem" style="order:');
@@ -1180,7 +1230,7 @@ void pickerGear(slot s) {
 			b.append(',0,event); return false;" onclick="descitem(');
 			b.append(it.descid);
 			b.append(',0,event)" href="#">');
-			
+
 			b.addItemIcon(it,"Click for item description",danger_level);
 			b.append('</a></div><div style="max-width:160px;">');
 			//b.add_favorite_button(it);
@@ -1203,7 +1253,7 @@ void pickerGear(slot s) {
 				b.append('</a>');
 			b.append('</div></div>');
 			break;
-			
+
 		case "minimal":
 			b.append('<span><a class="');
 			if(take_action)
@@ -1227,7 +1277,7 @@ void pickerGear(slot s) {
 				b.append('</a>');
 			b.append('</span>');
 			break;
-			
+
 		default:
 			b.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
 			b.append(it.descid);
@@ -1262,20 +1312,20 @@ void pickerGear(slot s) {
 			b.add_favorite_button(it);
 			b.append('</td></tr>');
 		}
-		
+
 		return true;
 	}
-	
+
 	void add_gear_section(string name, float [item] list) {
 		item [int] toDisplay;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
 				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 					toDisplay[ count(toDisplay) ] = it;
-		
+
 		if(count(toDisplay) > 0) {
 			buffer temp;
-			
+
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
@@ -1288,9 +1338,9 @@ void pickerGear(slot s) {
 				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
 				break;
 			}
-			
+
 			sort toDisplay by -list[value];
-			
+
 			int shown = 0;
 			string amountOption = name.get_option("amount");
 			int toShow = (amountOption == "all") ? -1 : to_int(amountOption);
@@ -1302,7 +1352,7 @@ void pickerGear(slot s) {
 						break;
 				}
 			}
-			
+
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				temp.append('</div></td></tr>');
@@ -1311,12 +1361,12 @@ void pickerGear(slot s) {
 				temp.append('</td></tr>');
 				break;
 			}
-			
+
 			if(shown > 0)
 				picker.append(temp.to_string());
 		}
 	}
-	
+
 	string disp_str = vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")];
 	foreach i,section in split_string(disp_str,", *") {
 		string [int] spl = split_string(section,":");
@@ -1338,11 +1388,11 @@ void pickerGear(slot s) {
 		if(stillforce)
 			add_gear_section(section, recommendedGear[section]);
 	}
-	
+
 	// Which gear is more desirable?
 	int gear_weight(item it) {
 		float weight;
-		
+
 		switch(item_type(it)) {
 		case "chefstaff":
 			weight = equip_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
@@ -1371,17 +1421,17 @@ void pickerGear(slot s) {
 		default:
 			weight = get_power(it);
 		}
-		
+
 		// This is for Thor's Pliers, but if anything else has this, then it is deserved.
 		if(string_modifier(it, "Modifiers").contains_text("Attacks Can't Miss"))
 			weight *= 1.6;
-		
+
 		// Tired of seeing the antique gear on top. For stuff like that, let's halve base power or whatever is computed in it's place.
 		if(string_modifier(it, "Modifiers").contains_text("Breakable"))
 			weight *= 0.5;
 		else if(weapon_hands(it) == 1)
 			weight *= 1.6;
-		
+
 		switch(my_primestat()) {
 		case $stat[Muscle]:
 			if(weapon_type(it) == $stat[Moxie])
@@ -1405,17 +1455,17 @@ void pickerGear(slot s) {
 
 		return weight;
 	}
-	
+
 	// Find some best gear to recommend
 	void add_inventory_section() {
 		item [int] avail;
 		foreach it in get_inventory()
 			if(be_good(it) && can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
-		
+
 		if(count(avail) > 0) {
 			sort avail by -gear_weight(value);
-			
+
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr>');
@@ -1425,12 +1475,12 @@ void pickerGear(slot s) {
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
 				break;
 			}
-			
+
 			// If this is the only section, show no title. Otherwise it is "inventory"
 			string name = any_options? "inventory": "favorites";
-			
+
 			boolean shield; // Make sure there is at least one shield!
-			
+
 			// For minimal, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
 			int amount = vars["chit.gear.layout"] == "minimal"? 11
 				: any_options? 4: 11;
@@ -1445,7 +1495,7 @@ void pickerGear(slot s) {
 						picker.add_gear_option(avail[x], name);
 						break;
 					}
-			
+
 			switch(vars["chit.gear.layout"]) {
 			case "experimental":
 				picker.append('</div></td></tr>');
@@ -1456,7 +1506,7 @@ void pickerGear(slot s) {
 			}
 		}
 	}
-	
+
 	add_inventory_section(); // Last chance to find something in inventory to display
 	if(!any_options)
 		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else") + " available. Poor you :(");
@@ -1564,7 +1614,7 @@ void addGear(buffer result) {
 		result.append('</a></span>');
 		pickerGear(s);
 	}
-	
+
 	result.append('<tr><td colspan="4">');
 	foreach s in $slots[ hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3 ]
 		addSlot(s);
@@ -1579,7 +1629,7 @@ void bakeGear() {
 	result.append(imagePath);
 	result.append('equipment.png">');
 	result.append('<a class="visit" target="mainpane" href="./inventory.php?which=2">Gear</a></th></tr>');
-	
+
 	result.addGear();
 
 	result.append('</tbody></table>');
