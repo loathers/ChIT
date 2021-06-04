@@ -1717,7 +1717,17 @@ void bakeFamiliar() {
 		info = group(dropMatcher, 1).replace_string("<br>", ", ");
 		switch ( myfam ) {
 			case $familiar[frumious bandersnatch]:
-				info = "Runaways: " + info;
+				boolean knowOde = have_skill($skill[The Ode to Booze]);
+				boolean haveOde = have_effect($effect[Ode to Booze]) > 0;
+				if(knowOde && !haveOde) {
+					info = 'Runaways: ' + info + ' (<a class="change" title="cast 1 The Ode to Booze" href="' + sideCommand("cast 1 The Ode to Booze") + '">Need Ode</a>)';
+				}
+				else if(haveOde) {
+					info = "Runaways: " + info + " (Ready!)";
+				}
+				else {
+					info = '<s title="You Don\'t have access to Ode :(">Runaways: ' + info + ' (Need Ode)</s>';
+				}
 				break;
 			case $familiar[rogue program]:
 				info = "Tokens: " + info;
