@@ -1978,7 +1978,7 @@ void bakeFamiliar() {
 				case "gunner's daughter": addition = "sleaze damage!"; break;
 				case "soilzerac": addition = "+3 myst/com"; break;
 				case "dirt julep": addition = "+5 myst/com"; break;
-				case "London frog": break; // wiki doesn't know what this one does
+				case "London frog": addition = "0.5xPotato"; break;
 				case "Simepore slime": addition = "1xPotato"; break;
 				case "nothingtini": addition = "delevels"; break;
 				case "Phil Collins": addition = "delevels!"; break;
