@@ -552,6 +552,8 @@ int hasDrops(item it) {
 		case $item[backup camera]:
 			// 5 extra uses in You, Robot
 			return (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
+		case $item[familiar scrapbook]:
+			return get_property("scrapbookCharges").to_int() / 100;
 	}
 
 	return 0;
