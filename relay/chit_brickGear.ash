@@ -179,6 +179,9 @@ string gearName(item it, slot s) {
 			int backupsLeft = (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 			notes = backupsLeft + " backups left";
 			break;
+		case $item[familiar scrapbook]:
+			notes = get_property("scrapbookCharges") + " scraps";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
