@@ -86,7 +86,7 @@ Many thanks to:
 	Ereinion and Caprosmaster, for helping with initial testing and feedback
 	rlbond who added css & java for familiar picker and other odds and ends
 	Icons from http://www.famfamfam.com/lab/icons/silk/
-	
+
 *************************************************************************************
 	0.1		Initial Release
 	0.2		Fixed bug with Kung-Fu Hustler (and probably other) intrinsic effects
@@ -129,7 +129,7 @@ Many thanks to:
 	0.8.1	Added tracker brick by ckb
 	0.8.4	Updating through SVN!
 			All future changelogs will be on the SVN and will be much more complete.
-	
+
 ************************************************************************************/
 
 string helperDanceCard() {
@@ -172,7 +172,7 @@ string helperWormwood() {
 		zones["windmill"] = $location[The Rogue Windmill];
 		zones["mansion"] = $location[The Mouldering Mansion];
 		zones["dome"] = $location[The Stately Pleasure Dome];
-			
+
 	string [string] rewards;
 		rewards["moxie"] = "discomask.gif|Gain Moxie Substats";
 		rewards["muscle"] = "strboost.gif|Gain Muscle Substats";
@@ -183,7 +183,7 @@ string helperWormwood() {
 		rewards["food"] = "sammich.gif|S.T.L.T.";
 		rewards["necklace"] = "albaneck.gif|albatross necklace";
 		rewards["booze"] = "flask.gif|flask of Amontillado";
-	
+
 	string [string, int] targets;
 		targets["moxie", 9] = "windmill|Check the upstairs apartment|Absinthe-Minded";
 		targets["moxie", 5] = "mansion|Approach the Man|Absinthe-Minded";
@@ -214,7 +214,7 @@ string helperWormwood() {
 		targets["booze", 5] = "dome|Explore some side-tunnels|Rat-Faced";
 		targets["booze", 1] = "mansion|Descend|Night Vision";
 
-		
+
 	//Normalize turns of Absinthe-Minded remaining
 	int absinthe = have_effect($effect[Absinthe-Minded]);
 	if(absinthe > 5) {
@@ -224,9 +224,9 @@ string helperWormwood() {
 	} else {
 		absinthe = 1;
 	}
-	
+
 	string [int] goals = split_string(pref, ",");	//split desired goals into separate strings
-	string goal;											
+	string goal;
 	string goalname;
 	string goalturns;
 
@@ -295,9 +295,9 @@ string helperWormwood() {
 
 	//Compile a (sorted) list of goals to include
 	string [string] goallist;
-	
+
 	for i from 0 to goals.count()-1 {
-		
+
 		goal = replace_string(goals[i], " ", "").to_string().to_lower_case();
 
 		goalname = fix_goalname();
@@ -325,7 +325,7 @@ string helperWormwood() {
 			}
 		}
 	}
-	
+
 	string [3] target;
 	string [2] reward;
 	location zone;
@@ -335,7 +335,7 @@ string helperWormwood() {
 	buffer rowdata;
 	int rows = 0;
 	int [string] addeditems;
-	
+
 	//Iterate through the normalized list of goals, and show only those that are still achievable (based on required effects)
 	foreach key, value in goallist {
 		if (!(addeditems contains value)) {
@@ -343,7 +343,7 @@ string helperWormwood() {
 			target = split_string(targets[value, absinthe], "\\|");
 			zone = zones[target[0]];
 			hint = target[1];
-			musthave = to_effect(target[2]);		
+			musthave = to_effect(target[2]);
 			if (have_effect(musthave) > 0) {
 				rowdata.append('<tr class="section">');
 				rowdata.append('<td class="icon" title="');
@@ -366,7 +366,7 @@ string helperWormwood() {
 			}
 		}
 	}
-	
+
 	//wrap everything up in a pretty table
 	if (rows > 0) {
 		result.append('<table id="chit_wormwood" class="chit_brick nospace">');
@@ -379,9 +379,9 @@ string helperWormwood() {
 		chitTools["helpers"] = "You have some expired counters|helpers.png";
 
 	}
-	
+
 	return result;
-	
+
 }
 
 string helperSemiRare() {
@@ -417,12 +417,12 @@ string helperSemiRare() {
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
 		}
 	}
-	
+
 	int semirareCounter = to_int(get_property("semirareCounter"));
 	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
 	string message = semirareCounter == 0? "No semirare so far during this ascension"
 		: ("Last semirare found " + (turns_played()-semirareCounter) + " turns ago (on turn " + semirareCounter + ") in " + semirareLocation);
-	
+
 	//Iterate through all the predefined zones
 	string[3] reward;
 	buffer rowdata;
@@ -451,7 +451,7 @@ string helperSemiRare() {
 			}
 		}
 	}
-	
+
 	//wrap everything up in a pretty table
 	if(rows > 0) {
 		result.append('<table id="chit_semirares" class="chit_brick nospace">');
@@ -462,17 +462,17 @@ string helperSemiRare() {
 		result.append(message);
 		result.append('</td></tr>');
 		result.append(rowdata);
-		result.append('</table>');		
+		result.append('</table>');
 		chitTools["helpers"] = "You have some expired counters|helpers.png";
 	}
-	
+
 	return result;
 }
 
 string helperSpookyraven() {
 	//Bail if the user doesn't want to see the helper
 	if(vars["chit.helpers.spookyraven"] != "true") return "";
-	
+
 	void addRoom(buffer info, string child) {
 		string room = get_property("nextSpookyraven"+child+"Room");
 		if(room != "none") {
@@ -495,14 +495,14 @@ string helperSpookyraven() {
 	result.append('helpers.png"><a target="mainpane" href="place.php?whichplace=manor1">Spookyraven Lights Out</a></th></tr>');
 	result.addRoom("Elizabeth");
 	result.addRoom("Stephen");
-	result.append('</table>');		
-	
+	result.append('</table>');
+
 	chitTools["helpers"] = "You have some expired counters|helpers.png";
 	return result.to_string();
 }
 
 string helperXiblaxian() {
-	
+
 	// turns to next drop - taken from kol wiki - 11, 16, 21...
 	int xidrops = get_property("_holoWristDrops").to_int();
 	int xiprog = get_property("_holoWristProgress").to_int() + 1;
@@ -512,7 +512,7 @@ string helperXiblaxian() {
 	int circuit = 3-available_amount($item[xiblaxian circuitry]);
 	int alloy = 1-available_amount($item[xiblaxian alloy]);
 	int polymer = 1-available_amount($item[xiblaxian polymer]);
-	
+
 	if(countdown == 0 && !can_interact() && get_counters("Xiblaxian Material", 0, 0) == "")
 		cli_execute("counters add 0 Xiblaxian Material holoputer.gif");
 
@@ -556,7 +556,7 @@ string helperXiblaxian() {
 		result.append('</tr>');
 		result.append('</table>');
 	}
-	
+
 	chitTools["helpers"] = "You have some expired counters|helpers.png";
 	return result.to_string();
 }
@@ -566,13 +566,13 @@ void addElementMap(buffer result, string img) {
 	result.append('<img src="');
 	result.append(imagePath);
 	result.append(img);
-	
+
 	if     (have_effect($effect[Spirit of Peppermint]) > 0) result.append("cold");
 	else if(have_effect($effect[Spirit of Bacon Grease]) > 0) result.append("sleaze");
 	else if(have_effect($effect[Spirit of Garlic]) > 0) result.append("stench");
 	else if(have_effect($effect[Spirit of Cayenne]) > 0) result.append("hot");
 	else if(have_effect($effect[Spirit of Wormwood]) > 0) result.append("spooky");
-	
+
 	result.append('.gif" width="190" height="190"');
 	if(have_skill($skill[Flavour of Magic])) {
 		result.append(' alt="Cast Flavour of Magic" usemap="#flavmap">');
@@ -596,12 +596,12 @@ void addElementMap(buffer result, string img) {
 void pickerFlavour() {
 	buffer picker;
 	picker.pickerStart("flavour", "Cast Flavour of Magic");
-	
+
 	picker.addLoader("Spiriting flavours...");
 	picker.append('<tr class="pickitem"><td>');
 	picker.addElementMap("elementchart2");
 	picker.append('</td></tr>');
-	
+
 	picker.append('</table></div>');
 	chitPickers["flavour"] = picker;
 }
@@ -619,10 +619,10 @@ buff parseBuff(string source) {
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
-		
+
 		//ckb: eliminate the heigh and width callout so we can controll it with css instead
 		columnIcon = replace_string(columnIcon,"width=30 height=30","");
-		
+
 		myBuff.effectImage = parse.group(3);
 		myBuff.eff = parse.group(4).desc_to_effect();
 		myBuff.effectName = parse.group(5);
@@ -681,7 +681,7 @@ buff parseBuff(string source) {
 		}
 		columnArrow = columnArrow.replace_string('Increase rounds of', upCost+'\nIncrease rounds of');
 	}
-	
+
 	//Apply any styling/renaming as specified in effects map
 	if(chitEffectsMap contains myBuff.effectName) {
 		matcher pattern = create_matcher('(type|alias|style|href|image|desc):"([^"]*)', chitEffectsMap[myBuff.effectName]);
@@ -718,14 +718,14 @@ buff parseBuff(string source) {
 
 	if(myBuff.eff != $effect[none] && my_path() == "G-Lover" && !($effects[Ode to Booze, Ultrahydrated] contains myBuff.eff) && myBuff.eff.to_lower_case().index_of("g") < 0)
 		style = "background-color:lightgray";
-	
+
 	// Flavour of Magic picker!
 	if($effects[Spirit of Cayenne, Spirit of Peppermint, Spirit of Garlic, Spirit of Wormwood, Spirit of Bacon Grease] contains myBuff.eff) {
 		columnIcon = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">' + columnIcon + '</a>';
 		columnTurns = '<a class="chit_launcher" rel="chit_pickerflavour" href="#">&infin;</a>';
 		pickerFlavour();
 	}
-	
+
 	// Check Mirror picker
 	if($effects[[1553]Slicked-Back Do, Pompadour, Cowlick, Fauxhawk] contains myBuff.eff)
 		columnTurns = '<a target="mainpane" href="skills.php?pwd='+my_hash()+'&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">&infin;</a>';
@@ -736,7 +736,7 @@ buff parseBuff(string source) {
 	// Fix for blank "On the Trail" problem.
 	if(length(effectAlias) == 0)
 		effectAlias = myBuff.effectName;
-	
+
 	boolean [effect] turtleBlessings = $effects[
 		Blessing of the War Snapper,
 		Blessing of She-Who-Was,
@@ -787,7 +787,7 @@ buff parseBuff(string source) {
 		if(speedUps >= 3)
 			effectAlias += ' <span class="efmods">(This is a guess. Please send confirmation for or against to Soolar the Second (#2463557))</span>';
 	}
-	
+
 	//Replace effect icons, if enabled
 	string [string] classmap;
 		classmap["at"] = "accordion.gif";
@@ -820,14 +820,14 @@ buff parseBuff(string source) {
 		}
 	}
 	result.append('>');
-	if(showIcons) 
+	if(showIcons)
 		result.append('<td class="icon">' + columnIcon + '</td>');
 	result.append('<td class="info"');
 	if(doArrows && myBuff.isIntrinsic)
 		result.append(' colspan="2"');
 	result.append('>');
 	result.append(effectAlias);
-	
+
 	//ckb: Add modification details for buffs and effects
 	if(to_boolean(vars["chit.effects.describe"])) {
 		string efMod;
@@ -842,7 +842,7 @@ buff parseBuff(string source) {
 			result.append('</span>');
 		}
 	}
-	
+
 	result.append('</td>');
 	if(myBuff.isIntrinsic) {
 		result.append('<td class="infinity');
@@ -870,7 +870,7 @@ buff parseBuff(string source) {
 	}
 	result.append('</tr>');
 	myBuff.effectHTML = result.to_string();
-	
+
 	return myBuff;
 }
 
@@ -888,7 +888,7 @@ void bakeEffects() {
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
 	if (layout == "") layout = "buffs";
 	boolean showSongs = contains_text(layout,"songs");
-	
+
 	//Load effects map
 	static {
 		string mapfile = "chit_effects.txt";
@@ -897,9 +897,9 @@ void bakeEffects() {
 		if(!file_to_map(mapfile, chitEffectsMap))
 			vprint("CHIT: Effects map could not be loaded (" + mapfile + ")", "red", 1);
 	}
-	
+
 	buff currentbuff;
-	
+
 	//Regular Effects
 	matcher rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["effects"]);
 	while (find(rowMatcher)) {
@@ -917,7 +917,7 @@ void bakeEffects() {
 			buffs.append(currentbuff.effectHTML);
 		}
 		total += 1;
-		
+
 		if(currentbuff.effectTurns == 0) {
 			if(currentbuff.effectName == "Fortune Cookie")
 				helpers.append(helperSemiRare());
@@ -929,11 +929,11 @@ void bakeEffects() {
 				helpers.append(helperSpookyraven());
 		}
 	}
-	
+
 	// Add helper for Xiblaxian holo-wrist-puter
 	if(vars["chit.helpers.xiblaxian"] != "false" && have_equipped($item[Xiblaxian holo-wrist-puter]))
 		helpers.append(helperXiblaxian());
-	
+
 	//Intrinsic Effects
 	rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["intrinsics"]);
 	while (find(rowMatcher)){
@@ -941,7 +941,7 @@ void bakeEffects() {
 		intrinsics.append(currentbuff.effectHTML);
 		total += 1;
 	}
-	
+
 	// Add Flavour of Nothing for all classes
 	boolean need_flavour() {
 		for i from 167 to 171
@@ -978,7 +978,7 @@ void bakeEffects() {
 		intrinsics.append('&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">00</a></td></tr>');
 		total += 1;
 	}
-	
+
 	// Some 0 mp Intrinsics should have reminders for their specific classe
 	void lack_effect(buffer result, skill sk, effect ef, string short_ef) {
 		if(have_skill(sk) && have_effect(ef) == 0 && my_class() == sk.class) {
@@ -1030,26 +1030,26 @@ void bakeEffects() {
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
-				case "buffs": 
-					result.append(expression); 
-					result.append(buffs); 
+				case "buffs":
+					result.append(expression);
+					result.append(buffs);
 					break;
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
-				default: //ignore all other values					
+				default: //ignore all other values
 			}
 		}
 		result.append('</table>');
 	}
-	
+
 	chitBricks["effects"] = result;
-	if (helpers.to_string() != "") chitBricks["helpers"] = helpers;	
-		
+	if (helpers.to_string() != "") chitBricks["helpers"] = helpers;
+
 }
 
 void bakeElements() {
 	buffer result;
-	
+
 	result.append('<table id="chit_elements" class="chit_brick nospace">');
 	result.append('<thead><tr><th><img src="');
 	result.append(imagePath);
@@ -1057,7 +1057,7 @@ void bakeElements() {
 	result.append("<tr><td>");
 	result.addElementMap("elementchart1");
 	result.append('</tr></table>');
-	
+
 	chitBricks["elements"] = result;
 }
 
@@ -1193,12 +1193,12 @@ void addPlants(buffer result) {
 void addFlorist(buffer result, boolean label) {
 	if(florist_available()) {
 		result.append('<tr><td class="label">');
-		
+
 		// label is not necessary if right after trail
 		if(vars["chit.stats.layout"].contains_text("trail,florist"))
 			label = false;
 		result.append(label? '<a class="visit" target="mainpane" href="place.php?whichplace=forestvillage&action=fv_friar">Florist</a>': '&nbsp;');
-		
+
 		result.append('</td><td class="florist" colspan="2">');
 		result.addPlants();
 		result.append('</td></tr>');
@@ -1215,16 +1215,16 @@ void bakeFlorist() {
 		result.addPlants();
 		result.append('</td></tr></table>');
 	}
-	
+
 	chitBricks["florist"] = result;
 }
 
 void bakeTrail() {
 	string source = chitSource["trail"];
 	buffer result;
-	
+
 	result.append('<table id="chit_trail" class="chit_brick nospace">');
-	
+
 	//Container
 	string url = "main.php";
 	matcher target = create_matcher('href="(.*?)" target=mainpane>Last Adventure:</a>', source);
@@ -1238,7 +1238,7 @@ void bakeTrail() {
 	result.append('<a class="visit" target="mainpane" href="');
 	result.append(url);
 	result.append('">Last Adventure</a></th></tr>');
-	
+
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a><br></font>', source);
 	if(target.find()) {
@@ -1248,7 +1248,7 @@ void bakeTrail() {
 		result.append(target.group(2));
 		result.append('</a></td></tr>');
 	}
-	
+
 	//Other adventures
 	matcher others = create_matcher("<nobr>(.*?)</nobr>", source);
 	while (find(others)) {
@@ -1261,9 +1261,9 @@ void bakeTrail() {
 			result.append('</a></td></tr>');
 		}
 	}
-	
+
 	result.append("</table>");
-	
+
 	chitBricks["trail"] = result;
 	chitTools["trail"] = "Recent Adventures|trail.png";
 
@@ -1307,7 +1307,7 @@ void pickerThrall() {
 		if(my_maxmp() >= mp_cost(s)) return "make";		// Orange
 		return "remove";								// Red
 	}
-	
+
 	void addThrall(buffer result, thrall t) {
 		skill s = t.skill;
 		buffer url;
@@ -1327,7 +1327,7 @@ void pickerThrall() {
 		url.append(' for ');
 		url.append(mp_cost(s));
 		url.append('mp">');
-		
+
 		result.append('<tr class="pickitem"><td class="');
 		result.append(color(s));
 		result.append('">');
@@ -1355,7 +1355,7 @@ void pickerThrall() {
 		url.append('<a class="change" href="');
 		url.append(sideCommand("cast Dismiss Pasta Thrall"));
 		url.append('" title="Dismiss Pasta Thrall">');
-		
+
 		result.append('<tr class="pickitem"><td class="retrieve">');
 		result.append(url);
 		result.append('<b>Dismiss ');
@@ -1371,7 +1371,7 @@ void pickerThrall() {
 
 	buffer picker;
 	picker.pickerStart("thrall", "Bind thy Thrall");
-	
+
 	// Check for all thralls
 	picker.addLoader("Binding Thrall...");
 	boolean sad = true;
@@ -1388,7 +1388,7 @@ void pickerThrall() {
 		else
 			picker.addSadFace("Poor "+my_thrall().name+" has no other thralls to play with.");
 	}
-	
+
 	picker.append('</table></div>');
 	chitPickers["thrall"] = picker;
 }
@@ -1402,7 +1402,7 @@ void bakeThrall() {
 			name = type;
 			type = temp;
 		}
-		
+
 		result.append('<table id="chit_thrall" class="chit_brick nospace">');
 		result.append('<tr><th title="Thrall Level">');
 		if(lvl != "")
@@ -1413,7 +1413,7 @@ void bakeThrall() {
 		result.append('" class="hand" onClick=\'javascript:window.open("desc_guardian.php","","height=200,width=300")\'>');
 		result.append(type);
 		result.append('</a></th></tr>');
-		
+
 		result.append('<tr><td class="icon" title="Thrall">');
 		result.append('<a class="chit_launcher" rel="chit_pickerthrall" href="#">');
 		result.append('<img title="Bind thy Thrall" src=/images/itemimages/');
@@ -1432,7 +1432,7 @@ void bakeThrall() {
 		}
 		result.append('</tr></table>');
 	}
-	
+
 	if(my_thrall() == $thrall[none])
 		bake("", "No Thrall", "No Thrall", "blank.gif");
 	else
@@ -1542,27 +1542,27 @@ void pickMood() {
 				picker.append('"><img src="');
 				picker.append(imagePath);
 				picker.append('control_remove_red.png"></a>');
-			} 
+			}
 		} else
 			picker.append('&nbsp;');
 		picker.append('</td></tr>');
 	}
-		
+
 	// Add link to execute mood unless it's on the toolbar
 	if(vars["chit.toolbar.moods"] != "bonus") {
 		picker.append('<tr class="pickitem"><th colspan="2">Current Mood</th></tr>');
 		picker.addCurrentMood(true);
 	}
-	
+
 	picker.append('</table>');
 	picker.append('</div>');
-	
+
 	chitPickers["mood"] = picker.to_string();
 }
 
 void bakeToolbar() {
 	buffer toolbar;
-	
+
 	void addRefresh(buffer result) {
 		result.append('<ul style="float:left"><li><a href="charpane.php" title="Reload"><img src="');
 		result.append(imagePath);
@@ -1579,19 +1579,19 @@ void bakeToolbar() {
 		result.append('<li><a href="#" class="chit_launcher" rel="chit_pickermood" title="Select Mood"><img src="');
 		result.append(imagePath);
 		result.append('select_mood.png"></a></li>');
-		
+
 		// If chit.toolbar.moods == bonus, then add extra mood execution button
 		if(vars["chit.toolbar.moods"] == "bonus") {
 			result.append('<li>');
 			result.addCurrentMood(false);
 			result.append('</li>');
 		}
-		
+
 		result.append('</ul>');
 		pickMood();
-		
+
 	}
-	
+
 	// If disable is first, attach it to the refresh button
 	void addDisable(buffer result, int i) {
 		buffer button;
@@ -1608,12 +1608,12 @@ void bakeToolbar() {
 		int point = i == 0? result.index_of("</ul>"): length(result);
 		result.insert(point, button);
 	}
-	
+
 	void addTools (buffer result) {
 		result.append('<ul>');
-	
+
 		string layout = vars["chit.toolbar.layout"];
-		
+
 		string [int] bricks = split_string(layout,",");
 		string brick;
 		string [int] toolprops;
@@ -1640,7 +1640,7 @@ void bakeToolbar() {
 					result.append('"></a></li>');
 				}
 			}
-		}	
+		}
 		result.append("</ul>");
 	}
 
@@ -1651,7 +1651,7 @@ void bakeToolbar() {
 		toolbar.addTools();
 	}
  	toolbar.append('</th></tr>');
- 	toolbar.append('</table>');	
+ 	toolbar.append('</table>');
 	chitBricks["toolbar"] = toolbar;
 }
 
@@ -1695,7 +1695,7 @@ string forcedDrop(float bonus) {
 void bakeModifiers() {
 
 	buffer result;
-	
+
 	//Heading
 	result.append('<table id="chit_modifiers" class="chit_brick nospace">');
 	result.append('<thead><tr><th colspan="2"><img src="');
@@ -1768,7 +1768,7 @@ void bakeModifiers() {
 	result.append('<tbody>');
 	result.append('<tr>');
 	result.append('<td class="label">Damage Absorb</td>');
-	result.append('<td class="info">' + to_int(damage_absorption_percent()) 
+	result.append('<td class="info">' + to_int(damage_absorption_percent())
 	  + '%&nbsp;(' + formatInt(raw_damage_absorption()) + ')</td>');
 	result.append('</tr>');
 	result.append('<tr>');
@@ -1855,10 +1855,10 @@ void bakeModifiers() {
 	result.append('</tr>');
 	result.append('</tbody>');
 
-		
+
 	result.append('</table>');
 	chitBricks["modifiers"] = result.to_string();
-	
+
 }
 
 void addStat(buffer result, stat s) {
@@ -1877,7 +1877,7 @@ string message(string organ, int severity) {
 	case "Stomach":
 		if(severity == 4)
 			return "You're too full to even eat a wafer-thin mint";
-		return "Hmmm... pies";	
+		return "Hmmm... pies";
 	case "Liver":
 		switch(severity) {
 		case 6: return "Sneaky!";
@@ -1886,7 +1886,7 @@ string message(string organ, int severity) {
 		case 3: return "You can barely stand up straight...";
 		case 2: return "You'd better keep an eye on your drinking...";
 		case 1: return "Your drinking is still under control";
-		case 0: return "You are stone-cold sober";	
+		case 0: return "You are stone-cold sober";
 		}
 	case "Spleen":
 		switch(severity) {
@@ -1894,7 +1894,7 @@ string message(string organ, int severity) {
 		case 4: return "Your spleen can't take any more abuse today";
 		case 3:
 		case 2: return "Your spleen has taken quite a bit of damage";
-		case 1: return "Your spleen is in pretty good shape";	
+		case 1: return "Your spleen is in pretty good shape";
 		case 0: return "Your spleen is in perfect shape!";
 		}
 	}
@@ -1965,7 +1965,7 @@ void pickerSoulSauce() {
 	buffer picker;
 	picker.pickerStart("soulsauce", "Spend Soul Sauce");
 	picker.addLoader("Performing Saucery...");
-	
+
 	void addSauceSkill(skill sk, string desc) {
 		desc += " (" + sk.soulsauce_cost() + " sauce)";
 		boolean canAfford = my_soulsauce() >= sk.soulsauce_cost();
@@ -2028,7 +2028,7 @@ void addSauce(buffer result) {
 
 void addHeavyRains(buffer result) {
 	buffer block;
-	
+
 	// Detect Thunder
 	matcher weather = create_matcher("Thunder:</td><td align=left><b><font color=black>((\\d+) dBs?)", chitSource["stats"]);
 	if(weather.find()) {
@@ -2038,7 +2038,7 @@ void addHeavyRains(buffer result) {
 		block.append(weather.group(2));
 		block.append('</span><img src="/images/itemimages/echo.gif"></div>');
 	}
-	
+
 	// Detect Rain
 	weather = create_matcher("Rain:</td><td align=left><b><font color=black>((\\d+) drops?)", chitSource["stats"]);
 	if(weather.find()) {
@@ -2048,7 +2048,7 @@ void addHeavyRains(buffer result) {
 		block.append(weather.group(2));
 		block.append('</span><img src="/images/itemimages/familiar31.gif"></div>');
 	}
-	
+
 	// Detect Lightning
 	weather = create_matcher("Lightning:</td><td align=left><b><font color=black>((\\d+) bolts?)", chitSource["stats"]);
 	if(weather.find()) {
@@ -2108,7 +2108,7 @@ void addGhostBusting(buffer result) {
 	boolean hasPack = available_amount($item[protonic accelerator pack]) > 0;
 	if(!hasPack && ghostLocation == "")
 		return;
-	
+
 	string zone_url(string loc) {
 		switch(loc) {
 		case "Madness Bakery":
@@ -2428,6 +2428,18 @@ void addRoboStuff(buffer result) {
 	}
 }
 
+void addWildfire(buffer result) {
+	matcher water = create_matcher("<td align=right>Water:</td><td align=left><b>([\\d,]+)</b>", chitSource["stats"]);
+	if (water.find()) {
+		result.append('<tr><td class="label">Water</td><td class="info">');
+		result.append(water.group(1));
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('</td><td><div title="Water" style="float:left"><img style="max-width:14px;padding-left:3px;" src="/images/itemimages/raindrop.gif"></td></tr>');
+		else
+			result.append('<img title="Water" style="max-width:14px;padding-left:3px;" src="/images/itemimages/raindrop.gif"></td></tr>');
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -2465,7 +2477,7 @@ void bakeSubStats() {
 	result.addStat($stat[muscle]);
 	result.addStat($stat[mysticality]);
 	result.addStat($stat[moxie]);
-	
+
 	result.append('</tbody>');
 	result.append('</table>');
 	chitBricks["substats"] = result.to_string();
@@ -2504,7 +2516,7 @@ void addMCD(buffer result, boolean bake) {
 				mcd.append('<tr class="' + (picker? 'pickitem ': '') + 'current"><td class="info">' + mcdmap[mcdlevel] + '</td>');
 			} else {
 #				mcd.append('<tr class="' + (picker? 'pickitem ': 'change') + '"><td class="info"><a ref="charpane.php" class="clilink through" title="mcd '+mcdlevel+'">' + mcdmap[mcdlevel] + '</a></td>');
-				mcd.append('<tr class="' + (picker? 'pickitem ': 'change') + '"><td class="info"><a ' + (picker? 'class="change" ': '') + ' href="' 
+				mcd.append('<tr class="' + (picker? 'pickitem ': 'change') + '"><td class="info"><a ' + (picker? 'class="change" ': '') + ' href="'
 					+ (mcdchange == ""? "": sideCommand("mcd "+mcdlevel))
 					+ '">' + mcdmap[mcdlevel] + '</a></td>');
 			}
@@ -2539,10 +2551,10 @@ void addMCD(buffer result, boolean bake) {
 		mcdchange = "gnomes.php?action=changedial&whichlevel=";
 		mcdbusy = "Changing Dial...";
 		if(get_property("lastDesertUnlock").to_int() != my_ascensions()) {
-			mcdSettable = false;			
+			mcdSettable = false;
 			progress = '<span title="The Gnomad camp has not been unlocked yet">No Beach?</span>';
 		}
-		
+
 	// Myst Signs
 	} else if(canadia_available()) {
 		mcdmax = 11;
@@ -2552,7 +2564,7 @@ void addMCD(buffer result, boolean bake) {
 		mcdpage = "canadia.php?place=machine";
 		mcdchange = "canadia.php?action=changedial&whichlevel=";
 		mcdbusy = "Changing Dial...";
-		
+
 	// Bad Moon Sign
 	} else if(in_bad_moon()) {
 		mcdname = "Heartbreaker's Hotel";
@@ -2562,7 +2574,7 @@ void addMCD(buffer result, boolean bake) {
 		mcdchange = "";
 		mcdSettable = false;
 		progress = progressCustom(current_mcd(), mcdmax, mcdtitle, 5, false);
-	
+
 	// Unknown?
 	} else {
 		mcdname = "Monster Level";
@@ -2594,14 +2606,14 @@ void addMCD(buffer result, boolean bake) {
 		result.append('</table>');
 		return;
 	}
-	
+
 	result.append('<tr><td class="label">');
 	if(mcdpage == "")
 		result.append(mcdlabel);
 	else
 		result.append('<a href="' + mcdpage + '" target="mainpane" title="' + mcdname + '">' + mcdlabel + '</a>');
 	result.append('</td>');
-	
+
 	string mcdvalue() {
 		if(mcdAvailable) {
 			string mcdvalue = mcdSettable? '<a href="#" class="chit_launcher" style="white-space:pre" rel="chit_pickermcd" title="' + mcdtitle + '">' + to_string(current_mcd()) + '</a>'
@@ -2623,17 +2635,17 @@ void addMCD(buffer result, boolean bake) {
 		}
 	}
 	result.append('</tr>');
-	
+
 	//Create MCD picker
 	if(mcdSettable && !(chitPickers contains "mcd")) {
 		buffer picker;
 		picker.pickerStart("mcd", mcdtitle);
-		
+
 		//Loader
 		picker.addLoader(mcdbusy);
 		picker.mcdlist(true);
 		picker.append('</table></div>');
-		
+
 		chitPickers["mcd"] = picker.to_string();
 	}
 }
@@ -2647,7 +2659,7 @@ void bakeMCD() {
 
 void bakeOrgans() {
 	buffer result;
-	
+
 	//Heading
 	result.append('<table id="chit_organs" class="chit_brick nospace">');
 	result.append('<thead><tr><th colspan="3"><img src="');
@@ -2661,7 +2673,7 @@ void bakeOrgans() {
 		result.addSpleen(true);
 	} else
 		result.append('<tr><td colspan="3">You have no real organs! <br> OMG!</td></tr>');
-	
+
 	result.append('</table>');
 	chitBricks["organs"] = result.to_string();
 }
@@ -2676,11 +2688,11 @@ void addTrail(buffer result) {
 		url = target.group(1);
 	if(url == "place.php?whichplace=town_right" && source.contains_text("Investigating a Plaintive Telegram"))
 		url = "place.php?whichplace=town_right&action=townright_ltt";
-		
+
 	result.append('<tr><td class="label"><a class="visit" target="mainpane" href="');
 	result.append(url);
 	result.append('">Last</a></td>');
-	
+
 	//Last Adventure
 	target = create_matcher('target=mainpane href="(.*?)">\\s*(.*?)</a><br></font>', source);
 	if(target.find()) {
@@ -2692,12 +2704,12 @@ void addTrail(buffer result) {
 	} else
 		result.append('<td class="info" colspan="2">(None)</td>');
 	result.append('</tr>');
-	
+
 }
 
 void bakeStats() {
 
-	string health = chitSource["health"]; 
+	string health = chitSource["health"];
 	string stats = chitSource["stats"];
 	buffer result;
 	boolean showBars = to_boolean(vars["chit.stats.showbars"]);
@@ -2739,7 +2751,7 @@ void bakeStats() {
 		}
 		return progressCustom(to_int(val), begin, sev(), false);
 	}
-	
+
 	void addBathtub() {
 		if(chitSource contains "bathtub") {
 			matcher tub = create_matcher("<b>(Crew|Crayons|Bubbles):</b></td><td class=small>([\\d,]+)</td>", chitSource["bathtub"]);
@@ -2753,7 +2765,7 @@ void bakeStats() {
 			}
 		}
 	}
-	
+
 	int severity_hpmp(int current, int limit, float red) {
 		float ratio = to_float(current) / limit;
 		if(ratio < red)
@@ -2762,7 +2774,7 @@ void bakeStats() {
 			return 2;
 		return 1;
 	}
-	
+
 	string restore(string p) {
 		if(p == "hp") {
 			if(my_hp() <= my_maxhp() * to_float(get_property("hpAutoRecovery")))
@@ -2776,7 +2788,7 @@ void bakeStats() {
 		}
 		return "restore+"+p;
 	}
-	
+
 	void addHP() {
 		result.append('<tr>');
 		result.append('<td class="label">HP</td>');
@@ -2788,16 +2800,16 @@ void bakeStats() {
 		}
 		if(showBars) {
 			if(health.contains_text("restore+HP")) {
-				result.append('<td class="progress"><a href="' + sideCommand("restore hp") + '">' 
+				result.append('<td class="progress"><a href="' + sideCommand("restore hp") + '">'
 					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
 			} else {
-				result.append('<td class="progress">' 
+				result.append('<td class="progress">'
 					+ progressCustom(my_hp(), my_maxhp(), "auto", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</td>');
 			}
 		}
 		result.append('</tr>');
 	}
-	
+
 	void addMP() {
 		if(my_class() == $class[Vampyre])
 			return;
@@ -2850,13 +2862,13 @@ void bakeStats() {
 				result.append('<td class="progress"><a href="' + sideCommand("restore mp") + '">'
 					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
 			} else {
-				result.append('<td class="progress">' 
+				result.append('<td class="progress">'
 					+ progressCustom(my_mp(), my_maxmp(), "auto", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</td>');
 			}
 		}
 		result.append('</tr>');
 	}
-	
+
 	void addAxel() {
 		if (index_of(health, "axelottal.gif") > -1) {
 			matcher axelMatcher = create_matcher("axelottal.gif\" /></td><td align=left><b>(.*?)</b>", health);
@@ -2871,7 +2883,7 @@ void bakeStats() {
 			}
 		}
 	}
-	
+
 	//<tr><td align=right>Drippy Juice:</td><td align=left><b><font color=black><span alt="Drippy Juice" title="Drippy Juice">10 &micro;g.</span></font></td></tr>
 	void addDrippyJuice() {
 		if (index_of(stats, "Drippy Juice:") > -1) {
@@ -2885,7 +2897,7 @@ void bakeStats() {
 			}
 		}
 	}
-	
+
 	boolean contains_stat(string section) {
 		if(section.contains_text("mainstat")) return true;
 		switch(my_primestat()) {
@@ -2895,7 +2907,7 @@ void bakeStats() {
 		}
 		return false;
 	}
-	
+
 	void addSection(string section) {
 		string [int] rows = split_string(section, ",");
 		result.append("<tbody>");
@@ -2920,7 +2932,7 @@ void bakeStats() {
 				default:
 			}
 		}
-		
+
 		// Add special stats to the section that contains mainstat
 		if(section.contains_stat()) {
 			switch(my_class()) {
@@ -2945,7 +2957,7 @@ void bakeStats() {
 				result.addCoins();
 				break;
 			}
-			
+
 			switch(my_path()) {
 			case "Heavy Rains":
 				result.addHeavyRains();
@@ -2965,14 +2977,17 @@ void bakeStats() {
 			case "You, Robot":
 				result.addRoboStuff();
 				break;
+			case "Wildfire":
+				result.addWildfire();
+				break;
 			}
-			
+
 			if(numeric_modifier("Maximum Hooch") > 0)
 				result.addHooch();
-			
+
 			if(available_amount($item[sprinkles]) > 0)
 				result.addSprinkles();
-			
+
 			// Quest updates should be shown if the tracker brick is not in use.
 			boolean tracker;
 			foreach layout in $strings[roof, walls, floor, toolbar]
@@ -2987,7 +3002,7 @@ void bakeStats() {
 			result.addFantasyRealm();
 			result.addPirateRealm();
 		}
-		
+
 		result.append("</tbody>");
 	}
 
@@ -2996,7 +3011,7 @@ void bakeStats() {
 			if(remainder.contains_text(s)) return false;
 		return true;
 	}
-	
+
 	//Heading
 	if (showBars) {
 		result.append('<table id="chit_stats" class="chit_brick nospace">');
@@ -3142,13 +3157,13 @@ void allCurrency(buffer result) {
 	void addCurrency(buffer result, chit_currency curr) {
 		if(displayedCurrencies[curr.tag])
 			return;
-		
+
 		displayedCurrencies[curr.tag] = true;
-		
+
 		result.append('<span class="currency_amount">');
 		result.append(formatInt(curr.amount));
 		result.append('</span>');
-		
+
 		result.addCurrencyIcon(curr);
 
 		switch(curr.it) {
@@ -3171,7 +3186,7 @@ void allCurrency(buffer result) {
 		chitCurrency = "meat";
 	string [int] dispCurrencies = split_string(chitCurrency, "\\|");
 	item current = to_item(dispCurrencies[0]);
-	
+
 	result.append('<div style="float:left" class="hand"><ul id="chit_currency"><li>');
 	foreach i,curr in dispCurrencies {
 		result.append('<span class="currency_block">');
@@ -3179,7 +3194,7 @@ void allCurrency(buffer result) {
 		result.append('</span>');
 	}
 	result.append('<ul>');
-	
+
 	boolean [string] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
 	foreach x,curtag in split_string("meat|"+vars["chit.currencies"]+"|"+vars["chit.currencies.special"], "\\s*(?<!\\\\)[,|]\\s*") {
 		chit_currency curr = getCurrency(curtag);
@@ -3216,7 +3231,7 @@ void allCurrency(buffer result) {
 	result.append('"); if(currencies!=null) { window.location.href = "/KoLmafia/sideCommand?cmd=set+chit.currencies+=+" + currencies.replace(/ /g,"+") + "&pwd=');
 	result.append(my_hash());
 	result.append('"; }\'>Edit List</a></li></ul>');
-	
+
 	result.append('</li></ul></div>');
 }
 
@@ -3254,7 +3269,7 @@ void pickOutfit() {
 
 	buffer picker;
 	picker.pickerStart("outfit", "Select Outfit");
-	
+
 	//Loader
 	foreach i,o in get_outfits()
 		if(i != 0) {
@@ -3263,7 +3278,7 @@ void pickOutfit() {
 			else
 				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + localize(o) + '</a></td>');
 		}
-		
+
 	picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
 	foreach i,o in get_custom_outfits()
 		if(o != " - No Change - ")
@@ -3305,7 +3320,7 @@ void pickOutfit() {
 		foreach e in list
 			result.addGear(e);
 	}
-	
+
 	// In KOLHS, might want to remove hat
 	if(my_path() == "KOLHS") {
 		if(equipped_item($slot[hat]) != $item[none])
@@ -3313,11 +3328,11 @@ void pickOutfit() {
 		else if(get_property("_hatBeforeKolhs") != "")
 			special.addGear("equip "+get_property("_hatBeforeKolhs")+"; set _hatBeforeKolhs = ", "Restore "+get_property("_hatBeforeKolhs"));
 	}
-	
+
 	// If using Kung Fu Fighting, you might want to empty your hands
 		if(have_effect($effect[Kung Fu Fighting]) > 0 && (equipped_item($slot[weapon]) != $item[none] || equipped_item($slot[off-hand]) != $item[none]))
 			special.addGear("unequip weapon; unequip off-hand", "Empty Hands");
-	
+
 	boolean noGearBrick = true;
 	foreach layout in $strings[roof, walls, floor, toolbar]
 		if(vars["chit." + layout + ".layout"].contains_text("gear"))
@@ -3336,16 +3351,16 @@ void pickOutfit() {
 				special.addGear("create unstable fulminate; equip unstable fulminate", "Cook & Equip unstable fulminate");
 		}
 	}
-	
+
 	if(length(special) > 0) {
 		picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Equipment Helper</td></tr>');
 		picker.append(special);
 	}
-	
+
 	picker.addLoader("Getting Dressed");
 	picker.append('</table>');
 	picker.append('</div>');
-	
+
 	chitPickers["outfit"] = picker.to_string();
 }
 
@@ -3404,7 +3419,7 @@ void bakeCharacter() {
 			}
 		}
 	}
-	
+
 	//Outfit
 	string myOutfit = "";
 	matcher outfitMatcher = create_matcher('<center class=tiny>Outfit: (.+?onClick\\=\'(outfit\\("(\\d+)"\\);).+?)</center>', source);
@@ -3426,7 +3441,7 @@ void bakeCharacter() {
 		}
 		return 0;
 	}
-	
+
 	string myGuild() {
 		switch(my_path()) {
 			case "Nuclear Autumn": return "shop.php?whichshop=mutate";
@@ -3512,7 +3527,7 @@ void bakeCharacter() {
 		}
 		return my_path();
 	}
-	
+
 	//Stat Progress
 	int x = my_level();
 	int y = x + 1;
@@ -3523,13 +3538,13 @@ void bakeCharacter() {
 	int current = mySubStats() - lower;
 	int needed = range - current;
 	float progress = (current * 100.0) / range;
-	
+
 	//Level + Council
 	string councilStyle = "";
 	string councilText = "Visit the Council";
 	if(to_int(get_property("lastCouncilVisit")) < my_level() && my_path() != "Community Service" && get_property("kingLiberated") == "false") {
 		councilStyle = 'background-color:#F0F060';
-		councilText = "The Council wants to see you urgently";		
+		councilText = "The Council wants to see you urgently";
 	}
 
 	result.append('<table id="chit_character" class="chit_brick nospace">');
@@ -3549,14 +3564,14 @@ void bakeCharacter() {
 	result.append(myName);
 	result.append('</a>');
 	result.append(myOutfit);
-	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" || 
+	if(vars["chit.clan.display"] == "on" || vars["chit.clan.display"] == "true" ||
 	  (vars["chit.clan.home"] != "" && vars["chit.clan.display"] == "away" && get_clan_name() != vars["chit.clan.home"])) {
 		result.append('<br /><span style="font-weight:normal">');
 		result.append(get_clan_name());
 		result.append('</span>');
 	}
 	result.append('</th></tr>');
-	
+
 	result.append('<tr>');
 	if(myAvatar != "") {
 		result.append('<td rowspan="4" class="avatar');
@@ -3584,7 +3599,7 @@ void bakeCharacter() {
 	result.append('<tr><td class="info">');
 	result.append(myPath());
 	result.append('</td></tr>');
-	
+
 	// 30x30:	hp.gif		meat.gif		hourglass.gif		swords.gif
 	// 20x20:	slimhp.gif	slimmeat.gif	slimhourglass.gif	slimpvp.gif
 	result.append('<tr><td class="info">');
@@ -3593,19 +3608,19 @@ void bakeCharacter() {
 	if(hippy_stone_broken() && index_of(chitSource["health"], "peevpee.php") > 0) {
 		matcher fites = create_matcher("PvP Fights Remaining.+?black>([\\d,]+)</span>", chitSource["health"]);
 		if(fites.find())
-			result.append('<td><div class="chit_resource"><div title="PvP Fights Remaining" style="float:right"><span>' 
+			result.append('<td><div class="chit_resource"><div title="PvP Fights Remaining" style="float:right"><span>'
 				+ fites.group(1) + '</span><a href="peevpee.php" target="mainpane">'
 				+ '<img src="/images/itemimages/slimpvp.gif"></a></div></div></td><div style="clear:both"></div>');
 		#result.append('<td class="turns" align="top" title="Turns played (this run)">' + formatInt(turns_played()) + '</td>');
 	}
-	result.append('</tr>');	
+	result.append('</tr>');
 
 	result.append('<tr>');
 	result.append('<td colspan="2"><div class="chit_resource">');
 	result.allCurrency();
 	result.append('<div title="'+my_adventures()+' Adventures remaining'
 		+ (get_property("kingLiberated") == "true"? '': '\n Current Run: '+my_daycount() +' / '+ turns_played())
-		+ '" style="float:right"><span>' + my_adventures() 
+		+ '" style="float:right"><span>' + my_adventures()
 		+ '</span><img src="/images/itemimages/slimhourglass.gif"></div>');
 	result.append('</div><div style="clear:both"></div></td>');
 	result.append('</tr>');
@@ -3622,17 +3637,17 @@ void bakeCharacter() {
 		result.append(' substats needed)" ><div class="progressbar" style="width:');
 		result.append(progress);
 		result.append('%"></div></td></tr>');
-	}	
+	}
 	result.append('</table>');
-		
+
 	chitBricks["character"] = result;
-		
+
 }
 
 void bakeQuests() {
 
-	string source = chitSource["quests"]; 
-	buffer result;	
+	string source = chitSource["quests"];
+	buffer result;
 	boolean hasQuests = (index_of(source, "<div>(none)</div>") == -1) && (index_of(source, "This Quest Tracker is a work in progress") == -1);
 	static {
 		record bio {
@@ -3651,7 +3666,7 @@ void bakeQuests() {
 		biodata[count(biodata)] = new bio("Fantasy Airship", "statusEngineering", 9);
 		biodata[count(biodata)] = new bio("Battlefield (Frat Outfit)", "statusGalley", 9);
 	}
-	
+
 	// Interpret readout for Oil Peak. u is B/Hg.
 	string to_slick(float u) {
 		float ml = monster_level_adjustment();
@@ -3686,15 +3701,15 @@ void bakeQuests() {
 		else bugbears = '<tr><td class="small"><div>Create a bugbear <b>key-o-tron</b>:<br>'
 		  + '&nbsp;&nbsp;&nbsp;BURTs: '+item_amount($item[BURT])+' /5</div></td></tr>';
 	}
-	
+
 	//See if we actually need to display anything
 	if ((source == "" && bugbears == "") || (!hasQuests && vars["chit.quests.hide"] == "true")) {
 		//We're done here
 		//chitBricks["quests"] = "";
 		return;
 	}
-	
-	//Otherwise we start building our table	
+
+	//Otherwise we start building our table
 	//result.append('<div id="nudgeblock">');
 	result.append('<table id="nudges" class="chit_brick nospace">');
 
@@ -3711,8 +3726,8 @@ void bakeQuests() {
 	//fix my syntax highlighting "
 
 	if(bugbears != "")
-		result.append(bugbears);	
-	
+		result.append(bugbears);
+
 	matcher rowMatcher = create_matcher("<tr(.*?)tr>", source);
 	string quest = "";
 	while (find(rowMatcher)) {
@@ -3725,36 +3740,36 @@ void bakeQuests() {
 			int e;
 
 			e = to_int(get_property("cyrptAlcoveEvilness"));
-			if (e > 25) {			
+			if (e > 25) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (+init)';
-			} else if (e > 0) {			
+			} else if (e > 0) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Alcove]) +'" target="mainpane">Alcove:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Alcove</s>';
 			}
 
 			e = to_int(get_property("cyrptCrannyEvilness"));
-			if (e > 25) {			
+			if (e > 25) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (+NC, +ML)';
-			} else if (e > 0) {			
+			} else if (e > 0) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Cranny]) +'" target="mainpane">Cranny:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Cranny</s>';
 			}
 
 			e = to_int(get_property("cyrptNicheEvilness"));
-			if (e > 25) {			
+			if (e > 25) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Niche]) +'" target="mainpane">Niche:</a> ' + e + ' (sniff dirty old lihc)';
-			} else if (e > 0) {			
+			} else if (e > 0) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Niche]) +'" target="mainpane">Niche:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Niche</s>';
 			}
 
 			e = to_int(get_property("cyrptNookEvilness"));
-			if (e > 25) {			
+			if (e > 25) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Nook]) +'" target="mainpane">Nook:</a> ' + e + ' (+items)';
-			} else if (e > 0) {			
+			} else if (e > 0) {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <a href="' + to_url($location[The Defiled Nook]) +'" target="mainpane">Nook:</a> ' + e + ' (Boss ready)';
 			} else {
 				evil += '<br>&nbsp;&nbsp;&nbsp;* <s>Nook</s>';
@@ -3771,10 +3786,10 @@ void bakeQuests() {
 			foreach peak in $strings[A-boo Peak, Twin Peak, Oil Peak]
 				quest = replace_string(quest, "* "+peak, '* <a href="' + to_url(to_location(peak)) +'" target="mainpane">' + peak + '</a>');
 		}
-		result.append(quest);	
+		result.append(quest);
 	}
  	result.append('</table>');
-	
+
 	//Append any javascript uncle CDM inlucded
 	matcher jsMatcher = create_matcher("<script(.*?)script>", source);
 	if (find(jsMatcher)) {
@@ -3782,7 +3797,7 @@ void bakeQuests() {
 	}
 
  	//result.append("</div>");
-	
+
 	chitBricks["quests"] = result;
 	chitTools["quests"] = "Current Quests|quests.png";
 }
@@ -3821,21 +3836,21 @@ void bakeHeader() {
 #		+'<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>\n'
 #		+'<script src="clilinks.js"></script>\n');
 #	result.replace_string('<script language=Javascript src="/images/scripts/jquery-1.3.1.min.js"></script>',"");
-#	result.replace_string('</head>','<script src="//code.jquery.com/jquery-1.7.2.min.js"></script><script src="clilinks.js"></script></head>'); 
+#	result.replace_string('</head>','<script src="//code.jquery.com/jquery-1.7.2.min.js"></script><script src="clilinks.js"></script></head>');
 
 	// Add doctype to escape quirks mode
 	result.replace_string('<html>', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>');
-	
+
 	//Add CSS to the <head> tag -- chit_custom.css overrides the default chit.css stylesheet.
 	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n<link rel="stylesheet" href="chit_custom.css">\n</head>');
-	
-	//Add JavaScript just before the <body> tag. 
+
+	//Add JavaScript just before the <body> tag.
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
 	result.replace_string('<body', '\n<script type="text/javascript" src="chit.js"></script>\n<body');
-	
+
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
-	
+
 	// remove restricted familiars for KoL's familiar picker
 	matcher famfavmatch = create_matcher("(var FAMILIARFAVES = .+?\\];)",result);
 	if(famfavmatch.find()) {
@@ -3855,13 +3870,13 @@ void bakeHeader() {
 		replacefamfavs .replace_string("= [[[","= [[");
 		result.replace_string(famfavmatch.group(0),replacefamfavs);
 	}
-	
+
 	// Add javascript for remembering autoscroll if desired
 	if(to_boolean(vars["chit.autoscroll"]))
 		result.replace_string("<body ", autoscrollScript);
-	
+
 	chitBricks["header"] = result.to_string();
-		
+
 }
 
 void bakeFooter() {
@@ -3869,7 +3884,7 @@ void bakeFooter() {
 	result.append(chitSource["footer"]);
 
 	chitBricks["footer"] = result.to_string();
-		
+
 }
 
 //Parse the page and break it up into smaller consumable chunks
@@ -3891,7 +3906,7 @@ boolean parsePage(buffer original) {
 		chitSource["familiar"] = parse.group(1);
 		source = parse.replace_first("");
 	}
-	
+
 	// Parse the beginning of the page
 	parse = create_matcher("(^.+?)(<center id='rollover'.+?</center>)(.*?)(<table align=center><tr><td align=right>Muscle:.*?)((?:<Center>Extreme Meter:|<img src=).*?</table>(?:.*?axelottal.*?</table>)?)", source);
 	if(find(parse)) {
@@ -3910,19 +3925,19 @@ boolean parsePage(buffer original) {
 		// delete all matches
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error parsing start of charpane", "red", -1);
-	
+
 	//Footer: Includes everything after the close body tag
 	if(find(parse = create_matcher("(</body></html>.*)", source))) {
 		chitSource["footer"] = parse.group(1);
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error parsing footer", "red", -1);
-	
+
 	// Quests: May or may not be present
 	if(find(parse = create_matcher('(<center id="nudgeblock">.*?(?:</script>|</tr></table>(?:</div>)?<p></center>))', source))) {
 		chitSource["quests"] = parse.group(1);
 		source = parse.replace_first("");
 	}
-	
+
 	// This is for help finding current location (below)
 	location parseLoc(string loc) {
 		if(to_location(loc) != $location[none])
@@ -3980,7 +3995,7 @@ boolean parsePage(buffer original) {
 		chitSource["effects"] += parse.group(1);
 		source = parse.replace_first("");
 	}
-	
+
 	// Pasta Thrall?
 	if(find(parse = create_matcher('(<center><font size=2><b>Pasta Thrall:</b></font>.+?</font>)', source))) {
 		chitSource["thrall"] = parse.group(1);
@@ -3992,7 +4007,7 @@ boolean parsePage(buffer original) {
 		chitSource["refresh"] = parse.group(1);
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error Parsing Refresh", "red", -1);
-	
+
 	// Gelatinous Noob
 	if(my_path() == "Gelatinous Noob" && find(parse = create_matcher('<span class=small><b>Absorptions:.+?</script><br>', source))) {
 		chitSource["gelNoob"] = parse.group(0);
@@ -4011,7 +4026,7 @@ boolean parsePage(buffer original) {
 		chitSource["pirateRealm"] = parse.group(0);
 		source = parse.replace_first("");
 	}
-	
+
 	//Whatever is left
 	chitSource["wtfisthis"] = source;
 
@@ -4037,7 +4052,7 @@ void bakeValhalla() {
 	result.append('<tr>');
 	result.append('<th colspan="3"><a target="mainpane" href="charsheet.php">' + myName + '</a></th>');
  	result.append('</tr>');
-	
+
 	result.append('<tr>');
 	result.append('<td rowspan="4" class="avatar"><a target="mainpane" href="charsheet.php"><img src="/images/otherimages/spirit.gif"></a></td>');
 	result.append('<td class="label">Astral Spirit</a></td>');
@@ -4050,15 +4065,15 @@ void bakeValhalla() {
 	result.append('<tr class="section">');
 	result.append('<td class="label">Karma</td>');
 	result.append('<td class="turns" rowspan="2" style="background-color:white"><img src="/images/itemimages/karma.gif"></td>');
-	result.append('</tr>');	
+	result.append('</tr>');
 
 	result.append('<tr>');
 	result.append('<td class="label" style="color:darkred;font-weight:bold">' + karma + '<td>');
 	result.append('</tr>');
-			
+
 	result.append('</table>');
 
-	
+
 	string progress = "";
 	result.append('<table id="chit_stats" class="chit_brick nospace">');
 
@@ -4070,7 +4085,7 @@ void bakeValhalla() {
 	result.append('</thead>');
 
 	progress = progressCustom(0, 10000, "&infin; / &infin;", -1, false);
-	
+
 	//Muscle
 	result.append('<tr>');
 	#result.append('<td class="label" width="40px">Muscle</td>');
@@ -4079,14 +4094,14 @@ void bakeValhalla() {
 	result.append('<td class="info">'+inf+'</td>');
 	result.append('<td class="progress">' + progress + '</td>');
 	result.append('</tr>');
-	
+
 	//Mysticality
 	result.append('<tr>');
 	result.append('<td class="label">Myst</td>');
 	result.append('<td class="info">'+inf+'</td>');
 	result.append('<td class="progress">' + progress + '</td>');
 	result.append('</tr>');
-	
+
 	//Moxie
 	result.append('<tr>');
 	result.append('<td class="label">Moxie</td>');
@@ -4121,14 +4136,14 @@ void bakeValhalla() {
 	result.append('<td class="info">'+inf+'</td>');
 	result.append('<td class="progress">' + progress + '</td>');
 	result.append('</tr>');
-	
+
 	//MP
 	result.append('<tr>');
 	result.append('<td class="label">MP</td>');
 	result.append('<td class="info">'+inf+'</td>');
 	result.append('<td class="progress">' + progress + '</td>');
 	result.append('</tr>');
-	
+
 	result.append('</table>');
 
 	chitBricks["valhalla"] = result;
@@ -4139,11 +4154,11 @@ void bakeBricks() {
 
 	bakeHeader();
 	bakeFooter();
-	
+
 	// Standardize brick layouts
 	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
 		vars[layout] = vars[layout].to_lower_case().replace_string(" ", "");
-	
+
 
 	if (inValhalla) {
 		bakeValhalla();
@@ -4175,10 +4190,10 @@ void bakeBricks() {
 						case "horsery":		bakeHorsery();		break;
 						case "boombox":		bakeBoombox();		break;
 						case "robo":		bakeRobo();			break;
-						
+
 						// Reserved words
 						case "helpers": case "update": break;
-						
+
 						// Unknown brick is possible plugin if it begins with "plugin". Try to dynamically load it.
 						// note: casing MUST match between brickname and bakebrickname function.
 						default:
@@ -4192,7 +4207,7 @@ void bakeBricks() {
 	}
 
 	bakeToolBar();
-	
+
 }
 
 buffer addBricks(string layout) {
@@ -4204,11 +4219,11 @@ buffer addBricks(string layout) {
 		for i from 0 to (bricks.count()-1) {
 			brick = bricks[i];
 			switch (brick) {
-				case "toolbar":	
-				case "header":	
-				case "footer":	
+				case "toolbar":
+				case "header":
+				case "footer":
 					break;	//Special Bricks that are inserted manually in the correct places
-				default: 
+				default:
 					result.append(chitBricks[brick]);
 			}
 		}
@@ -4219,7 +4234,7 @@ buffer addBricks(string layout) {
 
 buffer buildRoof() {
 	string layout = vars["chit.roof.layout"];
-	
+
 	buffer result;
 	result.append('<div id="chit_roof" class="chit_chamber">');
 	if(inValhalla)
@@ -4244,7 +4259,7 @@ buffer buildWalls() {
 
 buffer buildFloor() {
 	string layout = vars["chit.floor.layout"];
-	
+
 	buffer result;
 	result.append('<div id="chit_floor" class="chit_chamber">');
 	if(!inValhalla)
@@ -4256,17 +4271,17 @@ buffer buildFloor() {
 
 buffer buildCloset() {
 	buffer result;
-	
+
 	if(inValhalla)
 		return result;
-	
+
 	result.append('<div id="chit_closet">');
 
 	foreach key,value in chitPickers
 		result.append(value);
-	
+
 	string layout = vars["chit.toolbar.layout"];
-	
+
 	string [int] bricks = split_string(layout,",");
 	string brick;
 	for i from 0 to (bricks.count()-1) {
@@ -4289,7 +4304,7 @@ buffer buildCloset() {
 					result.append('</div>');
 				}
 				break;
-			default: 
+			default:
 				break;	//Special Bricks that are inserted manually in the correct places
 		}
 	}
@@ -4316,7 +4331,7 @@ buffer spelunky(buffer source) {
 	if(index < 0) // apathetic mood (Feature by Hellno)
 		index = source.index_of("</center><center><font size=1>[<a href=\"charpane.php\">refresh</a>]</font>");
 	if(index < 0) return source;
-	
+
 	// Add combat phase information
 	buffer spelunk;
 	spelunk.append("<div class=small><br><b>Non-combat Phase: ");
@@ -4328,7 +4343,7 @@ buffer spelunky(buffer source) {
 	} else
 		spelunk.append("</b><br><i>- NOW -</i></div>");
 	source.insert(index, spelunk);
-	
+
 	// Add Buddy tooltip info
 	if(source.contains_text("title='A Helpful Guy'"))
 		source = source.replace_string("title='A Helpful Guy'", "title='A Helpful Guy\nDelevels by 5-10 at start of all combats'");
@@ -4338,7 +4353,7 @@ buffer spelunky(buffer source) {
 		source = source.replace_string("title='A Damselfly'", "title='A Damselfly\nHeals 8-10 HP at the end of all successful combats'");
 	else if(source.contains_text("title='A Resourceful Kid'"))
 		source = source.replace_string("title='A Resourceful Kid'", "title='A Resourceful Kid\n Gives 7 gold at the end of all successful combats\nUnlocks that one Idol NC choice'");
-	
+
 	return source;
 }
 
@@ -4347,14 +4362,14 @@ buffer modifyPage(buffer source) {
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
 	if(vars["chit.disable"]=="true")
 		return source.replace_string('[<a href="charpane.php">refresh</a>]', '[<a href="'+ sideCommand('set chit.disable = false') +'">Enable ChIT</a>] &nbsp; [<a href="charpane.php">refresh</a>]');
-		
+
 	if(property_exists("chitVarVer"))		// This is no longer being used since zlib vars were migrated to vProps.
 		remove_property("chitVarVer");
 	if(property_exists("chitCurrency")) {	// This is being given a new name in line with existing vProps.
 		set_property("chit.currencies.showmany.choices", get_property("chitCurrency"));
 		remove_property("chitCurrency");
 	}
-	
+
 	//Check for updates (once a day) if chit.checkversion is true.
 	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit") && get_property("_svnUpdated") == "false") {
 		if(get_property("_chitSVNatHead").length() == 0)
@@ -4366,7 +4381,7 @@ buffer modifyPage(buffer source) {
 			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
 		}
 	}
-	
+
 	// handle limit modes
 	switch(limit_mode()) {
 	case "":			// Mode is not limited
@@ -4380,19 +4395,19 @@ buffer modifyPage(buffer source) {
 	default:			// Unknown limit mode could be dangerous
 		return source;
 	}
-	
+
 	// KoL still has a bug where it doesn't always detect limit mode for batman
 	if(source.contains_text("<b>You're Batfellow</b>"))
 		return source;
-	
+
 	if( index_of(source, 'alt="Karma" title="Karma"><br>') > 0 )
 		inValhalla = true;
-	
+
 	if( contains_text(source, "<hr width=50%><table") ) { // In "License to Adventure" there is <hr width=50%><center>
 		isCompact = true;
 		vprint("CHIT: Compact Character Pane not supported", "blue", 1);
 	}
-	
+
 	if(isCompact || !parsePage(source))
 		return source;
 
@@ -4408,16 +4423,16 @@ buffer modifyPage(buffer source) {
 	chitTools["tracker"] = "No trackers available|questsnone.png";
 	chitTools["moods"] = "Change Moods|select_mood.png";
 	chitTools["update"] = "New version available|update.png";
-	
+
 	// Bake all the bricks we're gonna need
 	bakeBricks();
-	
+
 	//Build the house
 	buffer page;
 	page.append(chitBricks["header"]);
 	page.append(buildHouse());
 	page.append(chitBricks["footer"]);
-	
+
 	return page;
 
 }
