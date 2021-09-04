@@ -1159,7 +1159,7 @@ void pickerGear(slot s) {
 		case $item[backup camera]:
 			pickerBackupCamera();
 			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera</a></td></tr>');
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera (currently ' + get_property("backupCameraMode") + ')</a></td></tr>');
 			break;
 	}
 
