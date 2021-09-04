@@ -768,19 +768,25 @@ void pickerRetroSuperCapeMeta() {
 		else {
 			picker.append('<a class="change" href="');
 			picker.append(sideCommand("retrocape " + hero + " " + mode));
-			picker.append('"><b>CONFIGURE</b> ');
+			picker.append('"><b>CONFIGURE</b> to ');
 		}
 		picker.append(name);
 		if(!active) picker.append('</a>');
 		picker.append('</td></tr>');
 	}
 
-	addCombo("for mainstat exp", my_primestat().to_string().to_lower_case(), "thrill", true);
-	addCombo("to yellow ray", "heck", "kiss", have_effect($effect[Everything Looks Yellow]) == 0);
-	addCombo("to purge evil", "vampire", "kill", true);
-	addCombo("to resist elements", "vampire", "hold", true);
-	addCombo("to spooky lantern", "heck", "kill", true);
-	addCombo("to stun enemies", "heck", "hold", true);
+	string mainstatHero = my_primestat().to_string().to_lower_case();
+	switch(my_primestat()) {
+		case $stat[Muscle]: mainstatHero = "vampire"; break;
+		case $stat[Mysticality]: mainstatHero = "heck"; break;
+		case $stat[Moxie]: mainstatHero = "robot"; break;
+	}
+	addCombo("get mainstat exp", mainstatHero, "thrill", true);
+	addCombo("yellow ray", "heck", "kiss", have_effect($effect[Everything Looks Yellow]) == 0);
+	addCombo("purge evil", "vampire", "kill", true);
+	addCombo("resist elements", "vampire", "hold", true);
+	addCombo("spooky lantern", "heck", "kill", true);
+	addCombo("stun enemies", "heck", "hold", true);
 
 	picker.addLoader("Configuring your cape...");
 	picker.append('</table></div>');
@@ -864,6 +870,40 @@ void pickerRetroSuperCapeAll() {
 	pickerRobot.addLoader("Configuring your cape...");
 	pickerRobot.append('</table></div>');
 	chitPickers["retrosupercaperobot"] = pickerRobot;
+}
+
+string retroSupercapeCurrentSetupName() {
+	string hero = get_property("retroCapeSuperhero");
+	string mode = get_property("retroCapeWashingInstructions");
+
+	switch(hero) {
+		case "vampire": // muscle
+			switch(mode) {
+				case "hold": return "resistances";
+				case "thrill": return my_primestat() == $stat[Muscle] ? "mainstat exp" : "mus exp";
+				case "kiss": return "draining kiss";
+				case "kill": return "purge evil";
+			}
+			break;
+		case "heck": // mysticality
+			switch(mode) {
+				case "hold": return "stun foes";
+				case "thrill": return my_primestat() == $stat[Mysticality] ? "mainstat exp" : "mys exp";
+				case "kiss": return "yellow ray";
+				case "kill": return "spooky lantern";
+			}
+			break;
+		case "robot": // moxie
+			switch(mode) {
+				case "hold": return "handcuff";
+				case "thrill": return my_primestat() == $stat[Moxie] ? "mainstat exp" : "mox exp";
+				case "kiss": return "sleaze attack";
+				case "kill": return "gun crit";
+			}
+			break;
+	}
+
+	return "???";
 }
 
 void pickerBackupCamera() {
@@ -1114,7 +1154,7 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapemeta" href="#">Change to optimal setups!</a></td></tr>');
 			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup!</a></td></tr>');
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup! (currently ' + retroSupercapeCurrentSetupName() + ')</a></td></tr>');
 			break;
 		case $item[backup camera]:
 			pickerBackupCamera();
