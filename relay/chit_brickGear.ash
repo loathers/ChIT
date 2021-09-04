@@ -182,6 +182,15 @@ string gearName(item it, slot s) {
 		case $item[familiar scrapbook]:
 			notes = get_property("scrapbookCharges") + " scraps";
 			break;
+		case $item[industrial fire extinguisher]:
+			int extinguisherCharge = get_property("_fireExtinguisherCharge").to_int();
+			if(extinguisherCharge <= 0) {
+				notes = "empty";
+			}
+			else {
+				notes = extinguisherCharge + "% full";
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
