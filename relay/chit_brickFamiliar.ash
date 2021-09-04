@@ -554,6 +554,8 @@ int hasDrops(item it) {
 			return (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 		case $item[familiar scrapbook]:
 			return get_property("scrapbookCharges").to_int() / 100;
+		case $item[industrial fire extinguisher]:
+			return get_property("_fireExtinguisherCharge").to_int();
 	}
 
 	return 0;
