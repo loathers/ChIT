@@ -177,7 +177,7 @@ string gearName(item it, slot s) {
 		case $item[backup camera]:
 			// 5 extra uses in You, Robot
 			int backupsLeft = (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
-			notes = backupsLeft + " backups left";
+			notes = backupsLeft + " backups left: " + get_property("lastCopyableMonster");
 			break;
 		case $item[familiar scrapbook]:
 			notes = get_property("scrapbookCharges") + " scraps";
