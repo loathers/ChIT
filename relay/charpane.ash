@@ -878,7 +878,7 @@ void bakeEffects() {
 
 	buffer result;
 	buffer songs;
-	buffer expression;
+	buffer uniques;
 	buffer buffs;
 	buffer intrinsics;
 	buffer helpers;
@@ -907,12 +907,12 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentbuff.effectHTML);
-		} else if (showSongs && $strings[at, aob, aoj, awol] contains currentbuff.effectType) {
+		} else if (showSongs && $strings[at, aob, aoj] contains currentbuff.effectType) {
 			songs.append(currentbuff.effectHTML);
-		} else if(showSongs && to_skill(currentbuff.effectName).expression == true) {
-			expression.append('<tbody class="buffs">');
-			expression.append(currentbuff.effectHTML);
-			expression.append('</tbody>');
+		} else if(showSongs && (to_skill(currentbuff.effectName).expression || $strings[awol, asdon] contains currentbuff.effectType)) {
+			uniques.append('<tbody class="buffs">');
+			uniques.append(currentbuff.effectHTML);
+			uniques.append('</tbody>');
 		} else {
 			buffs.append(currentbuff.effectHTML);
 		}
@@ -1031,7 +1031,7 @@ void bakeEffects() {
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
 				case "buffs":
-					result.append(expression);
+					result.append(uniques);
 					result.append(buffs);
 					break;
 				case "songs": result.append(songs); break;

@@ -80,6 +80,17 @@ Cautious Prowl	type:"awol"
 Prideful Strut	type:"awol"
 Leisurely Amblin'	type:"awol"
 
+#Asdonmartin Buffs
+Driving Obnoxiously	type:"asdon"
+Driving Stealthily	type:"asdon"
+Driving Wastefully	type:"asdon"
+Driving Safely	type:"asdon"
+Driving Recklessly	type:"asdon"
+Driving Intimidatingly	type:"asdon"
+Driving Quickly	type:"asdon"
+Driving Observantly	type:"asdon"
+Driving Waterproofly	type:"asdon"
+
 
 #Counters
 Dance Card	style:"background-color:khaki"
