@@ -606,6 +606,79 @@ void pickerFlavour() {
 	chitPickers["flavour"] = picker;
 }
 
+boolean isDriving() {
+	foreach eff in $effects[Driving Obnoxiously, Driving Stealthily, Driving Wastefully, Driving Safely, Driving Recklessly, Driving Intimidatingly, Driving Quickly, Driving Observantly, Driving Waterproofly] {
+		if(have_effect(eff) > 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void pickerAsdon() {
+	buffer picker;
+	picker.pickerStart("asdon", "Drive Differently! (" + get_fuel() + " fuel)");
+	picker.addLoader("Adjusting driving style...");
+
+	void addDriving(effect style) {
+		boolean current = have_effect(style) > 0;
+		boolean canDo = !current && get_fuel() >= 37;
+		string name = style.to_string().split_string(" ")[1];
+		string driveLink = '<a class="change" href="' + sideCommand("asdonmartin drive " + name.to_lower_case()) + '">';
+
+		picker.append('<tr class="pickitem');
+		if(!canDo) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		if(canDo) picker.append(driveLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(style.image);
+		picker.append('" title="');
+		picker.append(style.to_string());
+		picker.append('" />');
+		if(canDo) picker.append('</a>');
+		picker.append('</td><td colspan="2">');
+		if(current) {
+			picker.append('<b>Currently Driving</b> ');
+		}
+		else {
+			if(canDo) picker.append(driveLink);
+			picker.append('<b>Drive</b> ');
+		}
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		if(style == $effect[Driving Wastefully]) picker.append("Oil Peak pressure reduction");
+		else picker.append(parseEff(style));
+		picker.append('</span>');
+		if(canDo) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	foreach eff in $effects[Driving Obnoxiously, Driving Stealthily, Driving Wastefully, Driving Safely, Driving Recklessly, Driving Intimidatingly, Driving Quickly, Driving Observantly, Driving Waterproofly] {
+		addDriving(eff);
+	}
+
+	string workshedLink = '<a class="change visit done" href="campground.php?action=workshed" target="mainpane">';
+	picker.append('<tr class="pickitem"><td class-"icon">');
+	picker.append(workshedLink);
+	picker.append('<img class="chit_icon" src="/images/itemimages/');
+	picker.append($item[Asdon Martin keyfob].image);
+	picker.append('" title="Visit your workshed" /></a></td><td colspan="2">');
+	picker.append(workshedLink);
+	picker.append('<b>Visit</b> your workshed</a></td></tr>');
+
+	if(isDriving()) {
+		string stopLink = '<a class="change" href="' + sideCommand("asdonmartin drive clear") + '">';
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.append(stopLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/antianti.gif" title="Stop driving" /></a></td><td colspan="2">');
+		picker.append(stopLink);
+		picker.append('<b>Stop</b> Driving</a></td></tr>');
+	}
+
+	picker.append('</table></div>');
+	chitPickers["asdon"] = picker;
+}
+
 buff parseBuff(string source) {
 	buff myBuff;
 
@@ -826,6 +899,10 @@ buff parseBuff(string source) {
 	if(doArrows && myBuff.isIntrinsic)
 		result.append(' colspan="2"');
 	result.append('>');
+	if(myBuff.effectType == "asdon") {
+		pickerAsdon();
+		result.append('<a class="chit_launcher done" rel="chit_pickerasdon" href="#">');
+	}
 	result.append(effectAlias);
 
 	//ckb: Add modification details for buffs and effects
@@ -843,6 +920,9 @@ buff parseBuff(string source) {
 		}
 	}
 
+	if(myBuff.effectType == "asdon") {
+		result.append('</a>');
+	}
 	result.append('</td>');
 	if(myBuff.isIntrinsic) {
 		result.append('<td class="infinity');
@@ -928,6 +1008,17 @@ void bakeEffects() {
 			else if(currentbuff.effectName == "Spookyraven Lights Out")
 				helpers.append(helperSpookyraven());
 		}
+	}
+
+	if(!isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
+		pickerAsdon();
+
+		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
+		uniques.append($item[Asdon Martin keyfob].image);
+		uniques.append('" width="20" height="20" /></td><td class="info"');
+		if(get_property("relayAddsUpArrowLinks").to_boolean())
+			uniques.append(' colspan="2"');
+		uniques.append('><a class="chit_launcher done" rel="chit_pickerasdon" href="#">Not Driving</a></td><td class="infizero right">00</td></tr></tbody>');
 	}
 
 	// Add helper for Xiblaxian holo-wrist-puter

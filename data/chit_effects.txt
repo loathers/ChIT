@@ -83,7 +83,7 @@ Leisurely Amblin'	type:"awol"
 #Asdonmartin Buffs
 Driving Obnoxiously	type:"asdon"
 Driving Stealthily	type:"asdon"
-Driving Wastefully	type:"asdon"
+Driving Wastefully	type:"asdon", desc:"Oil Peak pressure reduction"
 Driving Safely	type:"asdon"
 Driving Recklessly	type:"asdon"
 Driving Intimidatingly	type:"asdon"

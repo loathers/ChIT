@@ -30,10 +30,10 @@ boolean [item] to_list(string list) {
 	boolean [item] retval;
 	foreach i, it in split_string(list, "[,|]")
 		retval[ to_item(it) ] = true;
-		
+
 	// In case there is no item in the list, or something doesn't parse as an item
 	remove retval[ $item[none] ];
-	
+
 	return retval;
 }
 
@@ -77,7 +77,7 @@ string define_prop(string name, string type, string def) {
 		remove_property(name);
 	else if(raw_value != value)
 		set_property(name, value);
-		
+
 	return value;
 }
 
@@ -167,7 +167,7 @@ boolean be_good(familiar johnny) {
       case "Trendy": if (!is_trendy(johnny)) return false; break;
       case "Avatar of Boris":
       case "Avatar of Jarlsberg":
-      case "Avatar of Sneaky Pete": 
+      case "Avatar of Sneaky Pete":
       case "Actually Ed the Undying": return false;
       case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
    }
@@ -250,7 +250,7 @@ void bakeUpdate(string thisver, string prefix, string newver) {
 		result.append('" title="SVN Installation">here</a> to install current version from SVN</p>');
 	}
 	result.append('</td></tr></tbody></table>');
-	chitBricks["update"] = result.to_string();		
+	chitBricks["update"] = result.to_string();
 }
 
 /*****************************************************
@@ -297,7 +297,7 @@ stat findSub(stat s) {
 
 string progressSubStats(stat s) {
 	int statval = my_basestat(s);
-	
+
 	int lower = statval**2;
 	int range = (statval + 1)**2 - lower;
 	int current = my_basestat(findSub(s)) - lower;
@@ -311,7 +311,7 @@ string progressCustom(int current, int limit, string hover, int severity, boolea
 	string color = "";
 	string title = "";
 	string border = "";
-	
+
 	switch (severity) {
 		case -1	: color = "#D0D0D0"; 	break;		//disabled
 		case 0	: color = "blue"; 		break;		//neutral
@@ -331,7 +331,7 @@ string progressCustom(int current, int limit, string hover, int severity, boolea
 	}
 	if (active) border = ' style="border-color:#707070"';
 	if (limit == 0) limit = 1;
-	
+
 	float progress = (min(current, limit) * 100.0) / limit;
 	buffer result;
 	result.append('<div class="progressbox"' + title + border + '>');
@@ -348,8 +348,8 @@ string progressCustom(int current, int limit, int severity, boolean active) {
 *****************************************************/
 
 void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker');	
-	picker.append(rel);	
+	picker.append('<div id="chit_picker');
+	picker.append(rel);
 	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="3">');
 	picker.append(message);
 	picker.append('</th></tr>');
@@ -383,14 +383,14 @@ void addSadFace(buffer picker, string message) {
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
 string parseMods(string evm, boolean span) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
-	
+
 	// Standardize capitalization
 	matcher uncap = create_matcher("\\b[a-z]", evm);
 	while(uncap.find())
 		uncap.append_replacement(enew, to_upper_case(uncap.group(0)));
 	uncap.append_tail(enew);
 	evm = enew;
-	
+
 	// Move parenthesis to the beginning of the modifier
 	enew.set_length(0);
 	matcher paren = create_matcher("(, ?|^)([^,]*?)\\((.+?)\\)", evm);
@@ -402,7 +402,7 @@ string parseMods(string evm, boolean span) {
 	}
 	paren.append_tail(enew);
 	evm = enew;
-	
+
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
 		boolean [string] original;
@@ -434,7 +434,7 @@ string parseMods(string evm, boolean span) {
 			result.append(s.val);
 			evm = to_string(result);
 		}
-	
+
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
 	enew.set_length(0);
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
@@ -476,7 +476,7 @@ string parseMods(string evm, boolean span) {
 	}
 	parse.append_tail(enew);
 	evm = enew;
-	
+
 	// May be an extra comma left at start. :(
 	// Add missing + in front of modifier, for consistency. Then remove colon because it is in the way of legibility
 	// Change " Percent: +XX" and " Drop: +XX" to "+XX%"
@@ -497,15 +497,15 @@ string parseMods(string evm, boolean span) {
 			enew.append(parse.group(4));	// This does not contain Drop, Percent or the colon.
 			if(parse.group(2) != "")		// group is Drop or Percent
 				enew.append("%");
-		
-		} else if(parse.group(6) != "") {	// group is the HP&MP combined Regen	
+
+		} else if(parse.group(6) != "") {	// group is the HP&MP combined Regen
 			enew.append("All Regen ");
 			enew.append(parse.group(7));
 		}
 	}
 	parse.append_tail(enew);
 	evm = enew;
-	
+
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
@@ -532,7 +532,7 @@ string parseMods(string evm, boolean span) {
 		evm = replace_string(evm,"Meat","<span class=moditem>Meat</span>");
 		evm = replace_string(evm,"ML","<span class=modml>ML</span>");
 	}
-	
+
 	//decorate elemental effects with pretty colors
 	string prismatize(string input) {
 		string [int] prism;
@@ -573,10 +573,10 @@ string parseEff(effect ef, boolean span) {
 	# if(ef == $effect[Polka of Plenty]) ef = $effect[Video... Games?];
 	switch(ef) {
 	case $effect[Knob Goblin Perfume]: return "";
-	case $effect[Bored With Explosions]: 
+	case $effect[Bored With Explosions]:
 		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
 		if(wafe.find()) return wafe.group(1);
-		return "You're just over them"; 
+		return "You're just over them";
 	}
 
 	# return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
