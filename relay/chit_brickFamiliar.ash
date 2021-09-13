@@ -1748,9 +1748,6 @@ void bakeFamiliar() {
 			case $familiar[astral badger]:
 				info = "Shrooms: " + info;
 				break;
-			case $familiar[Mini-Hipster]:
-				info = "Fights: " + info;
-				break;
 			case $familiar[Bloovian Groose]:
 				info = "Grease: " + info;
 				break;
