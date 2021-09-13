@@ -963,6 +963,7 @@ void bakeEffects() {
 	buffer intrinsics;
 	buffer helpers;
 	int total = 0;
+	boolean drivingDisplayed = false;
 
 	//Get layout preferences
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
@@ -990,6 +991,9 @@ void bakeEffects() {
 		} else if (showSongs && $strings[at, aob, aoj] contains currentbuff.effectType) {
 			songs.append(currentbuff.effectHTML);
 		} else if(showSongs && (to_skill(currentbuff.effectName).expression || $strings[awol, asdon] contains currentbuff.effectType)) {
+			if(currentbuff.effectType == "asdon") {
+				drivingDisplayed = true;
+			}
 			uniques.append('<tbody class="buffs">');
 			uniques.append(currentbuff.effectHTML);
 			uniques.append('</tbody>');
@@ -1010,7 +1014,7 @@ void bakeEffects() {
 		}
 	}
 
-	if(!isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
+	if(!drivingDisplayed && !isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
 		pickerAsdon();
 
 		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
