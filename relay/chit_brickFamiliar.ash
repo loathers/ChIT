@@ -2009,6 +2009,18 @@ void bakeFamiliar() {
 				ghostItem.url_encode() + '%22">' + ghostItem + '</a>!';
 		}
 		break;
+	case $familiar[Reagnimated Gnome]:
+		int gnomeAdv = get_property("_gnomeAdv").to_int();
+		if(gnomeAdv > 0) {
+			info += gnomeAdv + " adv gained";
+		}
+		break;
+	case $familiar[Temporal Riftlet]:
+		int riftletAdv = get_property("_riftletAdv").to_int();
+		if(riftletAdv > 0) {
+			info += riftletAdv + " adv gained";
+		}
+		break;
 	}
 
 	//Get equipment info
