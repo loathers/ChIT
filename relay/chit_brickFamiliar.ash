@@ -1576,6 +1576,28 @@ void FamPoke()
 
 }
 
+string ensorceleeDescription(string kolProvided) {
+	boolean cloake = have_equipped($item[vampyric cloake]);
+	monster ensorcelee = get_property("ensorcelee").to_monster();
+	int ensorceleeLevel = get_property("ensorceleeLevel").to_int();
+
+	switch(ensorcelee.monster_phylum()) {
+		case $phylum[beast]:
+			float meatDropBonus = min(max(10, ensorceleeLevel.to_float() / 2.5), 300);
+			if(cloake) {
+				meatDropBonus *= 1.25;
+			}
+			return "+" + meatDropBonus.to_int() + "% Meat Drops";
+		case $phylum[bug]:
+			float itemDropBonus = min(max(10, ensorceleeLevel.to_float() / 5), 300);
+			if(cloake) {
+				itemDropBonus *= 1.25;
+			}
+			return "+" + itemDropBonus.to_int() + "% Item Drops";
+		default:
+			return kolProvided;
+	}
+}
 
 # Thanks to Cannonfire40 for FamVampyre!
 # <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
@@ -1604,7 +1626,7 @@ void FamVampyre() {
 
 	matcher id = create_matcher('https://s3.amazonaws.com/images.kingdomofloathing.com/(.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
 	if(id.find())
-		bake(id.group(2), id.group(3), "/images/"+id.group(1));
+		bake(id.group(2), ensorceleeDescription(id.group(3)), "/images/"+id.group(1));
 	else
 		bake("", "", "/images/itemimages/blank.gif");
 
