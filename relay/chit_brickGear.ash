@@ -191,6 +191,12 @@ string gearName(item it, slot s) {
 				notes = extinguisherCharge + "% full";
 			}
 			break;
+		case $item[mafia thumb ring]:
+			int thumbAdvs = get_property("_mafiaThumbRingAdvs").to_int();
+			if(thumbAdvs > 0) {
+				notes = thumbAdvs + " adv gained";
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
