@@ -1615,9 +1615,9 @@ void FamVampyre() {
 		if (name == "") {
 			result.append('You have no ensorcelee, go get one!');
 		} else {
-			result.append('<b>' + name + '</b>');
+			result.append(name + ' (level ' + get_property("ensorceleeLevel") + ')');
 			result.append('<br>');
-			result.append('<font color=blue><b>'+desc+'</font></b>');
+			result.append('<font color=blue>'+desc+'</font>');
 		}
 		result.append('</td>');
 		result.append('</tr>');
