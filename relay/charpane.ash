@@ -963,7 +963,7 @@ void bakeEffects() {
 	buffer intrinsics;
 	buffer helpers;
 	int total = 0;
-	boolean drivingDisplayed = false;
+	boolean [string] uniqueTypesShown;
 
 	//Get layout preferences
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
@@ -979,42 +979,40 @@ void bakeEffects() {
 			vprint("CHIT: Effects map could not be loaded (" + mapfile + ")", "red", 1);
 	}
 
-	buff currentbuff;
+	buff currentBuff;
 
 	//Regular Effects
 	matcher rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["effects"]);
 	while (find(rowMatcher)) {
-		currentbuff = rowMatcher.group(1).parseBuff();
+		currentBuff = rowMatcher.group(1).parseBuff();
 
 		if (currentBuff.isIntrinsic) {
-			intrinsics.append(currentbuff.effectHTML);
-		} else if (showSongs && $strings[at, aob, aoj] contains currentbuff.effectType) {
-			songs.append(currentbuff.effectHTML);
-		} else if(showSongs && (to_skill(currentbuff.effectName).expression || $strings[awol, asdon] contains currentbuff.effectType)) {
-			if(currentbuff.effectType == "asdon") {
-				drivingDisplayed = true;
-			}
+			intrinsics.append(currentBuff.effectHTML);
+		} else if (showSongs && $strings[at, aob, aoj] contains currentBuff.effectType) {
+			songs.append(currentBuff.effectHTML);
+		} else if(showSongs && (to_skill(currentBuff.effectName).expression || $strings[awol, asdon] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
+			uniqueTypesShown[currentBuff.effectType] = true;
 			uniques.append('<tbody class="buffs">');
-			uniques.append(currentbuff.effectHTML);
+			uniques.append(currentBuff.effectHTML);
 			uniques.append('</tbody>');
 		} else {
-			buffs.append(currentbuff.effectHTML);
+			buffs.append(currentBuff.effectHTML);
 		}
 		total += 1;
 
-		if(currentbuff.effectTurns == 0) {
-			if(currentbuff.effectName == "Fortune Cookie")
+		if(currentBuff.effectTurns == 0) {
+			if(currentBuff.effectName == "Fortune Cookie")
 				helpers.append(helperSemiRare());
-			else if(currentbuff.effectName == "Wormwood")
+			else if(currentBuff.effectName == "Wormwood")
 				helpers.append(helperWormwood());
-			else if(currentbuff.effectName == "Dance Card")
+			else if(currentBuff.effectName == "Dance Card")
 				helpers.append(helperDanceCard());
-			else if(currentbuff.effectName == "Spookyraven Lights Out")
+			else if(currentBuff.effectName == "Spookyraven Lights Out")
 				helpers.append(helperSpookyraven());
 		}
 	}
 
-	if(!drivingDisplayed && !isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
+	if(!uniqueTypesShown["asdon"] && !isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
 		pickerAsdon();
 
 		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
@@ -1032,8 +1030,8 @@ void bakeEffects() {
 	//Intrinsic Effects
 	rowMatcher = create_matcher("<tr>(.*?)</tr>", chitSource["intrinsics"]);
 	while (find(rowMatcher)){
-		currentbuff = rowMatcher.group(1).parseBuff();
-		intrinsics.append(currentbuff.effectHTML);
+		currentBuff = rowMatcher.group(1).parseBuff();
+		intrinsics.append(currentBuff.effectHTML);
 		total += 1;
 	}
 
