@@ -12,6 +12,17 @@ svn checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT/branc
 
 Will require [a recent build of KoLMafia](https://ci.kolmafia.us/job/Kolmafia/lastSuccessfulBuild/).
 
+## What if I already have the sourceforge version installed?
+
+If you are switching from the old sourceforge version of ChIT, run this command before the previous command:
+
+```
+svn delete mafiachit
+```
+
+If you have done any configuration of ChIT on the old version, don't worry!
+Your settings will carry over automatically.
+
 # Settings
 
 ## How Settings Work
