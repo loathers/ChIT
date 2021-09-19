@@ -7,7 +7,7 @@ Character Info Toolbox (ChIT for short) is a character pane relay override scrip
 Run this command in the graphical CLI:
 
 ```
-svn checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT/branches/main/kolmafia/
+svn checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT/branches/main/src/
 ```
 
 Will require [a recent build of KoLMafia](https://ci.kolmafia.us/job/Kolmafia/lastSuccessfulBuild/).
