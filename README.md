@@ -27,7 +27,7 @@ Your settings will carry over automatically.
 
 Here are some very old examples of what ChIT can make your charpane look like, compared against the default charpane.
 
-![Chit Examples](./chitpanels.png)
+![Chit Examples](docs/chitpanels.png)
 
 More up to date examples coming soon!
 
