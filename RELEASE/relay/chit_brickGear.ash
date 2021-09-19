@@ -1285,38 +1285,6 @@ void pickerGear(slot s) {
 			command = cmd_override;
 
 		switch(vars["chit.gear.layout"]) {
-		case "experimental":
-			b.append('<div class="chit_flexitem" style="order:');
-			b.append(danger_level);
-			b.append(';"><div><a class="done" oncontextmenu="descitem(');
-			b.append(it.descid);
-			b.append(',0,event); return false;" onclick="descitem(');
-			b.append(it.descid);
-			b.append(',0,event)" href="#">');
-
-			b.addItemIcon(it,"Click for item description",danger_level);
-			b.append('</a></div><div style="max-width:160px;">');
-			//b.add_favorite_button(it);
-			if(take_action) {
-				b.append('<a class="change" href="');
-				b.append(command);
-				b.append('">');
-			}
-			b.append('<span style="font-weight:bold;">');
-			if(danger_level > 0)
-				b.append('<span class="warning-link">');
-			b.append(action);
-			if(danger_level > 0)
-				b.append('</span>');
-			b.append(' ');
-			b.append(action_description);
-			b.append('</span> ');
-			b.append(gearName(it, s));
-			if(take_action)
-				b.append('</a>');
-			b.append('</div></div>');
-			break;
-
 		case "minimal":
 			b.append('<span><a class="');
 			if(take_action)
@@ -1341,7 +1309,7 @@ void pickerGear(slot s) {
 			b.append('</span>');
 			break;
 
-		default:
+		case "oldschool":
 			b.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
 			b.append(it.descid);
 			b.append(',0,event); return false;" onclick="descitem(');
@@ -1374,6 +1342,39 @@ void pickerGear(slot s) {
 			b.append('</td><td>');
 			b.add_favorite_button(it);
 			b.append('</td></tr>');
+			break;
+
+		default:
+			b.append('<div class="chit_flexitem" style="order:');
+			b.append(danger_level);
+			b.append(';"><div><a class="done" oncontextmenu="descitem(');
+			b.append(it.descid);
+			b.append(',0,event); return false;" onclick="descitem(');
+			b.append(it.descid);
+			b.append(',0,event)" href="#">');
+
+			b.addItemIcon(it,"Click for item description",danger_level);
+			b.append('</a></div><div style="max-width:160px;">');
+			//b.add_favorite_button(it);
+			if(take_action) {
+				b.append('<a class="change" href="');
+				b.append(command);
+				b.append('">');
+			}
+			b.append('<span style="font-weight:bold;">');
+			if(danger_level > 0)
+				b.append('<span class="warning-link">');
+			b.append(action);
+			if(danger_level > 0)
+				b.append('</span>');
+			b.append(' ');
+			b.append(action_description);
+			b.append('</span> ');
+			b.append(gearName(it, s));
+			if(take_action)
+				b.append('</a>');
+			b.append('</div></div>');
+			break;
 		}
 
 		return true;
@@ -1390,15 +1391,17 @@ void pickerGear(slot s) {
 			buffer temp;
 
 			switch(vars["chit.gear.layout"]) {
-			case "experimental":
-				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-				temp.append(name);
-				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+			case "oldschool":
 				break;
 			case "minimal":
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				temp.append(name);
 				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				break;
+			default:
+				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
+				temp.append(name);
+				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			}
 
@@ -1417,11 +1420,13 @@ void pickerGear(slot s) {
 			}
 
 			switch(vars["chit.gear.layout"]) {
-			case "experimental":
-				temp.append('</div></td></tr>');
+			case "oldschool":
 				break;
 			case "minimal":
 				temp.append('</td></tr>');
+				break;
+			default:
+				temp.append('</div></td></tr>');
 				break;
 			}
 
@@ -1530,12 +1535,14 @@ void pickerGear(slot s) {
 			sort avail by -gear_weight(value);
 
 			switch(vars["chit.gear.layout"]) {
-			case "experimental":
-				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr>');
-				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
+			case "oldschool":
 				break;
 			case "minimal":
 				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				break;
+			default:
+				picker.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">best inventory</td></tr>');
+				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			}
 
@@ -1560,11 +1567,13 @@ void pickerGear(slot s) {
 					}
 
 			switch(vars["chit.gear.layout"]) {
-			case "experimental":
-				picker.append('</div></td></tr>');
+			case "oldschool":
 				break;
 			case "minimal":
 				picker.append('</td></tr>');
+				break;
+			default:
+				picker.append('</div></td></tr>');
 				break;
 			}
 		}
