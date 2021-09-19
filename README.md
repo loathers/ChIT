@@ -306,14 +306,18 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 ## Historical Credits
 
 By Chez up to v 0.6.0 -- All hail Chez! After that a bunch of people assumed control.
+
 Chez offers many thanks to:
-Zarqon, for his zlib library
-Bale, from whose CounterChecker script I stole some ideas and code
-All the countless KoLMafia devs and contributors, whose work make all our little pet projects possible
-Ereinion and Caprosmaster, for helping with initial testing and feedback
-Icons from http://www.famfamfam.com/lab/icons/silk/ & https://www.flaticon.com/
+
+- Zarqon, for his zlib library
+- Bale, from whose CounterChecker script I stole some ideas and code
+- All the countless KoLMafia devs and contributors, whose work make all our little pet projects possible
+- Ereinion and Caprosmaster, for helping with initial testing and feedback
+- Icons from http://www.famfamfam.com/lab/icons/silk/ & https://www.flaticon.com/
+
 Bale also wants to offer thanks to:
-AlbinoRhino who has helped me with javascript, html and css when it exceeded my ability
-ckb who wrote the tracker brick and added display and parsing for effects descriptions
-soolar who wrote the amazing gear Brick
-Many other people who have inspired and assisted me in with this project in ways that are hard to quantify
+
+- AlbinoRhino who has helped me with javascript, html and css when it exceeded my ability
+- ckb who wrote the tracker brick and added display and parsing for effects descriptions
+- soolar who wrote the amazing gear Brick
+- Many other people who have inspired and assisted me in with this project in ways that are hard to quantify
