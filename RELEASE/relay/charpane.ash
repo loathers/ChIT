@@ -13,7 +13,6 @@ import "chit_brickRobo.ash";
 // Set default values for configuration properties. These values will be used if there is no existing property
 // For more information refer to documentation in /data/chit_ReadMe.txt
 setvar("chit.autoscroll", true);
-setvar("chit.checkversion", false);
 setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
 setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
@@ -4462,18 +4461,6 @@ buffer modifyPage(buffer source) {
 	if(property_exists("chitCurrency")) {	// This is being given a new name in line with existing vProps.
 		set_property("chit.currencies.showmany.choices", get_property("chitCurrency"));
 		remove_property("chitCurrency");
-	}
-
-	//Check for updates (once a day) if chit.checkversion is true.
-	if(vars["chit.checkversion"]=="true" && svn_exists("mafiachit") && get_property("_svnUpdated") == "false") {
-		if(get_property("_chitSVNatHead").length() == 0)
-			set_property("_chitSVNatHead", svn_at_head("mafiachit"));
-		if(get_property("_chitSVNatHead") == "false") {
-			if(get_property("_chitChecked") != "true")
-				print("Character Info Toolbox has become outdated. It is recommended that you update it from SVN...", "red");
-			set_property("_chitChecked", "true");
-			bakeUpdate(svn_info("mafiachit").revision, "Revision ", svn_info("mafiachit").last_changed_rev);
-		}
 	}
 
 	// handle limit modes
