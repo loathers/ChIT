@@ -23,6 +23,14 @@ svn delete mafiachit
 If you have done any configuration of ChIT on the old version, don't worry!
 Your settings will carry over automatically.
 
+# Examples
+
+Here are some very old examples of what ChIT can make your charpane look like, compared against the default charpane.
+
+![Chit Examples](docs/chitpanels.png)
+
+More up to date examples coming soon!
+
 # Settings
 
 ## How Settings Work
