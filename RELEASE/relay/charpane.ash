@@ -42,7 +42,7 @@ setvar("chit.gear.display.in-run.defaults", "create=false, pull=false, amount=al
 setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all");
 setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
 setvar("chit.gear.layout", "default");
-setvar("chit.gear.favorites", "item", "Pantsgiving|your cowboy boots|gold detective badge|Mr. Screege's spectacles|KoL Con 13 snowglobe|ghostly reins|training helmet|over-the-shoulder Folder Holder|Spelunker's whip|The Jokester's gun|protonic accelerator pack");
+setvar("chit.gear.favorites", "item", "");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
 setvar("chit.helpers.dancecard", true);
