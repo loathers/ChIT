@@ -1,0 +1,150 @@
+# Accordion Thief Buffs
+The Moxious Madrigal	type:"at", alias:"Moxious Madrigal"
+The Magical Mojomuscular Melody	type:"at", alias:"Mojomuscular Melody"
+Cletus's Canticle of Celerity	type:"at", alias:"Canticle of Celerity"
+Power Ballad of the Arrowsmith	type:"at", alias:"Power Ballad"
+Polka of Plenty	type:"at", alias:"Polka of Plenty"
+Jackasses' Symphony of Destruction	type:"at", alias:"Jackasses'"
+Fat Leon's Phat Loot Lyric	type:"at", alias:"Phat Loot"
+Brawnee's Anthem of Absorption	type:"at", alias:"Brawnee's"
+Psalm of Pointiness	type:"at", alias:"Pointiness"
+Stevedave's Shanty of Superiority	type:"at", alias:"Shanty of Superiority"
+Aloysius' Antiphon of Aptitude	type:"at", alias:"Antiphon"
+Ode to Booze	type:"at", alias:"Ode to Booze"
+The Sonata of Sneakiness	type:"at", alias:"Sonata of Sneakiness"
+Carlweather's Cantata of Confrontation	type:"at", alias:"Cantata of Confrontation"
+Ur-Kel's Aria of Annoyance	type:"at", alias:"Urkel's"
+Dirge of Dreadfulness	type:"at", alias:"Dirge of Dreadfulness"
+The Ballad of Richie Thingfinder	type:"at", alias:"Thingfinder"
+Benetton's Medley of Diversity	type:"at", alias:"Benetton's"
+Elron's Explosive Etude	type:"at", alias:"Elron's"
+Chorale of Companionship	type:"at", alias:"Chorale of Companionship"
+Prelude of Precision	type:"at", alias:"Prelude of Precision"
+Donho's Bubbly Ballad	type:"at", alias:"Donho's Bubbly Ballad"
+Cringle's Curative Carol	type:"at", alias:"Cringle's Curative Carol"
+Inigo's Incantation of Inspiration	type:"at", alias:"Inigo's"
+Rolando's Rondo of Resisto	type:"at", alias:"Rondo of Resisto"
+Paul's Passionate Pop Song	type:"at", alias:"Passionate Pop Song"
+
+#Turtle Tamer Buffs
+Ghostly Shell	type:"tt"
+Tenacity of the Snapper	type:"tt"
+Empathy	type:"tt"
+Reptilian Fortitude	type:"tt"
+Astral Shell	type:"tt"
+Jingle Jangle Jingle	type:"tt", alias:"Jingle Bells"
+Curiosity of Br'er Tarrypin	type:"tt", alias:"Curiosity"
+
+#Seal Clubber Buffs
+Rage of the Reindeer	type:"sc"
+Musk of the Moose	type:"sc"
+Snarl of the Timberwolf	type:"sc"
+A Few Extra Pounds	type:"sc"
+Iron Palms	type:"sc"
+
+#Pastamancer Buffs
+Springy Fusilli	type:"pm"
+Leash of Linguini	type:"pm"
+Spirit of Bacon Grease	type:"pm", style:"color:blueviolet;font-style:italic"
+Spirit of Cayenne	type:"pm", style:"color:red;font-style:italic"
+Spirit of Peppermint	type:"pm", style:"color:blue;font-style:italic"
+Spirit of Garlic	type:"pm", style:"color:green;font-style:italic"
+Spirit of Wormwood	type:"pm", style:"color:grey;font-style:italic"
+
+#Sauceror Buffs
+Antibiotic Saucesphere	type:"sa", alias:"Antibiotic Sauce"
+Elemental Saucesphere	type:"sa", alias:"Elemental Sauce"
+Jalape&ntilde;o Saucesphere	type:"sa", alias:"Jalape&ntilde;o"
+Scarysauce	type:"sa"
+Blood Sugar Sauce Magic	alias:"Blood Sugar Sauce"
+
+#Disco Bandit Buffs
+Smooth Movements	type:"db"
+
+#Avatar of Boris Buffs
+Song of Accompaniment	type:"aob", alias:"Accompaniment"
+Song of Cockiness	type:"aob", alias:"Cockiness"
+Song of Solitude	type:"aob", alias:"Solitude"
+Song of Fortune	type:"aob", alias:"Fortune"
+Song of Battle	type:"aob", alias:"Battle"
+Song of the Glorious Lunch	type:"aob"
+
+#Avatar of Jarlsberg Buffs
+Coffeesphere	type:"aoj"
+Oilsphere	type:"aoj"
+Gristlesphere	type:"aoj"
+Chocolatesphere	type:"aoj"
+
+#Avatar of West of Loathing Buffs
+Cautious Prowl	type:"awol"
+Prideful Strut	type:"awol"
+Leisurely Amblin'	type:"awol"
+
+#Asdonmartin Buffs
+Driving Obnoxiously	type:"asdon"
+Driving Stealthily	type:"asdon"
+Driving Wastefully	type:"asdon", desc:"Oil Peak pressure reduction"
+Driving Safely	type:"asdon"
+Driving Recklessly	type:"asdon"
+Driving Intimidatingly	type:"asdon"
+Driving Quickly	type:"asdon"
+Driving Observantly	type:"asdon"
+Driving Waterproofly	type:"asdon"
+
+
+#Counters
+Dance Card	style:"background-color:khaki"
+Fortune Cookie	style:"background-color:khaki"
+Source Agent	style:"background-color:#2CB32C;font-style:italic;font-weight:bold;"
+Semirare window begin	alias:"SR range start"
+Semirare window end	alias:"SR range end"
+Bee window begin	style:"background-color:#D7D7FF;font-style:italic", image:"beeicon.gif"
+Bee window end	style:"background-color:#D7D7FF;font-style:italic", image:"beeicon.gif"
+Holiday Monster window begin	style:"background-color:#D7FFD7;font-style:italic", image:"corpsetini.gif"
+Holiday Monster window end	style:"background-color:#D7FFD7;font-style:italic", image:"corpsetini.gif"
+Rain Monster window begin	style:"background-color:#D7D7FF;font-style:italic"
+Rain Monster window end	style:"background-color:#D7D7FF;font-style:italic"
+Romantic Monster window begin	style:"background-color:#FFDBDB;font-style:italic", image:"arrow_heart.gif"
+Romantic Monster window end	style:"background-color:#FFDBDB;font-style:italic", image:"arrow_heart.gif"
+Silent Invasion window begin	style:"background-color:#599CFF;color:white;font-style:italic"
+Silent Invasion window end	style:"background-color:#599CFF;color:white;font-style:italic"
+Spookyraven Lights Out	style:"background-color:#599CFF;color:white;font-style:italic"
+Taco Elf window begin	alias:"( Taco Elf window", style:"color:#007C29;font-style:italic;font-weight:bold", image:"taco.gif"
+Taco Elf window end	alias:"Taco Elf window )", style:"color:#007C29;font-style:italic;font-weight:bold", image:"taco.gif"
+WoL Monster window begin	alias:"( Western wanderer", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
+WoL Monster window end	alias:"Western wanderer )", style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"badge.gif"
+Digitize Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
+Enamorang Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
+Vote Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold"
+
+#He-Boulder Major Rays
+Everything Looks Blue	style:"color:blue"
+Everything Looks Red	style:"color:red"
+Everything Looks Yellow	style:"color:olive"
+
+#Juju Mask
+Gaze of the Lightning God	style:"color:blue"
+Gaze of the Trickster God	style:"color:green"
+Gaze of the Volcano God	style:"color:red"
+
+#On the Trail
+On the Trail	alias:"", style:"font-weight:bold"
+
+#Miscelaneous common stuff to shorten
+Go Get 'Em, Tiger!	alias:"Get 'Em Tiger"
+Glittering Eyelashes	alias:"Glittery Lashes"
+Form of...Bird!	alias:"Birdform: "
+
+#Fun stuff
+Temporary Blindness	style:"background-color:black; color:white"
+
+#Effects linking to locations
+Shape of...Mole!	href:"adventure.php?snarfblat=177"
+Transpondent	href:"spaaace.php?arrive=1"
+Absinthe-Minded	href:"place.php?whichplace=wormwood"
+Down the Rabbit Hole	href:"place.php?whichplace=rabbithole"
+Dis Abled	href:"suburbandis.php"
+
+#Rewritten effect descriptions
+Video... Games?	desc:"EVERYTHING +5"
+Eldritch Attunement	desc:"Tentacles every fight"
