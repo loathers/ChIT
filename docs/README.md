@@ -29,7 +29,11 @@ Here are some very old examples of what ChIT can make your charpane look like, c
 
 ![Chit Examples](chitpanels.png)
 
-More up to date examples coming soon!
+Here's what my personal (heavily customized) charpane looks like at the moment (in the Dark Gyffte path):
+
+![Soolar's Charpane](soolarpanel.png)
+
+If you've customized your charpane, please by all means send me a screenshot to include here!
 
 # Settings
 
