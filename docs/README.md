@@ -40,12 +40,12 @@ You can override the default by making a character specific setting with the set
 - set chit.clan.home = Hardcore Nation
 - set chit.stats.layout = muscle,myst,moxie|hp,mp,axel|mcd|terminal|trail,florist
 - enter `prefref chit.` in the CLI to see a list of all properties and their current values
-  - Most settings in the prefref will be set to "DEFAULT:<default>" by default.
+  - Most settings in the prefref will be set to "DEFAULT:\[default]" by default.
     As long as DEFAULT remains at the start, the setting will automatically update with any
     changes to the default value.
     The part after the colon exists only to tell you what the default is, to make `prefref chit.` more useful.
   - If a setting matches the default but lacks the "DEFAULT:" prefix, it will be restored.
-    - If you want to make sure it doesn't get updated in the future, you can set it to "NONDEFAULT:<value>".
+    - If you want to make sure it doesn't get updated in the future, you can set it to "NONDEFAULT:\[value]".
 
 ## Layout Settings
 
@@ -201,7 +201,7 @@ The following preferences further refine the content and appearance of individua
   - You can also create your own custom categories, by editting data/chit_GearCategories.txt
   - Explanation of how to do so is provided via comments in data/chit_GearCategories.txt
   - Certain special categories that are too niche to include will always be displayed (ex. bounty is basically just the fledges or the talisman o' namsilat when needed for bounty hunting)
-  - You can include some options with a category by appending a : and then <option>=<value>
+  - You can include some options with a category by appending a : and then \[option]=\[value]
   - Valid options are:
     - amount=(any numeric value, or "all"): how many items to display in this category (from best to worst, when applicable). "all" "0" or any negative number will just display everything.
     - pull=(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
@@ -294,7 +294,7 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
     - intrinsics,limited,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs
   - Default: songs,buffs,intrinsics
 - chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
-  - true: uses chit_effects\_<yourname>.txt
+  - true: uses chit_effects\_\[yourname].txt
   - false: uses chit_effects.txt (default)
 - chit.effects.describe: Adds descriptions for each active effect.
 
