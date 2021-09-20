@@ -1,5 +1,5 @@
-script "Character Info Toolbox";
-notify "Bale";
+script "ChIT";
+notify "SOOLAR THE SECOND";
 since r20876; // industrial fire extinguisher
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
