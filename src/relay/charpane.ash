@@ -10,8 +10,8 @@ import "chit_brickHorsery.ash";
 import "chit_brickBoombox.ash";
 import "chit_brickRobo.ash";
 
-// Set default values for configuration properties. These values will be used if there is no existing property
-// For more information refer to documentation in /data/chit_ReadMe.txt
+// Set default values for configuration properties.
+// For more information refer to the README.md on Github
 setvar("chit.autoscroll", true);
 setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
 setvar("chit.currencies.special", "asdonmartinfuel");

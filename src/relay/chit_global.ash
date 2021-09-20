@@ -64,19 +64,35 @@ string normalize_prop(string value, string type) {
 }
 
 string define_prop(string name, string type, string def) {
-	// All "built-in" properties exist. A "custom" property that doesn't exist uses the (normalized) default.
-	string normalized_def = normalize_prop(def, type);
-	if(!property_exists(name))
-		return normalized_def;
+	if(!property_exists(name)) {
+		set_property(name, "DEFAULT:" + def);
+	}
+
+	boolean nondefault = false;
 
 	// The property exists and (potentially) overrides the default
 	string raw_value = get_property(name);
+	if(raw_value.starts_with("DEFAULT")) {
+		set_property(name, "DEFAULT:" + def);
+		raw_value = def;
+	}
+	else if(raw_value.starts_with("NONDEFAULT:")) {
+		nondefault = true;
+		raw_value = raw_value.substring(11); // It's ridiculous. It's not even funny.
+	}
+
 	string value = normalize_prop(raw_value, type);
 
-	if(value == normalized_def)
-		remove_property(name);
-	else if(raw_value != value)
-		set_property(name, value);
+	if(value == normalize_prop(def, type) && !nondefault)
+		set_property(name, "DEFAULT:" + def);
+	else if(raw_value != value) {
+		if(nondefault) {
+			set_property(name, "NONDEFAULT:" + value);
+		}
+		else {
+			set_property(name, value);
+		}
+	}
 
 	return value;
 }

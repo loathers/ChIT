@@ -39,7 +39,13 @@ You can override the default by making a character specific setting with the set
 
 - set chit.clan.home = Hardcore Nation
 - set chit.stats.layout = muscle,myst,moxie|hp,mp,axel|mcd|terminal|trail,florist
-- enter "prefref chit" in the CLI to see a list of all properties and their current values
+- enter `prefref chit.` in the CLI to see a list of all properties and their current values
+  - Most settings in the prefref will be set to "DEFAULT:<default>" by default.
+    As long as DEFAULT remains at the start, the setting will automatically update with any
+    changes to the default value.
+    The part after the colon exists only to tell you what the default is, to make `prefref chit.` more useful.
+  - If a setting matches the default but lacks the "DEFAULT:" prefix, it will be restored.
+    - If you want to make sure it doesn't get updated in the future, you can set it to "NONDEFAULT:<value>".
 
 ## Layout Settings
 
