@@ -334,7 +334,8 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 # Credits
 
 - Primary Maintainer: [soolar](https://github.com/soolar)
-- Other Maintainers: CKB and AlbinoRhino (github account information pending)
+- Other Maintainers: [ckb11](https://github.com/ckb11) (ckb on the KoLMafia forums)
+  and [tyrion-the-imp](https://github.com/tyrion-the-imp) (AlbinoRhino on the KoLMafia forums)
 - Original Author: Chez
 - Previous Primary Maintainer: Bale
 
