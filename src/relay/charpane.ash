@@ -1894,6 +1894,10 @@ void bakeModifiers() {
 		result.append(ele.to_string().substring(0, 1).to_upper_case());
 		result.append(ele.to_string().substring(1));
 		result.append('" title="');
+		float resPercent = elemental_resistance(ele);
+		resPercent = round(resPercent * 100.0) / 100.0; // round to 2 decimal places
+		result.append(resPercent);
+		result.append('% ');
 		result.append(ele.to_string());
 		result.append(' resistance">');
 		result.append(numeric_modifier(ele.to_string() + " Resistance").to_int());
