@@ -23,6 +23,12 @@ svn delete mafiachit
 If you have done any configuration of ChIT on the old version, don't worry!
 Your settings will carry over automatically.
 
+### A Small Warning
+
+Once you switch to the Github version of ChIT, if you switch back to the Sourceforge version for some reason,
+all of your boolean preferences will get messed up. Not that there's really any reason to switch back in the
+first place regardless.
+
 # Examples
 
 Here are some very old examples of what ChIT can make your charpane look like, compared against the default charpane.
