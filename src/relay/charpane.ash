@@ -1,5 +1,4 @@
-script "ChIT";
-notify "SOOLAR THE SECOND";
+script "Character Information Toolbox";
 since r20876; // industrial fire extinguisher
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
@@ -4523,5 +4522,11 @@ buffer modifyPage(buffer source) {
 }
 
 void main() {
+	// some shenanigans to get notify to work for people who already notified Bale
+	// and just in general because it's broken for relay override scripts seemingly
+	if(!property_exists("chit.notifyShenanigans.done")) {
+		cli_execute("chit_notify.ash");
+		set_property("chit.notifyShenanigans.done", "true");
+	}
 	visit_url().modifyPage().write();
 }
