@@ -614,6 +614,10 @@ boolean isDriving() {
 }
 
 void pickerAsdon() {
+	if(chitPickers["asdon"] != "") {
+		return;
+	}
+
 	buffer picker;
 	picker.pickerStart("asdon", "Drive Differently! (" + get_fuel() + " fuel)");
 	picker.addLoader("Adjusting driving style...");
@@ -675,6 +679,64 @@ void pickerAsdon() {
 
 	picker.append('</table></div>');
 	chitPickers["asdon"] = picker;
+}
+
+effect [int] availableExpressions() {
+	static effect [int] expressions;
+	static boolean done = false;
+
+	if(!done) {
+		foreach sk in $skills[] {
+			if(have_skill(sk) && be_good(sk) && sk.expression) {
+				expressions[expressions.count()] = to_effect(sk);
+			}
+		}
+		done = true;
+	}
+
+	return expressions;
+}
+
+void pickerExpression() {
+	if(chitPickers["expression"] != "") {
+		return;
+	}
+
+	buffer picker;
+	picker.pickerStart("expression", "Express Yourself!");
+	picker.addLoader("Expressing Yourself...");
+
+	void addExpression(effect expression) {
+		boolean current = have_effect(expression) > 0;
+		string expressLink = '<a class="change" href="' + sideCommand(expression.default) + '">';
+
+		picker.append('<tr class="pickitem');
+		if(current) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		if(!current) picker.append(expressLink);
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(expression.image);
+		picker.append('" title="');
+		picker.append(expression.to_string());
+		picker.append('" />');
+		if(!current) picker.append('</a>');
+		picker.append('</td><td colspan="2">');
+		if(current) picker.append('<b>Current</b>: ');
+		else picker.append(expressLink);
+		picker.append(expression.to_string());
+		picker.append('<br /><span class="descline">');
+		picker.append(parseEff(expression));
+		picker.append('</span>');
+		if(!current) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	foreach i, expression in availableExpressions() {
+		addExpression(expression);
+	}
+
+	picker.append('</table></div>');
+	chitPickers["expression"] = picker;
 }
 
 buff parseBuff(string source) {
@@ -897,9 +959,16 @@ buff parseBuff(string source) {
 	if(doArrows && myBuff.isIntrinsic)
 		result.append(' colspan="2"');
 	result.append('>');
+	boolean linkStarted = false;
 	if(myBuff.effectType == "asdon") {
 		pickerAsdon();
 		result.append('<a class="chit_launcher done" rel="chit_pickerasdon" href="#">');
+		linkStarted = true;
+	}
+	else if(myBuff.eff.to_skill().expression) {
+		pickerExpression();
+		result.append('<a class="chit_launcher done" rel="chit_pickerexpression" href="#">');
+		linkStarted = true;
 	}
 	result.append(effectAlias);
 
@@ -918,7 +987,7 @@ buff parseBuff(string source) {
 		}
 	}
 
-	if(myBuff.effectType == "asdon") {
+	if(linkStarted) {
 		result.append('</a>');
 	}
 	result.append('</td>');
