@@ -740,13 +740,13 @@ string retroHeroToIcon(string hero) {
 	switch(hero) {
 		case "muscle":
 		case "vampire":
-			return "Retrocape1.gif";
+			return "retrocape1.gif";
 		case "mysticality":
 		case "heck":
-			return "Retrocape2.gif";
+			return "retrocape2.gif";
 		case "moxie":
 		case "robot":
-			return "Retrocape3.gif";
+			return "retrocape3.gif";
 	}
 	abort("Unrecognized hero " + hero);
 	return "";
