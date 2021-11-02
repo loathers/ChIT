@@ -256,10 +256,11 @@ tr.florist :first-line {
 	width:75px;
 	position:relative;
 }
-#chit_character tr td.avatar img {
+#chit_character tr td.avatar a div {
 	height:75px;
 	width:auto;
 }
+
 #chit_character tr td.avatarRobo img {
 	height:75px;
 	width:75px;

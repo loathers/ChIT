@@ -3567,7 +3567,7 @@ void bakeCharacter() {
 	string myAvatar;
 	if(vars["chit.character.avatar"] != "false") {
 		if(my_path() != "You, Robot") {
-			matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><img.+?</a>)', source);
+			matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><div.+?</a>)', source);
 			if(avatarMatcher.find())
 				myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
 		}
