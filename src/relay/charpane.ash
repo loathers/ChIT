@@ -2869,6 +2869,21 @@ void addTrail(buffer result) {
 		result.append('<td class="info" colspan="2">(None)</td>');
 	result.append('</tr>');
 
+	//Also show previous adventure for miniature crystal ball silliness
+	matcher others = create_matcher("<nobr>(.*?)</nobr>", source);
+	while (find(others)) {
+	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a>', group(others, 1));
+		if (find(target)) {
+			result.append('<tr><td class="label">Prev</td>');
+			result.append('<td class="info" colspan="2" style="display:block;"><a class="visit" target="mainpane" href="');
+			result.append(target.group(1));
+			result.append('">');
+			result.append(target.group(2));
+			result.append('</a></td></tr>');
+			result.append('</tr>');
+			break;
+		}
+	}
 }
 
 void bakeStats() {
