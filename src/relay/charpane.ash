@@ -52,6 +52,7 @@ setvar("chit.kol.coolimages", true);
 setvar("chit.effects.layout", "songs,buffs,intrinsics");
 setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
+setvar("chit.stats.display.previous_zones", 1);
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox");
@@ -2870,20 +2871,27 @@ void addTrail(buffer result) {
 	result.append('</tr>');
 
 	//Also show previous adventure for miniature crystal ball silliness
+	//TODO: add a picker to the miniature crystal ball that updates this preference
+	int previous_zones_to_show = to_int(vars["chit.stats.display.previous_zones"]);
+	int found = 1;
 	matcher others = create_matcher("<nobr>(.*?)</nobr>", source);
 	while (find(others)) {
-	target = create_matcher('target=mainpane href="(.*?)">(.*?)</a>', group(others, 1));
+		if (found > previous_zones_to_show) {
+			break;
+		}
+		target = create_matcher('target=mainpane href="(.*?)">(.*?)</a>', group(others, 1));
 		if (find(target)) {
-			result.append('<tr><td class="label">Prev</td>');
+			result.append('<tr><td class="label">Prev('+to_string(found)+')</td>');
 			result.append('<td class="info" colspan="2" style="display:block;"><a class="visit" target="mainpane" href="');
 			result.append(target.group(1));
 			result.append('">');
 			result.append(target.group(2));
 			result.append('</a></td></tr>');
 			result.append('</tr>');
-			break;
+			++found;
 		}
 	}
+
 }
 
 void bakeStats() {
