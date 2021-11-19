@@ -52,7 +52,7 @@ setvar("chit.kol.coolimages", true);
 setvar("chit.effects.layout", "songs,buffs,intrinsics");
 setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
-setvar("chit.stats.display.previous_zones", 1);
+setvar("chit.stats.display.previous_zones", 0);
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
 setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox");
