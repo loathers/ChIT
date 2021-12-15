@@ -2043,6 +2043,11 @@ void bakeFamiliar() {
 			info += riftletAdv + " adv gained";
 		}
 		break;
+	case $familiar[Vampire Vintner]:
+		if(available_amount($item[1950 Vampire Vintner wine]) > 0) {
+			info += "Already have wine!";
+		}
+		break;
 	}
 
 	//Get equipment info
