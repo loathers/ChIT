@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r20876; // industrial fire extinguisher
+since r26000; //mafia char pane change
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -748,7 +748,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style, desc;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?)\\s+<span[^>]+>(?:(.*?), )?((?:<a[^>]*>)?\\(([\\d,]+||&infin;)(?:</a>)?)\\)(?:(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -762,8 +762,10 @@ buff parseBuff(string source) {
 		spoiler = parse.group(6);		// This appears for "Form of...Bird!" and "On the Trail"
 		if(get_campground() contains $item[jar of psychoses (The Crackpot Mystic)] && $strings[Consumed by Anger, Consumed by Doubt, Consumed by Fear, Consumed by Regret] contains myBuff.effectName)
 			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(8)+'</a>';
-		else
+		else {
 			columnTurns = parse.group(7).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
+			columnTurns = columnTurns.replace_string('">(','">');
+		}
 		if(parse.group(8) == "&infin;") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
