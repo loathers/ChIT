@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26002; // changes in charpane effect rendering
+since r26088; // 11-leaf clover
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
