@@ -44,7 +44,7 @@ setvar("chit.gear.favorites", "item", "");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
 setvar("chit.helpers.dancecard", true);
-setvar("chit.helpers.semirare", true);
+setvar("chit.helpers.lucky", true);
 setvar("chit.helpers.spookyraven", true);
 setvar("chit.helpers.wormwood", "stats,spleen");
 setvar("chit.helpers.xiblaxian", true);
@@ -382,9 +382,9 @@ string helperWormwood() {
 
 }
 
-string helperSemiRare() {
+string helperLucky() {
 	//Bail if the user doesn't want to see the helper
-	if(vars["chit.helpers.semirare"] != "true") return "";
+	if(vars["chit.helpers.lucky"] != "true") return "";
 
 	buffer result;
 
@@ -395,31 +395,45 @@ string helperSemiRare() {
 		rewards[$location[The Outskirts of Cobb's Knob]] = "lunchbox.gif|Knob Goblin lunchbox|0";
 		rewards[$location[The Limerick Dungeon]] = "eyedrops.gif|cyclops eyedrops|0";
 	if($strings[step1, step2, finished] contains get_property("questL05Goblin"))
-		rewards[$location[Cobb's Knob Harem]] = "vial.gif|scented massage oil (3)|20";
+		rewards[$location[Cobb's Knob Harem]] = "vial.gif|scented massage oil (3)|0";
 	if(get_property("lastCastleTopUnlock").to_int() == my_ascensions())
-		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|85";
+		rewards[$location[The Castle in the Clouds in the Sky (Top Floor)]] = "inhaler.gif|Mick's IcyVapoHotness Inhaler|0";
 	if(get_property("grimstoneMaskPath") == "gnome")
 		rewards[$location[Ye Olde Medievale Villagee]] = "leather.gif|3 each: Straw, Leather and Clay|0";
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
+		rewards[$location[The Brinier Deepers]] = "fish.gif|50 turns of fishy|0";
+		if(get_property("poolSharkCount").to_int() < 25)
+			rewards[$location[The Haunted Billiards Room]] = "poolcue.gif|Rack 'em up for permanent pool skill|0";
+		rewards[$location[Cobb's Knob Treasury]] = "adventureimages/kg_embezzler.gif|Fight an embezzler|20";
+		if(item_amount($item[hobo nickel]) >= 5)
+			rewards[$location[The Purple Light District]] = "lewdcard.gif|lewd playing card for 5 hobo nickles (if you've cleared sewers)|0";
 	} else {
 		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && !($strings[step3, finished] contains get_property("questL11Worship")))
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions() && ($strings[step1, step2, finished] contains get_property("questL05Goblin"))
 		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
-		if(!have_outfit("Mining Gear") && my_path() != "Way of the Surprising Fist" && ($strings[started, step1] contains get_property("questL08Trapper")))
-			rewards[$location[Itznotyerzitz Mine]] = "mattock.gif|Fight Dwarf Foreman|53";
-		if(get_property("questL11Palindome") != "finished" && item_amount($item[Talisman o' Namsilat]) == 0) {
-			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|104";
-			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|104";
+		if($strings[started, step1] contains get_property("questL08Trapper") && item_amount(to_item(get_property("trapperOre"))) < 3)
+			rewards[$location[Itznotyerzitz Mine]] = get_property("trapperOre").to_item().image + "|1 each: asbestos, chrome, and linoleum ore|0";
+		if(get_property("questL09Topping") == "started")
+			rewards[$location[The Smut Orc Logging Camp]] = "longscrew.gif|3 each: plank and screw for the bridge|0";
+		if($strings[step1, step2] contains get_property("questL09Topping")) {
+			if((get_property("booPeakProgress").to_int() - 30 * available_amount($item[A-Boo clue])) > 4)
+				rewards[$location[A-boo Peak]] = "map.gif|2 A-Boo clues and a death blossom|0";
+			// < 11 when 12 is required to make it because one crude is guaranteed, so at that point might as well just fight an oil creature
+			if((get_property("twinPeakProgress").to_int() & (1 << 2)) > 0 && item_amount($item[Jar of Oil]) == 0 && item_amount($item[bubblin' crude]) < 11)
+				rewards[$location[Oil Peak]] = "crudeoil.gif|3 bubblin' crude for oil jar and unnatural gas|0";
 		}
+		if(item_amount($item[S.O.C.K.]) > 0 && item_amount($item[Wand of Nagamar]) == 0)
+			rewards[$location[The Castle in the Clouds in the Sky (Basement)]] = "wand.gif|Letters for wand of nagamar (IF you need it...)|0";
+		if(!($strings[unstarted, finished] contains get_property("questL11Palindome")) && item_amount($item[Talisman o' Namsilat]) == 0) {
+			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|0";
+			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|0";
+		}
+		if(get_property("desertExploration").to_int() > 0 && get_property("desertExploration").to_int() < 100)
+			rewards[$location[The Oasis]] = "raindrop.gif|20 turns of Ultrahydrated|0";
 	}
-
-	int semirareCounter = to_int(get_property("semirareCounter"));
-	location semirareLocation = semirareCounter == 0? $location[none]: get_property("semirareLocation").to_location();
-	string message = semirareCounter == 0? "No semirare so far during this ascension"
-		: ("Last semirare found " + (turns_played()-semirareCounter) + " turns ago (on turn " + semirareCounter + ") in " + semirareLocation);
 
 	//Iterate through all the predefined zones
 	string[3] reward;
@@ -427,37 +441,37 @@ string helperSemiRare() {
 	int rows = 0;
 	foreach loc, value in rewards {
 		reward = split_string(value, "\\|");
-		if (loc != semirareLocation) {
-			if (my_basestat(my_primestat()) >= to_int(reward[2])) {
-				rowdata.append('<tr class="section">');
-				rowdata.append('<td class="icon" title="');
-				rowdata.append(reward[1]);
-				rowdata.append('"><img src="images/itemimages/');
-				rowdata.append(reward[0]);
-				rowdata.append('"></td>');
-				rowdata.append('<td class="location" title="');
-				rowdata.append(reward[1]);
-				rowdata.append('"><a class="visit" target="mainpane" href="');
-				rowdata.append(to_url(loc));
-				rowdata.append('">');
-				rowdata.append(to_string(loc));
-				rowdata.append('</a>');
-				rowdata.append(reward[1]);
-				rowdata.append('</td>');
-				rowdata.append('</tr>');
-				rows = rows + 1;
-			}
+		if (my_basestat(my_primestat()) >= to_int(reward[2])) {
+			rowdata.append('<tr class="section">');
+			rowdata.append('<td class="icon" title="');
+			rowdata.append(reward[1]);
+			rowdata.append('"><img src="images/');
+			if(!reward[0].contains_text('/'))
+				rowdata.append('itemimages/');
+			rowdata.append(reward[0]);
+			rowdata.append('"></td>');
+			rowdata.append('<td class="location" title="');
+			rowdata.append(reward[1]);
+			rowdata.append('"><a class="visit" target="mainpane" href="');
+			rowdata.append(to_url(loc));
+			rowdata.append('">');
+			rowdata.append(to_string(loc));
+			rowdata.append('</a>');
+			rowdata.append(reward[1]);
+			rowdata.append('</td>');
+			rowdata.append('</tr>');
+			rows = rows + 1;
 		}
 	}
 
 	//wrap everything up in a pretty table
 	if(rows > 0) {
-		result.append('<table id="chit_semirares" class="chit_brick nospace">');
+		result.append('<table id="chit_luckies" class="chit_brick nospace">');
 		result.append('<tr class="helper"><th colspan="2"><img src="');
 		result.append(imagePath);
-		result.append('helpers.png">Semi-Rares</th></tr>');
+		result.append('helpers.png">Lucky Adventures</th></tr>');
 		result.append('<tr><td class="info" colspan="2">');
-		result.append(message);
+		result.append('You are lucky! Your next adventure in an applicable area will be a lucky adventure! Here are some options:');
 		result.append('</td></tr>');
 		result.append(rowdata);
 		result.append('</table>');
@@ -1067,10 +1081,12 @@ void bakeEffects() {
 		}
 		total += 1;
 
+		if(currentBuff.effectName == "Lucky!") {
+			helpers.append(helperLucky());
+		}
+
 		if(currentBuff.effectTurns == 0) {
-			if(currentBuff.effectName == "Fortune Cookie")
-				helpers.append(helperSemiRare());
-			else if(currentBuff.effectName == "Wormwood")
+			if(currentBuff.effectName == "Wormwood")
 				helpers.append(helperWormwood());
 			else if(currentBuff.effectName == "Dance Card")
 				helpers.append(helperDanceCard());
