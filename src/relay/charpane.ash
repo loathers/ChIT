@@ -12,7 +12,7 @@ import "chit_brickRobo.ash";
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
 setvar("chit.autoscroll", true);
-setvar("chit.currencies", "item", "disassembled clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
+setvar("chit.currencies", "item", "11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
 setvar("chit.currencies.special", "asdonmartinfuel");
 setvar("chit.currencies.showmany", false);
 setvar("chit.currencies.showmany.choices", "meat");
@@ -3250,6 +3250,8 @@ void allCurrency(buffer result) {
 				return item_amount($item[ten-leaf clover]) > 0 ? '<a title="disassemble a clover" href="' + sideCommand("use 1 ten-leaf clover") + '">' : "";
 			case $item[ten-leaf clover]:
 				return item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "";
+			case $item[11-leaf clover]:
+				return '<a title="contemplate your clovers" target=mainpane href="inventory.php?ftext=11-leaf+clover">';
 			case $item[hobo nickel]:
 				return constructLink("Wander on over to hobopolis", "clan_hobopolis.php");
 			case $item[Freddy Kruegerand]:
