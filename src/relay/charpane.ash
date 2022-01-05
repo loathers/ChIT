@@ -425,7 +425,12 @@ string helperLucky() {
 			if((get_property("twinPeakProgress").to_int() & (1 << 2)) > 0 && item_amount($item[Jar of Oil]) == 0 && item_amount($item[bubblin' crude]) < 11)
 				rewards[$location[Oil Peak]] = "crudeoil.gif|3 bubblin' crude for oil jar and unnatural gas|0";
 		}
-		if(item_amount($item[S.O.C.K.]) > 0 && item_amount($item[Wand of Nagamar]) == 0)
+		int w_amount = item_amount($item[WA]) + item_amount($item[ruby W]);
+		int a_amount = item_amount($item[WA]) + item_amount($item[metallic A]);
+		int n_amount = item_amount($item[ND]) + item_amount($item[lowercase N]);
+		int d_amount = item_amount($item[ND]) + item_amount($item[heavy D]);
+		boolean have_wand = item_amount($item[Wand of Nagamar]) > 0 || (w_amount > 0 && a_amount > 0 && n_amount > 0 && d_amount > 0);
+		if(item_amount($item[S.O.C.K.]) > 0 && !have_wand)
 			rewards[$location[The Castle in the Clouds in the Sky (Basement)]] = "wand.gif|Letters for wand of nagamar (IF you need it...)|0";
 		if(!($strings[unstarted, finished] contains get_property("questL11Palindome")) && item_amount($item[Talisman o' Namsilat]) == 0) {
 			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|0";
