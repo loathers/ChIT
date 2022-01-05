@@ -438,6 +438,8 @@ string helperLucky() {
 		}
 		if(get_property("desertExploration").to_int() > 0 && get_property("desertExploration").to_int() < 100)
 			rewards[$location[The Oasis]] = "raindrop.gif|20 turns of Ultrahydrated|0";
+		if(!($strings[unstarted, started] contains get_property("questL11Manor")) && available_amount($item[Bram's choker]) == 0)
+			rewards[$location[The Haunted Boiler Room]] = "bramchoker.gif|Fight Bram the Stoker for a -combat/+PvP fights accessory|104";
 	}
 
 	//Iterate through all the predefined zones
