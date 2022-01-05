@@ -2017,13 +2017,6 @@ void bakeFamiliar() {
 		pickerSnapper();
 		info += ' &bull; <a class="chit_launcher done" rel="chit_pickersnapper" href="#">guide me!</a>';
 		break;
-	case $familiar[Melodramedary]:
-		int spit = get_property("camelSpit").to_int();
-		if(spit >= 100)
-			info += "Ready to spit";
-		else
-			info += spit.to_string() + "% spit";
-		break;
 	case $familiar[Ghost of Crimbo Commerce]:
 		string ghostItem = get_property("commerceGhostItem");
 		if(ghostItem != "") {
