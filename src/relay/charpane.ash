@@ -432,8 +432,9 @@ string helperLucky() {
 		boolean have_wand = item_amount($item[Wand of Nagamar]) > 0 || (w_amount > 0 && a_amount > 0 && n_amount > 0 && d_amount > 0);
 		if(item_amount($item[S.O.C.K.]) > 0 && !have_wand)
 			rewards[$location[The Castle in the Clouds in the Sky (Basement)]] = "wand.gif|Letters for wand of nagamar (IF you need it...)|0";
-		if(!($strings[unstarted, finished] contains get_property("questL11Palindome")) && item_amount($item[Talisman o' Namsilat]) == 0) {
-			rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|0";
+		if($strings[started, step1] contains get_property("questL11Ron")) {
+			if(get_property("questL11Shen") != "unstarted")
+				rewards[$location[The Copperhead Club]] = "rocks_f.gif|Flamin' Whatshisname (3)|0";
 			rewards[$location[A Mob of Zeppelin Protesters]] = "bansai.gif|Choice of Protesting|0";
 		}
 		if(get_property("desertExploration").to_int() > 0 && get_property("desertExploration").to_int() < 100)
