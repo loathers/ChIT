@@ -1,996 +1,1061 @@
-
 /* ckb's simple css lesson
    # = define's an ID, use only on one element, once per page
    . = defines a class, use as mush as desired
-   
+
    element {} = defines style for all of that element
    #name {} = defines ID styles
    .name {} = defines class styles
-   
+
    #name element {} = defines style for an element within an ID
    .name element {} = defines style for an element within a class
-   
+
 */
 
 /*Defaults */
 body {
-	margin:0px;
-	font-size:1em;
+	margin: 0px;
+	font-size: 1em;
 }
 td {
-	font-size:1em;
+	font-size: 1em;
 }
 a:hover {
-	color:blue;
+	color: blue;
 }
 
 .hand {
-	cursor:pointer;
+	cursor: pointer;
 }
 .nospace {
-	padding:0px;
-	border-spacing:0px;
+	padding: 0px;
+	border-spacing: 0px;
 }
 a .warning-link {
-	color:red;
+	color: red;
 }
 a.warning-link:hover {
-	color:crimson;
+	color: crimson;
 }
 a.blue-link {
-	color:blue;
+	color: blue;
 }
 a.blue-link:hover {
-	color:red !important;
+	color: red !important;
 }
 
 .descline {
-	color:#707070;
+	color: #707070;
 }
 
 #chit_house {
 }
 #chit_roof {
-	overflow-x:hidden;
-	overflow-y:hidden;
-	margin:2px 2px -2px 2px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	margin: 2px 2px -2px 2px;
 }
 #chit_walls {
-	border-top:1px solid #E0E0E0;
-	border-bottom:1px solid #E0E0E0;
-	margin:-2px 2px 0px 2px;
-	overflow-x:hidden;
-	overflow-y:auto;
-	position:absolute;
-	width:99%;
+	border-top: 1px solid #e0e0e0;
+	border-bottom: 1px solid #e0e0e0;
+	margin: -2px 2px 0px 2px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: absolute;
+	width: 99%;
 }
 #chit_floor {
-	position:absolute;
-	overflow-x:hidden;
-	overflow-y:auto;
-	margin:-2px 2px 2px 2px;
-	width:98%;
+	position: absolute;
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin: -2px 2px 2px 2px;
+	width: 98%;
 }
 #chit_toolbar {
-	border-collapse:separate;
-	border:1px solid #D0D0D0;
-	empty-cells:show;
-	font-size:12px;
-	font-weight:normal;
-	margin:0px;
-	width:100%;
-	padding:1px 1px 1px 1px;
+	border-collapse: separate;
+	border: 1px solid #d0d0d0;
+	empty-cells: show;
+	font-size: 12px;
+	font-weight: normal;
+	margin: 0px;
+	width: 100%;
+	padding: 1px 1px 1px 1px;
 }
 #chit_toolbar img {
-	border:0px;
-	width:16px;
-	height:16px;
+	border: 0px;
+	width: 16px;
+	height: 16px;
 }
 
 #chit_toolbar th {
-	text-align:center;
-	vertical-align:middle;
-	background-color:#F0F0F0;
-	padding:2px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #f0f0f0;
+	padding: 2px;
 }
 
 /* Table defaults */
 table.chit_brick {
-	background-color:white;
-	border-collapse:separate;
-	border:1px solid #D0D0D0;
-	empty-cells:show;
-	font-size:12px;
-	font-weight:normal;
-	margin-bottom:5px;
-	width:100%;
-	padding:1px 1px 0px 1px;
+	background-color: white;
+	border-collapse: separate;
+	border: 1px solid #d0d0d0;
+	empty-cells: show;
+	font-size: 12px;
+	font-weight: normal;
+	margin-bottom: 5px;
+	width: 100%;
+	padding: 1px 1px 0px 1px;
 }
 table.chit_brick:last-child {
-	margin-bottom:0px;
+	margin-bottom: 0px;
 }
 table.chit_brick a {
-	text-decoration:none;
+	text-decoration: none;
 }
 table.chit_brick tr td a:hover {
-	color:blue;
+	color: blue;
 }
 table.chit_brick img {
-	border:0;
-	margin:0;
-	padding:0;
+	border: 0;
+	margin: 0;
+	padding: 0;
 }
 div.chit_skeleton table.chit_brick {
-	margin-bottom:0px;
+	margin-bottom: 0px;
 }
 table.chit_brick th {
-	word-wrap:break-word;
-	max-width:200px;
-	text-align:center;
-	vertical-align:middle;
-	background-color:#F0F0F0;
-	padding:2px;
+	word-wrap: break-word;
+	max-width: 200px;
+	text-align: center;
+	vertical-align: middle;
+	background-color: #f0f0f0;
+	padding: 2px;
 }
 table.chit_brick th img {
-	float:left;
+	float: left;
 }
 div.chit_skeleton table.chit_brick th {
-	background-color:#F0F0B0;
+	background-color: #f0f0b0;
 }
 
 /* location: used for counter checkers locations */
 table.chit_brick tr td.location {
-	background-color:white;
-	padding:3px 6px;
-	text-align:left;
-	color:#666666;
-	line-height:1.4;
+	background-color: white;
+	padding: 3px 6px;
+	text-align: left;
+	color: #666666;
+	line-height: 1.4;
 }
 table.chit_brick tr td.location a {
-	display:block;
-	font-weight:bold;
+	display: block;
+	font-weight: bold;
 }
 table.chit_brick tr td.info {
-	padding:3px;
+	padding: 3px;
 }
 table.chit_brick tr.helper th {
-	background-color:#F0F0B0;
+	background-color: #f0f0b0;
 }
 table.chit_brick tr.wellfed th {
-	background-color:#F0F0B0;
+	background-color: #f0f0b0;
 }
 
 table.chit_brick td {
-	border:0px;
-	text-align:center;
-	vertical-align:middle;
+	border: 0px;
+	text-align: center;
+	vertical-align: middle;
 }
 table.chit_brick tr td.progress {
-	padding:1px;
+	padding: 1px;
 }
 table.chit_brick tr td.icon {
-	background-color:white;
-	border:0px;
-	padding:3px;
-	width:30px;
+	background-color: white;
+	border: 0px;
+	padding: 3px;
+	width: 30px;
 }
-table.chit_brick tr td.icon  img{
-	border:0px;
-	width:30px;
-	height:30px;
+table.chit_brick tr td.icon img {
+	border: 0px;
+	width: 30px;
+	height: 30px;
 }
 table.chit_brick tr td.weirdicon {
-	background-color:white;
-	border:0px;
-	padding:3px;
-	width:auto !important;
+	background-color: white;
+	border: 0px;
+	padding: 3px;
+	width: auto !important;
 }
-table.chit_brick tr td.clancy  img{
-	background-color:white;
-	padding:3px;
-	border:0px;
-	width:40px;
-	height:80px;
+table.chit_brick tr td.clancy img {
+	background-color: white;
+	padding: 3px;
+	border: 0px;
+	width: 40px;
+	height: 80px;
 }
-table.chit_brick tr td.companion  img{
-	background-color:white;
-	padding:3px;
-	border:0px;
-	width:80px;
-	height:80px;
-	padding:0px 0px 0px 0px;
-	margin:0px 0px 0px 0px;
+table.chit_brick tr td.companion img {
+	background-color: white;
+	padding: 3px;
+	border: 0px;
+	width: 80px;
+	height: 80px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
 }
-table.chit_brick tr td.motorcycle  img{
-	text-align:center;
-	height:70px;
-	margin:-3px 0px -9px 0px;
+table.chit_brick tr td.motorcycle img {
+	text-align: center;
+	height: 70px;
+	margin: -3px 0px -9px 0px;
 }
-table.chit_brick tr td.vykea  img{
-	border:0px;
-	padding:0px 0px 10px 0px;
-	max-width:40px;
+table.chit_brick tr td.vykea img {
+	border: 0px;
+	padding: 0px 0px 10px 0px;
+	max-width: 40px;
 }
 
 /* section adds the light grey bar above the table row */
 table.chit_brick tr.section td {
-	border-top:1px solid #F0F0F0;
+	border-top: 1px solid #f0f0f0;
 }
 
 /* Florist Friars formatting */
 td.florist {
-	color:#606060;
-	font-weight:bold;
-	text-align:center;
-	padding:0px;
-	max-width:60px;
+	color: #606060;
+	font-weight: bold;
+	text-align: center;
+	padding: 0px;
+	max-width: 60px;
 }
 td.florist img {
-	margin:-5px 2px 0px 2px;
-	vertical-align:middle;
-	height:40px;
+	margin: -5px 2px 0px 2px;
+	vertical-align: middle;
+	height: 40px;
 }
 tr.florist img {
-	vertical-align:middle;
-	max-height:50px;
+	vertical-align: middle;
+	max-height: 50px;
 }
 tr.florist :first-line {
-	font-weight:bold;
+	font-weight: bold;
 }
 
 /* Character Panel */
 #chit_character tr td.level {
-	font-size:21px;
-	background-color:#F8F8F8;
-	width:40px;
+	font-size: 21px;
+	background-color: #f8f8f8;
+	width: 40px;
 }
 
 #chit_character tr td.avatar {
-	background-color:white;
-	padding:2px;
-	width:45px;
-	vertical-align:middle;
+	background-color: white;
+	padding: 2px;
+	width: 45px;
+	vertical-align: middle;
 }
 #chit_character tr td.avatarRobo {
-	height:75px;
-	width:75px;
-	position:relative;
+	height: 75px;
+	width: 75px;
+	position: relative;
 }
 #chit_character tr td.avatar a div {
-	height:75px;
-	width:auto;
+	height: 75px;
+	width: auto;
 }
 
 #chit_character tr td.avatarRobo img {
-	height:75px;
-	width:75px;
+	height: 75px;
+	width: 75px;
 }
 #chit_character tr td.label {
-	font-weight:bold;
-	text-align:left;
-	padding:1px 4px;
+	font-weight: bold;
+	text-align: left;
+	padding: 1px 4px;
 }
 #chit_character tr td.info {
-	color:#606060;
-	text-align:left;
-	padding:1px 4px;
+	color: #606060;
+	text-align: left;
+	padding: 1px 4px;
 }
 #chit_character tr td.info a {
-	font-weight:bold;
-	white-space:nowrap;
+	font-weight: bold;
+	white-space: nowrap;
 }
 
 #chit_character tr td.turns {
-	border-top:1px solid white;
-	background-color:#F8F8F8;
-	padding:1px 4px;
+	border-top: 1px solid white;
+	background-color: #f8f8f8;
+	padding: 1px 4px;
 }
 #chit_character tr td.progress {
-	border-top:1px solid #DDDDDD;
-	height:5px;
+	border-top: 1px solid #dddddd;
+	height: 5px;
 }
 #chit_character tr td.progress div.progressbar {
-	height:5px;
+	height: 5px;
 }
 
 .chit_resource {
-	color:darkred;
-	font-weight:bold;
-	background-color:#F8F8F8;
-	padding:0px 2px;
+	color: darkred;
+	font-weight: bold;
+	background-color: #f8f8f8;
+	padding: 0px 2px;
 }
-.chit_resource div span, .chit_resource div img {
-	vertical-align:middle;
+.chit_resource div span,
+.chit_resource div img {
+	vertical-align: middle;
 }
 .chit_resource div img {
-	max-width:12px;
-	max-height:12px;
-	padding-left:3px;
+	max-width: 12px;
+	max-height: 12px;
+	padding-left: 3px;
 }
 
 .chit_stormy {
-	color:blue;
-	font-weight:bold;
-	background-color:#F8F8F8;
-	padding:0px 0px 0px 2px;
+	color: blue;
+	font-weight: bold;
+	background-color: #f8f8f8;
+	padding: 0px 0px 0px 2px;
 }
-.chit_stormy div span, .chit_stormy div img {
-	float:left;
-	vertical-align:middle;
-	padding-left:7px;
+.chit_stormy div span,
+.chit_stormy div img {
+	float: left;
+	vertical-align: middle;
+	padding-left: 7px;
 }
 .chit_stormy div img {
-	max-width:14px;
-	max-height:14px;
-	padding-left:3px;
+	max-width: 14px;
+	max-height: 14px;
+	padding-left: 3px;
 }
 
 /* Stats Panel */
 #chit_stats tbody tr:first-child td {
-	border-top:1px solid #F0F0F0;
+	border-top: 1px solid #f0f0f0;
 }
 
-#chit_stats tr td.label, #chit_substats tr td.label, #chit_organs tr td.label {
-	font-weight:bold;
-	text-align:left;
-	padding:2px;
-	width:50px;
+#chit_stats tr td.label,
+#chit_substats tr td.label,
+#chit_organs tr td.label {
+	font-weight: bold;
+	text-align: left;
+	padding: 2px;
+	width: 50px;
 }
-#chit_stats tr td.info, #chit_substats tr td.info tr td.info {
-	color:#606060;
-	font-weight:bold;
-	text-align:right;
-	padding:1px;
-	width:50px;
+#chit_stats tr td.info,
+#chit_substats tr td.info tr td.info {
+	color: #606060;
+	font-weight: bold;
+	text-align: right;
+	padding: 1px;
+	width: 50px;
 }
 #chit_stats tr td.fury {
-	color:red;
-	font-weight:900;
-	text-align:center;
-	padding:1px;
-	max-width:50px;
+	color: red;
+	font-weight: 900;
+	text-align: center;
+	padding: 1px;
+	max-width: 50px;
 }
 #chit_organs tr td.info {
-	color:#606060;
-	font-weight:bold;
-	text-align:center;
-	padding:2px;
-	width:40px;
-	display:block;
+	color: #606060;
+	font-weight: bold;
+	text-align: center;
+	padding: 2px;
+	width: 40px;
+	display: block;
 }
-#chit_stats tr td.info a, #chit_stats tr td.progress a {
-	color:#606060;
-	white-space:nowrap;
+#chit_stats tr td.info a,
+#chit_stats tr td.progress a {
+	color: #606060;
+	white-space: nowrap;
 }
-#chit_stats tr td.info a:hover, #chit_stats tr td.progress a:hover {
-	color:blue;
+#chit_stats tr td.info a:hover,
+#chit_stats tr td.progress a:hover {
+	color: blue;
 }
 #chit_stats.nobars tr td.info {
-	width:135px;
+	width: 135px;
 }
-#chit_stats tr td.progress, #chit_substats tr td.progress, #chit_organs tr td.progress {
-	width:100%;
-	padding:2px 2px 2px 2px;
-	text-align:right;
-	font-weight:bold;
-	color:#A0A0A0;
+#chit_stats tr td.progress,
+#chit_substats tr td.progress,
+#chit_organs tr td.progress {
+	width: 100%;
+	padding: 2px 2px 2px 2px;
+	text-align: right;
+	font-weight: bold;
+	color: #a0a0a0;
 }
 #chit_stats tr td.history {
-	color:#606060;
-	font-weight:normal;
-	text-align:left;
-	padding:2px;
+	color: #606060;
+	font-weight: normal;
+	text-align: left;
+	padding: 2px;
 }
 #chit_stats tr td.history a {
-	font-weight:bold;
-	color:#606060;
+	font-weight: bold;
+	color: #606060;
 }
 #chit_stats tr td.history a:hover {
-	color:blue;
+	color: blue;
 }
 
 td.ghostbust {
-	display:block;
+	display: block;
 }
 
 div.progressbox {
-	padding:1px;
-	background-color:#F0F0F0;
-	border:1px solid #E0E0E0;
-	height:6px
+	padding: 1px;
+	background-color: #f0f0f0;
+	border: 1px solid #e0e0e0;
+	height: 6px;
 }
 div.progressbar {
-	height:100%;
-	background-color:blue
+	height: 100%;
+	background-color: blue;
 }
 
 /* Modifiers Panel */
 #chit_modifiers tbody tr:first-child td {
-	border-top:1px solid #F0F0F0;
+	border-top: 1px solid #f0f0f0;
 }
 
 #chit_modifiers tr td.label {
-	font-weight:bold;
-	text-align:left;
-	padding:2px;
+	font-weight: bold;
+	text-align: left;
+	padding: 2px;
 }
-#chit_modifiers tr td.info{
-	color:#606060;
-	font-weight:bold;
-	text-align:right;
-	padding:2px;
+#chit_modifiers tr td.info {
+	color: #606060;
+	font-weight: bold;
+	text-align: right;
+	padding: 2px;
 }
 
 /* MCD Panel + popup */
 #chit_mcd tr th.busy {
-	background-image:url(/images/relayimages/chit/busy.gif);
-	background-position:5px center;
-	background-repeat:no-repeat;
+	background-image: url(/images/relayimages/chit/busy.gif);
+	background-position: 5px center;
+	background-repeat: no-repeat;
 }
-#chit_mcd td, #chit_pickermcd td {
-	padding:2px 4px;
-	text-align:left;
+#chit_mcd td,
+#chit_pickermcd td {
+	padding: 2px 4px;
+	text-align: left;
 }
-#chit_mcd tr:hover td, #chit_pickermcd tr:hover td {
-	background-color:#F8F8F8;
+#chit_mcd tr:hover td,
+#chit_pickermcd tr:hover td {
+	background-color: #f8f8f8;
 }
-#chit_mcd tr.current td, #chit_pickermcd tr.current td {
-	background-color:#F0F0F0;
-	font-weight:bold;
+#chit_mcd tr.current td,
+#chit_pickermcd tr.current td {
+	background-color: #f0f0f0;
+	font-weight: bold;
 }
-#chit_mcd td.level, #chit_pickermcd td.level  {
-	font-weight:bold;
-	text-align:center;
-	width:20px;
+#chit_mcd td.level,
+#chit_pickermcd td.level {
+	font-weight: bold;
+	text-align: center;
+	width: 20px;
 }
-#chit_mcd td a, #chit_pickermcd td a  {
-	display:block;
+#chit_mcd td a,
+#chit_pickermcd td a {
+	display: block;
 }
 
 /* Familiars Panel */
 #chit_familiar tr td.progress {
-	border-top:1px solid #DDDDDD;
+	border-top: 1px solid #dddddd;
 }
 #chit_familiar tr td.progress div.progressbar {
-	height:4px;
+	height: 4px;
 }
 #chit_familiar tr td.info {
-	border-left:1px solid #F0F0F0;
-	border-right:1px solid #F0F0F0;
-	font-weight:bold;
-	line-height:1.4;
+	border-left: 1px solid #f0f0f0;
+	border-right: 1px solid #f0f0f0;
+	font-weight: bold;
+	line-height: 1.4;
 }
 
 /* Trail (Last Adventure) Panel */
 #chit_trail tr td {
-	padding:0px 4px 2px 4px;
-	font-size:12px;
+	padding: 0px 4px 2px 4px;
+	font-size: 12px;
 }
 #chit_trail tr td.last {
-	padding:2px 4px;
-	font-size:12px;
-	font-weight:bold;
+	padding: 2px 4px;
+	font-size: 12px;
+	font-weight: bold;
 }
 
 /* Effects Panel */
 #chit_effects a {
-	text-decoration:none;
+	text-decoration: none;
 }
-#chit_effects td.shrug a:hover, #chit_effects td.infinity a:hover, #chit_effects td.infizero a:hover {
-	color:red;
+#chit_effects td.shrug a:hover,
+#chit_effects td.infinity a:hover,
+#chit_effects td.infizero a:hover {
+	color: red;
 }
 
 #chit_effects tbody.intrinsics td.info {
-	text-align:left;
+	text-align: left;
 }
 #chit_effects td {
-	border-bottom:1px solid #F0F0F0;
-	vertical-align:middle;
-	padding:0px;
+	border-bottom: 1px solid #f0f0f0;
+	vertical-align: middle;
+	padding: 0px;
 }
 #chit_effects tr:last-child td {
-	border-bottom:3px solid #E0E0E0;
+	border-bottom: 3px solid #e0e0e0;
 }
 #chit_effects tbody:last-child tr:last-child td {
-	border-bottom:0px;
+	border-bottom: 0px;
 }
 #chit_effects td.icon {
-	text-align:left;
-	width:20px;
-	padding:1px 2px;
+	text-align: left;
+	width: 20px;
+	padding: 1px 2px;
 }
 #chit_effects td.icon img {
-	border:0px;
-	width:20px;
-	height:20px;
+	border: 0px;
+	width: 20px;
+	height: 20px;
 }
-#chit_effects td.noshrug, #chit_effects td.shrug {
-	text-align:center;
-	padding:0px 2px;
-	width:25px;
+#chit_effects td.noshrug,
+#chit_effects td.shrug {
+	text-align: center;
+	padding: 0px 2px;
+	width: 25px;
 }
-#chit_effects td.shrug a, #chit_effects td.infinity a, #chit_effects td.infizero a {
-	color:blue;
+#chit_effects td.shrug a,
+#chit_effects td.infinity a,
+#chit_effects td.infizero a {
+	color: blue;
 }
 #chit_effects td.info {
-	padding:1px 3px;
-	text-align:left;
+	padding: 1px 3px;
+	text-align: left;
 }
 #chit_effects td.powerup {
-	width:20px;
-	text-align:center;
+	width: 20px;
+	text-align: center;
 }
 #chit_effects td.infinity {
-	text-align:center;
-	font-size:16px;
-	font-weight:bold;
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
 }
 #chit_effects td.infizero {
-	text-align:center;
-	font-size:10px;
-	font-weight:bold;
+	text-align: center;
+	font-size: 10px;
+	font-weight: bold;
 }
 #chit_effects td.powerup a {
-	display:block;
-	height:100%;
+	display: block;
+	height: 100%;
 }
 #chit_effects td.right {
-	text-align:right;
-	padding-right:4px;
+	text-align: right;
+	padding-right: 4px;
 }
 
 .efmods {
-	color:#777777; /* slightly darker than modspooky */
+	color: #777777; /* slightly darker than modspooky */
 }
 #chit_effects .efmods {
-	font-size:10px;
+	font-size: 10px;
 }
 .modCold {
-	color:blue;
+	color: blue;
 }
 .modHot {
-	color:red;
+	color: red;
 }
 .modSleaze {
-	color:blueviolet;
+	color: blueviolet;
 }
 .modSpooky {
-	color:#999999; /* slightly lighter than efmods */
+	color: #999999; /* slightly lighter than efmods */
 }
 .modStench {
-	color:green;
+	color: green;
 }
 .modPrismatic {
-	background: -moz-linear-gradient(-45deg,  rgba(255,0,0,1) 0%, rgba(138,43,226,1) 25%, rgba(0,128,0,1) 50%, rgba(0,0,255,1) 100%, rgba(153,153,153,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,rgba(255,0,0,1)), color-stop(25%,rgba(138,43,226,1)), color-stop(50%,rgba(0,128,0,1)), color-stop(100%,rgba(0,0,255,1)), color-stop(100%,rgba(153,153,153,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(-45deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* IE10+ */
-	background: linear-gradient(135deg,  rgba(255,0,0,1) 0%,rgba(138,43,226,1) 25%,rgba(0,128,0,1) 50%,rgba(0,0,255,1) 100%,rgba(153,153,153,1) 100%); /* W3C */
+	background: -moz-linear-gradient(
+		-45deg,
+		rgba(255, 0, 0, 1) 0%,
+		rgba(138, 43, 226, 1) 25%,
+		rgba(0, 128, 0, 1) 50%,
+		rgba(0, 0, 255, 1) 100%,
+		rgba(153, 153, 153, 1) 100%
+	); /* FF3.6+ */
+	background: -webkit-gradient(
+		linear,
+		left top,
+		right bottom,
+		color-stop(0%, rgba(255, 0, 0, 1)),
+		color-stop(25%, rgba(138, 43, 226, 1)),
+		color-stop(50%, rgba(0, 128, 0, 1)),
+		color-stop(100%, rgba(0, 0, 255, 1)),
+		color-stop(100%, rgba(153, 153, 153, 1))
+	); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(
+		-45deg,
+		rgba(255, 0, 0, 1) 0%,
+		rgba(138, 43, 226, 1) 25%,
+		rgba(0, 128, 0, 1) 50%,
+		rgba(0, 0, 255, 1) 100%,
+		rgba(153, 153, 153, 1) 100%
+	); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(
+		-45deg,
+		rgba(255, 0, 0, 1) 0%,
+		rgba(138, 43, 226, 1) 25%,
+		rgba(0, 128, 0, 1) 50%,
+		rgba(0, 0, 255, 1) 100%,
+		rgba(153, 153, 153, 1) 100%
+	); /* Opera 11.10+ */
+	background: -ms-linear-gradient(
+		-45deg,
+		rgba(255, 0, 0, 1) 0%,
+		rgba(138, 43, 226, 1) 25%,
+		rgba(0, 128, 0, 1) 50%,
+		rgba(0, 0, 255, 1) 100%,
+		rgba(153, 153, 153, 1) 100%
+	); /* IE10+ */
+	background: linear-gradient(
+		135deg,
+		rgba(255, 0, 0, 1) 0%,
+		rgba(138, 43, 226, 1) 25%,
+		rgba(0, 128, 0, 1) 50%,
+		rgba(0, 0, 255, 1) 100%,
+		rgba(153, 153, 153, 1) 100%
+	); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0000', endColorstr='#999999',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-	color:transparent;
+	color: transparent;
 	-webkit-background-clip: text;
 	background-clip: text;
-	font-weight:bold;
+	font-weight: bold;
 }
 
 /* chit_picker defines the popup details, use for companion/familiar, MCD, etc. */
 table.chit_picker {
-	width:100%;
-	border:1px solid blue;
-	font-size:12px;
-	background-color:#F8F8F8;
-	text-align:center;
-	vertical-align:middle;
-	padding:0px;
-	border-spacing:0px;
+	width: 100%;
+	border: 1px solid blue;
+	font-size: 12px;
+	background-color: #f8f8f8;
+	text-align: center;
+	vertical-align: middle;
+	padding: 0px;
+	border-spacing: 0px;
 }
 table.chit_picker th {
-	background-color:blue;
-	color:white;
-	padding:4px 12px;
-	background-position:top right;
-	background-image:none;
-	background-repeat:no-repeat;
-	cursor:pointer;
+	background-color: blue;
+	color: white;
+	padding: 4px 12px;
+	background-position: top right;
+	background-image: none;
+	background-repeat: no-repeat;
+	cursor: pointer;
 }
 table.chit_picker th:hover {
-	background-image:url(/images/closebutton.gif);
+	background-image: url(/images/closebutton.gif);
 }
 
 table.chit_picker td {
-	border-left:0px;
-	border-right:0px;
-	border-top:0px solid #DDDDDD;
-	border-bottom:1px solid white;
+	border-left: 0px;
+	border-right: 0px;
+	border-top: 0px solid #dddddd;
+	border-bottom: 1px solid white;
 }
 
 table.chit_picker tr.currentitem td {
-	background-color:#E2E2E2;
+	background-color: #e2e2e2;
 }
 
 table.chit_picker tr.pickitem td {
 }
 table.chit_picker tr.picknone td.info {
-	padding:8px;
-	color:#333333;
+	padding: 8px;
+	color: #333333;
 }
 table.chit_picker td.icon {
-	width:30px;
-	background-color:white;
+	width: 30px;
+	background-color: white;
 }
 table.chit_picker td.icon img {
-	border:0px solid white;
+	border: 0px solid white;
 }
 table.chit_picker td.item {
-	padding:0px 6px;
+	padding: 0px 6px;
 }
 table.chit_picker tr.pickloader td.item {
-	padding:4px 12px;
+	padding: 4px 12px;
 }
 table.chit_picker tr.pickitem td.remove {
-	border-left:4px solid red;
+	border-left: 4px solid red;
 }
 table.chit_picker tr.pickitem td.fold {
-	border-left:4px solid orange;
+	border-left: 4px solid orange;
 }
 table.chit_picker tr.pickitem td.make {
-	border-left:4px solid orange;
+	border-left: 4px solid orange;
 }
 table.chit_picker tr.pickitem td.inventory {
-	border-left:4px solid green;
+	border-left: 4px solid green;
 }
 table.chit_picker tr.pickitem td.clancy {
-	border-left:4px solid green;
+	border-left: 4px solid green;
 }
 table.chit_picker tr.pickitem td.retrieve {
-	border-left:4px solid purple;
+	border-left: 4px solid purple;
 }
 table.chit_picker tr.pickitem td.action {
-	border-bottom:1px solid #E0E0E0;
-	padding:4px 8px;
-	font-weight:bold;
+	border-bottom: 1px solid #e0e0e0;
+	padding: 4px 8px;
+	font-weight: bold;
 }
 table.chit_picker tr td a {
-	display:block;
-	width:100%;
-	height:	100%;
-	text-decoration:none;
-	color:black;
+	display: block;
+	width: 100%;
+	height: 100%;
+	text-decoration: none;
+	color: black;
 }
 table.chit_picker tr.pickitem a:hover {
-	text-decoration:none;
-	color:blue;
+	text-decoration: none;
+	color: blue;
 }
 
 /* Familiar Panel */
 #chit_pickerfamgear tr:hover td {
-	background-color:#F0F0F0;
+	background-color: #f0f0f0;
 }
 
 /* chit_skeleton */
 div.chit_skeleton {
-	position:absolute;
-	display:block;
-	z-index:10;
-	right:10px;
-	left:10px;
+	position: absolute;
+	display: block;
+	z-index: 10;
+	right: 10px;
+	left: 10px;
 }
 
 div.chit_skeleton table.chit_brick th {
-	background-position:top right;
-	background-image:none;
-	background-repeat:no-repeat;
-	cursor:pointer;
+	background-position: top right;
+	background-image: none;
+	background-repeat: no-repeat;
+	cursor: pointer;
 }
 div.chit_skeleton table.chit_brick th:hover {
-	background-image:url(/images/relayimages/chit/collapse.png);
+	background-image: url(/images/relayimages/chit/collapse.png);
 }
 
 /* Current Quests Panel (#nudges ID matched KOL usage) */
 #nudges td.small {
-	font-size:1em;
-	border-top:1px solid #F0F0F0;
-	padding:4px;
+	font-size: 1em;
+	border-top: 1px solid #f0f0f0;
+	padding: 4px;
 }
 
 #nudges td a {
-	display:inline;
+	display: inline;
 }
 
 #nudges div {
-	padding-right:20px;
-	text-align:left;
-	line-height:1.4;
+	padding-right: 20px;
+	text-align: left;
+	line-height: 1.4;
 }
 
 #nudges div .close {
-	position:absolute;
-	top:0px;
-	right:0px;
-	border:0px solid red;
-	display:inline;
-	height:10px;
-	width:10px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border: 0px solid red;
+	display: inline;
+	height: 10px;
+	width: 10px;
 }
 
 /* Elements Panel (KOLWiki Elements image) */
 #chit_elements td {
-	overflow-x:hidden;
+	overflow-x: hidden;
 }
 
 #chit_elements td img {
-	vertical-align:middle;
-	text-align:center;
-	width:100%;
-	max-width:200px;
+	vertical-align: middle;
+	text-align: center;
+	width: 100%;
+	max-width: 200px;
 }
 
 /* Toolbar Panel (icons + popups) */
 #chit_toolbar {
-	padding:0px;
-	border-spacing:0px;
+	padding: 0px;
+	border-spacing: 0px;
 }
 #chit_toolbar ul {
-	list-style-type:none;
-	margin:0px;
-	padding:0px;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
 }
 
 #chit_toolbar ul li {
-	display:inline;
-	margin:0px;
-	padding:0px 3px;
-	border:0px;
+	display: inline;
+	margin: 0px;
+	padding: 0px 3px;
+	border: 0px;
 }
 #chit_toolbar ul li a {
-	margin:0px;
-	padding:0px;
-	border:0px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
 }
 #chit_toolbar ul li img {
-	margin:0px;
-	padding:0px;
-	border:0px;
-	vertical-align:middle;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	vertical-align: middle;
 }
 
 .chit_chamber #chit_update th {
-	background-color:#dce1f5;
+	background-color: #dce1f5;
 }
 #chit_update a {
-	font-weight:bold;
+	font-weight: bold;
 }
 #chit_update p {
-	padding:4px;
-	margin:0px;
+	padding: 4px;
+	margin: 0px;
 }
 
 #fam_equip {
-	position:relative;
+	position: relative;
 }
 img#fam_equip {
-	position:absolute;
-	top:0;
-	left:0;
-	z-index:5;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 5;
 }
 #fam_lock {
-	position:absolute;
-	top:21;
-	left:17;
-	z-index:10;
-	max-width:16px;
-	max-height:16px;
-	border:1px solid black;
+	position: absolute;
+	top: 21;
+	left: 17;
+	z-index: 10;
+	max-width: 16px;
+	max-height: 16px;
+	border: 1px solid black;
 }
 
 /* Quests Tracker Panel added by ckb */
 #chit_tracker tr td {
-	padding:0px 4px 2px 4px;
+	padding: 0px 4px 2px 4px;
 	/* font-size:12px; */
-	font-size:12px;
-	text-align:left;
-	border-top:1px solid #F0F0F0;
+	font-size: 12px;
+	text-align: left;
+	border-top: 1px solid #f0f0f0;
 }
 #chit_tracker td a {
-	font-weight:bold;
+	font-weight: bold;
 }
 #chit_tracker tr td table {
-	width:100%;
-	border:0px;
-	padding:0px 0px 0px 0px;
+	width: 100%;
+	border: 0px;
+	padding: 0px 0px 0px 0px;
 }
 #chit_tracker tr td table tr td {
-	margin-bottom:0px;
-	border:0px;
-	padding:0px 0px 0px 0px;
+	margin-bottom: 0px;
+	border: 0px;
+	padding: 0px 0px 0px 0px;
 }
 
-.walford_done{
-	color:green;
+.walford_done {
+	color: green;
 }
 .walford_nobucket {
-	color:red;
+	color: red;
 }
 .walford_noquest {
-	color:red;
+	color: red;
 }
 
 /* Modified from Fancy Currency by DeadNed (#1909053) */
 #chit_currency {
-	margin:0;
-	padding:0;
-	list-style:none;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 #chit_currency span {
-	color:darkred;
-	vertical-align:middle;
+	color: darkred;
+	vertical-align: middle;
 }
 #chit_currency ul li {
-	display:block;
-	position:relative;
-	z-index:12;
+	display: block;
+	position: relative;
+	z-index: 12;
 }
 #chit_currency li ul {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 	text-align: right;
-	display:none;
+	display: none;
 }
 #chit_currency ul li a {
-	display:block;
-	text-decoration:none;
-	padding:5px 15px 5px 15px;
-	background:#ffffff;
-	margin-left:1px;
-	white-space:nowrap;
-	font-weight:bold;
-	color:black;
-	font-size:smaller;
-	font-size:14px;
+	display: block;
+	text-decoration: none;
+	padding: 5px 15px 5px 15px;
+	background: #ffffff;
+	margin-left: 1px;
+	white-space: nowrap;
+	font-weight: bold;
+	color: black;
+	font-size: smaller;
+	font-size: 14px;
 }
 #chit_currency ul li img {
-	max-width:14px;
-	max-height:14px;
+	max-width: 14px;
+	max-height: 14px;
 }
 #chit_currency ul li.current a {
-	background:#dddddd;
+	background: #dddddd;
 }
 #chit_currency ul li a:hover {
-	background:#bbbbbb;
+	background: #bbbbbb;
 }
 #chit_currency li:hover ul {
-	display:block;
-	position:absolute;
-	border:1px solid gray;
+	display: block;
+	position: absolute;
+	border: 1px solid gray;
 }
 #chit_currency li:hover li {
-	float:none;
-	font-size:12px;
-	border-bottom:1px solid gray;
+	float: none;
+	font-size: 12px;
+	border-bottom: 1px solid gray;
 }
 #chit_currency li:hover li.currency_edit {
-	border-bottom:none;
+	border-bottom: none;
 }
 #chit_currency span.currency_block {
-	margin-left:0.3em;
-	margin-right:0.3em;
+	margin-left: 0.3em;
+	margin-right: 0.3em;
 }
 #chit_currency span.currency_amount {
-	margin-right:0em;
+	margin-right: 0em;
 }
 #chit_currency img.currency_icon {
-	margin-left:0em;
-	padding-left:0.1em;
-	padding-right:0.2em;
+	margin-left: 0em;
+	padding-left: 0.1em;
+	padding-right: 0.2em;
 }
 
 img.chit_icon {
-  border:1px solid #D0D0D0 !important;
-  margin:1px !important;
+	border: 1px solid #d0d0d0 !important;
+	margin: 1px !important;
 }
 div.chit_icon {
-	border:1px solid #D0D0D0 !important;
-	margin:1px !important;
+	border: 1px solid #d0d0d0 !important;
+	margin: 1px !important;
 }
 img.chit_icon.alldrops {
-	border-color:#B300FF !important;
+	border-color: #b300ff !important;
 }
 div.alldrops {
-	border-color:#B300FF !important;
+	border-color: #b300ff !important;
 }
 img.chit_icon.hasdrops {
-	border-color:blue !important;
+	border-color: blue !important;
 }
 div.hasdrops {
-	border-color:blue !important;
+	border-color: blue !important;
 }
 img.chit_icon.good {
-	border-color:green !important;
+	border-color: green !important;
 }
 div.good {
-	border-color:green !important;
+	border-color: green !important;
 }
 img.chit_icon.warning {
-	border-color:orange !important;
+	border-color: orange !important;
 }
 div.warning {
-	border-color:orange !important;
+	border-color: orange !important;
 }
 img.chit_icon.danger {
-	border-color:red !important;
+	border-color: red !important;
 }
 div.danger {
-	border-color:red !important;
+	border-color: red !important;
 }
 table.chit_picker tr.chit_pickerblock {
-	background:white;
+	background: white;
 }
-table.chit_picker tr.chit_pickerblock  .chit_icon {
-	float:left;
+table.chit_picker tr.chit_pickerblock .chit_icon {
+	float: left;
 }
 
 .chit_flexcontainer {
-	display:flex;
-	flex-wrap:wrap;
+	display: flex;
+	flex-wrap: wrap;
 }
 .chit_flexitem {
-	
 }
 
 .chit_favbutton {
-	vertical-align:middle;
+	vertical-align: middle;
 }
 .chit_favbutton img {
-	float:left;
+	float: left;
 }
 
 /* For the robo brick*/
 .robrickavatar {
-	position:relative;
-	width:75px;
-	height:75px;
-	display:block;
-	margin-left:auto;
-	margin-right:auto;
+	position: relative;
+	width: 75px;
+	height: 75px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }
 .robrickavatar img {
-	width:75px;
-	height:75px;
-	position:absolute;
-	top:0;
-	left:0;
-	right:0;
-	bottom:0;
+	width: 75px;
+	height: 75px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 .chit_robopickericon {
-	width:55px;
-	height:55px;
-	position:relative;
+	width: 55px;
+	height: 55px;
+	position: relative;
 }
 .chit_robopickericon img {
-	width:50px;
-	height:50px;
-	position:absolute;
-	top:0;
-	left:0;
+	width: 50px;
+	height: 50px;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 /* Melodramedary */
 div.chit_melodramedary {
-	display:flex;
-	position:relative;
+	display: flex;
+	position: relative;
 }
 
 div.chit_melodramedary img {
-	width:auto !important;
-	height:auto !important;
+	width: auto !important;
+	height: auto !important;
 }
 
 /* Left-Hand Man */
 div.chit_left-handman {
-	position:relative;
-	width:30px;
-	height:50px;
+	position: relative;
+	width: 30px;
+	height: 50px;
+}
+
+.darkrow {
+	background-color: #e3e3e3;
 }

@@ -1700,9 +1700,13 @@ void pickMood() {
 	picker.pickerStart("mood", "Select New Mood");
 	picker.addLoader("Getting Moody");
 	string moodname = currentMood();
+	boolean darkRow = false;
 	foreach i,m in get_moods() {
 		if(m == "") continue;
-		picker.append('<tr class="pickitem"><td class="info"><a title="Make this your current mood" class="visit" href="');
+		picker.append('<tr class="pickitem');
+		if(darkRow) picker.append(' darkrow');
+		darkRow = !darkRow;
+		picker.append('"><td class="info"><a title="Make this your current mood" class="visit" href="');
 		picker.append(sideCommand("mood "+m));
 		picker.append('">');
 		picker.append(m);
