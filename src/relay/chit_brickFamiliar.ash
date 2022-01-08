@@ -2034,6 +2034,14 @@ void bakeFamiliar() {
 		if(ghostItem != "") {
 			info += 'Buy <a target=mainpane href="mall.php?justitems=0&pudnuggler=%22' +
 				ghostItem.url_encode() + '%22">' + ghostItem + '</a>!';
+			break;
+		}
+		int commerceCharge = get_property("commerceGhostCombats").to_int();
+		if(commerceCharge >= 9) {
+			info += "Mall ask next turn!";
+		}
+		else {
+			info += commerceCharge + "/10 combats to mall ask";
 		}
 		break;
 	case $familiar[Reagnimated Gnome]:
