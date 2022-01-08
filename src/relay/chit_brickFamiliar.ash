@@ -869,6 +869,18 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			return STATUS_ALLDROPS;
 		}
 		break;
+	case $familiar[Shorter-Order Cook]:
+		int cookCharge = get_property("_shortOrderCookCharge").to_int();
+		int cookChargeNeeded = have_equipped($item[blue plate]) ? 9 : 11;
+		boolean cookDropNextTurn = cookCharge + 1 >= cookChargeNeeded;
+		if(cookDropNextTurn) {
+			iconInfo.append("Drop next turn!");
+			return STATUS_ALLDROPS;
+		}
+		else {
+			iconInfo.append(cookCharge + "/" + cookChargeNeeded + " to drop");
+		}
+		break;
 	}
 	return STATUS_NORMAL;
 }
@@ -2039,6 +2051,17 @@ void bakeFamiliar() {
 	case $familiar[Vampire Vintner]:
 		if(available_amount($item[1950 Vampire Vintner wine]) > 0) {
 			info += "Already have wine!";
+		}
+		break;
+	case $familiar[Shorter-Order Cook]:
+		int cookCharge = get_property("_shortOrderCookCharge").to_int();
+		int cookChargeNeeded = have_equipped($item[blue plate]) ? 9 : 11;
+		boolean cookDropNextTurn = cookCharge + 1 >= cookChargeNeeded;
+		if(cookDropNextTurn) {
+			info += "Drop next turn!";
+		}
+		else {
+			info += cookCharge + "/" + cookChargeNeeded + " to drop";
 		}
 		break;
 	}
