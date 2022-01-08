@@ -24,6 +24,24 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 
+string beardToShorthand(effect beard) {
+	string [effect] shorthands = {
+		$effect[Spectacle Moustache]: "item/spooky",
+		$effect[Toiletbrush Moustache]: "ML/stench",
+		$effect[Barbell Moustache]: "mus/gear",
+		$effect[Grizzly Beard]: "mp reg/cold",
+		$effect[Surrealist's Moustache]: "mys/food",
+		$effect[Musician's Musician's Moustache]: "mox/booze",
+		$effect[Gull-Wing Moustache]: "init/hot",
+		$effect[Space Warlord's Beard]: "wpn dmg/crit",
+		$effect[Pointy Wizard Beard]: "spl dmg/crit",
+		$effect[Cowboy Stache]: "rng dmg/hp/mp",
+		$effect[Friendly Chops]: "meat/sleaze"
+	};
+
+	return shorthands[beard];
+}
+
 string gearName(item it, slot s) {
 	string name = to_string(it);
 	string notes = "";
@@ -195,6 +213,18 @@ string gearName(item it, slot s) {
 			int thumbAdvs = get_property("_mafiaThumbRingAdvs").to_int();
 			if(thumbAdvs > 0) {
 				notes = thumbAdvs + " adv gained";
+			}
+			break;
+		case $item[Daylight Shavings Helmet]:
+			effect nextBeard = get_property("_nextBeard").to_effect();
+			if(nextBeard != $effect[none]) {
+				notes = beardToShorthand(nextBeard);
+				if(have_effect(get_property("_lastBeard").to_effect()) > 0) {
+					notes += " next";
+				}
+				else {
+					notes += " due";
+				}
 			}
 			break;
 	}
@@ -957,6 +987,78 @@ void pickerBackupCamera() {
 	chitPickers["backupcamera"] = picker;
 }
 
+// This isn't really a picker, it just uses the picker layout
+void pickerFakeDaylightShavingsHelmet() {
+	buffer picker;
+	picker.pickerStart("fakebeard", "Check out beard ordering");
+
+	void addBeard(effect beard) {
+		picker.append('<tr class="pickitem');
+		if(have_effect(beard) > 0)
+			picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(beard.image);
+		picker.append('" /></td><td colspan="2">');
+		picker.append(beard.to_string());
+		picker.append('<br /><span class="descline">');
+		picker.append(parseMods(string_modifier(beard, "Evaluated Modifiers")));
+		picker.append('</span></td></tr>');
+	}
+
+	effect [int] baseBeardOrder = {
+		$effect[Spectacle Moustache],
+		$effect[Toiletbrush Moustache],
+		$effect[Barbell Moustache],
+		$effect[Grizzly Beard],
+		$effect[Surrealist's Moustache],
+		$effect[Musician's Musician's Moustache],
+		$effect[Gull-Wing Moustache],
+		$effect[Space Warlord's Beard],
+		$effect[Pointy Wizard Beard],
+		$effect[Cowboy Stache],
+		$effect[Friendly Chops]
+	};
+
+	effect [int] beardOrder;
+
+	int classIdMod = my_class().to_int() % 6;
+	int currBeard = -1;
+	for(int i = 0; i < 11; ++i) {
+		int nextBeard = (classIdMod * i) % 11;
+		beardOrder[i] = baseBeardOrder[nextBeard];
+		if(have_effect(beardOrder[i]) > 0) {
+			currBeard = i;
+			set_property("_lastBeard", beardOrder[i]);
+		}
+	}
+
+	if(currBeard == -1) {
+		effect lastBeard = get_property("_lastBeard").to_effect();
+		for(int i = 0; i < 11; ++i) {
+			if(lastBeard == beardOrder[i]) {
+				currBeard = i;
+				break;
+			}
+		}
+		if(currBeard == -1) {
+			// We don't have beard info
+			currBeard = 0;
+		}
+	}
+
+	for(int i = 0; i < 11; ++i) {
+		int beardToDisplay = (i + currBeard) % 11;
+		addBeard(beardOrder[beardToDisplay]);
+
+		if(i == 1) {
+			set_property("_nextBeard", beardOrder[beardToDisplay].to_string());
+		}
+	}
+
+	picker.append('</table></div>');
+	chitPickers["fakebeard"] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -1168,6 +1270,9 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera (currently ' + get_property("backupCameraMode") + ')</a></td></tr>');
 			break;
 		case $item[Daylight Shavings Helmet]:
+			pickerFakeDaylightShavingsHelmet();
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerfakebeard" href="#"><b>Check</b> upcoming beards</a></td></tr>');
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="account_facialhair.php"><b>Adjust</b> your facial hair</a></td></tr>');
 			break;

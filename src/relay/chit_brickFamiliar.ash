@@ -556,6 +556,13 @@ int hasDrops(item it) {
 			return get_property("scrapbookCharges").to_int() / 100;
 		case $item[industrial fire extinguisher]:
 			return get_property("_fireExtinguisherCharge").to_int();
+		case $item[Daylight Shavings Helmet]:
+			foreach beard in $effects[Spectacle Moustache, Toiletbrush Moustache, Barbell Moustache, Grizzly Beard, Surrealist's Moustache, Musician's Musician's Moustache, Gull-Wing Moustache, Space Warlord's Beard, Pointy Wizard Beard, Cowboy Stache, Friendly Chops] {
+				if(have_effect(beard) > 0)
+				 return 0;
+			}
+			return 1;
+			break;
 	}
 
 	return 0;
