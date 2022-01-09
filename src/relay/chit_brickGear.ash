@@ -226,6 +226,9 @@ string gearName(item it, slot s) {
 					notes += " due";
 				}
 			}
+			else {
+				notes = "unknown beard due";
+			}
 			break;
 	}
 
@@ -1023,6 +1026,7 @@ void pickerFakeDaylightShavingsHelmet() {
 
 	int classIdMod = my_class().to_int() % 6;
 	int currBeard = -1;
+	boolean haveBeardInfo = true;
 	for(int i = 0; i < 11; ++i) {
 		int nextBeard = (classIdMod * i) % 11;
 		beardOrder[i] = baseBeardOrder[nextBeard];
@@ -1043,6 +1047,7 @@ void pickerFakeDaylightShavingsHelmet() {
 		if(currBeard == -1) {
 			// We don't have beard info
 			currBeard = 0;
+			haveBeardInfo = false;
 		}
 	}
 
@@ -1050,7 +1055,7 @@ void pickerFakeDaylightShavingsHelmet() {
 		int beardToDisplay = (i + currBeard) % 11;
 		addBeard(beardOrder[beardToDisplay]);
 
-		if(i == 1) {
+		if(i == 1 && haveBeardInfo) {
 			set_property("_nextBeard", beardOrder[beardToDisplay].to_string());
 		}
 	}
