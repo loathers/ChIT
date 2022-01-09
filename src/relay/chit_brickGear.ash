@@ -216,8 +216,8 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[Daylight Shavings Helmet]:
-			effect nextBeard = get_property("_nextBeard").to_effect();
-			if(nextBeard != $effect[none]) {
+			effect nextBeard = get_property("chit.nextBeard").to_effect();
+			if(nextBeard != $effect[none] && get_property("chit.beardInfoAscension").to_int() == my_ascensions()) {
 				notes = beardToShorthand(nextBeard);
 				if(have_effect(get_property("_lastBeard").to_effect()) > 0) {
 					notes += " next";
@@ -225,9 +225,6 @@ string gearName(item it, slot s) {
 				else {
 					notes += " due";
 				}
-			}
-			else {
-				notes = "unknown beard due";
 			}
 			break;
 	}
@@ -1024,20 +1021,30 @@ void pickerFakeDaylightShavingsHelmet() {
 
 	effect [int] beardOrder;
 
+	boolean newAscension = false;
+	if(get_property("chit.beardInfoAscension").to_int() < my_ascensions()) {
+		remove_property("chit.nextBeard");
+		remove_property("chit.lastBeard");
+		set_property("chit.beardInfoAscension", my_ascensions());
+		newAscension = true;
+	}
+
 	int classIdMod = my_class().to_int() % 6;
 	int currBeard = -1;
 	boolean haveBeardInfo = true;
+	boolean haveBeard = false;
 	for(int i = 0; i < 11; ++i) {
 		int nextBeard = (classIdMod * i) % 11;
 		beardOrder[i] = baseBeardOrder[nextBeard];
 		if(have_effect(beardOrder[i]) > 0) {
+			haveBeard = true;
 			currBeard = i;
-			set_property("_lastBeard", beardOrder[i]);
+			set_property("chit.lastBeard", beardOrder[i]);
 		}
 	}
 
 	if(currBeard == -1) {
-		effect lastBeard = get_property("_lastBeard").to_effect();
+		effect lastBeard = get_property("chit.lastBeard").to_effect();
 		for(int i = 0; i < 11; ++i) {
 			if(lastBeard == beardOrder[i]) {
 				currBeard = i;
@@ -1051,12 +1058,16 @@ void pickerFakeDaylightShavingsHelmet() {
 		}
 	}
 
+	if(haveBeardInfo && !haveBeard) {
+		currBeard = (currBeard + 1) % 11;
+	}
+
 	for(int i = 0; i < 11; ++i) {
 		int beardToDisplay = (i + currBeard) % 11;
 		addBeard(beardOrder[beardToDisplay]);
 
-		if(i == 1 && haveBeardInfo) {
-			set_property("_nextBeard", beardOrder[beardToDisplay].to_string());
+		if((i == 0 && newAscension) || (i == 1 && haveBeardInfo)) {
+			set_property("chit.nextBeard", beardOrder[beardToDisplay].to_string());
 		}
 	}
 
