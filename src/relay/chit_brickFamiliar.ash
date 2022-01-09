@@ -562,7 +562,6 @@ int hasDrops(item it) {
 				 return 0;
 			}
 			return 1;
-			break;
 	}
 
 	return 0;
