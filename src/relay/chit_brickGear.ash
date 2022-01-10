@@ -42,6 +42,9 @@ string beardToShorthand(effect beard) {
 	return shorthands[beard];
 }
 
+effect getCurrBeard();
+effect getNextBeard();
+
 string gearName(item it, slot s) {
 	string name = to_string(it);
 	string notes = "";
@@ -216,10 +219,10 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[Daylight Shavings Helmet]:
-			effect nextBeard = get_property("chit.nextBeard").to_effect();
-			if(nextBeard != $effect[none] && get_property("chit.beardInfoAscension").to_int() == my_ascensions()) {
+			effect nextBeard = getNextBeard();
+			if(nextBeard != $effect[none]) {
 				notes = beardToShorthand(nextBeard);
-				if(have_effect(get_property("_lastBeard").to_effect()) > 0) {
+				if(getCurrBeard() != $effect[none]) {
 					notes += " next";
 				}
 				else {
@@ -987,6 +990,95 @@ void pickerBackupCamera() {
 	chitPickers["backupcamera"] = picker;
 }
 
+effect [int] getBeardOrder() {
+	effect [int] baseBeardOrder = {
+		$effect[Spectacle Moustache],
+		$effect[Toiletbrush Moustache],
+		$effect[Barbell Moustache],
+		$effect[Grizzly Beard],
+		$effect[Surrealist's Moustache],
+		$effect[Musician's Musician's Moustache],
+		$effect[Gull-Wing Moustache],
+		$effect[Space Warlord's Beard],
+		$effect[Pointy Wizard Beard],
+		$effect[Cowboy Stache],
+		$effect[Friendly Chops]
+	};
+
+	effect [int] beardOrder;
+	int classIdMod = my_class().to_int() % 6;
+	for(int i = 0; i < 11; ++i) {
+		int nextBeard = (classIdMod * i) % 11;
+		beardOrder[i] = baseBeardOrder[nextBeard];
+	}
+
+	if(get_property("chit.beardInfoAscension").to_int() < my_ascensions()) {
+		set_property("chit.beardInfoAscension", my_ascensions());
+		// this will report falsely one time ever, probably
+		set_property("chit.lastBeard", beardOrder[10]);
+	}
+
+	return beardOrder;
+}
+
+effect getCurrBeard() {
+	foreach beard in $effects[
+		Spectacle Moustache,
+		Toiletbrush Moustache,
+		Barbell Moustache,
+		Grizzly Beard,
+		Surrealist's Moustache,
+		Musician's Musician's Moustache,
+		Gull-Wing Moustache,
+		Space Warlord's Beard,
+		Pointy Wizard Beard,
+		Cowboy Stache,
+		Friendly Chops
+	] {
+		if(have_effect(beard) > 0) {
+			set_property("chit.lastBeard", beard);
+			return beard;
+		}
+	}
+	return $effect[none];
+}
+
+int getCurrBeardNum() {
+	foreach i,beard in getBeardOrder() {
+		if(have_effect(beard) > 0) {
+			set_property("chit.lastBeard", beard);
+			return i;
+		}
+	}
+	return -1;
+}
+
+int getLastBeardNum() {
+	effect lastBeard = get_property("chit.lastBeard").to_effect();
+	if(lastBeard == $effect[none]) {
+		return -1;
+	}
+	foreach i,beard in getBeardOrder() {
+		if(beard == lastBeard) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+effect getNextBeard() {
+	effect [int] beardOrder = getBeardOrder();
+	int currBeardNum = getCurrBeardNum();
+	if(currBeardNum == -1) {
+		int lastBeardNum = getLastBeardNum();
+		if(lastBeardNum == -1) {
+			return $effect[none];
+		}
+		return beardOrder[(lastBeardNum + 1) % 11];
+	}
+	return beardOrder[(currBeardNum + 1) % 11];
+}
+
 // This isn't really a picker, it just uses the picker layout
 void pickerFakeDaylightShavingsHelmet() {
 	buffer picker;
@@ -1005,70 +1097,18 @@ void pickerFakeDaylightShavingsHelmet() {
 		picker.append('</span></td></tr>');
 	}
 
-	effect [int] baseBeardOrder = {
-		$effect[Spectacle Moustache],
-		$effect[Toiletbrush Moustache],
-		$effect[Barbell Moustache],
-		$effect[Grizzly Beard],
-		$effect[Surrealist's Moustache],
-		$effect[Musician's Musician's Moustache],
-		$effect[Gull-Wing Moustache],
-		$effect[Space Warlord's Beard],
-		$effect[Pointy Wizard Beard],
-		$effect[Cowboy Stache],
-		$effect[Friendly Chops]
-	};
+	effect [int] beardOrder = getBeardOrder();
 
-	effect [int] beardOrder;
-
-	boolean newAscension = false;
-	if(get_property("chit.beardInfoAscension").to_int() < my_ascensions()) {
-		remove_property("chit.nextBeard");
-		remove_property("chit.lastBeard");
-		set_property("chit.beardInfoAscension", my_ascensions());
-		newAscension = true;
-	}
-
-	int classIdMod = my_class().to_int() % 6;
-	int currBeard = -1;
-	boolean haveBeardInfo = true;
-	boolean haveBeard = false;
-	for(int i = 0; i < 11; ++i) {
-		int nextBeard = (classIdMod * i) % 11;
-		beardOrder[i] = baseBeardOrder[nextBeard];
-		if(have_effect(beardOrder[i]) > 0) {
-			haveBeard = true;
-			currBeard = i;
-			set_property("chit.lastBeard", beardOrder[i]);
-		}
-	}
-
-	if(currBeard == -1) {
-		effect lastBeard = get_property("chit.lastBeard").to_effect();
-		for(int i = 0; i < 11; ++i) {
-			if(lastBeard == beardOrder[i]) {
-				currBeard = i;
-				break;
-			}
-		}
-		if(currBeard == -1) {
-			// We don't have beard info
-			currBeard = 0;
-			haveBeardInfo = false;
-		}
-	}
-
-	if(haveBeardInfo && !haveBeard) {
-		currBeard = (currBeard + 1) % 11;
+	int beardStartNum = getCurrBeardNum();
+	if(beardStartNum == -1) {
+		// this works even if last beard is unknown because we want to start at 0 there
+		// and it returns -1 in that case
+		beardStartNum = (getLastBeardNum() + 1) % 11;
 	}
 
 	for(int i = 0; i < 11; ++i) {
-		int beardToDisplay = (i + currBeard) % 11;
+		int beardToDisplay = (i + beardStartNum) % 11;
 		addBeard(beardOrder[beardToDisplay]);
-
-		if((i == 0 && newAscension) || (i == 1 && haveBeardInfo)) {
-			set_property("chit.nextBeard", beardOrder[beardToDisplay].to_string());
-		}
 	}
 
 	picker.append('</table></div>');
