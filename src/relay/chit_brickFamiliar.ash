@@ -164,7 +164,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 
 	string sadMessage(string it, string fam) {
 		string famname = my_path() == "Avatar of Boris"? "Clancy": myfam.name;
-		return "You don't have any "+it+" for your " + fam + ".<br><br>Poor "+famname;
+		return "You don't have any " + it + " for your " + fam + ".<br><br>Poor " + famname + ".";
 	}
 
 	void pickerSnowsuit() {
@@ -423,6 +423,11 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			picker.addLoader("Changing Equipment...");
 			pickChameleon();
 			if(count(addeditems) == 0) picker.addSadFace(sadMessage("equipment", myfam));
+			break;
+		case $familiar[Ghost of Crimbo Carols]:
+		case $familiar[Ghost of Crimbo Cheer]:
+		case $familiar[Ghost of Crimbo Commerce]:
+			picker.addSadFace(myfam.name + " is too incorporeal for equipment.<br><br>Poor " + myfam.name + ".");
 			break;
 		case $familiar[none]:
 			if(my_path() == "Avatar of Boris") {
