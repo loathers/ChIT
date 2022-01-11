@@ -2116,6 +2116,9 @@ void bakeFamiliar() {
 			case $item[miniature crystal ball]:
 				info += (length(info) == 0 ? "" : ", ") + '<a class="visit" target="mainpane" href="inventory.php?ponder=1">ponder</a>';
 				break;
+			case $item[Mayflower bouquet]:
+				info += (length(info) == 0 ? "" : ", ") + get_property("_mayflowerDrops") + " flowers";
+				break;
 		}
 	}
 
