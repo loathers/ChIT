@@ -2097,21 +2097,25 @@ void bakeFamiliar() {
 		}
 	} else {
 		famitem = familiar_equipped_equipment(my_familiar());
-		if (famitem != $item[none]) {
-			equiptype = to_string(famitem);
-			// If using snow suit, find the current face & add carrot drop info
-			if(famitem == $item[Snow Suit] && have_effect($effect[SOME PIGS]) == 0) {
-				switch(get_property("snowsuit")) {
-					case "eyebrows": equipimage = "snowface1.gif"; break;
-					case "smirk": equipimage = "snowface2.gif"; break;
-					case "nose": equipimage = "snowface3.gif"; break;
-					case "goatee": equipimage = "snowface4.gif"; break;
-					case "hat": equipimage = "snowface5.gif"; break;
-					default: equipimage = "snowsuit.gif"; break;
+		if(famitem != $item[none]) {
+			equipimage = famitem.image;
+		}
+		switch(famitem) {
+			case $item[Snow Suit]:
+				if(have_effect($effect[SOME PIGS]) == 0) {
+					switch(get_property("snowsuit")) {
+						case "eyebrows": equipimage = "snowface1.gif"; break;
+						case "smirk": equipimage = "snowface2.gif"; break;
+						case "nose": equipimage = "snowface3.gif"; break;
+						case "goatee": equipimage = "snowface4.gif"; break;
+						case "hat": equipimage = "snowface5.gif"; break;
+					}
+					info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
 				}
-				info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
-			} else
-				equipimage = famitem.image;
+				break;
+			case $item[miniature crystal ball]:
+				info += (length(info) == 0 ? "" : ", ") + '<a class="visit" target="mainpane" href="inventory.php?ponder=1">ponder</a>';
+				break;
 		}
 	}
 
