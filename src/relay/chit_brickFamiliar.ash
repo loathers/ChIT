@@ -567,6 +567,10 @@ int hasDrops(item it) {
 				 return 0;
 			}
 			return 1;
+		case $item[cursed magnifying glass]:
+			if(get_property("cursedMagnifyingGlassCount").to_int() >= 13)
+				return 1;
+			break;
 	}
 
 	return 0;

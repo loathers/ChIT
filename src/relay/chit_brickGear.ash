@@ -230,6 +230,9 @@ string gearName(item it, slot s) {
 				}
 			}
 			break;
+		case $item[cursed magnifying glass]:
+			notes += get_property("cursedMagnifyingGlassCount") + "/13 charge, " + get_property("_voidFreeFights") + "/5 free";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
