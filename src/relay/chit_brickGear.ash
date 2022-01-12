@@ -1015,12 +1015,6 @@ effect [int] getBeardOrder() {
 		beardOrder[i] = baseBeardOrder[nextBeard];
 	}
 
-	if(get_property("chit.beardInfoAscension").to_int() < my_ascensions()) {
-		set_property("chit.beardInfoAscension", my_ascensions());
-		// this will report falsely one time ever, probably
-		set_property("chit.lastBeard", beardOrder[10]);
-	}
-
 	return beardOrder;
 }
 
@@ -1039,7 +1033,6 @@ effect getCurrBeard() {
 		Friendly Chops
 	] {
 		if(have_effect(beard) > 0) {
-			set_property("chit.lastBeard", beard);
 			return beard;
 		}
 	}
@@ -1049,7 +1042,6 @@ effect getCurrBeard() {
 int getCurrBeardNum() {
 	foreach i,beard in getBeardOrder() {
 		if(have_effect(beard) > 0) {
-			set_property("chit.lastBeard", beard);
 			return i;
 		}
 	}
@@ -1057,7 +1049,7 @@ int getCurrBeardNum() {
 }
 
 int getLastBeardNum() {
-	effect lastBeard = get_property("chit.lastBeard").to_effect();
+	effect lastBeard = get_property("lastBeardBuff").to_effect();
 	if(lastBeard == $effect[none]) {
 		return -1;
 	}
@@ -1075,7 +1067,8 @@ effect getNextBeard() {
 	if(currBeardNum == -1) {
 		int lastBeardNum = getLastBeardNum();
 		if(lastBeardNum == -1) {
-			return $effect[none];
+			// now that it's mafia tracked we can trust that it's reliable enough
+			beardOrder[0];
 		}
 		return beardOrder[(lastBeardNum + 1) % 11];
 	}

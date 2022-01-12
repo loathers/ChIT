@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26110; // cursed magnifying glass tracking
+since r26114; // native beard tracking
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
