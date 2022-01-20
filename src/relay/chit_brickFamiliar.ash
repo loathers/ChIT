@@ -1924,12 +1924,13 @@ void bakeFamiliar() {
 		int thought = item_amount($item[abstraction: thought]);
 		int action = item_amount($item[abstraction: action]);
 		int sensation = item_amount($item[abstraction: sensation]);
+		boolean haveDuped = get_property("lastDMTDuplication").to_int() >= my_ascensions();
 		if(thought > 0 && action > 0 && sensation > 0)
 			isBlue = " blue-link";
 		info = '<a class="visit' + isBlue + '" target="mainpane" title="DMT mixing: '
 			+ thought + ' item, ' + action + ' weight, ' + sensation + ' init'
 			+ ' possible" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
-			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe';
+			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe, dupe ' + (haveDuped ? "used" : "available");
 		break;
 	case $familiar[Intergnat]:
 		if(item_amount($item[BACON]) > 0) {
