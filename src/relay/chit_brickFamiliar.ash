@@ -2088,6 +2088,10 @@ void bakeFamiliar() {
 			info += cookCharge + "/" + cookChargeNeeded + " to drop";
 		}
 		break;
+	case $familiar[Stocking Mimic]:
+		boolean candyBagDropped = get_property("_bagOfCandy").to_boolean();
+		info += candyBagDropped ? "bag dropped today" : "can drop bag today";
+		break;
 	}
 
 	//Get equipment info
