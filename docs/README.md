@@ -12,6 +12,14 @@ svn checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT/branc
 
 Will require [a recent build of KoLMafia](https://ci.kolmafia.us/job/Kolmafia/lastSuccessfulBuild/).
 
+## Uninstallation
+
+Run this command in the graphical CLI:
+```
+svn delete ChIT
+```
+note that the above command is case sensitive. `chit` will not work it has to be `ChIT`
+
 ## What if I already have the sourceforge version installed?
 
 If you are switching from the old sourceforge version of ChIT, run this command before the previous command:
