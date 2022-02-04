@@ -467,6 +467,8 @@ int hasBjornDrops(familiar f) {
 	return 0;
 }
 
+int locketFightsRemaining();
+
 // TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
@@ -571,6 +573,8 @@ int hasDrops(item it) {
 			if(get_property("cursedMagnifyingGlassCount").to_int() >= 13)
 				return 1;
 			break;
+		case $item[combat lover's locket]:
+			return locketFightsRemaining();
 	}
 
 	return 0;

@@ -44,6 +44,7 @@ string beardToShorthand(effect beard) {
 
 effect getCurrBeard();
 effect getNextBeard();
+int locketFightsRemaining();
 
 string gearName(item it, slot s) {
 	string name = to_string(it);
@@ -232,6 +233,15 @@ string gearName(item it, slot s) {
 			break;
 		case $item[cursed magnifying glass]:
 			notes += get_property("cursedMagnifyingGlassCount") + "/13 charge, " + get_property("_voidFreeFights") + "/5 free";
+			break;
+		case $item[combat lover's locket]:
+			int locketFights = locketFightsRemaining();
+			if(locketFights > 0) {
+				notes += locketFights + " reminiscence" + (locketFights == 1 ? "" : "s") + " remain";
+			}
+			else {
+				notes += "done reminiscing";
+			}
 			break;
 	}
 
@@ -1075,6 +1085,14 @@ effect getNextBeard() {
 	return beardOrder[(currBeardNum + 1) % 11];
 }
 
+int locketFightsRemaining() {
+	string fought = get_property("_locketMonstersFought");
+	if(fought.length() == 0) {
+		return 3;
+	}
+	return max(3 - fought.split_string(",").count(), 0);
+}
+
 // This isn't really a picker, it just uses the picker layout
 void pickerFakeDaylightShavingsHelmet() {
 	buffer picker;
@@ -1327,6 +1345,10 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerfakebeard" href="#"><b>Check</b> upcoming beards</a></td></tr>');
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="account_facialhair.php"><b>Adjust</b> your facial hair</a></td></tr>');
+			break;
+		case $item[combat lover's locket]:
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?reminisce=1"><b>Reminisce</b> about past loves</a></td></tr>');
 			break;
 	}
 
