@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26114; // native beard tracking
+since r26244; // Grey You basic support
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
