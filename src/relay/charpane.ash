@@ -2059,8 +2059,12 @@ void addStat(buffer result, stat s) {
 	result.append(s == $stat[mysticality]? "Myst": to_string(s));
 	result.append('</td>');
 	result.append('<td class="info">' + formatStats(s) + '</td>');
-	if(to_boolean(vars["chit.stats.showbars"]))
-		result.append('<td class="progress">' + progressSubStats(s) + '</td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		if(usesSubstats())
+			result.append('<td class="progress">' + progressSubStats(s) + '</td>');
+		else
+			result.append('<td></td>');
+	}
 	result.append('</tr>');
 }
 
@@ -3827,9 +3831,12 @@ void bakeCharacter() {
 		result.append(my_primestat().to_lower_case());
 		result.append(' until level ');
 		result.append(to_string(my_level() + 1));
-		result.append('\n (');
-		result.append(formatInt(needed));
-		result.append(' substats needed)" ><div class="progressbar" style="width:');
+		if(usesSubstats()) {
+			result.append('\n (');
+			result.append(formatInt(needed));
+			result.append(' substats needed)');
+		}
+		result.append('" ><div class="progressbar" style="width:');
 		result.append(progress);
 		result.append('%"></div></td></tr>');
 	}

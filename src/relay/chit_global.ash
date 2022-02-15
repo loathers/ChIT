@@ -677,3 +677,6 @@ boolean isImportantOffhand(item it) {
 	return $items[UV-resistant compass, ornate dowsing rod, unstable fulminate, wine bomb] contains it;
 }
 
+boolean usesSubstats() {
+	return my_class() != $class[Grey Goo];
+}
