@@ -200,6 +200,9 @@ string gearName(item it, slot s) {
 			// 5 extra uses in You, Robot
 			int backupsLeft = (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 			notes = backupsLeft + " backups left: " + get_property("lastCopyableMonster");
+			if(!get_property("backupCameraReverserEnabled").to_boolean()) {
+				notes += ", REVERSER NOT ENABLED!";
+			}
 			break;
 		case $item[familiar scrapbook]:
 			notes = get_property("scrapbookCharges") + " scraps";
@@ -1793,6 +1796,11 @@ int dangerLevel(item it, slot s) {
 		case $item[sea chaps]: case $item[sea cowboy hat]:
 			if(get_property("lassoTraining") == "expertly")
 				return 1;
+			break;
+		case $item[backup camera]:
+			if(!get_property("backupCameraReverserEnabled").to_boolean()) {
+				return 2;
+			}
 			break;
 	}
 	// latte reminder
