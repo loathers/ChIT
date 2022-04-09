@@ -246,6 +246,9 @@ string gearName(item it, slot s) {
 				notes += "done reminiscing";
 			}
 			break;
+		case $item[unbreakable umbrella]:
+			notes += get_property("umbrellaState");
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
@@ -1088,14 +1091,6 @@ effect getNextBeard() {
 	return beardOrder[(currBeardNum + 1) % 11];
 }
 
-int locketFightsRemaining() {
-	string fought = get_property("_locketMonstersFought");
-	if(fought.length() == 0) {
-		return 3;
-	}
-	return max(3 - fought.split_string(",").count(), 0);
-}
-
 // This isn't really a picker, it just uses the picker layout
 void pickerFakeDaylightShavingsHelmet() {
 	buffer picker;
@@ -1130,6 +1125,54 @@ void pickerFakeDaylightShavingsHelmet() {
 
 	picker.append('</table></div>');
 	chitPickers["fakebeard"] = picker;
+}
+
+int locketFightsRemaining() {
+	string fought = get_property("_locketMonstersFought");
+	if(fought.length() == 0) {
+		return 3;
+	}
+	return max(3 - fought.split_string(",").count(), 0);
+}
+
+void pickerUnbrella() {
+	buffer picker;
+	picker.pickerStart("unbrella", "Reconfigure your unbrella");
+
+	void addSetting(string name, string desc, string command, string icon) {
+		boolean active = get_property("umbrellaState") == name;
+
+		picker.append('<tr class="pickitem');
+		if(active) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('" /></td><td colspan="2">');
+		if(active) {
+			picker.append('<b>Current</b>: ');
+		}
+		else {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("umbrella " + command));
+			picker.append('"><b>Configure</b> to be ');
+		}
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(!active) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addSetting("broken", "+25% ML", "broken", "unbrella7.gif");
+	addSetting("forward-facing", "+25 DR, Shield", "forward", "unbrella3.gif");
+	addSetting("bucket style", "+25% Item Drop", "bucket", "unbrella5.gif");
+	addSetting("pitchfork style", "+25 Weapon Damage", "pitchfork", "unbrella8.gif");
+	addSetting("constantly twirling", "+25 Spell Damage", "twirling", "unbrella6.gif");
+	addSetting("cocoon", "-10% combat", "cocoon", "unbrella1.gif");
+
+	picker.addLoader("Reconfiguring your unbrella");
+	picker.append('</table></div>');
+	chitPickers["unbrella"] = picker;
 }
 
 int dangerLevel(item it, slot s);
@@ -1352,6 +1395,11 @@ void pickerGear(slot s) {
 		case $item[combat lover's locket]:
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?reminisce=1"><b>Reminisce</b> about past loves</a></td></tr>');
+			break;
+		case $item[unbreakable umbrella]:
+			pickerUnbrella();
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerunbrella" href="#"><b>Reconfigure</b> your umbrella</a></td></tr>');
 			break;
 	}
 

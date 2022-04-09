@@ -629,6 +629,19 @@ string item_image(item it, int modify_image)
 				break;
 			case $item[unwrapped knock-off retro superhero cape]:
 				return "/images/itemimages/" + retroHeroToIcon(get_property("retroCapeSuperhero"));
+			case $item[unbreakable umbrella]:
+				switch(get_property("umbrellaState")) {
+					case "broken": return "/images/itemimages/unbrella7.gif";
+					case "forward-facing": return "/images/itemimages/unbrella3.gif";
+					case "bucket style": return "/images/itemimages/unbrella5.gif";
+					case "pitchfork style": return "/images/itemimages/unbrella8.gif";
+					case "constantly twirling": return "/images/itemimages/unbrella6.gif";
+					case "cocoon": return "/images/itemimages/unbrella1.gif";
+					default:
+						print("Invalid umbrellaState " + get_property("umbrellaState") + "???", "red");
+						break;
+				}
+				break;
 		}
 	}
 
