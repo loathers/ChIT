@@ -4532,112 +4532,112 @@ buffer addGroup(string[int] rowHTMLs, string className) {
 buffer addRow(string[int] bricks, string[int] styleInfos) {
 //adds bricks or groups of bricks into horizontal rows
 	buffer buff;
-	string brick;
 	int totalStars = starCount(styleInfos) + count(bricks) - count(styleInfos);
-	//append(buff, '<div class="brick_row">');
 	foreach i,s in bricks {
-		brick = s;
-		if(chitBricks contains s) {
-			brick = chitBricks[s];
-		} else {
-			if(length(s) == 0 || substring(s,0,1) != "<")
-				brick = "";
-		}
-		if(length(brick) > 0) {
-			append(buff, '<div class="brick_holder" '+stylize(styleInfos[i],totalStars)+'>'+brick+'</div>');
-		}
+		append(buff, '<div class="brick_holder" '+stylize(styleInfos[i],totalStars)+'>'+s+'</div>');
 	}
-	//append(buff, '</div>');
 	return buff;
 }
 
-buffer addBricks (string[int] tokens) {
-//parses a chit.__.layout string and adding bricks in appropriate rows and columns,
-//with user-specified widths for the various bricks and groups of bricks
-//uses multi-dimensional arrays for tracking arrays at different parenthesis depth.
-	buffer result; 
-	string[int,int] bricks;
-	string[int,int] rowHTML;
-	string[int,int] styleInfo;
-	string brick;
-	boolean read_style = false;
-	int pLevel = 0;
-	int[int] i = {0:0};
-	int[int] j = {0:0};
-	foreach n,s in tokens {
-		if(read_style){
-			styleInfo[pLevel,i[pLevel]] = tokens[n];
-			read_style = false;
-		} else {
-			switch(s) {
-				case "": break;
-				case ":":
-				//next token tells us how wide this last element should be
-					read_style = true;
-					break;
-				case "|":
-				//next element will be horizontally adjacent to this one
-					i[pLevel]++;
-					break;
-				case ",":
-				//next element will start a new row below this one
-					rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
-					i[pLevel]=0;
-					j[pLevel]++;
-					bricks[pLevel]={};
-					styleInfo[pLevel]={};
-					break;
-				case "{":
-				case "(":
-				//parenthesis depth increased. Pause current group parsing and start a new one.
-					pLevel++;
-					i[pLevel] = 0;
-					j[pLevel] = 0;
-					bricks[pLevel] = {};
-					styleInfo[pLevel] = {};
-					break;
-				case "}":
-				//vertical group complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
-					rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
-					bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_column");
-					i[pLevel] = 0;
-					j[pLevel] = 0;
-					bricks[pLevel] = {};
-					styleInfo[pLevel] = {};
-					pLevel--;
-					break;
-				case ")":
-				//horizontal row complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
-					rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
-					bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
-					i[pLevel] = 0;
-					j[pLevel] = 0;
-					bricks[pLevel] = {};
-					styleInfo[pLevel] = {};
-					pLevel--;
-					break;
-				default:
-					switch (s) {
-						case "toolbar":
-						case "header":
-						case "footer":
-							break;	//Special Bricks that are inserted manually in the correct places
-						default:
-							bricks[pLevel,i[pLevel]] = s;
-					}
-					break;
-			}
-		}
-	}
-	rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
-	append(result, addGroup(rowHTML[pLevel],"brick_row"));
-	return result;
-}
+
 
 buffer addBricks(string layout) {
+	buffer addBricksHelper (string[int] tokens) {
+	//parses a chit.__.layout string and adds bricks in appropriate rows and columns,
+	//with user-specified widths for the various bricks and groups of bricks
+	//uses multi-dimensional arrays for tracking arrays at different parenthesis depth.
+		buffer result; 
+		string[int,int] bricks;
+		string[int,int] rowHTML;
+		string[int,int] styleInfo;
+		string brick;
+		boolean read_style = false;
+		int pLevel = 0;      //tracks parenthesis depth
+		int[int] i = {0:0};  //tracks bricks within a row
+		int[int] j = {0:0};  //tracks rows withing a group
+		foreach n,s in tokens {
+			if(read_style && bricks[pLevel] contains i[pLevel]){
+				styleInfo[pLevel,i[pLevel]] = s;
+				read_style = false;
+			} else {
+				switch(s) {
+					case "": break;
+					case ":":
+					//next token tells us how wide this last element should be
+						read_style = true;
+						break;
+					case "|":
+					//next element will be horizontally adjacent to this one
+						i[pLevel]++;
+						break;
+					case ",":
+					//next element will start a new row below this one
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						i[pLevel]=0;
+						j[pLevel]++;
+						bricks[pLevel]={};
+						styleInfo[pLevel]={};
+						break;
+					case "{":
+					case "(":
+					//parenthesis depth increased. Pause current group parsing and start a new one.
+						pLevel++;
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						break;
+					case ")":
+					//vertical group complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_column");
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						pLevel--;
+						break;
+					case "}":
+					//horizontal row complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						pLevel--;
+						break;
+					case "toolbar":
+					case "header":
+					case "footer":
+						break;	//Special Bricks that are inserted manually in the correct places
+					default:
+						if(chitBricks contains s && chitBricks[s] != "") {
+							bricks[pLevel,i[pLevel]] = chitBricks[s];
+						}
+						break;
+				}
+			}
+		}
+		if(pLevel != 0)
+			append(result, "<span>Malformed chit layout (mismatched parentheses): " + layout + "<span>");
+		while(pLevel > 0){
+			rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+			bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
+			i[pLevel] = 0;
+			j[pLevel] = 0;
+			bricks[pLevel] = {};
+			styleInfo[pLevel] = {};
+			pLevel--;
+		}
+		rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+		append(result, addGroup(rowHTML[pLevel],"brick_row"));
+		return result;
+	}
+	
 //receive chit.__.layout string, tokenize it, and send it for processing.
 	string[int] tokens = tokenize(layout, $strings[\,,|,(,),:,{,}]);
-	return addBricks(tokens);
+	return addBricksHelper(tokens);
 }
 
 buffer buildRoof() {
