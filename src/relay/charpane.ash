@@ -413,7 +413,7 @@ string helperLucky() {
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions() && ($strings[step1, step2, finished] contains get_property("questL05Goblin"))
 		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
-			rewards[$location[Cobb's Knob Kitchens]] = "elitehelm.gif|Fight KGE Guard Captain|20";
+			rewards[$location[Cobb's Knob Barracks]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if($strings[started, step1] contains get_property("questL08Trapper") && item_amount(to_item(get_property("trapperOre"))) < 3)
 			rewards[$location[Itznotyerzitz Mine]] = get_property("trapperOre").to_item().image + "|1 each: asbestos, chrome, and linoleum ore|0";
 		if(get_property("questL09Topping") == "started")
