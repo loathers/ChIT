@@ -4443,7 +4443,7 @@ string[int] tokenize(string str, boolean[string] glues) {
 			//if no glue was found at the start of str, remove the first character from str
 			//and add it to ctoken. It will be added to the list of tokens when another glue
 			//or end-of-string is found.
-			append(ctoken, substring(str,0,1));
+			ctoken.append(substring(str,0,1));
 			str = substring(str,1);
 			loop = true;
 		}
@@ -4532,9 +4532,13 @@ buffer addGroup(string[int] rowHTMLs, string className) {
 buffer addRow(string[int] bricks, string[int] styleInfos) {
 //adds bricks or groups of bricks into horizontal rows
 	buffer buff;
+	string s2;
 	int totalStars = starCount(styleInfos) + count(bricks) - count(styleInfos);
 	foreach i,s in bricks {
-		append(buff, '<div class="brick_holder" '+stylize(styleInfos[i],totalStars)+'>'+s+'</div>');
+		int ind = index_of(s,">");
+		string s2 = substring(s,0,ind) + " " + stylize(styleInfos[i],totalStars) + substring(s,ind);
+		append(buff, s2);
+		//append(buff, '<div class="brick_holder" '+stylize(styleInfos[i],totalStars)+'>'+s+'</div>');
 	}
 	return buff;
 }
@@ -4612,15 +4616,15 @@ buffer addBricks(string layout) {
 					case "footer":
 						break;	//Special Bricks that are inserted manually in the correct places
 					default:
-						if(chitBricks contains s && chitBricks[s] != "") {
-							bricks[pLevel,i[pLevel]] = chitBricks[s];
+						if(chitBricks[s] != "") {
+							bricks[pLevel,i[pLevel]] = '<div class="brick_holder">' + chitBricks[s] + '</div>';
 						}
 						break;
 				}
 			}
 		}
 		if(pLevel != 0)
-			append(result, "<span>Malformed chit layout (mismatched parentheses): " + layout + "<span>");
+			result.append('<div class="error_message"><span>Malformed chit layout (mismatched parentheses): </span><span class="code"' + layout + '</span></div>');
 		while(pLevel > 0){
 			rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
 			bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
@@ -4631,7 +4635,7 @@ buffer addBricks(string layout) {
 			pLevel--;
 		}
 		rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
-		append(result, addGroup(rowHTML[pLevel],"brick_row"));
+		result.append(addGroup(rowHTML[pLevel],"brick_row"));
 		return result;
 	}
 	
