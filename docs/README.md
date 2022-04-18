@@ -120,17 +120,19 @@ Simply place your bricks in the area you want, in the order you want them.
 The roof, walls and floor of your house can use some special syntax to lay bricks out in rows and columns.
 - | separator places bricks or groups of bricks horizontally adjacent each other in a row
 - , separator starts a new row of bricks after the previous row
-- () parens vertically group bricks
-- {} curly braces horizontally group bricks
+- ( ) parens vertically group bricks
+- { } curly braces horizontally group bricks
+
 Overriding the width of a brick or group of bricks can be accomplished by adding the following suffix immediately after it:
 - :X% sets its width to X%.
 - :Xpx sets its width equal to X pixels.
 - :X\* sets its width to be X times wider than the default width of bricks in that row.
+
 If no width override is supplied, ChIT tries to make all bricks in the same row the same width, content allowing.
 
 examples:
-- character|gear:112px,stats:3\*|{familiar,trail}:2\*
-- effects:2\*|{trail,gear,familiar,boombox}
+- character|gear:112px,stats:3\*|(familiar,trail):2\*
+- effects:2\*|(trail,gear,familiar,boombox)
 
 Each brick may have an icon at the top left in it's title bar.
 When the icon is clicked, the contents of the walls will (temporarily) "stretch" over the roof space.
