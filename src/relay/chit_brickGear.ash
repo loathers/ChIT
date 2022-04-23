@@ -1025,7 +1025,8 @@ effect [int] getBeardOrder() {
 	};
 
 	effect [int] beardOrder;
-	int classIdMod = my_class().to_int() % 6;
+	int classId = my_class().to_int();
+	int classIdMod = ((classId<=6)?classId:classId+1)% 6;
 	for(int i = 0; i < 11; ++i) {
 		int nextBeard = (classIdMod * i) % 11;
 		beardOrder[i] = baseBeardOrder[nextBeard];
