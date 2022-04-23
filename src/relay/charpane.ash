@@ -4366,10 +4366,8 @@ void bakeBricks() {
 		bakeValhalla();
 	} else {
 		foreach layout in $strings[roof, walls, floor, toolbar] {
-			string [int] bricks = split_string(vars["chit." + layout + ".layout"],",");
-			string brick;
-			for i from 0 to (bricks.count()-1) {
-				brick = bricks[i];
+			foreach i,s in split_string(vars["chit."+layout+".layout"],"[,\\|(){}]") {
+				string brick = split_string(s,":")[0]; //content after ":" is style info
 				if (!(chitBricks contains brick)) {
 					switch (brick) {
 						case "character":	bakeCharacter();	break;
@@ -4412,26 +4410,237 @@ void bakeBricks() {
 
 }
 
-buffer addBricks(string layout) {
 
-	buffer result;
-	if (layout != "") {
-		string [int] bricks = split_string(layout,",");
-		string brick;
-		for i from 0 to (bricks.count()-1) {
-			brick = bricks[i];
-			switch (brick) {
-				case "toolbar":
-				case "header":
-				case "footer":
-					break;	//Special Bricks that are inserted manually in the correct places
-				default:
-					result.append(chitBricks[brick]);
+string[int] tokenize(string str, boolean[string] glues) {
+// splits up a string into tokens, which include the passed in glues, and the stuff between glues.
+// example: str="(1,alpha,33.3)", glues=$strings[\,,(,)]
+// -> returns [0:"(", 1:"1", 2:",", 3:"alpha", 4:",", 5:"33.3", 6:")"]
+	string[int] tokens;
+	buffer ctoken;
+	int j = 0;
+	boolean loop = true;
+	while(length(str) > 0){ // works through str one character at a time at a time
+		while(loop){
+			loop = false;
+			foreach s,b in glues {
+				if(length(s) <= length(str) && s == substring(str, 0, length(s))) {
+				//if a glue is found at the current portion of the string
+					loop = true;
+					if(length(ctoken) != 0){
+					//add non-zero length non-glue to list of tokens.
+						tokens[j] = ctoken;
+						set_length(ctoken,0);
+						j++;
+					}
+					//add found glue to list of tokens, and delete it from the front of str
+					tokens[j] = s;
+					str = substring(str,length(s));
+					j++;
+				}
 			}
 		}
+		if(length(str) > 0) {
+			//if no glue was found at the start of str, remove the first character from str
+			//and add it to ctoken. It will be added to the list of tokens when another glue
+			//or end-of-string is found.
+			ctoken.append(substring(str,0,1));
+			str = substring(str,1);
+			loop = true;
+		}
 	}
-	return result;
+	if(length(ctoken) > 0)
+		//add non-zero length last non-glue token to list of tokens.
+		tokens[j] = ctoken;
+	return tokens;
+}
 
+
+
+float starCount(string[int] styleInfos) {
+	//counts the number of stars "*" in the current row of bricks
+	//used to decide what css width should be set to a brick or group of bricks.
+	float starCountHelper(string styleInfo) {
+		buffer bnum;
+		string[int] tokens = tokenize(styleInfo, $strings[*,%,px]);
+		float num = 1;
+		foreach i,s in tokens {
+			switch(s){
+			// a number before a "*" will return that number. Everything else will return 1.
+				case "%":
+				case "px":
+					num = 1;
+					break;
+				case "*":
+					return num;
+				default:
+					num = to_float(s);
+			}
+		}
+		return 1;
+	}
+	
+	float total = 0;
+	foreach i,s in styleInfos {
+		total += starCountHelper(s);
+	}
+	return total;
+}
+
+string stylize(string styleInfo, int total_stars) {
+//returns an appropriate width style to a brick or group of bricks, based on user's chit layout preference
+	string[int] tokens = tokenize(styleInfo, $strings[*,%,px]);
+	string style = "";
+	float num = 0;
+	foreach i,s in tokens {
+		switch(s){
+			case "*":
+				style += "width:" + (100.0 * max(num,1)/total_stars) +"%;";
+				break;
+			case "px":
+				style += "min-width:" + num + "px;";
+				style += "max-width:" + num + "px;";
+				break;
+			case "%":
+				style += "width:" + num + "%;";
+				break;
+			default:
+				num = to_float(s);
+		}
+	}
+	if(style == "")
+		style = "width:" + (100.0 * max(num,1)/total_stars) +"%;";
+	
+	return 'style="' + style + '"';
+}
+
+buffer addGroup(string[int] rowHTMLs, string className) {
+//adds rows of bricks into a vertical group
+	buffer buff;
+	if(className != "")
+		append(buff, '<div class="'+className+'">');
+		
+	foreach i,s in rowHTMLs {
+		append(buff, s);
+	}
+	
+	if(className != "")
+		append(buff, '</div>');
+
+	return buff;
+}
+
+buffer addRow(string[int] bricks, string[int] styleInfos) {
+//adds bricks or groups of bricks into horizontal rows
+	buffer buff;
+	int totalStars = starCount(styleInfos) + count(bricks) - count(styleInfos);
+	foreach i,s in bricks {
+		int ind = index_of(s,">"); //find place to add style
+		string s2 = substring(s,0,ind) + " " + stylize(styleInfos[i],totalStars) + substring(s,ind); //add style to brick
+		append(buff, s2);
+	}
+	return buff;
+}
+
+
+
+buffer addBricks(string layout) {
+	buffer addBricksHelper (string[int] tokens) {
+	//parses a chit.__.layout string and adds bricks in appropriate rows and columns,
+	//with user-specified widths for the various bricks and groups of bricks
+	//uses multi-dimensional arrays for tracking arrays at different parenthesis depth.
+		buffer result; 
+		string[int,int] bricks;
+		string[int,int] rowHTML;
+		string[int,int] styleInfo;
+		string brick;
+		boolean read_style = false;
+		int pLevel = 0;      //tracks parenthesis depth
+		int[int] i = {0:0};  //tracks bricks within a row
+		int[int] j = {0:0};  //tracks rows withing a group
+		foreach n,s in tokens {
+			if(read_style && bricks[pLevel] contains i[pLevel]){
+				styleInfo[pLevel,i[pLevel]] = s;
+				read_style = false;
+			} else {
+				read_style = false;
+				switch(s) {
+					case "": break;
+					case ":":
+					//next token tells us how wide this last element should be
+						read_style = true;
+						break;
+					case "|":
+					//next element will be horizontally adjacent to this one
+						i[pLevel]++;
+						break;
+					case ",":
+					//next element will start a new row below this one
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						i[pLevel]=0;
+						j[pLevel]++;
+						bricks[pLevel]={};
+						styleInfo[pLevel]={};
+						break;
+					case "{":
+					case "(":
+					//parenthesis depth increased. Pause current group parsing and start a new one.
+						pLevel++;
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						break;
+					case ")":
+					//vertical group complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_column");
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						pLevel--;
+						break;
+					case "}":
+					//horizontal row complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
+						rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+						bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
+						i[pLevel] = 0;
+						j[pLevel] = 0;
+						bricks[pLevel] = {};
+						styleInfo[pLevel] = {};
+						pLevel--;
+						break;
+					case "toolbar":
+					case "header":
+					case "footer":
+						break;	//Special Bricks that are inserted manually in the correct places
+					default:
+						if(chitBricks[s] != "") {
+							bricks[pLevel,i[pLevel]] = '<div class="brick_holder">' + chitBricks[s] + '</div>';
+						}
+						break;
+				}
+			}
+		}
+		if(pLevel != 0)
+			result.append('<div class="error_message"><span>Malformed chit layout: </span><span class="code">' + layout + '</span></div>');
+		while(pLevel > 0){
+			rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+			bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
+			i[pLevel] = 0;
+			j[pLevel] = 0;
+			bricks[pLevel] = {};
+			styleInfo[pLevel] = {};
+			pLevel--;
+		}
+		rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
+		result.append(addGroup(rowHTML[pLevel],"brick_row"));
+		return result;
+	}
+	
+//receive chit.__.layout string, tokenize it, and send it for processing.
+	string[int] tokens = tokenize(layout, $strings[\,,|,(,),:,{,}]);
+	return addBricksHelper(tokens);
 }
 
 buffer buildRoof() {
