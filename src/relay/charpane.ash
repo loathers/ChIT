@@ -4517,7 +4517,7 @@ buffer addGroup(string[int] rowHTMLs, string className) {
 //adds rows of bricks into a vertical group
 	buffer buff;
 	if(className != "")
-		append(buff, '<div class='+className+'>');
+		append(buff, '<div class="'+className+'">');
 		
 	foreach i,s in rowHTMLs {
 		append(buff, s);
@@ -4532,13 +4532,11 @@ buffer addGroup(string[int] rowHTMLs, string className) {
 buffer addRow(string[int] bricks, string[int] styleInfos) {
 //adds bricks or groups of bricks into horizontal rows
 	buffer buff;
-	string s2;
 	int totalStars = starCount(styleInfos) + count(bricks) - count(styleInfos);
 	foreach i,s in bricks {
-		int ind = index_of(s,">");
-		string s2 = substring(s,0,ind) + " " + stylize(styleInfos[i],totalStars) + substring(s,ind);
+		int ind = index_of(s,">"); //find place to add style
+		string s2 = substring(s,0,ind) + " " + stylize(styleInfos[i],totalStars) + substring(s,ind); //add style to brick
 		append(buff, s2);
-		//append(buff, '<div class="brick_holder" '+stylize(styleInfos[i],totalStars)+'>'+s+'</div>');
 	}
 	return buff;
 }
@@ -4564,6 +4562,7 @@ buffer addBricks(string layout) {
 				styleInfo[pLevel,i[pLevel]] = s;
 				read_style = false;
 			} else {
+				read_style = false;
 				switch(s) {
 					case "": break;
 					case ":":
@@ -4624,7 +4623,7 @@ buffer addBricks(string layout) {
 			}
 		}
 		if(pLevel != 0)
-			result.append('<div class="error_message"><span>Malformed chit layout (mismatched parentheses): </span><span class="code"' + layout + '</span></div>');
+			result.append('<div class="error_message"><span>Malformed chit layout: </span><span class="code">' + layout + '</span></div>');
 		while(pLevel > 0){
 			rowHTML[pLevel,j[pLevel]] = addRow(bricks[pLevel], styleInfo[pLevel]);
 			bricks[pLevel-1,i[pLevel-1]] = addGroup(rowHTML[pLevel],"brick_row");
