@@ -2109,6 +2109,12 @@ void bakeFamiliar() {
 		boolean candyBagDropped = get_property("_bagOfCandy").to_boolean();
 		info += candyBagDropped ? "bag dropped today" : "can drop bag today";
 		break;
+	case $familiar[grey goose]:
+		int famweight = familiar_weight(myfam);
+		info += famweight + " lb";
+		int target = max(famweight+1, 6);
+		if(famweight < 20)
+			info += " - " +  (target**2 - myfam.experience) + " exp to " + target + " lb";
 	}
 
 	//Get equipment info
@@ -2197,25 +2203,23 @@ void bakeFamiliar() {
 	buffer result;
 	result.append('<table id="chit_familiar" class="chit_brick nospace">');
 	if (isFed) {
-		result.append('<tr class="wellfed">');
+		result.append('<tr class="wellfed"><th>');
 	} else {
-		result.append('<tr>');
+		result.append('<tr><th>');
 	}
-	result.append('<th width="40" title="'+ weight_title +'" style="color:blue">' + famweight + '</th>');
+	result.append('<span title="'+ weight_title +'" style="color:blue">' + famweight + ' lb </span>');
 
 	if (protect) {
-		result.append('<th title="' + hover + '">' + famname);
+		result.append('<span title="' + hover + '">' + famtype);
 	} else {
-		result.append('<th><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famname + '</a>');
+		result.append('<span><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famtype + '</a>');
 	}
-	result.append(name_followup + '</th>');
-	if (charges == "") {
-		result.append('<th width="30">&nbsp;</th>');
-	} else {
-		result.append('<th width="30" title="' + chargeTitle + '">' + charges + '</th>');
+	result.append(name_followup + '</span>');
+	if (charges != "") {
+		result.append('<span title="' + chargeTitle + '">' + charges + '</span>');
 	}
-	result.append('</tr><tr>');
-	result.append('<td class="');
+	result.append('</th></tr><tr>');
+	result.append('<td><div class="');
 	if(myfam.isWeirdo()) result.append('weird');
 	result.append('icon" title="' + hover_famicon + '">');
 	if (protect) {
@@ -2225,24 +2229,22 @@ void bakeFamiliar() {
 		result.addFamiliarIcon(myfam, false, false);
 		result.append('</a>');
 	}
-	result.append('</td>');
-	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famtype + '</a>' + info + '</td>');
+	result.append('</div>');
 	if (myfam == $familiar[none]) {
-		result.append('<td class="icon">');
-		result.append('</td>');
+		result.append('<div class="icon"></div>');
 	} else {
 		if (equiptype == "") {
-			result.append('<td class="icon" title="Equip your familiar">');
+			result.append('<div class="icon" title="Equip your familiar">');
 		} else {
-			result.append('<td class="icon">');
+			result.append('<div class="icon">');
 		}
 		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && vars["chit.familiar.showlock"].to_boolean();
 		if(lockable)
 			result.append('<div id="fam_equip">');
 		result.append('<a class="chit_launcher" rel="chit_pickerfamgear" href="#">');
-		result.append('<img title="' + equiptype + '" src="/images/itemimages/' + equipimage + '">');
+		result.append('<img class="chit_icon" title="' + equiptype + '" src="/images/itemimages/' + equipimage + '">');
 		if(lockable) {
-			result.append('<a href="' + sideCommand("ashq lock_familiar_equipment("+ (!is_familiar_equipment_locked()) +")")  +'"><img title="Equipment ');
+			result.append('<a href="' + sideCommand("ashq lock_familiar_equipment("+ (!is_familiar_equipment_locked()) +")")  +'"><img class="chit_icon" title="Equipment ');
 			if(is_familiar_equipment_locked())
 				result.append('Locked" id="fam_lock" src="/images/itemimages/padlock.gif"></a>');
 			else
@@ -2251,9 +2253,10 @@ void bakeFamiliar() {
 		result.append('</a>');
 		if(lockable)
 			result.append('</div>');
-		result.append('</td>');
+		result.append('</div>');
 	}
-	result.append('</tr>');
+	result.append('<div class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + info + '</div>');
+	result.append('</td></tr>');
 
 	//Add Progress bar if we have one
 	matcher progMatcher = create_matcher("<table title='(.*?)' cellpadding=0", source);
