@@ -4589,6 +4589,7 @@ buffer addBricks(string layout) {
 						j[pLevel] = 0;
 						bricks[pLevel] = {};
 						styleInfo[pLevel] = {};
+						rowHTML[pLevel] = {};
 						break;
 					case ")":
 					//vertical group complete. Add it to the list of bricks in the previous parenthesis depth and continue there.
@@ -4598,6 +4599,7 @@ buffer addBricks(string layout) {
 						j[pLevel] = 0;
 						bricks[pLevel] = {};
 						styleInfo[pLevel] = {};
+						rowHTML[pLevel] = {};
 						pLevel--;
 						break;
 					case "}":
