@@ -88,19 +88,27 @@ a.blue-link:hover {
 
 #chit_house {
 }
+
 #chit_roof {
 	overflow-y: hidden;
 }
+
 #chit_walls {
 	margin-top: -10px;
 	margin-bottom: -6px;
 	position: absolute;
+	z-index: -1;
 }
+
+#chit_walls .brick_column {
+	height: unset;
+}
+
 #chit_floor {
 	position: absolute;
 }
 
-.chit_chamber{
+.chit_chamber {
 	width: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
@@ -146,13 +154,14 @@ table.chit_brick {
 	empty-cells: show;
 	font-size: 12px;
 	font-weight: normal;
-	margin-bottom: 5px;
+	flex-grow: 1;
+}
+table.chit_brick > thead,
+table.chit_brick > tbody {
+	display: table;
 	width: 100%;
-	padding: 1px 1px 0px 1px;
 }
-table.chit_brick:last-child {
-	margin-bottom: 0px;
-}
+
 table.chit_brick a {
 	text-decoration: none;
 }
@@ -169,7 +178,7 @@ div.chit_skeleton table.chit_brick {
 }
 table.chit_brick th {
 	word-wrap: break-word;
-	max-width: 200px;
+	width: 100%;
 	text-align: center;
 	vertical-align: middle;
 	background-color: #f0f0f0;
@@ -506,15 +515,38 @@ div.progressbar {
 }
 
 /* Familiars Panel */
-#chit_familiar tr td.progress {
+
+#chit_familiar tbody{
+	height: 100%;
+}
+
+#chit_familiar tr:last-child {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#chit_familiar tr:last-child td {
+	/*min-height: 90px;*/
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: space-around;
+}
+
+#chit_familiar tr:first-child th {
+	max-height: 16px;
+}
+
+#chit_familiar tr .progress {
 	border-top: 1px solid #dddddd;
 }
-#chit_familiar tr td.progress div.progressbar {
+#chit_familiar tr .progress .progressbar {
 	height: 4px;
 }
-#chit_familiar tr td.info {
-	border-left: 1px solid #f0f0f0;
-	border-right: 1px solid #f0f0f0;
+#chit_familiar tr .info {
+	min-width: 50%;
 	font-weight: bold;
 	line-height: 1.4;
 }
@@ -777,6 +809,7 @@ table.chit_picker tr.pickitem a:hover {
 
 /* chit_skeleton */
 div.chit_skeleton {
+    text-align: -webkit-center;
 	position: absolute;
 	display: block;
 	z-index: 10;
