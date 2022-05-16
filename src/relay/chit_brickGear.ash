@@ -1068,14 +1068,14 @@ int getCurrBeardNum() {
 int getLastBeardNum() {
 	effect lastBeard = get_property("lastBeardBuff").to_effect();
 	if(lastBeard == $effect[none]) {
-		return -1;
+		return 0;
 	}
 	foreach i,beard in getBeardOrder() {
 		if(beard == lastBeard) {
 			return i;
 		}
 	}
-	return -1;
+	return 0;
 }
 
 effect getNextBeard() {
@@ -1083,10 +1083,6 @@ effect getNextBeard() {
 	int currBeardNum = getCurrBeardNum();
 	if(currBeardNum == -1) {
 		int lastBeardNum = getLastBeardNum();
-		if(lastBeardNum == -1) {
-			// now that it's mafia tracked we can trust that it's reliable enough
-			beardOrder[0];
-		}
 		return beardOrder[(lastBeardNum + 1) % 11];
 	}
 	return beardOrder[(currBeardNum + 1) % 11];
