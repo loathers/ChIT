@@ -1762,6 +1762,7 @@ void bakeFamiliar() {
 	boolean isFed = source.contains_text('</a></b>, the <i>extremely</i> well-fed <b>');
 	string weight_title = "Buffed Weight";
 	string name_followup = "";
+	string mummingicon = "";
 
 	familiar myfam = my_familiar();
 	item famitem = $item[none];
@@ -1774,7 +1775,7 @@ void bakeFamiliar() {
 		// Put the mumming trunk icon before the familiar type name
 		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592.*?</a>', source); #"
 		if(find(mummingmatcher))
-			famtype = group(mummingmatcher) + " " + famtype;
+			mummingicon = group(mummingmatcher);
 	}
 
 	//Get Familiar Name
@@ -2203,14 +2204,16 @@ void bakeFamiliar() {
 	} else {
 		result.append('<tr>');
 	}
-	result.append('<th width="40" title="'+ weight_title +'" style="color:blue">' + famweight + '</th>');
+	result.append('<th width="40">');
+	result.append(mummingicon);
+	result.append('</th><th><span title="'+ weight_title +'" style="color:blue">' + famweight + ' lb </span>');
 
 	if (protect) {
-		result.append('<th title="' + hover + '">' + famname);
+		result.append('<span title="' + hover + '">' + famtype);
 	} else {
-		result.append('<th><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famname + '</a>');
+		result.append('<span><a target=mainpane href="familiar.php" class="familiarpick" title="' + hover + '">' + famtype + '</a>');
 	}
-	result.append(name_followup + '</th>');
+	result.append(name_followup + '</span></th>');
 	if (charges == "") {
 		result.append('<th width="30">&nbsp;</th>');
 	} else {
@@ -2228,7 +2231,7 @@ void bakeFamiliar() {
 		result.append('</a>');
 	}
 	result.append('</td>');
-	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famtype + '</a>' + info + '</td>');
+	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + info + '</td>');
 	if (myfam == $familiar[none]) {
 		result.append('<td class="icon">');
 		result.append('</td>');
