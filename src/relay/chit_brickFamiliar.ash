@@ -575,6 +575,8 @@ int hasDrops(item it) {
 			break;
 		case $item[combat lover's locket]:
 			return locketFightsRemaining();
+		case $item[June cleaver]:
+			return (get_property("_juneCleaverFightsLeft").to_int() == 0) ? 1 : 0;
 	}
 
 	return 0;

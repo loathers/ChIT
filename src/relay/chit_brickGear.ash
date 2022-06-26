@@ -249,6 +249,14 @@ string gearName(item it, slot s) {
 		case $item[unbreakable umbrella]:
 			notes += get_property("umbrellaState");
 			break;
+		case $item[June cleaver]:
+			int juneFights = get_property("_juneCleaverFightsLeft").to_int();
+			if(juneFights == 0) {
+				notes += "noncom now!";
+			}
+			else {
+				notes += juneFights + " to noncom";
+			}
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
