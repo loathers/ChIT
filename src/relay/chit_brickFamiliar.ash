@@ -577,6 +577,9 @@ int hasDrops(item it) {
 			return locketFightsRemaining();
 		case $item[June cleaver]:
 			return (get_property("_juneCleaverFightsLeft").to_int() == 0) ? 1 : 0;
+		case $item[designer sweatpants]:
+			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
+			return max(sweatboozeleft, 0);
 	}
 
 	return 0;

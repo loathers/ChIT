@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26338; // full unbrella support
+since r26534; // sweatpants
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -4478,7 +4478,7 @@ float starCount(string[int] styleInfos) {
 		}
 		return 1;
 	}
-	
+
 	float total = 0;
 	foreach i,s in styleInfos {
 		total += starCountHelper(s);
@@ -4509,7 +4509,7 @@ string stylize(string styleInfo, int total_stars) {
 	}
 	if(style == "")
 		style = "width:" + (100.0 * max(num,1)/total_stars) +"%;";
-	
+
 	return 'style="' + style + '"';
 }
 
@@ -4518,11 +4518,11 @@ buffer addGroup(string[int] rowHTMLs, string className) {
 	buffer buff;
 	if(className != "")
 		append(buff, '<div class="'+className+'">');
-		
+
 	foreach i,s in rowHTMLs {
 		append(buff, s);
 	}
-	
+
 	if(className != "")
 		append(buff, '</div>');
 
@@ -4548,7 +4548,7 @@ buffer addBricks(string layout) {
 	//parses a chit.__.layout string and adds bricks in appropriate rows and columns,
 	//with user-specified widths for the various bricks and groups of bricks
 	//uses multi-dimensional arrays for tracking arrays at different parenthesis depth.
-		buffer result; 
+		buffer result;
 		string[int,int] bricks;
 		string[int,int] rowHTML;
 		string[int,int] styleInfo;
@@ -4639,7 +4639,7 @@ buffer addBricks(string layout) {
 		result.append(addGroup(rowHTML[pLevel],"brick_row"));
 		return result;
 	}
-	
+
 //receive chit.__.layout string, tokenize it, and send it for processing.
 	string[int] tokens = tokenize(layout, $strings[\,,|,(,),:,{,}]);
 	return addBricksHelper(tokens);

@@ -257,6 +257,15 @@ string gearName(item it, slot s) {
 			else {
 				notes += juneFights + " to noncom";
 			}
+			break;
+		case $item[designer sweatpants]:
+			int sweat = max(min(100, get_property("sweat").to_int()), 0);
+			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
+			notes += sweat + "% sweaty";
+			if(sweatboozeleft > 0) {
+				notes += ", " + sweatboozeleft + " booze sweats";
+			}
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
