@@ -103,7 +103,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	}
 
 	boolean [item] hiddengear;
-	foreach i,famequip in split_string(vars["chit.familiar.hiddengear"], "\\s*(?<!\\\\),\\s*")
+	foreach i,famequip in split_string(vars["chit.familiar.hiddengear"], "\\|")
 		hiddengear[to_item(famequip)] = true;
 
 	void addEquipment(item it, string cmd) {

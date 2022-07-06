@@ -1,0 +1,64 @@
+bool	autoscroll	true
+
+items	currencies	11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;
+string	currencies.special	asdonmartinfuel
+bool	currencies.showmany	false
+string	currencies.showmany.choices	meat
+
+bool	character.avatar	true	Shows or hides your character image.
+bool	character.title	true	Shows your Custom Title if you have one, instead of your current class name. It might be useful to disable this if you have a long title that causes ugly wrapping in the charpane.
+
+string	clan.display	away	Valid values are on,off,away. Away will only display clan if chit.clan.home is not blank.
+string	clan.home	.
+
+bool	disable	false
+
+bool	familiar.anti-gollywog	true	Colorize the Crimbo Shrub's image so that it doesn't look like a gollywog.
+items	familiar.hiddengear		Vertical bar (|) separated list of generic familiar equipment to hide from the familiar gear picker.
+bool	familiar.protect	false	Removes all familiar-switching links from the charpane when you're on a 100% run (You have to go to your campsite->terraium to change familiars, or use chat commands).
+bool	familiar.showlock	false	Show a lock for generic familiar equipment to toggle familiar equipment locking.
+items	familiar.hats	spangly sombrero|sugar chapeau|chef's hat|party hat	Vertical bar (|) separated list of hats to include with a Hatrack as your current familiar.
+items	familiar.pants	spangly mariachi pants|double-ice britches|BRICKO pants|pin-stripe slacks|studded leather boxer shorts|monster pants|sugar shorts	Vertical bar (|) separated list of pants to include with a Fancypants Scarecrow as your current familiar.
+items	familiar.weapons	time sword|batblade|Hodgman's whackin' stick|astral mace|Maxwell's Silver Hammer|goatskin umbrella|grassy cutlass|dreadful glove|Stick-Knife of Loathing|Work is a Four Letter Sword	Vertical bar (|) separated list of weapons to include with a Disembodied Hand as your current familiar.
+items	familiar.off-hands	Kramco Sausage-o-Matic&trade;|latte lovers member's mug|A Light that Never Goes Out|Half a Purse	Vertical bar (|) separated list of off-hands to include with a Left-Hand Man as your current familiar.
+bool	familiar.iconize-weirdos	false	Should we display familiars like melodramedary as their hatchling images instead?
+
+string	effects.classicons	none
+bool	effects.describe	true
+bool	effects.modicons	true
+bool	effects.showicons	true
+bool	effects.usermap	false
+
+string	gear.display.in-run	favorites:pull=true:create=true, astral, item, -combat, +combat, quest:pull=true:create=true, today, ML:amount=2, path, prismatic, res, resistance:amount=2, charter, rollover, DRUNK, Wow, exp
+string	gear.display.in-run.defaults	create=false, pull=false, amount=all
+string	gear.display.aftercore	favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
+string	gear.display.aftercore.defaults	create=true, pull=true, amount=1
+string	gear.layout	default
+items	gear.favorites	.
+bool	gear.ignoreG-Lover	false
+bool	gear.lattereminder	true
+
+bool	helpers.dancecard	true
+bool	helpers.lucky	true
+bool	helpers.spookyraven	true
+string	helpers.wormwood	stats,spleen
+bool	helpers.xiblaxian	true
+
+bool	kol.coolimages	true
+
+string	effects.layout	songs,buffs,intrinsics
+
+string	floor.layout	update,familiar
+string	roof.layout	character,stats,gear
+string	stats.layout	muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist
+string	toolbar.layout	trail,quests,modifiers,elements,organs
+string	walls.layout	helpers,thrall,robo,vykea,effects,horsery,boombox
+
+bool	quests.hide	false	Don't display Quest Nudges when you don't have any active quests
+
+bool	stats.showbars	true
+
+bool	thrall.showname	false
+
+# do not change to boolean, "bonus" is also valid
+string	toolbar.moods	true

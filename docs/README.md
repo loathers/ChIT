@@ -15,9 +15,11 @@ Will require [a recent build of KoLMafia](https://ci.kolmafia.us/job/Kolmafia/la
 ## Uninstallation
 
 Run this command in the graphical CLI:
+
 ```
 svn delete ChIT
 ```
+
 note that the above command is case sensitive. `chit` will not work it has to be `ChIT`
 
 ## What if I already have the sourceforge version installed?
@@ -118,12 +120,14 @@ Simply place your bricks in the area you want, in the order you want them.
   - Default: trail,quests,modifiers,elements,organs
 
 The roof, walls and floor of your house can use some special syntax to lay bricks out in rows and columns.
+
 - | separator places bricks or groups of bricks horizontally adjacent each other in a row
 - , separator starts a new row of bricks after the previous row
 - ( ) parens vertically group bricks
 - { } curly braces horizontally group bricks
 
 Overriding the width of a brick or group of bricks can be accomplished by adding the following suffix immediately after it:
+
 - :X% sets its width to X%.
 - :Xpx sets its width equal to X pixels.
 - :X\* sets its width to be X times wider than the default width of bricks in that row.
@@ -131,6 +135,7 @@ Overriding the width of a brick or group of bricks can be accomplished by adding
 If no width override is supplied, ChIT tries to make all bricks in the same row the same width, content allowing.
 
 examples:
+
 - character|gear:112px,stats:3\*|(familiar,trail):2\*
 - effects:2\*|(trail,gear,familiar,boombox)
 
@@ -179,9 +184,11 @@ The following preferences further refine the content and appearance of individua
 - chit.familiar.protect: Removes all familiar-switching links from the charpane when you're on a 100% run
   - (You have to go to your campsite->terraium to change familiars, or use chat commands)
   - Default: false
+- chit.familiar.showlock: Show a lock for generic familiar equipment to toggle familiar equipment locking
+  - Default: false
 - chit.familiar.anti-gollywog: Colorize the Crimbo Shrub's image so that it doesn't look like a gollywog
   - Default: true
-- chit.familiar.hiddengear: Comma delimited list of generic familiar equipment to hide from the familiar gear picker.
+- chit.familiar.hiddengear: Vertical bar (|) separated list of generic familiar equipment to hide from the familiar gear picker.
   - Default:
 - chit.familiar.iconize-weirdos: Should we display familiars like melodramedary as their hatchling images instead?
 
