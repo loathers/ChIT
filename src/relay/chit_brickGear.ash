@@ -1189,6 +1189,55 @@ void pickerUnbrella() {
 	chitPickers["unbrella"] = picker;
 }
 
+void pickerSweatpants() {
+	buffer picker;
+	int sweat = get_property("sweat").to_int();
+	int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
+	picker.pickerStart("sweatpants", "Sweat Magic (" + sweat + "% sweaty)");
+
+	void addSweatSkill(skill sk, string desc, int cost) {
+		string castLink = '<a class="change" href="' + sideCommand("cast 1 " + sk.to_string()) + '">';
+		boolean canCast = !sk.combat && cost <= sweat;
+
+		picker.append('<tr class="pickitem');
+		if(!canCast) picker.append(' currentitem');
+		picker.append('"><td class="icon"><a class="done" onclick=\'javascript:');
+		picker.append('poop("desc_skill.php?whichskill=');
+		picker.append(sk.to_int());
+		picker.append('&self=true","skill", 350, 300)\' href="#">');
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(sk.image);
+		picker.append('" title="Pop out skill description" /></a></td>');
+		picker.append('<td colspan="2">');
+		if(canCast) {
+			picker.append(castLink);
+			picker.append('<b>Cast</b> ');
+		}
+		picker.append(sk.to_string());
+		picker.append(' (');
+		picker.append(cost);
+		picker.append(' sweat)<br /><span class="descline">');
+		picker.append(desc);
+		if(sk.combat) picker.append('<br />(Available in combat)');
+		if(sweat < cost) picker.append('<br />(Not enough sweat!)');
+		picker.append('</span></a></td></tr>');
+	}
+
+	addSweatSkill($skill[Sip Some Sweat], "Restore 50 MP", 5);
+	addSweatSkill($skill[Drench Yourself in Sweat], "+100% Init for 5 turns", 15);
+	addSweatSkill($skill[Sweat Out Some Booze], "Cleanse 1 liver (" + sweatboozeleft
+		+ " left today)", 25);
+	addSweatSkill($skill[Make Sweat-Ade], "Does what the skill name says", 50);
+	addSweatSkill($skill[Sweat Flick], "Deals sweat sleaze damage", 1);
+	addSweatSkill($skill[Sweat Spray], "Deal minor sleaze damage for the rest of combat", 3);
+	addSweatSkill($skill[Sweat Flood], "Stun for 5 rounds", 5);
+	addSweatSkill($skill[Sweat Sip], "Restore 50 MP", 5);
+
+	picker.addLoader("Sweating the small stuff...");
+	picker.append('</table></div>');
+	chitPickers['sweatpants'] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -1414,6 +1463,13 @@ void pickerGear(slot s) {
 			pickerUnbrella();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerunbrella" href="#"><b>Reconfigure</b> your umbrella</a></td></tr>');
+			break;
+		case $item[designer sweatpants]:
+			pickerSweatpants();
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="chit_launcher done" ');
+			picker.append('rel="chit_pickersweatpants" href="#"><b>Use</b> some sweat</a>');
+			picker.append('</td></tr>');
 			break;
 	}
 

@@ -2460,6 +2460,21 @@ void addWalfordBucket(buffer result) {
 	}
 }
 
+void addSweat(buffer result) {
+	int sweat = get_property("sweat").to_int();
+	result.append('<tr>');
+	result.append('<td class="label">Sweat</td><td class="info">');
+	result.append(sweat);
+	result.append(' %</a></td>');
+	if(to_boolean(vars["chit.stats.showbars"])) {
+		result.append('<td class="progress"><div class="progressbox">');
+		result.append('<div class="progressbar" style="width:');
+		result.append(sweat);
+		result.append('%"></div></div></td>');
+	}
+	result.append('</tr>');
+}
+
 void addFantasyRealm(buffer result) {
 	// TODO: Don't display this if Rubees are an active currency (add logic to conveniently check active currencies...)
 	if(have_equipped($item[FantasyRealm G. E. M.])) {
@@ -3183,6 +3198,9 @@ void bakeStats() {
 
 			if(available_amount($item[sprinkles]) > 0)
 				result.addSprinkles();
+
+			if(equipped_amount($item[designer sweatpants]) > 0)
+				result.addSweat();
 
 			// Quest updates should be shown if the tracker brick is not in use.
 			boolean tracker;
