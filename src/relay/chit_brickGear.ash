@@ -1197,7 +1197,9 @@ void pickerSweatpants() {
 
 	void addSweatSkill(skill sk, string desc, int cost) {
 		string castLink = '<a class="change" href="' + sideCommand("cast 1 " + sk.to_string()) + '">';
-		boolean canCast = !sk.combat && cost <= sweat;
+		boolean noBooze = (sk == $skill[Sweat Out Some Booze])
+			&& (get_property("_sweatOutSomeBoozeUsed").to_int() >= 3);
+		boolean canCast = !sk.combat && cost <= sweat && !noBooze;
 
 		picker.append('<tr class="pickitem');
 		if(!canCast) picker.append(' currentitem');
@@ -1219,7 +1221,8 @@ void pickerSweatpants() {
 		picker.append(' sweat)<br /><span class="descline">');
 		picker.append(desc);
 		if(sk.combat) picker.append('<br />(Available in combat)');
-		if(sweat < cost) picker.append('<br />(Not enough sweat!)');
+		if(noBooze) picker.append('<br />(Already used up for today)');
+		else if(sweat < cost) picker.append('<br />(Not enough sweat!)');
 		picker.append('</span></a></td></tr>');
 	}
 
