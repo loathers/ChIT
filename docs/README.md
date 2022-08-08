@@ -7,16 +7,26 @@ Character Info Toolbox (ChIT for short) is a character pane relay override scrip
 Run this command in the graphical CLI:
 
 ```
-svn checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT/branches/main/src/
+git checkout https://github.com/Loathing-Associates-Scripting-Society/ChIT.git
 ```
 
 Will require [a recent build of KoLMafia](https://ci.kolmafia.us/job/Kolmafia/lastSuccessfulBuild/).
+
+### Migrating from SVN to Git
+
+With Mafia support now implemented for git you can now remove the old SVN repo and convert to git.
+
+```
+svn delete Loathing-Associates-Scripting-Society-ChIT-branches-main-src
+```
+
+Then install ChIT as normal.
 
 ## Uninstallation
 
 Run this command in the graphical CLI:
 ```
-svn delete ChIT
+git delete ChIT
 ```
 note that the above command is case sensitive. `chit` will not work it has to be `ChIT`
 
