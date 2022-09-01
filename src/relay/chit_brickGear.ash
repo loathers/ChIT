@@ -198,7 +198,7 @@ string gearName(item it, slot s) {
 			break;
 		case $item[backup camera]:
 			// 5 extra uses in You, Robot
-			int backupsLeft = (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
+			int backupsLeft = (my_path().id == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 			notes = backupsLeft + " backups left: " + get_property("lastCopyableMonster");
 			if(!get_property("backupCameraReverserEnabled").to_boolean()) {
 				notes += ", REVERSER NOT ENABLED!";
