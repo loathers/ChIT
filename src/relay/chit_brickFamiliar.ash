@@ -558,7 +558,7 @@ int hasDrops(item it) {
 			return get_property("_cargoPocketEmptied").to_boolean() ? 0 : 1;
 		case $item[backup camera]:
 			// 5 extra uses in You, Robot
-			return (my_path_id() == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
+			return (my_path().id == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
 		case $item[familiar scrapbook]:
 			return get_property("scrapbookCharges").to_int() / 100;
 		case $item[industrial fire extinguisher]:
