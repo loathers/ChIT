@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26597; // mafia support for git w subfolders
+since r26713; // Adds $path
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
