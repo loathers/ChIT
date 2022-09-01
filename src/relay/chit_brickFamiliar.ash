@@ -163,7 +163,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	}
 
 	string sadMessage(string it, string fam) {
-		string famname = my_path() == "Avatar of Boris"? "Clancy": myfam.name;
+		string famname = my_path().name == "Avatar of Boris"? "Clancy": myfam.name;
 		return "You don't have any " + it + " for your " + fam + ".<br><br>Poor " + famname + ".";
 	}
 
@@ -430,7 +430,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			picker.addSadFace(myfam.name + " is too incorporeal for equipment.<br><br>Poor " + myfam.name + ".");
 			break;
 		case $familiar[none]:
-			if(my_path() == "Avatar of Boris") {
+			if(my_path().name == "Avatar of Boris") {
 				picker.addLoader("Changing Instrument...");
 				pickClancy();
 				if(item_amount($item[Clancy's lute]) + item_amount($item[Clancy's crumhorn]) == 0)
@@ -751,7 +751,7 @@ int iconInfoSpecial(familiar f, buffer iconInfo) {
 			if(statsLeft != 1)
 				iconInfo.append("s");
 			// The stats are nice, but they don't warrant highlighting outside of The Source, where they're super important.
-			if(my_path() == "The Source")
+			if(my_path().name == "The Source")
 				return STATUS_HASDROPS;
 			else
 				return STATUS_NORMAL;
@@ -954,7 +954,7 @@ boolean isWeirdo(familiar f) {
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
-	boolean pokeFam = (my_path() == "Pocket Familiars");
+	boolean pokeFam = (my_path().name == "Pocket Familiars");
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
 		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
@@ -1739,7 +1739,7 @@ void pickerSnapper() {
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
-	switch(my_path()) {
+	switch(my_path().name) {
 	case "Avatar of Boris": FamBoris(); return;
 	case "Avatar of Jarlsberg": FamJarlsberg(); return;
 	case "Avatar of Sneaky Pete": FamPete(); return;

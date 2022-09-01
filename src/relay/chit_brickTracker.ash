@@ -75,7 +75,7 @@ buffer buildTracker() {
 	result.append("tracker.png\"  class=\"chit_walls_stretch\">");
 	result.append("<a target=mainpane href=\"questlog.php\">Quest Tracker</a></th></tr>");
 	
-	if (my_path()=="Live. Ascend. Repeat.") {
+	if (my_path().name=="Live. Ascend. Repeat.") {
 		result.append("<tr><td>");
 		result.append("Turncount: [ <b>");
 		result.append(my_turncount());
@@ -408,7 +408,7 @@ buffer buildTracker() {
 		int p = get_property("twinPeakProgress").to_int();
 		boolean mystery(int c) { return (p & (1 << c)) == 0; }
 		float famBonus() {
-			switch (my_path()) {
+			switch (my_path().name) {
 			case "Avatar of Boris":
 				return minstrel_instrument() != $item[Clancy's lute]? 0:
 					numeric_modifier($familiar[baby gravy fairy], "Item Drop", minstrel_level() * 5, $item[none]);
@@ -633,7 +633,7 @@ buffer buildTracker() {
 			case "step1": case "step2":
 				result.append("<a target=mainpane href=\"manor3.php\">Manor Cellar</a>");
 				result.append(" - Find Lord Spookyraven");
-				if (my_path()=="Nuclear Autumn" && available_amount($item[E-Z Cook&trade; oven])==0 && item_amount($item[recipe: mortar-dissolving solution])>0) {
+				if (my_path().name=="Nuclear Autumn" && available_amount($item[E-Z Cook&trade; oven])==0 && item_amount($item[recipe: mortar-dissolving solution])>0) {
 					result.append("<br>Find mortar dissolvers:");
 					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor1\">Kitchen</a> - "+ItemReport($item[loosening powder]));
 					result.append("<br><a target=mainpane href=\"place.php?whichplace=manor1\">Conservatory</a> - "+ItemReport($item[powdered castoreum],"castoreum"));
@@ -743,7 +743,7 @@ buffer buildTracker() {
 	
 	
 	//L11: questL11Desert
-	if (Started("questL11Desert") && my_path()!="Actually Ed the Undying") {
+	if (Started("questL11Desert") && my_path().name!="Actually Ed the Undying") {
 		result.append("<tr><td>");
 			result.append("<a target=mainpane href=\"beach.php\">Beach</a> - Find the Pyramid<br>");
 			int desertExploration = get_property("desertExploration").to_int();
@@ -938,9 +938,9 @@ buffer buildTracker() {
 			result.append(", ");
 			result.append(ItemReport($item[electric boning knife], "boning knife"));
 		}
-		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete, The Source] contains my_path());
+		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete, The Source] contains my_path().name);
 		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
-			if ( my_path()=="Bees Hate You" ) {
+			if ( my_path().name=="Bees Hate You" ) {
 				result.append("<br>GMOB: ");
 				result.append(ItemReport($item[antique hand mirror]));
 			} else  {
@@ -973,7 +973,7 @@ buffer buildTracker() {
 	}
 	
 	//Daily Dungeon
-	if (!to_boolean(get_property("dailyDungeonDone"))&& get_property("questL13Final")!="finished" && !($strings[Bugbear Invasion, Actually Ed the Undying] contains my_path()) ) {
+	if (!to_boolean(get_property("dailyDungeonDone"))&& get_property("questL13Final")!="finished" && !($strings[Bugbear Invasion, Actually Ed the Undying] contains my_path().name) ) {
 		int havekeys = available_amount($item[fat loot token]);
 		int needkeys = 3;
 		foreach kk in $items[Boris's key, Jarlsberg's key, Sneaky Pete's key] {
@@ -1024,25 +1024,25 @@ buffer buildTracker() {
 	
 	//challenge path stuff
 	/*
-	if (my_path() == "Bees Hate You") 
+	if (my_path().name == "Bees Hate You") 
 		honeypot for gate in NS tower
 
-	if (my_path() == "Avatar of Boris") 
+	if (my_path().name == "Avatar of Boris") 
 		No star weapon is needed at the lair
 	
-	if (my_path() == "Avatar of Jarlsberg") 
+	if (my_path().name == "Avatar of Jarlsberg") 
 
 
-	if (my_path() == "Trendy") 
+	if (my_path().name == "Trendy") 
 	
 	
-	if (my_path() == "Way of the Surprising Fist" ) 
+	if (my_path().name == "Way of the Surprising Fist" ) 
 		No star weapon is needed at the lair
 	
-	if (my_path() == "Zombie Slayer")
+	if (my_path().name == "Zombie Slayer")
 	
 	
-	if (my_path() == "Bugbear Invasion")
+	if (my_path().name == "Bugbear Invasion")
 		//Bugbear biodata
 		bio [int] biodata;
 		biodata[count(biodata)] = new bio("Sleazy Back Alley", "biodataWasteProcessing", 3);

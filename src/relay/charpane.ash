@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r26597; // mafia support for git w subfolders
+since r26713; // $path changes
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -412,7 +412,7 @@ string helperLucky() {
 		if(available_amount($item[stone wool]) < 2 && get_property("lastTempleUnlock").to_int() == my_ascensions() && !($strings[step3, finished] contains get_property("questL11Worship")))
 			rewards[$location[The Hidden Temple]] = "stonewool.gif|Fight Baa'baa'bu'ran|5";
 		if(!have_outfit("Knob Goblin Elite Guard Uniform") && get_property("lastDispensaryOpen").to_int() != my_ascensions() && ($strings[step1, step2, finished] contains get_property("questL05Goblin"))
-		  && my_path() != "Way of the Surprising Fist" && my_path() != "Way of the Surprising Fist")
+		  && my_path().name != "Way of the Surprising Fist" && my_path().name != "Way of the Surprising Fist")
 			rewards[$location[Cobb's Knob Barracks]] = "elitehelm.gif|Fight KGE Guard Captain|20";
 		if($strings[started, step1] contains get_property("questL08Trapper") && item_amount(to_item(get_property("trapperOre"))) < 3)
 			rewards[$location[Itznotyerzitz Mine]] = get_property("trapperOre").to_item().image + "|1 each: asbestos, chrome, and linoleum ore|0";
@@ -871,7 +871,7 @@ buff parseBuff(string source) {
 		}
 	}
 
-	if(myBuff.eff != $effect[none] && my_path() == "G-Lover" && !($effects[Ode to Booze, Ultrahydrated] contains myBuff.eff) && myBuff.eff.to_lower_case().index_of("g") < 0)
+	if(myBuff.eff != $effect[none] && my_path().name == "G-Lover" && !($effects[Ode to Booze, Ultrahydrated] contains myBuff.eff) && myBuff.eff.to_lower_case().index_of("g") < 0)
 		style = "background-color:lightgray";
 
 	// Flavour of Magic picker!
@@ -1578,7 +1578,7 @@ void pickerThrall() {
 }
 
 void bakeThrall() {
-	if(my_class() != $class[Pastamancer] || my_path() == "Nuclear Autumn" || my_path() == "Pocket Familiars") return;
+	if(my_class() != $class[Pastamancer] || my_path().name == "Nuclear Autumn" || my_path().name == "Pocket Familiars") return;
 	buffer result;
 	void bake(string lvl, string name, string type, string img) {
 		if(to_boolean(vars["chit.thrall.showname"])) {
@@ -2991,7 +2991,7 @@ void bakeStats() {
 			if(my_hp() <= my_maxhp() * to_float(get_property("hpAutoRecovery")))
 				return "ash+restore_hp(0)";
 		} else if(p == "mp") {
-			if(my_path() == "Zombie Slayer") {
+			if(my_path().name == "Zombie Slayer") {
 				if(my_mp() <= my_maxmp() * to_float(get_property("mpAutoRecovery")))
 					return "ash+restore_hp(0)";
 			} else if(my_mp() <= my_maxmp() * to_float(get_property("mpAutoRecovery")))
@@ -3040,7 +3040,7 @@ void bakeStats() {
 			}
 			return;
 		}
-		if(my_path() == "Zombie Slayer") {
+		if(my_path().name == "Zombie Slayer") {
 			string HordeLink = get_property("baleUr_ZombieAuto") == ""? '<a href="skills.php" target="mainpane" title="Use Horde Skills">'
 				// If using Universal_recovery, add link to recover Horde
 				: '<a href="' + sideCommand("restore mp") + '" title="Restore Horde">';
@@ -3148,11 +3148,11 @@ void bakeStats() {
 		if(section.contains_stat()) {
 			switch(my_class()) {
 			case $class[Seal Clubber]:
-				if(my_path() != "Nuclear Autumn")
+				if(my_path().name != "Nuclear Autumn")
 					result.addFury();
 				break;
 			case $class[Sauceror]:
-				if(my_path() != "Nuclear Autumn")
+				if(my_path().name != "Nuclear Autumn")
 					result.addSauce();
 				break;
 			case $class[Avatar of Sneaky Pete]:
@@ -3169,7 +3169,7 @@ void bakeStats() {
 				break;
 			}
 
-			switch(my_path()) {
+			switch(my_path().name) {
 			case "Heavy Rains":
 				result.addHeavyRains();
 				break;
@@ -3320,7 +3320,7 @@ void allCurrency(buffer result) {
 				return constructLink("Fiddle with your genes", "shop.php?whichshop=mutate");
 			case $item[source essence]:
 				string termlink = 'campground.php?action=terminal';
-				if(my_path() == "Nuclear Autumn")
+				if(my_path().name == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
 				return constructLink("Boot up the Source Terminal", termlink);
 			case $item[BACON]:
@@ -3538,7 +3538,7 @@ void pickOutfit() {
 	}
 
 	// In KOLHS, might want to remove hat
-	if(my_path() == "KOLHS") {
+	if(my_path().name == "KOLHS") {
 		if(equipped_item($slot[hat]) != $item[none])
 			special.addGear("unequip hat; set _hatBeforeKolhs = "+equipped_item($slot[hat]), "Remove Hat for School");
 		else if(get_property("_hatBeforeKolhs") != "")
@@ -3597,7 +3597,7 @@ void bakeCharacter() {
 	//Title
 	string myTitle() {
 		string myTitle = my_class();
-		if(vars["chit.character.title"] == "true" && my_path() != "Actually Ed the Undying") {
+		if(vars["chit.character.title"] == "true" && my_path().name != "Actually Ed the Undying") {
 			matcher titleMatcher = create_matcher("<br>(.*?)<br>(.*?)<", source);
 			if(find(titleMatcher)) {
 				myTitle = group(titleMatcher, 2);
@@ -3618,7 +3618,7 @@ void bakeCharacter() {
 	//Avatar
 	string myAvatar;
 	if(vars["chit.character.avatar"] != "false") {
-		if(my_path() != "You, Robot") {
+		if(my_path().name != "You, Robot") {
 			matcher avatarMatcher = create_matcher('<table align=center><tr><td>(.*?)<a class=\'([^\']+).+?("><div.+?</a>)', source);
 			if(avatarMatcher.find())
 				myAvatar = avatarMatcher.group(1) + '<a href="#" rel="chit_pickeroutfit" title="Select Outfit" class="chit_launcher ' + avatarMatcher.group(2) + avatarMatcher.group(3);
@@ -3659,7 +3659,7 @@ void bakeCharacter() {
 	}
 
 	string myGuild() {
-		switch(my_path()) {
+		switch(my_path().name) {
 			case "Nuclear Autumn": return "shop.php?whichshop=mutate";
 			case "Pocket Familiars": return "shop.php?whichshop=pokefam";
 			case "You, Robot": return "campground.php";
@@ -3713,7 +3713,7 @@ void bakeCharacter() {
 	string myPath() {
 		if(get_property("kingLiberated") == "true")
 			return "No Restrictions";
-		switch(my_path()) {
+		switch(my_path().name) {
 		case "None": return "No Path";
 		case "Bees Hate You":
 			int bees = 0;
@@ -3742,7 +3742,7 @@ void bakeCharacter() {
 		case "G-Lover": return "<a target='mainpane' style='font-weight:normal;' href='shop.php?whichshop=glover'>G-Lover</a>";
 		case "Wildfire": return '<a target="mainpane" style="font-weight:normal;" href="place.php?whichplace=wildfire_camp">Wildfire</a>';
 		}
-		return my_path();
+		return my_path().name;
 	}
 
 	//Stat Progress
@@ -3759,7 +3759,7 @@ void bakeCharacter() {
 	//Level + Council
 	string councilStyle = "";
 	string councilText = "Visit the Council";
-	if(to_int(get_property("lastCouncilVisit")) < my_level() && my_path() != "Community Service" && get_property("kingLiberated") == "false") {
+	if(to_int(get_property("lastCouncilVisit")) < my_level() && my_path().name != "Community Service" && get_property("kingLiberated") == "false") {
 		councilStyle = 'background-color:#F0F060';
 		councilText = "The Council wants to see you urgently";
 	}
@@ -3792,7 +3792,7 @@ void bakeCharacter() {
 	result.append('<tr>');
 	if(myAvatar != "") {
 		result.append('<td rowspan="4" class="avatar');
-		if(my_path() == "You, Robot") result.append(' avatarRobo');
+		if(my_path().name == "You, Robot") result.append(' avatarRobo');
 		result.append('">');
 		result.append(myAvatar);
 		result.append('</td>');
@@ -3909,7 +3909,7 @@ void bakeQuests() {
 
 	// See if we need to add any quest data for Bugbears
 	string bugbears;
-	if(my_path() == "Bugbear Invasion") {
+	if(my_path().name == "Bugbear Invasion") {
 		if(item_amount($item[key-o-tron]) > 0) {
 			foreach i,b in biodata if(get_property(b.prop).is_integer())
 				bugbears += '<br>&nbsp;&nbsp;&nbsp;* '+ b.loc +': ' + get_property(b.prop).to_int() + '/'+ b.data;
@@ -4229,7 +4229,7 @@ boolean parsePage(buffer original) {
 	} else return vprint("CHIT: Error Parsing Refresh", "red", -1);
 
 	// Gelatinous Noob
-	if(my_path() == "Gelatinous Noob" && find(parse = create_matcher('<span class=small><b>Absorptions:.+?</script><br>', source))) {
+	if(my_path().name == "Gelatinous Noob" && find(parse = create_matcher('<span class=small><b>Absorptions:.+?</script><br>', source))) {
 		chitSource["gelNoob"] = parse.group(0);
 		source = parse.replace_first("");
 	}

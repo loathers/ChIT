@@ -6,7 +6,7 @@ boolean [string] forceSections;
 boolean aftercore = qprop("questL13Final");
 
 float equip_modifier(item it, string mod) {
-	if(my_path() == "Gelatinous Noob") return 0;
+	if(my_path().name == "Gelatinous Noob") return 0;
 	switch(it) {
 	case $item[your cowboy boots]:
 		return equipped_item($slot[bootskin]).numeric_modifier(mod)
@@ -369,7 +369,7 @@ void addGear(item it, string reason, float score)
 {
 	class gear_class = class_modifier(it,"Class");
 
-	if(vars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path() == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
+	if(vars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path().name == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
 		return;
 
 	if(is_unrestricted(it) && can_equip(it) && chit_available(it, reason) > 0
@@ -583,7 +583,7 @@ void addFavGear() {
 						ok = false;
 					break;
 				case "Path":
-					if(my_path() != val)
+					if(my_path().name != val)
 						ok = false;
 					break;
 				case "Force":
@@ -1956,7 +1956,7 @@ void addGear(buffer result) {
 
 		switch(s) {
 		case $slot[hat]:
-			if(my_path() == "You, Robot" && get_property("youRobotTop") != "4") {
+			if(my_path().name == "You, Robot" && get_property("youRobotTop") != "4") {
 				result.append(badSlot("Need Mannequin Head"));
 				return;
 			}
@@ -1968,7 +1968,7 @@ void addGear(buffer result) {
 			}
 			break;
 		case $slot[weapon]:
-			if(my_path() == "You, Robot" && get_property("youRobotLeft") != "4") {
+			if(my_path().name == "You, Robot" && get_property("youRobotLeft") != "4") {
 				result.append(badSlot("Need Vice Grips"));
 				return;
 			}
@@ -1979,13 +1979,13 @@ void addGear(buffer result) {
 				pickerGear(s);
 				return;
 			}
-			else if(my_path() == "You, Robot" && get_property("youRobotRight") != "4") {
+			else if(my_path().name == "You, Robot" && get_property("youRobotRight") != "4") {
 				result.append(badSlot("Need Omni-Claw"));
 				return;
 			}
 			break;
 		case $slot[pants]:
-			if(my_path() == "You, Robot" && get_property("youRobotBottom") != "4") {
+			if(my_path().name == "You, Robot" && get_property("youRobotBottom") != "4") {
 				result.append(badSlot("Need Robo-Legs"));
 				return;
 			}

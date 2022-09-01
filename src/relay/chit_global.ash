@@ -158,7 +158,7 @@ boolean qprop(string test) {
 
 // determine if something is path-safe
 boolean be_good(string johnny) {
-   switch (my_path()) {
+   switch (my_path().name) {
       case "Bees Hate You": if (johnny.to_lower_case().index_of("b") > -1) return false; break;
       case "Trendy": if (!is_trendy(johnny)) return false; break;
       case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
@@ -166,7 +166,7 @@ boolean be_good(string johnny) {
    return is_unrestricted(johnny);
 }
 boolean be_good(item johnny) {
-   switch (my_path()) {
+   switch (my_path().name) {
       case "Bees Hate You": if (johnny.to_lower_case().index_of("b") > -1) return false; break;
       case "Trendy": if (!is_trendy(johnny)) return false; break;
       case "Avatar of Boris": if (johnny == $item[trusty]) return true;
@@ -179,7 +179,7 @@ boolean be_good(item johnny) {
    return is_unrestricted(johnny);
 }
 boolean be_good(familiar johnny) {
-   switch (my_path()) {
+   switch (my_path().name) {
       case "Trendy": if (!is_trendy(johnny)) return false; break;
       case "Avatar of Boris":
       case "Avatar of Jarlsberg":
@@ -190,7 +190,7 @@ boolean be_good(familiar johnny) {
    return is_unrestricted(johnny);
 }
 boolean be_good(skill johnny) {
-   switch (my_path()) {
+   switch (my_path().name) {
       case "Trendy": if (!is_trendy(johnny)) return false; break;
       case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
    }

@@ -141,7 +141,7 @@ void pickerRoboBottom() {
 
 void bakeRobo() {
     // Nothing to do if you aren't a robot
-    if(my_path() != "You, Robot") {
+    if(my_path().name != "You, Robot") {
         return;
     }
     buffer result;
