@@ -647,6 +647,15 @@ string item_image(item it, int modify_image)
 						break;
 				}
 				break;
+			case $item[Jurassic Parka]:
+				switch(get_property("parkaMode")) {
+					case "kachungasaur": return "/images/itemimages/jparka8.gif";
+					case "dilophosaur": return "/images/itemimages/jparka3.gif";
+					case "spikolodon": return "/images/itemimages/jparka2.gif";
+					case "ghostasaurus": return "/images/itemimages/jparka1.gif";
+					case "pterodactyl": return "/images/itemimages/jparka9.gif";
+				}
+				break;
 		}
 	}
 
