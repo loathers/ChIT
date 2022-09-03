@@ -85,7 +85,7 @@ void pickerHorse() {
 
 void bakeHorsery() {
 	// Nothing to do if you don't have the horsery
-	if(get_property("horseryAvailable").to_boolean() != true)
+	if(get_property("horseryAvailable").to_boolean() != true || !is_unrestricted($item[Horsery contract]))
 		return;
 
 	pickerHorse();
