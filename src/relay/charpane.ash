@@ -4803,7 +4803,8 @@ buffer modifyPage(buffer source) {
 
 	// handle limit modes
 	switch(limit_mode()) {
-	case "":			// Mode is not limited
+	case "": // old way of indicating mode is not limited, just in case it reverts or something
+	case "0":			// Mode is not limited
 	case "edunder":		// Ed's Underworld
 		break;
 	case "spelunky":	// Needs special handling for the Spelunkin' minigame
