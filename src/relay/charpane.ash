@@ -2659,11 +2659,11 @@ void addOrgan(buffer result, string organ, boolean showBars, int current, int li
 }
 
 void addStomach(buffer result, boolean showBars) {
-	if(can_eat())
+	if(can_eat() && fullness_limit() > 0)
 		result.addOrgan("Stomach", showBars, my_fullness(), fullness_limit(), have_effect($effect[Got Milk]) > 0);
 }
 void addLiver(buffer result, boolean showBars) {
-	if(can_drink())
+	if(can_drink() && inebriety_limit() > 0)
 		result.addOrgan("Liver", showBars, my_inebriety(), inebriety_limit(), have_effect($effect[Ode to Booze]) > 0);
 }
 void addSpleen(buffer result, boolean showBars) {
