@@ -2132,6 +2132,24 @@ void bakeFamiliar() {
 		boolean candyBagDropped = get_property("_bagOfCandy").to_boolean();
 		info += candyBagDropped ? "bag dropped today" : "can drop bag today";
 		break;
+	case $familiar[grey goose]:
+		int famweight = familiar_weight(myfam);
+		info += famweight + "lb";
+		if(famweight > 1) info += "s";
+		int target = max(famweight + 1, 6);
+		if(famweight < 20) {
+			int expToGo = target**2 - myfam.experience;
+			int combats = ceil(expToGo / numeric_modifier("Familiar Experience"));
+			info += ", " +  expToGo + " exp";
+			if(combats != expToGo) {
+				info += ' <span title="gaining '
+				+ floor(numeric_modifier("Familiar Experience")) + ' fam exp per combat">(' + combats
+				+ " fight" + (combats > 1 ? "s" : "") + ")</span>";
+			}
+			info += " to " + target + "lb";
+			if(target > 1) info += "s";
+		}
+		break;
 	}
 
 	//Get equipment info
