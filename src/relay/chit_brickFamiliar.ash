@@ -2139,7 +2139,7 @@ void bakeFamiliar() {
 		int target = max(famweight + 1, 6);
 		if(famweight < 20) {
 			int expToGo = target**2 - myfam.experience;
-			int combats = ceil(expToGo / numeric_modifier("Familiar Experience"));
+			int combats = ceil(expToGo / (numeric_modifier("Familiar Experience") + 1));
 			info += ", " +  expToGo + " exp";
 			if(combats != expToGo) {
 				info += ' <span title="gaining '
