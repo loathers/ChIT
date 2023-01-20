@@ -470,6 +470,7 @@ int hasBjornDrops(familiar f) {
 		case $familiar[twitching space critter]: return checkDrops("_spaceFurDropsCrown",1);
 		case $familiar[Machine Elf]: return checkDrops("_abstractionDropsCrown",25);
 		case $familiar[Adventurous Spelunker]: return checkDrops("_oreDropsCrown",6);
+		case $familiar[Puck Man]: case $familiar[Ms. Puck Man]: return checkDrops("_yellowPixelDropsCrown", 25);
 	}
 
 	return 0;
