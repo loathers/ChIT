@@ -1113,3 +1113,11 @@ div.chit_left-handman {
 .code {
 	font-family: monospace;
 }
+
+.scoretext {
+	text-align: left !important;
+}
+
+.scorenum {
+	text-align: left !important;
+}

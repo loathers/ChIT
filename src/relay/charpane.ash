@@ -2941,6 +2941,22 @@ void bakeStats() {
 		}
 	}
 
+	void addScore() {
+		// <span class='nes' style='line-height: 14px; font-size: 12px;'>1,250</span>
+		matcher score = create_matcher('<font color="?([^>"]+)"?><span class=\'nes\'[^>]*>([^<]+)</span>', stats);
+		if(find(score)) {
+			result.append('<tr style="line-height: 14px; font-size: 12px;"><td');
+			if(showBars) {
+				result.append(' colspan="2"');
+			}
+			result.append(' class="scoretext"><span class="nes">Score:</span></td><td class="scorenum"><font color="');
+			result.append(score.group(1));
+			result.append('"><span class="nes">');
+			result.append(score.group(2));
+			result.append('</span></td></tr>');
+		}
+	}
+
 	string progressTub(string s, int val) {
 		int begin;
 		switch(s) {
@@ -3252,6 +3268,7 @@ void bakeStats() {
 				addAxel();
 			addBathtub();
 			addExtreme();
+			addScore();
 			checkExtra = false;
 		}
 	}
