@@ -1,4 +1,3 @@
-1
 # IMPORTANT NOTE: CHANGES TO THIS FILE WILL PROBABLY NOT TAKE EFFECT UNTIL YOU RELAUNCH MAFIA
 # Using a very large tab width is recommended for viewing this file
 # Category Name is used in chit.gear.display.in-run and chit.gear.display.aftercore
@@ -70,7 +69,7 @@ quest	frilly skirt	Manual: true, Quest: questM12Pirate == step2
 quest	blackberry galoshes	Manual: true, Quest: questL11Black >= started, Quest: questL11Black <= step1
 quest	antique machete, muculent machete, machetito, papier-m&#226;ch&#233;te	Manual: true, Quest: questL11Worship >= step3, Quest: questL11Worship <= step4
 quest	Surgeonosity	Quest: hiddenHospitalProgress == 1
-quest	2*UV-resistant compass, 3*ornate dowsing rod	Manual: true, Quest: questL11Desert == started
+quest	2*UV-resistant compass, 3*ornate dowsing rod, survival knife	Manual: true, Quest: questL11Desert == started
 quest	Lord Spookyraven's spectacles	Manual: true, Quest: questL11Manor >= started, Quest: questL11Manor <= step1
 quest	unstable fulminate	Manual: true, Quest: questL11Manor >= step1, Quest: questL11Manor <= step3
 quest	Clownosity	Quest: questG04Nemesis == step5
