@@ -110,6 +110,7 @@ Inside each area you can place any of the following "bricks":
 - modifiers: Some useful modifiers (+meat, +items, +combat, ML, DA, DR etc)
 - elements: Shows the KoL elements chart from the wiki (also mostly for the toolbar)
 - update: Notifies you when new versions of CHIT are available
+- next: Provides a dropdown to tell ChIT where you're going next to get recommendations beforehand
 
 ### Layout Variables
 

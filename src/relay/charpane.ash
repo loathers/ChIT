@@ -8,6 +8,7 @@ import "chit_brickTerminal.ash";
 import "chit_brickHorsery.ash";
 import "chit_brickBoombox.ash";
 import "chit_brickRobo.ash";
+import "chit_brickNext.ash";
 
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
@@ -4425,6 +4426,7 @@ void bakeBricks() {
 						case "horsery":		bakeHorsery();		break;
 						case "boombox":		bakeBoombox();		break;
 						case "robo":		bakeRobo();			break;
+						case "next": bakeNext(); break;
 
 						// Reserved words
 						case "helpers": case "update": break;
