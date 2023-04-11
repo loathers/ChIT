@@ -589,6 +589,11 @@ int hasDrops(item it) {
 		case $item[designer sweatpants]:
 			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
 			return max(sweatboozeleft, 0);
+		case $item[cursed monkey's paw]:
+			if(get_property("_monkeyPawWishesUsed").to_int() < 5) {
+				return 1;
+			}
+			break;
 	}
 
 	return 0;
@@ -663,6 +668,12 @@ string item_image(item it, int modify_image)
 					case "spikolodon": return "/images/itemimages/jparka2.gif";
 					case "ghostasaurus": return "/images/itemimages/jparka1.gif";
 					case "pterodactyl": return "/images/itemimages/jparka9.gif";
+				}
+				break;
+			case $item[cursed monkey's paw]:
+				int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
+				if(wishesUsed >= 0 && wishesUsed <= 5) {
+					return "/images/itemimages/monkeypaw" + wishesUsed + ".gif";
 				}
 				break;
 		}

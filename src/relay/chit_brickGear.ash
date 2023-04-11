@@ -24,6 +24,30 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 
+skill monkeyPawSkill(int wishesUsed) {
+	switch(wishesUsed) {
+		case 0: return $skill[Monkey Slap];
+		case 1: return $skill[Monkey Tickle];
+		case 2: return $skill[Evil Monkey Eye];
+		case 3: return $skill[Monkey Peace Sign];
+		case 4: return $skill[Monkey Point];
+		case 5: return $skill[Monkey Punch];
+		default: return $skill[none];
+	}
+}
+
+string monkeyPawSkillDesc(skill sk) {
+	switch(sk) {
+		case $skill[Monkey Slap]: return "Batter up-like";
+		case $skill[Monkey Tickle]: return "Delevel";
+		case $skill[Evil Monkey Eye]: return '<span class="modSpooky">Spooky damage</span> + delevel';
+		case $skill[Monkey Peace Sign]: return "Heal";
+		case $skill[Monkey Point]: return "Olfaction-like";
+		case $skill[Monkey Punch]: return "Physical damage";
+		default: return "";
+	}
+}
+
 string beardToShorthand(effect beard) {
 	string [effect] shorthands = {
 		$effect[Spectacle Moustache]: "item/spooky",
@@ -270,6 +294,15 @@ string gearName(item it, slot s) {
 			string parkaMode = get_property("parkaMode");
 			if(parkaMode.length() > 0) {
 				notes += parkaMode + " mode";
+			}
+			break;
+		case $item[cursed monkey's paw]:
+			int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
+			if(wishesUsed >=0 && wishesUsed < 5) {
+				notes += (5 - wishesUsed) + " wishes left";
+			}
+			else if(wishesUsed >= 5) {
+				notes += "no wishes left";
 			}
 			break;
 	}
@@ -1530,6 +1563,25 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
 			picker.append('rel="chit_pickerjurassicparka" href="#"><b>Pick</b> parka mode</a>');
 			picker.append('</td></tr>');
+			break;
+		case $item[cursed monkey's paw]:
+			int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
+			if(wishesUsed >= 0 && wishesUsed < 5) {
+				skill currSkill = monkeyPawSkill(wishesUsed);
+				skill nextSkill = monkeyPawSkill(wishesUsed + 1);
+				start_option(in_slot, true);
+				picker.append('<td colspan="2"><a class="visit done" target=mainpane href="main.php?pwd=');
+				picker.append(my_hash());
+				picker.append('&action=cmonk"><b>Wish</b> for an item or effect<br /><span class="descline">Current skill: ');
+				picker.append(currSkill);
+				picker.append(' (');
+				picker.append(monkeyPawSkillDesc(currSkill));
+				picker.append(')<br />Next skill: ');
+				picker.append(nextSkill);
+				picker.append(' (');
+				picker.append(monkeyPawSkillDesc(nextSkill));
+				picker.append(')</a></td></tr>');
+			}
 			break;
 	}
 
