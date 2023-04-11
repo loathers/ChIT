@@ -59,6 +59,7 @@ setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox")
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
+setvar("chit.next.maxlen", 30);
 setvar("chit.toolbar.moods", "true"); // do not change to boolean, "bonus" is also valid
 
 /************************************************************************************

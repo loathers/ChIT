@@ -28,14 +28,26 @@ void bakeNext() {
 			res.append('">');
 			prevzone = zone;
 		}
+		string locShort = loc.to_string();
+		boolean wasShortened = false;
+		int maxLength = vars["chit.next.maxlen"].to_int();
+		if(maxLength > 0 && locShort.length() > maxLength) {
+			locShort = locShort.substring(0, maxLength - 3) + "...";
+			wasShortened = true;
+		}
 		res.append('<option value="ashq set_location($location[');
 		res.append(loc);
 		res.append('])"');
 		if(loc == my_location()) {
 			res.append(' selected');
 		}
+		if(wasShortened) {
+			res.append(' title="');
+			res.append(loc);
+			res.append('"');
+		}
 		res.append('>');
-		res.append(loc);
+		res.append(locShort);
 		res.append('</option>');
 	}
 

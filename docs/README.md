@@ -360,6 +360,10 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 
   - Default: true
 
+- chit.next.maxlen: The next brick will shorten location names that are longer than this limit in its dropdown. Full location name can still be seen on mouseover when shortened. A value of 0 means no limit.
+
+  - Default: 30
+
 - chit.disable: If this is set true, then chit will be disabled
 
   - Default: false
