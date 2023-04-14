@@ -1445,6 +1445,9 @@ void pickerGear(slot s) {
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="place.php?whichplace=realm_fantasy">Visit FantasyRealm.</a></td></tr>');
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
+				'href="shop.php?whichshop=fantasyrealm">Spend Rubees.</a></td></tr>');
 			break;
 		case $item[PirateRealm eyepatch]:
 			start_option(in_slot, true);
