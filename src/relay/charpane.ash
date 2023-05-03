@@ -1210,6 +1210,7 @@ void bakeEffects() {
 			new noncommod("jellyglob.gif", "stench jelly", "jelly all over you"),
 			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
 			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
+			new noncommod("pillminder.gif", "sneakisol", "avoiding fights until something cool happens"),
 		};
 
 		foreach i,noncom in nomcommods {
