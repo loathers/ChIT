@@ -50,7 +50,7 @@ setvar("chit.helpers.spookyraven", true);
 setvar("chit.helpers.wormwood", "stats,spleen");
 setvar("chit.helpers.xiblaxian", true);
 setvar("chit.kol.coolimages", true);
-setvar("chit.effects.layout", "songs,buffs,intrinsics");
+setvar("chit.effects.layout", "advmods,songs,buffs,intrinsics");
 setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
@@ -1053,6 +1053,7 @@ void bakeEffects() {
 	buffer buffs;
 	buffer intrinsics;
 	buffer helpers;
+	buffer advmods;
 	int total = 0;
 	boolean [string] uniqueTypesShown;
 
@@ -1060,6 +1061,9 @@ void bakeEffects() {
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
 	if (layout == "") layout = "buffs";
 	boolean showSongs = contains_text(layout,"songs");
+	if(!contains_text(layout, "advmods")) {
+		layout = "advmods," + layout;
+	}
 
 	//Load effects map
 	static {
@@ -1195,6 +1199,29 @@ void bakeEffects() {
 	intrinsics.lack_effect($skill[Mist Form], $effect[Mist Form], "Mist Form");
 	intrinsics.lack_effect($skill[Flock of Bats Form], $effect[Bats Form], "Bats Form");
 
+	if(chitSource["advmods"] != "") {
+		record noncommod {
+			string icon;
+			string desc;
+			string matchtext;
+		};
+		noncommod[int] nomcommods = {
+			new noncommod("clarabell.gif", "clara's bell", "Clara's Bell"),
+			new noncommod("jellyglob.gif", "stench jelly", "jelly all over you"),
+			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
+		};
+
+		foreach i,noncom in nomcommods {
+			if(chitSource["advmods"].contains_text(noncom.matchtext)) {
+				advmods.append('<tr class="effect"><td class="icon"><img height=20 width=20 src="/images/itemimages/');
+				advmods.append(noncom.icon);
+				advmods.append('" /></td><td class="info" colspan="3">Noncom guaranteed by ');
+				advmods.append(noncom.desc);
+				advmods.append('</td></tr>');
+			}
+		}
+	}
+
 	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');
 		intrinsics.append('</tbody>');
@@ -1206,6 +1233,10 @@ void bakeEffects() {
 	if (length(buffs) > 0) {
 		buffs.insert(0, '<tbody class="buffs">');
 		buffs.append('</tbody>');
+	}
+	if (length(advmods) > 0) {
+		advmods.insert(0, '<tbody class="advmods">');
+		advmods.append('</tbody>');
 	}
 
 	if (total > 0) {
@@ -1222,6 +1253,7 @@ void bakeEffects() {
 					break;
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
+				case "advmods": result.append(advmods); break;
 				default: //ignore all other values
 			}
 		}
@@ -4144,6 +4176,12 @@ boolean parsePage(buffer original) {
 	if(find(parse)) {
 		chitSource["familiar"] = parse.group(1);
 		source = parse.replace_first("");
+	}
+
+	parse = create_matcher('<p><b><font size=2>Adventure Modifiers:</font></b><br>(.*?)<p>', source);
+	if(find(parse)) {
+		chitSource["advmods"] = parse.group(1);
+		// don't strip out advmods from source out of an abundance of caution
 	}
 
 	// Parse the beginning of the page
