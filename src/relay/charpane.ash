@@ -1209,6 +1209,7 @@ void bakeEffects() {
 			new noncommod("clarabell.gif", "clara's bell", "Clara's Bell"),
 			new noncommod("jellyglob.gif", "stench jelly", "jelly all over you"),
 			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
+			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
 		};
 
 		foreach i,noncom in nomcommods {
