@@ -336,9 +336,10 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - buffs - regular effects
   - intrinsics - intrinsic effects
   - songs - only if present, this will cause all active AT songs to be displayed separately. (And other limited quantity buffs like Boris and Jarlsberg)
+  - advmods - Adventure Modifiers (currently just non-combat forcers)
   - Example:
     - intrinsics,limited,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs
-  - Default: songs,buffs,intrinsics
+  - Default: advmods,songs,buffs,intrinsics
 - chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
   - true: uses chit_effects\_\[yourname].txt
   - false: uses chit_effects.txt (default)
