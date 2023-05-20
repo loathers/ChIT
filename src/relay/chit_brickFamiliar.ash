@@ -594,6 +594,10 @@ int hasDrops(item it) {
 				return 1;
 			}
 			break;
+		case $item[Cincho de Mayo]:
+			int cinch = 100 - get_property("_cinchUsed").to_int();
+			if(cinch > 0) return 1;
+			break;
 	}
 
 	return 0;

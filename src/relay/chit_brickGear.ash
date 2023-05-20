@@ -305,6 +305,10 @@ string gearName(item it, slot s) {
 				notes += "no wishes left";
 			}
 			break;
+		case $item[Cincho de Mayo]:
+			int cinch = 100 - get_property("_cinchUsed").to_int();
+			notes += (cinch > 0 ? cinch.to_string() : "no") + " cinch";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
@@ -1324,6 +1328,50 @@ void pickerJurassicParka() {
 	chitPickers['jurassicparka'] = picker;
 }
 
+void pickerCincho() {
+	int cinch = 100 - get_property("_cinchUsed").to_int();
+
+	buffer picker;
+	picker.pickerStart('cincho', "Use some cinch (" + cinch + " available)");
+
+	void addSkill(skill sk, string imageSuffix, string desc, int cinchCost) {
+		boolean canUse = cinch >= cinchCost && !sk.combat;
+
+		picker.append('<tr class="pickitem');
+		if(!canUse) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/cincho');
+		picker.append(imageSuffix);
+		picker.append('.gif" /></td><td colspan="2">');
+		if(canUse) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("cast " + sk.to_string()));
+			picker.append('"><b>Cincho:</b> ');
+		}
+		else {
+			picker.append('Cincho: ');
+		}
+		picker.append(sk.to_string().substring(8));
+		picker.append(' (');
+		picker.append(cinchCost);
+		picker.append(' cinch)<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(canUse) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addSkill($skill[Cincho: Confetti Extravaganza], "confetti", "Double substats from this fight, but get smacked", 5);
+	addSkill($skill[Cincho: Dispense Salt and Lime], "lime", "Triples stat gain from next drink", 25);
+	addSkill($skill[Cincho: Fiesta Exit], "exit", "Force a noncom", 60);
+	addSkill($skill[Cincho: Party Foul], "swear", "Damage, weaken, and stun", 5);
+	addSkill($skill[Cincho: Party Soundtrack], "music", "30 adv +5lbs", 25);
+	addSkill($skill[Cincho: Projectile Piñata], "candy", "Damage, stun, get candy", 5);
+
+	picker.addLoader("Using Cinch...");
+	picker.append('</table></div>');
+	chitPickers['cincho'] = picker;
+}
+
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -1585,6 +1633,19 @@ void pickerGear(slot s) {
 				picker.append(monkeyPawSkillDesc(nextSkill));
 				picker.append(')</a></td></tr>');
 			}
+			break;
+		case $item[Cincho de Mayo]:
+			int restsTaken = get_property("_cinchoRests").to_int();
+			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
+			pickerCincho();
+			start_option(in_slot, true);
+			picker.append('<td colspan="2"><a class="chit_launcher done" ');
+			picker.append('rel="chit_pickercincho" href="#"><b>Use</b> some cinch<br /><span class="descline">');
+			picker.append(get_property("_cinchoRests"));
+			picker.append(' rests taken, will gain ');
+			picker.append(cinchToGain);
+			picker.append('</span></a>');
+			picker.append('</td></tr>');
 			break;
 	}
 
