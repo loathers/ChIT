@@ -76,6 +76,7 @@ string gearName(item it, slot s) {
 
 	switch(it) {
 		case $item[V for Vivala mask]:
+		case $item[replica V for Vivala mask]:
 			if(hasDrops(it) > 0) notes = hasDrops(it) + ' adv gainable';
 			break;
 		case $item[mayfly bait necklace]:
@@ -98,9 +99,11 @@ string gearName(item it, slot s) {
 				notes += get_property("boneAbacusVictories") + "/1000";
 			break;
 		case $item[navel ring of navel gazing]:
-			name = "navel ring";
+		case $item[replica navel ring of navel gazing]:
+			name = (it == $item[replica navel ring of navel gazing]) ? "replica navel ring" : "navel ring";
 			// no break intentionally
 		case $item[Greatest American Pants]:
+		case $item[replica Greatest American Pants]:
 			int runs = to_int(get_property("_navelRunaways"));
 			if(runs < 3) notes = "100% free run";
 			else if(runs < 6) notes = "80% free run";
@@ -205,6 +208,7 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[Powerful Glove]:
+		case $item[replica Powerful Glove]:
 			int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
 			notes = batteryLeft + "% battery";
 			break;
@@ -216,6 +220,7 @@ string gearName(item it, slot s) {
 			notes = transformsLeft + " transformations";
 			break;
 		case $item[Cargo Cultist Shorts]:
+		case $item[replica Cargo Cultist Shorts]:
 			boolean pocketEmptied = get_property("_cargoPocketEmptied").to_boolean();
 			if(!pocketEmptied)
 				notes = "pocket pickable";
@@ -232,6 +237,7 @@ string gearName(item it, slot s) {
 			notes = get_property("scrapbookCharges") + " scraps";
 			break;
 		case $item[industrial fire extinguisher]:
+		case $item[replica industrial fire extinguisher]:
 			int extinguisherCharge = get_property("_fireExtinguisherCharge").to_int();
 			if(extinguisherCharge <= 0) {
 				notes = "empty";
@@ -283,6 +289,7 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[designer sweatpants]:
+		case $item[replica designer sweatpants]:
 			int sweat = max(min(100, get_property("sweat").to_int()), 0);
 			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
 			notes += sweat + "% sweaty";
@@ -291,6 +298,7 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[Jurassic Parka]:
+		case $item[replica Jurassic Parka]:
 			string parkaMode = get_property("parkaMode");
 			if(parkaMode.length() > 0) {
 				notes += parkaMode + " mode";
@@ -306,6 +314,7 @@ string gearName(item it, slot s) {
 			}
 			break;
 		case $item[Cincho de Mayo]:
+		case $item[replica Cincho de Mayo]:
 			int cinch = 100 - get_property("_cinchUsed").to_int();
 			notes += (cinch > 0 ? cinch.to_string() : "no") + " cinch";
 			break;
@@ -1466,6 +1475,7 @@ void pickerGear(slot s) {
 			picker.append('</a></td></tr>');
 			break;
 		case $item[over-the-shoulder Folder Holder]:
+		//case $item[replica over-the-shoulder Folder Holder]:
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=useholder">Manage your folders.</a></td></tr>');
 			break;
@@ -1521,6 +1531,7 @@ void pickerGear(slot s) {
 			}
 			break;
 		case $item[Kramco Sausage-o-Matic&trade;]:
+		case $item[replica Kramco Sausage-o-Matic&trade;]:
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
 				'href="inventory.php?action=grind"><b>Grind</b> (' + available_amount($item[magical sausage casing]).formatInt() + ' casings available):<br />');
@@ -1530,6 +1541,7 @@ void pickerGear(slot s) {
 			picker.append('</a></td></tr>');
 			break;
 		case $item[Fourth of May Cosplay Saber]:
+		case $item[replica Fourth of May Cosplay Saber]:
 			if(get_property("_saberMod") == "0") {
 				pickerForceUpgrade();
 				start_option(in_slot, true);
@@ -1549,6 +1561,7 @@ void pickerGear(slot s) {
 			}
 			break;
 		case $item[Powerful Glove]:
+		case $item[replica Powerful Glove]:
 			int batteryUsed = get_property("_powerfulGloveBatteryPowerUsed").to_int();
 			if(batteryUsed < 100) {
 				pickerPowerfulGlove();
@@ -1562,6 +1575,7 @@ void pickerGear(slot s) {
 				'href="inventory.php?tap=guzzlr"><b>Tap</b> tablet</a></td></tr>');
 			break;
 		case $item[Cargo Cultist Shorts]:
+		case $item[replica Cargo Cultist Shorts]:
 			if(!get_property("_cargoPocketEmptied").to_boolean()) {
 				start_option(in_slot, false);
 				string [int] pocketsEmptied = get_property("cargoPocketsEmptied").split_string(",");
@@ -1602,6 +1616,7 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerunbrella" href="#"><b>Reconfigure</b> your umbrella</a></td></tr>');
 			break;
 		case $item[designer sweatpants]:
+		case $item[replica designer sweatpants]:
 			pickerSweatpants();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
@@ -1609,6 +1624,7 @@ void pickerGear(slot s) {
 			picker.append('</td></tr>');
 			break;
 		case $item[Jurassic Parka]:
+		case $item[replica Jurassic Parka]:
 			pickerJurassicParka();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
@@ -1635,6 +1651,7 @@ void pickerGear(slot s) {
 			}
 			break;
 		case $item[Cincho de Mayo]:
+		case $item[replica Cincho de Mayo]:
 			int restsTaken = get_property("_cinchoRests").to_int();
 			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
 			pickerCincho();

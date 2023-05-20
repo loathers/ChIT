@@ -481,7 +481,9 @@ int locketFightsRemaining();
 // TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
-		case $item[V for Vivala mask]: return 10 - to_int(get_property("_vmaskAdv"));
+		case $item[V for Vivala mask]:
+		case $item[replica V for Vivala mask]:
+			return 10 - to_int(get_property("_vmaskAdv"));
 		case $item[mayfly bait necklace]: return 30 - to_int(get_property("_mayflySummons"));
 		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
 		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
@@ -497,6 +499,7 @@ int hasDrops(item it) {
 				return 1;
 			break;
 		case $item[Greatest American Pants]:
+		case $item[replica Greatest American Pants]:
 			if(get_property("_gapBuffs").to_int() < 5)
 				return 1;
 			// intentional fallthrough
@@ -551,10 +554,12 @@ int hasDrops(item it) {
 		case $item[Lil' Doctor&trade; bag]:
 			return 9 - get_property("_otoscopeUsed").to_int() - get_property("_reflexHammerUsed").to_int() - get_property("_chestXRayUsed").to_int();
 		case $item[Fourth of May Cosplay Saber]:
+		case $item[replica Fourth of May Cosplay Saber]:
 			return 5 - get_property("_saberForceUses").to_int();
 		case $item[Beach Comb]:
 			return 11 - get_property("_freeBeachWalksUsed").to_int();
 		case $item[Powerful Glove]:
+		case $item[replica Powerful Glove]:
 			return 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
 		case $item[Eight Days a Week Pill Keeper]:
 			int uses = (spleen_limit() - my_spleen_use()) / 3;
@@ -564,6 +569,7 @@ int hasDrops(item it) {
 			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
 			return transformsLeft;
 		case $item[Cargo Cultist Shorts]:
+		case $item[replica Cargo Cultist Shorts]:
 			return get_property("_cargoPocketEmptied").to_boolean() ? 0 : 1;
 		case $item[backup camera]:
 			// 5 extra uses in You, Robot
@@ -571,6 +577,7 @@ int hasDrops(item it) {
 		case $item[familiar scrapbook]:
 			return get_property("scrapbookCharges").to_int() / 100;
 		case $item[industrial fire extinguisher]:
+		case $item[replica industrial fire extinguisher]:
 			return get_property("_fireExtinguisherCharge").to_int();
 		case $item[Daylight Shavings Helmet]:
 			foreach beard in $effects[Spectacle Moustache, Toiletbrush Moustache, Barbell Moustache, Grizzly Beard, Surrealist's Moustache, Musician's Musician's Moustache, Gull-Wing Moustache, Space Warlord's Beard, Pointy Wizard Beard, Cowboy Stache, Friendly Chops] {
@@ -587,6 +594,7 @@ int hasDrops(item it) {
 		case $item[June cleaver]:
 			return (get_property("_juneCleaverFightsLeft").to_int() == 0) ? 1 : 0;
 		case $item[designer sweatpants]:
+		case $item[replica designer sweatpants]:
 			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
 			return max(sweatboozeleft, 0);
 		case $item[cursed monkey's paw]:
@@ -595,6 +603,7 @@ int hasDrops(item it) {
 			}
 			break;
 		case $item[Cincho de Mayo]:
+		case $item[replica Cincho de Mayo]:
 			int cinch = 100 - get_property("_cinchUsed").to_int();
 			if(cinch > 0) return 1;
 			break;
@@ -666,6 +675,7 @@ string item_image(item it, int modify_image)
 				}
 				break;
 			case $item[Jurassic Parka]:
+			case $item[replica Jurassic Parka]:
 				switch(get_property("parkaMode")) {
 					case "kachungasaur": return "/images/itemimages/jparka8.gif";
 					case "dilophosaur": return "/images/itemimages/jparka3.gif";
