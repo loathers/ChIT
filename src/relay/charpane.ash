@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27320; // monkey's paw wish tracking
+since r27367; // replica iotms
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
