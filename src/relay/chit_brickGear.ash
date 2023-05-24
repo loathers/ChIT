@@ -1475,7 +1475,7 @@ void pickerGear(slot s) {
 			picker.append('</a></td></tr>');
 			break;
 		case $item[over-the-shoulder Folder Holder]:
-		//case $item[replica over-the-shoulder Folder Holder]:
+		case $item[replica over-the-shoulder Folder Holder]:
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=useholder">Manage your folders.</a></td></tr>');
 			break;

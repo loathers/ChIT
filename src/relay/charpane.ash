@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27367; // replica iotms
+since r27373; // replica iotms (including folder holder)
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
