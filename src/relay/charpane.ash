@@ -920,6 +920,8 @@ buff parseBuff(string source) {
 		columnIcon = columnIcon.replace_string(myBuff.effectImage, "lattecup1.gif");
 		myBuff.effectImage = "lattecup1.gif";
 	}
+	else if (myBuff.effectName.contains_tex("Spooky VHS Monster"))
+		effectAlias = "VHS Taped " + get_property("spookyVHSTapeMonster");
 	else if(turtleBlessings contains myBuff.eff || grandTurtleBlessings contains myBuff.eff) {
 		boolean isGrand = grandTurtleBlessings contains myBuff.eff;
 		int speedUps = 0;
