@@ -543,7 +543,7 @@ buffer buildTracker() {
 		result.append("Find the "+ItemReport($item[Talisman o' Namsilat]));
 		result.append("<br>");
 		if (Started("questL11Shen")) {
-			result.append("<a target=mainpane href=\"place.php?whichplace=town_wrong.php\">Copperhead Club</a>");
+			result.append("<a target=mainpane href=\"place.php?whichplace=town_wrong\">Copperhead Club</a>");
 			result.append("<br>");
 			result.append("Get the "+ItemReport($item[Copperhead Charm]));
 			if (get_property("shenQuestItem")!="") {
