@@ -520,14 +520,14 @@ void addFavGear() {
 
 	// Find varous stuff instead of hardcoding lists
 	static {
-		record modifier {
+		record modifier_value {
 			float multiplier;
 			string mod;
 		};
 		record gear_category {
 			float [item] list;
 			string name;
-			modifier [int] modifiers;
+			modifier_value [int] modifiers;
 			string [string, int] attributes;
 		};
 		gear_category [int] catList;
@@ -536,7 +536,7 @@ void addFavGear() {
 			cat.name = name;
 			foreach i,mod in mods.split_string(" *, *") {
 				string [int] split = mod.split_string(" *\\* *");
-				modifier curr;
+				modifier_value curr;
 				if(split.count() == 1) {
 					if(split[0].to_float() != 0.0) {
 						curr.multiplier = split[0].to_float();
