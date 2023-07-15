@@ -772,7 +772,7 @@ buff parseBuff(string source) {
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style, desc;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +(?:<span[^>]*>)?\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;)(?:</a>)?)\\)(?:(?:</span>)?(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +(?:<span[^>]*>)?\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;|Today)(?:</a>)?)\\)(?:(?:</span>)?(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -799,6 +799,9 @@ buff parseBuff(string source) {
 			turnOff($effect[Wolf Form], $skill[Wolf Form]);
 			turnOff($effect[Mist Form], $skill[Mist Form]);
 			turnOff($effect[Bats Form], $skill[Flock of Bats Form]);
+		} else if (parse.group(8) == "Today") {
+			myBuff.effectTurns = -1;
+			myBuff.isIntrinsic = true;
 		} else
 			myBuff.effectTurns = parse.group(8).to_int();
 		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
