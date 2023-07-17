@@ -771,8 +771,9 @@ buff parseBuff(string source) {
 
 	string columnIcon, columnTurns, columnArrow;
 	string spoiler, style, desc;
+	boolean isToday = false;
 
-	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +(?:<span[^>]*>)?\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;)(?:</a>)?)\\)(?:(?:</span>)?(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
+	matcher parse = create_matcher('(?:<td[^>]*>(.*?)</td>)?<td[^>]*>(<.*?itemimages/([^"]*)"(?:.*?eff\\("([^"]+)"\\))?.*?)</td><td[^>]*>[^>]*>(.*?) +(?:<span[^>]*>)?\\((?:(.*?), )?((?:<a[^>]*>)?([\\d,]+||&infin;|Today)(?:</a>)?)\\)(?:(?:</span>)?(?:</font>)?&nbsp;(<a.*?</a>))?.*?</td>', source);
 	// The ? stuff at the end is because those arrows are a mafia option that might not be present
 	if(parse.find()) {
 		columnIcon = parse.group(2);	// This is full html for the icon
@@ -788,7 +789,7 @@ buff parseBuff(string source) {
 			columnTurns = '<a target="mainpane" href="/place.php?whichplace=junggate_3&action=mystic_face" title="This... This isn\'t me.">'+parse.group(8)+'</a>';
 		else
 			columnTurns = parse.group(7).replace_string('title="Use a remedy to remove', 'title="SGEEAs Left: '+ item_amount($item[soft green echo eyedrop antidote]) +'\nUse a remedy to remove');
-		if(parse.group(8) == "&infin;") {	// Is it intrinsic?
+		if(parse.group(8) == "&infin;" || parse.group(8) == "Today") {	// Is it intrinsic?
 			myBuff.effectTurns = -1;
 			myBuff.isIntrinsic = true;
 			void turnOff(effect toDisable, skill toUse) {
@@ -799,6 +800,9 @@ buff parseBuff(string source) {
 			turnOff($effect[Wolf Form], $skill[Wolf Form]);
 			turnOff($effect[Mist Form], $skill[Mist Form]);
 			turnOff($effect[Bats Form], $skill[Flock of Bats Form]);
+			if(parse.group(8) == "Today") {
+				isToday = true;
+			}
 		} else
 			myBuff.effectTurns = parse.group(8).to_int();
 		// There are various problems with KoL's native uparrows. Only use them if KoL's uparrows are missing
@@ -1016,7 +1020,11 @@ buff parseBuff(string source) {
 	}
 	result.append('</td>');
 	if(myBuff.isIntrinsic) {
-		result.append('<td class="infinity');
+		result.append('<td class="');
+		if(isToday)
+			result.append('today');
+		else
+			result.append('infinity');
 		if(!doArrows)
 			result.append(' right');
 		result.append('">');
