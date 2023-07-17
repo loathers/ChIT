@@ -1654,6 +1654,7 @@ void pickerGear(slot s) {
 		case $item[replica Cincho de Mayo]:
 			int restsTaken = get_property("_cinchoRests").to_int();
 			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
+			int freeRestsLeft = total_free_rests() - get_property("timesRested").to_int();
 			pickerCincho();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
@@ -1662,7 +1663,7 @@ void pickerGear(slot s) {
 			picker.append(' rests taken, will gain ');
 			picker.append(cinchToGain);
 			picker.append(', ');
-			picker.append(total_free_rests() - get_property("timesRested").to_int());
+			picker.append(freeRestsLeft > 0 ? freeRestsLeft.to_string() : 'no');
 			picker.append(' free rests left</span></a>');
 			picker.append('</td></tr>');
 			break;
