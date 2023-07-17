@@ -802,6 +802,9 @@ buff parseBuff(string source) {
 			turnOff($effect[Bats Form], $skill[Flock of Bats Form]);
 			if(parse.group(8) == "Today") {
 				isToday = true;
+				if(myBuff.effectName == "Citizen of a Zone") {
+					myBuff.effectName = "Citizen of " + get_property("_citizenZone");
+				}
 			}
 		} else
 			myBuff.effectTurns = parse.group(8).to_int();

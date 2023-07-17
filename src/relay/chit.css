@@ -572,6 +572,7 @@ div.progressbar {
 }
 #chit_effects td.shrug a,
 #chit_effects td.infinity a,
+#chit_effects td.today a,
 #chit_effects td.infizero a {
 	color: blue;
 }
