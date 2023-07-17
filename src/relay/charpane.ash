@@ -813,8 +813,6 @@ buff parseBuff(string source) {
 		}
 	}
 	string effectAlias = myBuff.effectName;
-	// temp(?) fix for %birdname%
-	columnArrow = columnArrow.replace_string("%birdname%", "bird");
 	// Add MP or item cost to increase effect
 	matcher howUp = create_matcher("cmd\\=((cast 1 )?(.+?))&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
