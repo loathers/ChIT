@@ -1661,7 +1661,9 @@ void pickerGear(slot s) {
 			picker.append(get_property("_cinchoRests"));
 			picker.append(' rests taken, will gain ');
 			picker.append(cinchToGain);
-			picker.append('</span></a>');
+			picker.append(', ');
+			picker.append(total_free_rests() - get_property("timesRested").to_int());
+			picker.append(' free rests left</span></a>');
 			picker.append('</td></tr>');
 			break;
 	}
