@@ -607,6 +607,20 @@ int hasDrops(item it) {
 			int cinch = 100 - get_property("_cinchUsed").to_int();
 			if(cinch > 0) return 1;
 			break;
+		case $item[august scepter]:
+		case $item[replica august scepter]:
+			int augUsed = get_property("_augSkillsCast").to_int();
+			int augUsable = 5;
+			if(can_interact()) {
+				++augUsable;
+				if(get_property("_augTodayCast").to_boolean()) {
+					++augUsed;
+				}
+			}
+			if(augUsed < augUsable) {
+				return 1;
+			}
+			break;
 	}
 
 	return 0;
