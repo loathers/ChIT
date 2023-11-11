@@ -1,5 +1,33 @@
 // The familiar picker was the invention of soolar.
 
+void pickerLEDCandle() {
+	buffer picker;
+	picker.pickerStart("ledcandle", "Change lights");
+
+	void addOption(string name, string desc, string value, string img) {
+		boolean isActive = get_property("ledCandleMode") == value;
+
+		picker.append('<tr class="pickitem');
+		if(isActive) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		picker.append('<img class="chit_icon" src="/images/itemimages/' + img + '" />');
+		picker.append('</td><td colspan="2">');
+		if(!isActive) picker.append('<a class="change" href="' + sideCommand("jillcandle " + value) + '">');
+		picker.append('<b>Select</b> the ' + name + ' Light<br /><span class="descline">' + desc + '</span>');
+		if(!isActive) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addOption("Disco Ball", "1.5x Fairy (item)", "disco", "discoball.gif");
+	addOption("Ultraviolet", "1.5x Leprechaun (meat)", "ultraviolet", "goldenlight.gif");
+	addOption("Reading", "1.5x Sombreroball (stats)", "reading", "borgonette.gif");
+	addOption("Red", "50% combat action rate (normally 25%)", "red light", "crystal.gif");
+
+	picker.addLoader("Fiddling with your light...");
+	picker.append('</table></div>');
+	chitPickers["ledcandle"] = picker;
+}
+
 void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 
 	int [item] allmystuff = get_inventory();
@@ -393,9 +421,10 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	}
 
 	if(equipped_amount($item[LED candle]) > 0) {
+		pickerLEDCandle();
 		picker.append('<tr class="pickitem">');
 		picker.append('<td class="action" colspan="2">');
-		picker.append('<a class="done" target="mainpane" href="inventory.php?action=tweakjill&pwd=' + my_hash() + '">');
+		picker.append('<a class="chit_launcher" rel="chit_pickerledcandle" href="#">');
 		picker.append("Adjust LED candle");
 		picker.append('</a></td></tr>');
 	}
