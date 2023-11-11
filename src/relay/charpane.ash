@@ -1702,10 +1702,7 @@ void bakeVYKEA() {
 }
 
 string currentMood() {
-	matcher pattern = create_matcher(">mood (.*?)</a>", chitSource["mood"]);
-	if(find(pattern))
-		return group(pattern, 1);
-	return "???";
+	return get_property("currentMood");
 }
 
 void addCurrentMood(buffer result, boolean picker) {
