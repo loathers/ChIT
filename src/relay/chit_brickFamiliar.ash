@@ -392,6 +392,14 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		picker.append('</a></td></tr>');
 	}
 
+	if(equipped_amount($item[LED candle]) > 0) {
+		picker.append('<tr class="pickitem">');
+		picker.append('<td class="action" colspan="2">');
+		picker.append('<a class="done" target="mainpane" href="inventory.php?action=tweakjill&pwd=' + my_hash() + '">');
+		picker.append("Adjust LED candle");
+		picker.append('</a></td></tr>');
+	}
+
 	//Bugged Bugbear (Get free equipment from Arena)
 	if(myfam == $familiar[Baby Bugged Bugbear] && (available_amount($item[bugged beanie]) + available_amount($item[bugged balaclava]) + available_amount($item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t])) == 0)
 		picker.append('<tr class="pickitem"><td class="action" colspan="2"><a class="done" target="mainpane" href="arena.php">Visit the Arena</a></tr>');
