@@ -705,6 +705,86 @@ void pickerAsdon() {
 	chitPickers["asdon"] = picker;
 }
 
+void pickerHoloRecord() {
+	if(chitPickers["holorecord"] != "") {
+		return;
+	}
+
+	effect nowPlaying = $effect[none];
+	foreach eff in $effects[
+		Power\, Man,
+		Shrieking Weasel,
+		Superdrifting,
+		Drunk and Avuncular,
+		Ministrations in the Dark,
+		Lucky Struck,
+		Record Hunger,
+	] {
+		if(have_effect(eff) > 0) {
+			nowPlaying = eff;
+			break;
+		}
+	}
+
+	buffer picker;
+	picker.pickerStart("holorecord", "Play some tunes on your Wrist-Boy");
+	picker.addLoader("Putting in the new record...");
+
+	void addRecord(item holorecord) {
+		effect eff = effect_modifier(holorecord, "effect");
+		int price = npc_price(holorecord);
+		boolean active = have_effect(eff) > 0;
+		int copies = item_amount(holorecord);
+		boolean canDo = !active && ((price > 0 && my_meat() > price) || copies > 0);
+
+		picker.append('<tr class="pickitem');
+		if(!canDo) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		picker.append('<img class="chit_icon" src="/images/itemimages/');
+		picker.append(eff.image);
+		picker.append('" /></td><td colspan="2">');
+		if(active) {
+			picker.append('<b>Now Playing</b>: ');
+		}
+		else if(canDo) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand((nowPlaying != $effect[none] ? ("shrug " + nowPlaying.to_string() + "; ") : "") + "use 1 " + holorecord.to_string()));
+			picker.append('"><b>Play</b> ');
+		}
+		else if(price == 0) {
+			picker.append("<b>(Not unlocked)</b> ");
+		}
+		else if(price > my_meat()) {
+			picker.append("<b>(Can't afford)</b> ");
+		}
+		picker.append(holorecord.to_string());
+		if(copies == 0 && price > 0) picker.append(' (' + price + ' meat)');
+		else if(copies > 0) picker.append(' (' + item_amount(holorecord) + ' cop' + (copies > 1 ? 'ies' : 'y') + ')');
+		picker.append('<br /><span class="descline">');
+		if(holorecord == $item[The Pigs holo-record]) picker.append('Food gives +100% more Adventures');
+		else if(holorecord == $item[Drunk Uncles holo-record]) picker.append('Booze gives +100% more Adventures');
+		else picker.append(parseEff(eff));
+		picker.append('</span>');
+		if(canDo) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	foreach holorecord in $items[
+		Power-Guy 2000 holo-record,
+		Shrieking Weasel holo-record,
+		Superdrifter holo-record,
+		EMD holo-record,
+		Lucky Strikes holo-record,
+		The Pigs holo-record,
+		Drunk Uncles holo-record,
+	] {
+		addRecord(holorecord);
+	}
+
+	picker.append('</table></div>');
+	chitPickers["holorecord"] = picker;
+}
+
 effect [int] availableExpressions() {
 	static effect [int] expressions;
 	static boolean done = false;
@@ -998,6 +1078,11 @@ buff parseBuff(string source) {
 		result.append('<a class="chit_launcher done" rel="chit_pickerasdon" href="#">');
 		linkStarted = true;
 	}
+	else if(myBuff.effectType == "holorecord" && available_amount($item[Wrist-Boy]) > 0) {
+		pickerHoloRecord();
+		result.append('<a class="chit_launcher done" rel="chit_pickerholorecord" href="#">');
+		linkStarted = true;
+	}
 	else if(myBuff.eff.to_skill().expression) {
 		pickerExpression();
 		result.append('<a class="chit_launcher done" rel="chit_pickerexpression" href="#">');
@@ -1098,7 +1183,8 @@ void bakeEffects() {
 			intrinsics.append(currentBuff.effectHTML);
 		} else if (showSongs && $strings[at, aob, aoj] contains currentBuff.effectType) {
 			songs.append(currentBuff.effectHTML);
-		} else if(showSongs && (to_skill(currentBuff.effectName).expression || $strings[awol, asdon] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
+		} else if(showSongs && (to_skill(currentBuff.effectName).expression || $strings[awol, asdon,
+		holorecord] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
 			uniqueTypesShown[currentBuff.effectType] = true;
 			uniques.append('<tbody class="buffs">');
 			uniques.append(currentBuff.effectHTML);
@@ -1131,6 +1217,17 @@ void bakeEffects() {
 		if(get_property("relayAddsUpArrowLinks").to_boolean())
 			uniques.append(' colspan="2"');
 		uniques.append('><a class="chit_launcher done" rel="chit_pickerasdon" href="#">Not Driving</a></td><td class="infizero right">00</td></tr></tbody>');
+	}
+
+	if(!uniqueTypesShown["holorecord"] && available_amount($item[Wrist-Boy]) > 0) {
+		pickerHoloRecord();
+
+		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
+		uniques.append($item[Wrist-Boy].image);
+		uniques.append('" width="20" height="20" /></td><td class="info"');
+		if(get_property("relayAddsUpArrowLinks").to_boolean())
+			uniques.append(' colspan="2"');
+		uniques.append('><a class="chit_launcher done" rel="chit_pickerholorecord" href="#">Peace and Quiet</a></td><td class="infizero right">00</td></tr></tbody>');
 	}
 
 	// Add helper for Xiblaxian holo-wrist-puter
@@ -1182,7 +1279,7 @@ void bakeEffects() {
 		total += 1;
 	}
 
-	// Some 0 mp Intrinsics should have reminders for their specific classe
+	// Some 0 mp Intrinsics should have reminders for their specific class
 	void lack_effect(buffer result, skill sk, effect ef, string short_ef) {
 		if(have_skill(sk) && have_effect(ef) == 0 && my_class() == sk.class) {
 			result.append('<tr class="effect">');

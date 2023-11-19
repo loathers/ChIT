@@ -91,6 +91,14 @@ Driving Quickly	type:"asdon"
 Driving Observantly	type:"asdon"
 Driving Waterproofly	type:"asdon"
 
+#Wrist-Boy holo-records
+Power, Man	type:"holorecord"
+Shrieking Weasel	type:"holorecord"
+Superdrifting	type:"holorecord"
+Drunk and Avuncular	type:"holorecord", desc:"Booze gives +100% more Adventures"
+Ministrations in the Dark	type:"holorecord"
+Lucky Struck	type:"holorecord"
+Record Hunger	type:"holorecord", desc:"Food gives +100% more Adventures"
 
 #Counters
 Dance Card	style:"background-color:khaki"
