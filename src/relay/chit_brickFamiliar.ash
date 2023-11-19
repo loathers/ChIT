@@ -1064,7 +1064,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		iconInfo.append(dropsLeft);
 		iconInfo.append(" ");
 		// certain familiars drop different things in the crown/bjorn
-		if(isBjorn && $familiars[Machine Elf, Adventurous Spelunker] contains f) {
+		if(isBjorn && $familiars[Machine Elf, Adventurous Spelunker, Puck Man, Ms. Puck Man] contains f) {
 			switch(f) {
 				case $familiar[Machine Elf]:
 					iconInfo.append("abstraction");
@@ -1072,6 +1072,11 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 					break;
 				case $familiar[Adventurous Spelunker]:
 					iconInfo.append("non-quest ore");
+					break;
+				case $familiar[Puck Man]:
+				case $familiar[Ms. Puck Man]:
+					iconInfo.append("yellow pixel");
+					if(dropsLeft > 1) iconInfo.append("s");
 					break;
 			}
 		}
