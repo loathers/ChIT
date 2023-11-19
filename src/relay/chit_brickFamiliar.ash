@@ -1071,7 +1071,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 					if(dropsLeft > 1) iconInfo.append("s");
 					break;
 				case $familiar[Adventurous Spelunker]:
-					iconInfo.append("ore");
+					iconInfo.append("non-quest ore");
 					break;
 			}
 		}
