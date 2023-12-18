@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27373; // replica iotms (including folder holder)
+since r27735; // Asdon Martin keyfob (on ring)
 import "chit_global.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
@@ -687,7 +687,7 @@ void pickerAsdon() {
 	picker.append('<tr class="pickitem"><td class-"icon">');
 	picker.append(workshedLink);
 	picker.append('<img class="chit_icon" src="/images/itemimages/');
-	picker.append($item[Asdon Martin keyfob].image);
+	picker.append($item[Asdon Martin keyfob (on ring)].image);
 	picker.append('" title="Visit your workshed" /></a></td><td colspan="2">');
 	picker.append(workshedLink);
 	picker.append('<b>Visit</b> your workshed</a></td></tr>');
@@ -1208,11 +1208,11 @@ void bakeEffects() {
 		}
 	}
 
-	if(!uniqueTypesShown["asdon"] && !isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
+	if(!uniqueTypesShown["asdon"] && !isDriving() && get_workshed() == $item[Asdon Martin keyfob (on ring)] && be_good($item[Asdon Martin keyfob (on ring)])) {
 		pickerAsdon();
 
 		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
-		uniques.append($item[Asdon Martin keyfob].image);
+		uniques.append($item[Asdon Martin keyfob (on ring)].image);
 		uniques.append('" width="20" height="20" /></td><td class="info"');
 		if(get_property("relayAddsUpArrowLinks").to_boolean())
 			uniques.append(' colspan="2"');
