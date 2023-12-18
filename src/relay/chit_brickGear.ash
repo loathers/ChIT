@@ -331,6 +331,10 @@ string gearName(item it, slot s) {
 			}
 			notes += augSkillsCast + "/" + augSkillsCastable + " used";
 			break;
+		case $item[carnivorous potted plant]:
+			int plantFreeKills = get_property("_carnivorousPottedPlantWins").to_int();
+			notes = plantFreeKills + " free kills [" +  (1.0 / (20.0 + plantFreeKills) * 100) + "% swallow chance]";
+			break;
 	}
 
 	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
