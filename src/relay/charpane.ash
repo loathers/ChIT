@@ -687,7 +687,7 @@ void pickerAsdon() {
 	picker.append('<tr class="pickitem"><td class-"icon">');
 	picker.append(workshedLink);
 	picker.append('<img class="chit_icon" src="/images/itemimages/');
-	picker.append($item[Asdon Martin keyfob (on ring)].image);
+	picker.append($item[Asdon Martin keyfob].image);
 	picker.append('" title="Visit your workshed" /></a></td><td colspan="2">');
 	picker.append(workshedLink);
 	picker.append('<b>Visit</b> your workshed</a></td></tr>');
@@ -1073,7 +1073,7 @@ buff parseBuff(string source) {
 		result.append(' colspan="2"');
 	result.append('>');
 	boolean linkStarted = false;
-	if(myBuff.effectType == "asdon" && get_workshed() == $item[Asdon Martin keyfob (on ring)]) {
+	if(myBuff.effectType == "asdon") {
 		pickerAsdon();
 		result.append('<a class="chit_launcher done" rel="chit_pickerasdon" href="#">');
 		linkStarted = true;
@@ -1208,11 +1208,11 @@ void bakeEffects() {
 		}
 	}
 
-	if(!uniqueTypesShown["asdon"] && !isDriving() && get_workshed() == $item[Asdon Martin keyfob (on ring)] && be_good($item[Asdon Martin keyfob (on ring)])) {
+	if(!uniqueTypesShown["asdon"] && !isDriving() && get_workshed() == $item[Asdon Martin keyfob] && be_good($item[Asdon Martin keyfob])) {
 		pickerAsdon();
 
 		uniques.append('<tbody class="buffs"><tr class="effect"><td class="icon"><img src="/images/itemimages/');
-		uniques.append($item[Asdon Martin keyfob (on ring)].image);
+		uniques.append($item[Asdon Martin keyfob].image);
 		uniques.append('" width="20" height="20" /></td><td class="info"');
 		if(get_property("relayAddsUpArrowLinks").to_boolean())
 			uniques.append(' colspan="2"');
@@ -1972,8 +1972,6 @@ void bakeToolbar() {
 				}
 			}
 		}
-		// DON'T COMMIT THIS
-		result.append('<li><a href="' + sideCommand("set chit.usechitter = true") + '">ChITTER</a></li>');
 		result.append("</ul>");
 	}
 
@@ -5032,11 +5030,6 @@ void main() {
 	if(!property_exists("chit.notifyShenanigans.done")) {
 		cli_execute("chit_notify.ash");
 		set_property("chit.notifyShenanigans.done", "true");
-	}
-	// DON'T COMMIT THIS
-	if(get_property("chit.usechitter").to_boolean()) {
-		cli_execute("relay_ChITTER.js");
-		return;
 	}
 	visit_url().modifyPage().write();
 }
