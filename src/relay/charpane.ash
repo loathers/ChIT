@@ -2794,6 +2794,29 @@ void addWildfire(buffer result) {
 	}
 }
 
+void addWereProfessor(buffer result) {
+	matcher transform = create_matcher("<td align=right>Until Transform:</td><td align=left><b>([\\d,]+)</b>", chitSource["stats"]);
+	if (transform.find()) {
+		result.append('<tr><td class="label">Transform</td><td class="info">');
+		result.append(transform.group(1));
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td class="progress"><div class="progressbox">');
+			result.append('<div class="progressbar" style="width:');
+			result.append(100 - 2 * to_int(transform.group(1)));
+			result.append('%"></div></div></td>');
+		}
+		else 
+			result.append('<td>&nbsp;</td>');
+	}	
+	matcher research = create_matcher("<td align=right>Research Points:</td><td align=left><b>([\\d,]+)</b>", chitSource["stats"]);
+	if (research.find()) {
+		result.append('<tr><td class="label">Research</td><td class="info">');
+		result.append(research.group(1));
+		if(to_boolean(vars["chit.stats.showbars"]))
+			result.append('<td>&nbsp;</td>');
+	}	
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -3349,6 +3372,9 @@ void bakeStats() {
 				break;
 			case "Wildfire":
 				result.addWildfire();
+				break;
+			case "WereProfessor":
+				result.addWereProfessor();
 				break;
 			}
 
