@@ -2797,12 +2797,20 @@ void addWildfire(buffer result) {
 void addWereProfessor(buffer result) {
 	matcher transform = create_matcher("<td align=right>Until Transform:</td><td align=left><b>([\\d,]+)</b>", chitSource["stats"]);
 	if (transform.find()) {
-		result.append('<tr><td class="label">Transform</td><td class="info">');
+		result.append('<tr><td class="label">');
+		if (have_effect($effect[Savage Beast]) > 0)
+			result.append('Prof');
+		else
+			result.append('Wolf');
+		result.append(' In</td><td class="info">');
 		result.append(transform.group(1));
+		result.append(' turn');
+		if (to_int(transform.group(1)) != 1)
+			result.append('s');
 		if(to_boolean(vars["chit.stats.showbars"])) {
 			result.append('<td class="progress"><div class="progressbox">');
 			result.append('<div class="progressbar" style="width:');
-			result.append(100 - 2 * to_int(transform.group(1)));
+			result.append(2 * to_int(transform.group(1)));
 			result.append('%"></div></div></td>');
 		}
 		else 
