@@ -360,36 +360,247 @@ string progressCustom(int current, int limit, int severity, boolean active) {
 }
 
 /*****************************************************
+	HTML functions
+*****************************************************/
+typedef string[string] attrmap;
+int[string] tagsOpen;
+
+void tagStart(buffer buf, string type, attrmap attrs, boolean selfClosing) {
+	if(!selfClosing) {
+		tagsOpen[type] += 1;
+	}
+
+	buf.append('<');
+	buf.append(type);
+	foreach attr, value in attrs {
+		buf.append(' ');
+		buf.append(attr);
+		buf.append('="');
+		// TODO: Escape " in value
+		buf.append(value);
+		buf.append('"');
+	}
+	if(selfClosing) {
+		buf.append(' /');
+	}
+	buf.append('>');
+}
+
+void tagStart(buffer buf, string type, attrmap attrs) {
+	tagStart(buf, type, attrs, false);
+}
+
+void tagStart(buffer buf, string type) {
+	tagStart(buf, type, attrmap {});
+}
+
+void tagFinish(buffer buf, string type) {
+	if(tagsOpen[type] < 1) {
+		print('Tried to close a <' + type + '> without opening one first', 'red');
+	}
+	else {
+		tagsOpen[type] -= 1;
+	}
+	buf.append('</');
+	buf.append(type);
+	buf.append('>');
+}
+
+void tagSelfClosing(buffer buf, string type, attrmap attrs) {
+	tagStart(buf, type, attrs, true);
+}
+
+void addImg(buffer buf, string src, attrmap attrs) {
+	attrs['src'] = src;
+	buf.tagSelfClosing('img', attrs);
+}
+
+string itemimage(string src) {
+	return '/images/itemimages/' + src;
+}
+
+void br(buffer buf) {
+	buf.tagSelfClosing('br', attrmap {});
+}
+
+/*****************************************************
 	Picker functions
 *****************************************************/
+string[int] pickerStack;
 
-void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker');
-	picker.append(rel);
-	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="3">');
+void pickerStart(buffer picker, string name, string message) {
+	if(chitPickers contains name) {
+		print("Tried to start picker " + name + ", but we already finished that one!", "red");
+	}
+	pickerStack[pickerStack.count()] = name;
+
+	picker.tagStart('div', attrmap {
+		'id': 'chit_picker' + name, 'class': 'chit_skeleton', 'style': 'display:none'
+	});
+	picker.tagStart('table', attrmap {
+		'class': 'chit_picker'
+	});
+	picker.tagStart('tr');
+	picker.tagStart('th', attrmap {
+		'colspan': '3'
+	});
 	picker.append(message);
-	picker.append('</th></tr>');
+	picker.tagFinish('th');
+	picker.tagFinish('tr');
 }
-void pickerStart(buffer picker, string rel, string message, string image) {
-	picker.pickerStart(picker, rel, '<img src="' + imagePath + image + '.png">' + message);
+
+void pickerStart(buffer picker, string name, string message, string image) {
+	picker.pickerStart(picker, name, '<img src="' + imagePath + image + '.png" />' + message);
 }
 
 void addLoader(buffer picker, string message, string subloader) {
-	picker.append('<tr class="pickloader');
-	picker.append(subloader);
-	picker.append('" style="display:none"><td class="info">');
+	picker.tagStart('tr', attrmap {
+		'class': 'pickloader' + subloader, 'style': 'display:none'
+	});
+	picker.tagStart('td', attrmap { 'class': 'info' });
 	picker.append(message);
-	picker.append('</td><td class="icon"><img src="/images/itemimages/karma.gif"></td></tr>');
+	picker.tagFinish('td');
+	picker.tagStart('td', attrmap { 'class': 'icon' });
+	picker.addImg(itemimage('karma.gif'), attrmap {});
+	picker.tagFinish('td');
+	picker.tagFinish('tr');
 }
 
 void addLoader(buffer picker, string message) {
 	addLoader(picker,message,"");
 }
 
+void pickerFinish(buffer picker, string loadingText) {
+	if(pickerStack.count() == 0) {
+		print("Tried to finish a picker, but couldn't because none were open...", "red");
+		return;
+	}
+	if(loadingText != "") {
+		picker.addLoader(loadingText);
+	}
+	picker.tagFinish('table');
+	picker.tagFinish('div');
+	chitPickers[remove pickerStack[pickerStack.count() - 1]] = picker;
+}
+
+void pickerFinish(buffer picker) {
+	pickerFinish(picker, "");
+}
+
 void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone"><td class="info" colspan="3">');
+	picker.tagStart('tr', attrmap { 'class': 'picknone' });
+	picker.tagStart('td', attrmap { 'class': 'info', 'colspan': '3' });
 	picker.append(message);
-	picker.append('</td></tr>');
+	picker.tagFinish('td');
+	picker.tagFinish('tr');
+}
+
+void pickerStartOption(buffer picker, boolean usable) {
+	picker.tagStart('tr', attrmap { 'class': 'pickitem' + (usable ? '' : ' currentitem') });
+}
+
+void pickerFinishOption(buffer picker) {
+	// Just in case I want to restructure pickers in the future
+	picker.tagFinish('tr');
+}
+
+void pickerAddImage(buffer picker, string src, boolean withLink, attrmap linkAttrs) {
+	picker.tagStart('td', attrmap { 'class': 'icon' });
+	if(withLink) {
+		picker.tagStart('a', linkAttrs);
+	}
+	picker.addImg(src, attrmap { 'class': 'chit_icon' });
+	if(withLink) {
+		picker.tagFinish('a');
+	}
+	picker.tagFinish('td');
+}
+
+void pickerAddImage(buffer picker, string src, attrmap linkAttrs) {
+	pickerAddImage(picker, src, true, linkAttrs);
+}
+
+void pickerAddImage(buffer picker, string src) {
+	pickerAddImage(picker, src, false, attrmap {});
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs) {
+	picker.pickerStartOption(usable);
+	picker.pickerAddImage(imgsrc, imgLink, imgAttrs);
+	picker.tagStart('td', attrmap { 'colspan': '2' });
+	if(usable) {
+		picker.tagStart('a', attrmap { 'class': 'change', 'href': href });
+		picker.tagStart('b');
+		picker.append(verb);
+		picker.tagFinish('b');
+		picker.append(' ');
+	}
+	picker.append(noun);
+	if(parenthetical != "") {
+		picker.append(' (');
+		picker.append(parenthetical);
+		picker.append(')');
+	}
+	if(desc != "") {
+		picker.br();
+		picker.tagStart('span', attrmap { 'class': 'descline' });
+		picker.append(desc);
+		picker.tagFinish('span');
+	}
+	if(usable) {
+		picker.tagFinish('a');
+	}
+	picker.tagFinish('td');
+	picker.pickerFinishOption();
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, false, attrmap {});
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, true, imgAttrs);
+}
+
+void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
+	if(sk.combat) {
+		usable = false;
+		if(desc != "") {
+			desc += '<br />';
+		}
+		desc += '(Available in combat)';
+	}
+
+	picker.pickerGenericOption('Cast', sk.to_string(), desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
+		'class': 'done',
+		'onclick': "javascript:poop('desc_skill.php?whichskill=" + sk.to_int() + "&self=true','skill',350,300);",
+		'title': 'Pop out skill description',
+		'href': '#',
+	});
+}
+
+// Examples: Edpiece, Jurassic Parka, etc
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
+	if(current) {
+		name = '<b>Current</b>: ' + name;
+	}
+	picker.pickerGenericOption('Select', name, desc, "", sideCommand(cmd), !current, img);
+}
+
+string parseEff(effect eff);
+
+void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
+	if(desc == "") {
+		desc = parseEff(eff);
+	}
+	desc += ' (' + duration + ' turns)';
+
+	picker.pickerGenericOption(verb, eff.to_string(), desc, "", href, usable, itemimage(eff.image), attrmap {
+		'class': 'done',
+		'onclick': "javascript:eff('" + eff.descid + "');",
+		'title': 'Pop out effect description',
+		'href': '#',
+	});
 }
 
 /*****************************************************

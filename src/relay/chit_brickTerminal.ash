@@ -98,9 +98,7 @@ void pickerSourceSkills(int i) {
 	foreach _,edu in split_string(get_property("sourceTerminalEducateKnown"), ",")
 		picker.addSourceSkillChoice(edu, i == 1);
 	
-	picker.addLoader("Downloading knowledge...");
-	picker.append('</table></div>');
-	chitPickers["sourceskills" + i] = picker;
+	picker.pickerFinish("Downloading knowledge...");
 }
 
 void addSourceSkillDisplay(buffer result, string edu, int i, boolean fullSize) {

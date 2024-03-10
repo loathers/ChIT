@@ -684,37 +684,7 @@ void pickerEdpiece() {
 	string current = get_property("edPiece");
 
 	void addJewel(string jewel, string desc, string icon) {
-		string jewelLink = '<a class="change" href="' + sideCommand("edpiece " + jewel) + '">';
-
-		picker.append('<tr class="pickitem');
-		if(jewel == current)  picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		if(jewel != current) picker.append(jewelLink);
-		picker.append('<img class="chit_icon');
-		picker.append('" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('.gif" title="');
-		if(jewel == current) picker.append('Current:');
-		else picker.append('Install');
-		picker.append(' a golden ');
-		picker.append(jewel);
-		picker.append(' (');
-		picker.append(desc);
-		picker.append(')" />');
-		if(jewel != current) picker.append('</a>');
-		picker.append('</td><td colspan="2">');
-		if(jewel != current) {
-			picker.append(jewelLink);
-			picker.append('<b>Install</b>');
-		}
-		else picker.append('<b>Current:</b>');
-		picker.append(' a golden ');
-		picker.append(jewel);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(jewel != current) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption("a golden " + jewel, desc, "edpiece " + jewel, "/images/itemimages/" + icon + ".gif", jewel == current);
 	}
 
 	addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
@@ -725,44 +695,25 @@ void pickerEdpiece() {
 	addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
 	addJewel("fish", "Lets you breathe underwater", "fish");
 
-	picker.addLoader("Cool jewels!");
-	picker.append('</table></div>');
-	chitPickers["edpiece"] = picker;
+	picker.pickerFinish("Cool jewels!");
 }
 
 void pickerGAP() {
 	buffer picker;
 	picker.pickerStart("gap", "Activate a Superpower");
 
-	void addSuperpower(string power, string desc, string icon, int duration) {
-		string powerLink = '<a class="change" href="' + sideCommand("gap " + power) + '">';
-
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(powerLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('.gif" title="Activate Super ');
-		picker.append(power);
-		picker.append('" /></a></td><td colspan="2">');
-		picker.append(powerLink);
-		picker.append('<b>Activate</b> Super ');
-		picker.append(power);
-		picker.append('<br /><space class="descline">');
-		picker.append(parseMods(desc, true));
-		picker.append(' (');
-		picker.append(duration);
-		picker.append(' turns)</span></a></td></tr>');
+	void addSuperpower(effect power, string desc, int duration) {
+		string href = sideCommand("gap " + power.to_string().substring(6));
+		picker.pickerEffectOption("Activate", power, desc, duration, href, true);
 	}
 
-	addSuperpower("Skill", "Combat Skills/Spells cost 0 MP", "snowflakes", 5);
-	addSuperPower("Structure", "+500 DA, +5 Prismatic resistance", "wallshield", 10);
-	addSuperPower("Vision", "+25% Item Drops", "xrayspecs", 20);
-	addSuperPower("Speed", "+100% Moxie", "fast", 20);
-	addSuperPower("Accuracy", "+30% Crit Chance", "reticle", 10);
+	addSuperpower($effect[Super Skill], "Combat Skills/Spells cost 0 MP", 5);
+	addSuperPower($effect[Super Structure], "", 10);
+	addSuperPower($effect[Super Vision], "", 20);
+	addSuperPower($effect[Super Speed], "", 20);
+	addSuperPower($effect[Super Accuracy], "", 10);
 
-	picker.addLoader("Loading Superpowers...");
-	picker.append('</table></div>');
-	chitPickers["gap"] = picker;
+	picker.pickerFinish("Loading Superpowers...");
 }
 
 void pickerForceUpgrade() {
@@ -770,23 +721,9 @@ void pickerForceUpgrade() {
 	picker.pickerStart("theforce", "Pick an upgrade");
 
 	void addUpgrade(int upgrade, string name, string desc, string icon) {
-		string upgradeLink = '<a class="change" href="' + sideCommand('ashq visit_url("main.php?action=may4", false); visit_url("choice.php?pwd=&whichchoice=1386&option=' + upgrade.to_string() + '");') + '">';
-
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(upgradeLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('.gif" title="Install ');
-		picker.append(name);
-		picker.append(' (');
-		picker.append(desc);
-		picker.append(')" /></a></td><td colspan="2">');
-		picker.append(upgradeLink);
-		picker.append('<b>Install</b> ');
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span></a></td></tr>');
+		picker.pickerGenericOption("Install", name, desc, "",
+			sideCommand('ashq visit_url("main.php?action=may4", false); visit_url("choice.php?pwd=&whichchoice=1386&option=' + upgrade.to_string() + '");'),
+			true, itemimage(icon + '.gif'));
 	}
 
 	addUpgrade(1, "Enhanced Kaiburr Crystal", "15-20 MP regen", "crystal");
@@ -794,9 +731,7 @@ void pickerForceUpgrade() {
 	addUpgrade(3, "Force Resistance Multiplier", "+3 Prismatic Res", "wonderwall");
 	addUpgrade(4, "Empathy Chip", "+10 Familiar Weight", "spiritorb");
 
-	picker.addLoader("Applying upgrade...");
-	picker.append('</table></div>');
-	chitPickers["theforce"] = picker;
+	picker.pickerFinish("Applying upgrade...");
 }
 
 void pickerPillKeeper() {
@@ -832,9 +767,7 @@ void pickerPillKeeper() {
 	addPill("Surprise Me", "Force a semi-rare. Even repeats!", "semirare", "spreadsheet");
 	addPill("Telecybin", "Adventure Randomly! (30 turns)", "random", "calendar");
 
-	picker.addLoader("Popping pills!");
-	picker.append('</table></div>');
-	chitPickers["pillkeeper"] = picker;
+	picker.pickerFinish("Popping pills!");
 }
 
 void pickerPowerfulGlove() {
@@ -869,9 +802,7 @@ void pickerPowerfulGlove() {
 		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)");
 	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)");
 
-	picker.addLoader("Entering cheat code!");
-	picker.append('</table></div>');
-	chitPickers["powerfulglove"] = picker;
+	picker.pickerFinish("Entering cheat code...");
 }
 
 string retroHeroToIcon(string hero) {
@@ -932,9 +863,7 @@ void pickerRetroSuperCapeMeta() {
 	addCombo("spooky lantern", "heck", "kill", true);
 	addCombo("stun enemies", "heck", "hold", true);
 
-	picker.addLoader("Configuring your cape...");
-	picker.append('</table></div>');
-	chitPickers["retrosupercapemeta"] = picker;
+	picker.pickerFinish("Configuring your cape...");
 }
 
 void pickerRetroSuperCapeAll() {
@@ -981,9 +910,7 @@ void pickerRetroSuperCapeAll() {
 	addHero("Vampire Slicer", "Muscle +30%, Maximum HP +50", "vampire");
 	addHero("Heck General", "Mysticality +30%, Maximum MP +50", "heck");
 	addHero("Robot Police", "Moxie +30%, Maximum HP/MP +25", "robot");
-	pickerHero.addLoader("Picking mode...");
-	pickerHero.append('</table></div>');
-	chitPickers["retrosupercapeall"] = pickerHero;
+	pickerHero.pickerFinish("Picking mode...");
 
 	// Vampire picker
 	pickerVampire.pickerStart("retrosupercapevampire", "Pick a mode");
@@ -991,9 +918,7 @@ void pickerRetroSuperCapeAll() {
 	pickerVampire.addMode("Thrill Me", "+3 Muscle Stats Per Fight", "vampire", "thrill", true);
 	pickerVampire.addMode("Kiss Me", "Allows vampiric smooching (HP drain)", "vampire", "kiss", false);
 	pickerVampire.addMode("Kill Me", "Lets you instantly kill undead foes with a sword (reduces evil in Cyrpt)", "vampire", "kill", false);
-	pickerVampire.addLoader("Configuring your cape...");
-	pickerVampire.append('</table></div>');
-	chitPickers["retrosupercapevampire"] = pickerVampire;
+	pickerVampire.pickerFinish("Configuring your cape...");
 
 	// Heck picker
 	pickerHeck.pickerStart("retrosupercapeheck", "Pick a mode");
@@ -1001,9 +926,7 @@ void pickerRetroSuperCapeAll() {
 	pickerHeck.addMode("Thrill Me", "+3 Mysticality Stats Per Fight", "heck", "thrill", true);
 	pickerHeck.addMode("Kiss Me", "Lets you unleash the Devil's kiss (100 turn cooldown yellow ray)", "heck", "kiss", false);
 	pickerHeck.addMode("Kill Me", "A Heck Clown will make your spells spookier (Spooky lantern)", "heck", "kill", false);
-	pickerHeck.addLoader("Configuring your cape...");
-	pickerHeck.append('</table></div>');
-	chitPickers["retrosupercapeheck"] = pickerHeck;
+	pickerHeck.pickerFinish("Configuring your cape...");
 
 	// Robot picker
 	pickerRobot.pickerStart("retrosupercaperobot", "Pick a mode");
@@ -1011,9 +934,7 @@ void pickerRetroSuperCapeAll() {
 	pickerRobot.addMode("Thrill Me", "+3 Moxie Stats Per Fight", "robot", "thrill", true);
 	pickerRobot.addMode("Kiss Me", "Enable a Sleaze attack", "robot", "kiss", false);
 	pickerRobot.addMode("Kill Me", "Lets you perform a super-accurate attack with a gun (guaranteed crit)", "robot", "kill", false);
-	pickerRobot.addLoader("Configuring your cape...");
-	pickerRobot.append('</table></div>');
-	chitPickers["retrosupercaperobot"] = pickerRobot;
+	pickerRobot.pickerFinish("Configuring your cape...");
 }
 
 string retroSupercapeCurrentSetupName() {
@@ -1090,9 +1011,7 @@ void pickerBackupCamera() {
 	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
 	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
 
-	picker.addLoader("Configuring your camera...");
-	picker.append('</table></div>');
-	chitPickers["backupcamera"] = picker;
+	picker.pickerFinish("Configuring your camera...");
 }
 
 effect [int] getBeardOrder() {
@@ -1206,8 +1125,7 @@ void pickerFakeDaylightShavingsHelmet() {
 		addBeard(beardOrder[beardToDisplay]);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["fakebeard"] = picker;
+	picker.pickerFinish();
 }
 
 int locketFightsRemaining() {
@@ -1253,9 +1171,7 @@ void pickerUnbrella() {
 	addSetting("constantly twirling", "+25 Spell Damage", "twirling", "unbrella6.gif");
 	addSetting("cocoon", "-10% combat", "cocoon", "unbrella1.gif");
 
-	picker.addLoader("Reconfiguring your unbrella");
-	picker.append('</table></div>');
-	chitPickers["unbrella"] = picker;
+	picker.pickerFinish("Reconfiguring your unbrella");
 }
 
 void pickerSweatpants() {
@@ -1265,34 +1181,18 @@ void pickerSweatpants() {
 	picker.pickerStart("sweatpants", "Sweat Magic (" + sweat + "% sweaty)");
 
 	void addSweatSkill(skill sk, string desc, int cost) {
-		string castLink = '<a class="change" href="' + sideCommand("cast 1 " + sk.to_string()) + '">';
 		boolean noBooze = (sk == $skill[Sweat Out Some Booze])
 			&& (get_property("_sweatOutSomeBoozeUsed").to_int() >= 3);
 		boolean canCast = !sk.combat && cost <= sweat && !noBooze;
 
-		picker.append('<tr class="pickitem');
-		if(!canCast) picker.append(' currentitem');
-		picker.append('"><td class="icon"><a class="done" onclick=\'javascript:');
-		picker.append('poop("desc_skill.php?whichskill=');
-		picker.append(sk.to_int());
-		picker.append('&self=true","skill", 350, 300)\' href="#">');
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(sk.image);
-		picker.append('" title="Pop out skill description" /></a></td>');
-		picker.append('<td colspan="2">');
-		if(canCast) {
-			picker.append(castLink);
-			picker.append('<b>Cast</b> ');
+		if(noBooze) {
+			desc += '<br />(Already used up for today)';
 		}
-		picker.append(sk.to_string());
-		picker.append(' (');
-		picker.append(cost);
-		picker.append(' sweat)<br /><span class="descline">');
-		picker.append(desc);
-		if(sk.combat) picker.append('<br />(Available in combat)');
-		if(noBooze) picker.append('<br />(Already used up for today)');
-		else if(sweat < cost) picker.append('<br />(Not enough sweat!)');
-		picker.append('</span></a></td></tr>');
+		else if(sweat < cost) {
+			desc += '<br />(Not enough sweat!)';
+		}
+
+		picker.pickerSkillOption(sk, desc, cost + " sweat", canCast);
 	}
 
 	addSweatSkill($skill[Sip Some Sweat], "Restore 50 MP", 5);
@@ -1305,9 +1205,7 @@ void pickerSweatpants() {
 	addSweatSkill($skill[Sweat Flood], "Stun for 5 rounds", 5);
 	addSweatSkill($skill[Sweat Sip], "Restore 50 MP", 5);
 
-	picker.addLoader("Sweating the small stuff...");
-	picker.append('</table></div>');
-	chitPickers['sweatpants'] = picker;
+	picker.pickerFinish("Sweating the small stuff...");
 }
 
 void pickerJurassicParka() {
@@ -1321,24 +1219,7 @@ void pickerJurassicParka() {
 		string switchLink = '<a class="change" href="' + sideCommand("parka " + name) + '">';
 		boolean current = currMode == name;
 
-		picker.append('<tr class="pickitem');
-		if(current) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(image);
-		picker.append('" /></td><td colspan="2">');
-		if(!current) {
-			picker.append(switchLink);
-			picker.append('<b>Change</b> to ');
-		}
-		else {
-			picker.append('<b>Current</b>: ');
-		}
-		picker.append(name);
-		picker.append(' mode<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(!current) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, "/images/itemimages/" + image, current);
 	}
 
 	addMode("kachungasaur", "Max HP +100%, +50% Meat Drop, +2 Cold Res", "jparka8.gif");
@@ -1349,9 +1230,7 @@ void pickerJurassicParka() {
 	addMode("ghostasaurus", "10 DR, +50 Max MP, +2 Spooky Res", "jparka1.gif");
 	addMode("pterodactyl", "+5% noncom, +50% init, +2 Hot Res", "jparka9.gif");
 
-	picker.addLoader("Pulling dino tab...");
-	picker.append('</table></div>');
-	chitPickers['jurassicparka'] = picker;
+	picker.pickerFinish("Pulling dino tab...");
 }
 
 void pickerCincho() {
@@ -1393,9 +1272,7 @@ void pickerCincho() {
 	addSkill($skill[Cincho: Party Soundtrack], "music", "30 adv +5lbs", 25);
 	addSkill($skill[Cincho: Projectile Piñata], "candy", "Damage, stun, get candy", 5);
 
-	picker.addLoader("Using Cinch...");
-	picker.append('</table></div>');
-	chitPickers['cincho'] = picker;
+	picker.pickerFinish("Using Cinch...");
 }
 
 void pickerAugust() {
@@ -1471,9 +1348,7 @@ void pickerAugust() {
 	addSkill($skill[Aug. 30th: Beach Day!], 30, "Acquire 1 baywatch (melting +7adv/+2fites/-2mp cost acc).");
 	addSkill($skill[Aug. 31st: Cabernet Sauvignon \ Day!], 31, "Acquire 2 bottles of Cabernet Sauvignon (booze that helps find booze).");
 
-	picker.addLoader("Celebrating a holiday...");
-	picker.append('</table></div>');
-	chitPickers['august'] = picker;
+	picker.pickerFinish("Celebrating a holiday...");
 }
 
 int dangerLevel(item it, slot s);
@@ -2230,13 +2105,11 @@ void pickerGear(slot s) {
 
 	add_inventory_section(); // Last chance to find something in inventory to display
 	if(!any_options)
-		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else") + " available. Poor you :(");
+		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else ") + "available. Poor you :(");
 
-	picker.addLoader("Changing " + s + "...");
 	picker.addLoader("Adding to favorites...", "addfav");
 	picker.addLoader("Removing from favorites...", "delfav");
-	picker.append('</table></div>');
-	chitPickers["gear" + s] = picker;
+	picker.pickerFinish("Changing " + s + "...");
 }
 
 

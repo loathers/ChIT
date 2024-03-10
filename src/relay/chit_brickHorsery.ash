@@ -78,9 +78,7 @@ void pickerHorse() {
 	for(int i = 1; i <= 4; ++i)
 		picker.addHorse(i);
 
-	picker.addLoader("Hostling your horse...");
-	picker.append('</table></div>');
-	chitPickers["horsery"] = picker;
+	picker.pickerFinish("Hostling your horse...");
 }
 
 void bakeHorsery() {

@@ -619,13 +619,11 @@ void pickerFlavour() {
 	buffer picker;
 	picker.pickerStart("flavour", "Cast Flavour of Magic");
 
-	picker.addLoader("Spiriting flavours...");
 	picker.append('<tr class="pickitem"><td>');
 	picker.addElementMap("elementchart2");
 	picker.append('</td></tr>');
 
-	picker.append('</table></div>');
-	chitPickers["flavour"] = picker;
+	picker.pickerFinish("Spiriting flavours...");
 }
 
 boolean isDriving() {
@@ -638,13 +636,12 @@ boolean isDriving() {
 }
 
 void pickerAsdon() {
-	if(chitPickers["asdon"] != "") {
+	if(chitPickers contains "asdon") {
 		return;
 	}
 
 	buffer picker;
 	picker.pickerStart("asdon", "Drive Differently! (" + get_fuel() + " fuel)");
-	picker.addLoader("Adjusting driving style...");
 
 	void addDriving(effect style) {
 		boolean current = have_effect(style) > 0;
@@ -701,12 +698,11 @@ void pickerAsdon() {
 		picker.append('<b>Stop</b> Driving</a></td></tr>');
 	}
 
-	picker.append('</table></div>');
-	chitPickers["asdon"] = picker;
+	picker.pickerFinish("Adjusting driving style...");
 }
 
 void pickerHoloRecord() {
-	if(chitPickers["holorecord"] != "") {
+	if(chitPickers contains "holorecord") {
 		return;
 	}
 
@@ -728,7 +724,6 @@ void pickerHoloRecord() {
 
 	buffer picker;
 	picker.pickerStart("holorecord", "Play some tunes on your Wrist-Boy");
-	picker.addLoader("Putting in the new record...");
 
 	void addRecord(item holorecord) {
 		effect eff = effect_modifier(holorecord, "effect");
@@ -781,8 +776,7 @@ void pickerHoloRecord() {
 		addRecord(holorecord);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["holorecord"] = picker;
+	picker.pickerFinish("Putting in the new record...");
 }
 
 effect [int] availableExpressions() {
@@ -802,13 +796,12 @@ effect [int] availableExpressions() {
 }
 
 void pickerExpression() {
-	if(chitPickers["expression"] != "") {
+	if(chitPickers contains "expression") {
 		return;
 	}
 
 	buffer picker;
 	picker.pickerStart("expression", "Express Yourself!");
-	picker.addLoader("Expressing Yourself...");
 
 	void addExpression(effect expression) {
 		boolean current = have_effect(expression) > 0;
@@ -839,8 +832,7 @@ void pickerExpression() {
 		addExpression(expression);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["expression"] = picker;
+	picker.pickerFinish("Expressing Yourself...");
 }
 
 buff parseBuff(string source) {
@@ -1497,9 +1489,7 @@ void pickerFlorist(string[int] planted){
 			picker.append('<td><a href="' + sideCommand("florist plant "+plant) + '">' + plantDesc(plant, true) + '</a></td></tr>');
 		} else picker.append('<tr><td colspan="2">No more plants available to plant here</td></tr>');
 	}
-	picker.addLoader("Planting");
-	picker.append('</table></div>');
-	chitPickers["florist"] = picker;
+	picker.pickerFinish("Planting");
 }
 
 void addPlants(buffer result) {
@@ -1703,7 +1693,6 @@ void pickerThrall() {
 	picker.pickerStart("thrall", "Bind thy Thrall");
 
 	// Check for all thralls
-	picker.addLoader("Binding Thrall...");
 	boolean sad = true;
 	foreach x,t in binds
 		if(have_skill(t.skill) && t != my_thrall()) {
@@ -1719,8 +1708,7 @@ void pickerThrall() {
 			picker.addSadFace("Poor "+my_thrall().name+" has no other thralls to play with.");
 	}
 
-	picker.append('</table></div>');
-	chitPickers["thrall"] = picker;
+	picker.pickerFinish("Binding Thrall...");
 }
 
 void bakeThrall() {
@@ -1841,7 +1829,6 @@ void addCurrentMood(buffer result, boolean picker) {
 void pickMood() {
 	buffer picker;
 	picker.pickerStart("mood", "Select New Mood");
-	picker.addLoader("Getting Moody");
 	string moodname = currentMood();
 	boolean darkRow = false;
 	foreach i,m in get_moods() {
@@ -1885,10 +1872,7 @@ void pickMood() {
 		picker.addCurrentMood(true);
 	}
 
-	picker.append('</table>');
-	picker.append('</div>');
-
-	chitPickers["mood"] = picker.to_string();
+	picker.pickerFinish("Getting Moody");
 }
 
 void bakeToolbar() {
@@ -2303,7 +2287,6 @@ void addFury(buffer result) {
 void pickerSoulSauce() {
 	buffer picker;
 	picker.pickerStart("soulsauce", "Spend Soul Sauce");
-	picker.addLoader("Performing Saucery...");
 
 	void addSauceSkill(skill sk, string desc) {
 		desc += " (" + sk.soulsauce_cost() + " sauce)";
@@ -2341,8 +2324,7 @@ void pickerSoulSauce() {
 	addSauceSkill($skill[Soul Finger], "Delevel monster significantly");
 	addSauceSkill($skill[Soul Blaze], "Deal massive hot damage");
 
-	picker.append('</table></div>');
-	chitPickers["soulsauce"] = picker;
+	picker.pickerFinish("Performing Saucery...");
 }
 
 void addSauce(buffer result) {
@@ -3026,12 +3008,9 @@ void addMCD(buffer result, boolean bake) {
 		buffer picker;
 		picker.pickerStart("mcd", mcdtitle);
 
-		//Loader
-		picker.addLoader(mcdbusy);
 		picker.mcdlist(true);
-		picker.append('</table></div>');
 
-		chitPickers["mcd"] = picker.to_string();
+		picker.pickerFinish(mcdbusy);
 	}
 }
 void addMCD(buffer result) { result.addMCD(false); }
@@ -3767,11 +3746,7 @@ void pickOutfit() {
 		picker.append(special);
 	}
 
-	picker.addLoader("Getting Dressed");
-	picker.append('</table>');
-	picker.append('</div>');
-
-	chitPickers["outfit"] = picker.to_string();
+	picker.pickerFinish("Getting Dressed");
 }
 
 void bakeCharacter() {
@@ -5066,4 +5041,14 @@ void main() {
 		set_property("chit.notifyShenanigans.done", "true");
 	}
 	visit_url().modifyPage().write();
+
+	foreach tag, openCount in tagsOpen {
+		if(openCount > 0) {
+			print('Found ' + openCount + ' open <' + tag + '>s', 'red');
+		}
+	}
+
+	foreach i, picker in pickerStack {
+		print('Never finished picker ' + picker, 'red');
+	}
 }

@@ -23,9 +23,7 @@ void pickerLEDCandle() {
 	addOption("Reading", "1.5x Sombreroball (stats)", "reading", "borgonette.gif");
 	addOption("Red", "50% combat action rate (normally 25%)", "red light", "crystal.gif");
 
-	picker.addLoader("Fiddling with your light...");
-	picker.append('</table></div>');
-	chitPickers["ledcandle"] = picker;
+	picker.pickerFinish("Fiddling with your light...");
 }
 
 void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
@@ -240,9 +238,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
 		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
 
-		picker.addLoader("Rearranging your familiar's face!");
-		picker.append('</table></div>');
-		chitPickers["snowsuit"] = picker;
+		picker.pickerFinish("Rearranging your familiar's face!");
 	}
 
 	void pickEquipment() {
@@ -487,10 +483,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 			pickEquipment();
 			if(count(addeditems) == 0) picker.addSadFace(sadMessage("equipment", myfam));
 	}
-	picker.append('</table></div>');
-
-	chitPickers["equipment"] = picker;
-
+	picker.pickerFinish();
 }
 
 int checkDrops(string counter_prop, int limit) {
@@ -1335,9 +1328,8 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	picker.append('<td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');
 	picker.append('Visit Your Terrarium');
 	picker.append('</a></td></tr>');
-	picker.addLoader("Changing familiar...");
-	picker.append('</table></div>');
-	chitPickers[cmd] = picker;
+
+	picker.pickerFinish("Changing familiar...");
 }
 
 void pickerCompanion(string famname, string famtype) {
@@ -1381,7 +1373,6 @@ void pickerCompanion(string famname, string famtype) {
 	picker.pickerStart("companion", "Summon thy Companion");
 
 	// Check for all companions
-	picker.addLoader("Summoning Companion...");
 	boolean sad = true;
 	foreach s, i in companion
 		if(have_skill(s) && (length(famtype) < 4 || substring(famtype, 4).to_skill() != s)) {  // Remove "the " from famtype before converting
@@ -1395,8 +1386,7 @@ void pickerCompanion(string famname, string famtype) {
 			picker.addSadFace("Poor "+famname+" has no other food to play with.");
 	}
 
-	picker.append('</table></div>');
-	chitPickers["equipment"] = picker;
+	picker.pickerFinish("Summoning Companion...");
 }
 
 string servant_ability(servant s, int lvl) {
@@ -1436,7 +1426,6 @@ void pickerServant() {
 
 	buffer picker;
 	picker.pickerStart("servant", "Put thy Servant to Work");
-	picker.addLoader("Summoning Servant...");
 	boolean sad = true;
 	foreach s in $servants[]
 		if(have_servant(s) && my_servant() != s) {
@@ -1453,9 +1442,7 @@ void pickerServant() {
 	// Link to Servant's Quarters
 	picker.append('<tr class="pickitem"><td colspan=2 class="make"><a class="change" style="border-top: 1px solid gray; padding: 3px 0px 3px 0px;" onclick="javascript:location.reload();" target=mainpane href="place.php?whichplace=edbase&action=edbase_door"><b>Go to the Servant\'s Quarters</b></a></td></tr>');
 
-	picker.append('</table></div>');
-
-	chitPickers["servants"] = picker;
+	picker.pickerFinish("Summoning Servant...");
 }
 
 void FamBoris() {
@@ -1830,9 +1817,7 @@ void pickerSnapper() {
 	addPhylum($phylum[undead], "undead", $item[unfinished pleasure], "Potion, 20 turns of Superhuman Spooky Resistance");
 	addPhylum($phylum[weird], "weirdos", $item[non-Euclidean angle], "Spleen size 1, 30 turns of +50% Mysticality Gains");
 
-	picker.addLoader("Changing guidance");
-	picker.append('</table></div>');
-	chitPickers["snapper"] = picker;
+	picker.pickerFinish("Changing guidance...");
 }
 
 void bakeFamiliar() {

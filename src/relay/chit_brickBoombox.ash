@@ -110,9 +110,7 @@ void pickerBoombox() {
 	for(int i = 1; i <= 6; ++i)
 		picker.addBoomboxSong(i);
 
-	picker.addLoader("Choosing a soundtrack...");
-	picker.append('</table></div>');
-	chitPickers["boombox"] = picker;
+	picker.pickerFinish("Choosing a soundtrack...");
 }
 
 void bakeBoombox() {
