@@ -10,6 +10,8 @@ boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/relayimages/chit/";
 
+typedef string[string] attrmap;
+
 record buff {
 	effect eff;
 	string effectName;
@@ -19,6 +21,68 @@ record buff {
 	int effectTurns;
 	boolean isIntrinsic;
 };
+
+record extra_info {
+	// picker options
+	string pickerName;
+	string pickerLauncherText;
+	string pickerImage; // leave blank for own image
+	// fold option
+	string foldText;
+	// generic option
+	string genericLinkText;
+	string genericLinkAttrs;
+};
+
+extra_info extraInfoPicker(string name, string launcherText, string image) {
+	extra_info info;
+	info.pickerName = name;
+	info.pickerLauncherText = launcherText;
+	info.pickerImage = image;
+	return info;
+}
+
+extra_info extraInfoPicker(string name, string launcherText) {
+	return extraInfoPicker(name, launcherText, '');
+}
+
+extra_info extraInfoFoldable(string text) {
+	extra_info info;
+	info.foldText = text;
+	return info;
+}
+
+extra_info extraInfoGenericLink(string text, attrmap attrs) {
+	extra_info info;
+	info.genericLinkText = text;
+	info.genericLinkAttrs = attrs;
+	return info;
+}
+
+record item_info {
+	string name;
+	string desc;
+	boolean hasDrops;
+	int dangerLevel;
+	string image;
+	extra_info[int] extra;
+};
+
+record familiar_info {
+	string desc;
+	int dropsLeft;
+	string dropName;
+	int bjornDropsLeft;
+	string bjornDropName;
+	int dangerLevel;
+	string image;
+};
+
+// some constants
+int DANGER_NONE = 0;
+int DANGER_WARNING = 1;
+int DANGER_DANGEROUS = 2;
+int DANGER_GOOD = -1;
 
 /*****************************************************
 	Veracity's vProps
@@ -362,7 +426,6 @@ string progressCustom(int current, int limit, int severity, boolean active) {
 /*****************************************************
 	HTML functions
 *****************************************************/
-typedef string[string] attrmap;
 int[string] tagsOpen;
 
 void tagStart(buffer buf, string type, attrmap attrs, boolean selfClosing) {

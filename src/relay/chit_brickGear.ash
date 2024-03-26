@@ -24,52 +24,8 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 
-skill monkeyPawSkill(int wishesUsed) {
-	switch(wishesUsed) {
-		case 0: return $skill[Monkey Slap];
-		case 1: return $skill[Monkey Tickle];
-		case 2: return $skill[Evil Monkey Eye];
-		case 3: return $skill[Monkey Peace Sign];
-		case 4: return $skill[Monkey Point];
-		case 5: return $skill[Monkey Punch];
-		default: return $skill[none];
-	}
-}
 
-string monkeyPawSkillDesc(skill sk) {
-	switch(sk) {
-		case $skill[Monkey Slap]: return "Batter up-like";
-		case $skill[Monkey Tickle]: return "Delevel";
-		case $skill[Evil Monkey Eye]: return '<span class="modSpooky">Spooky damage</span> + delevel';
-		case $skill[Monkey Peace Sign]: return "Heal";
-		case $skill[Monkey Point]: return "Olfaction-like";
-		case $skill[Monkey Punch]: return "Physical damage";
-		default: return "";
-	}
-}
-
-string beardToShorthand(effect beard) {
-	string [effect] shorthands = {
-		$effect[Spectacle Moustache]: "item/spooky",
-		$effect[Toiletbrush Moustache]: "ML/stench",
-		$effect[Barbell Moustache]: "mus/gear",
-		$effect[Grizzly Beard]: "mp reg/cold",
-		$effect[Surrealist's Moustache]: "mys/food",
-		$effect[Musician's Musician's Moustache]: "mox/booze",
-		$effect[Gull-Wing Moustache]: "init/hot",
-		$effect[Space Warlord's Beard]: "wpn dmg/crit",
-		$effect[Pointy Wizard Beard]: "spl dmg/crit",
-		$effect[Cowboy Stache]: "rng dmg/hp/mp",
-		$effect[Friendly Chops]: "meat/sleaze"
-	};
-
-	return shorthands[beard];
-}
-
-effect getCurrBeard();
-effect getNextBeard();
-int locketFightsRemaining();
-
+// done
 string gearName(item it, slot s) {
 	string name = to_string(it);
 	string notes = "";
@@ -677,99 +633,6 @@ void addFavGear() {
 	}
 }
 
-void pickerEdpiece() {
-	buffer picker;
-	picker.pickerStart("edpiece", "Adorn thy crown");
-
-	string current = get_property("edPiece");
-
-	void addJewel(string jewel, string desc, string icon) {
-		picker.pickerSelectionOption("a golden " + jewel, desc, "edpiece " + jewel, "/images/itemimages/" + icon + ".gif", jewel == current);
-	}
-
-	addJewel("bear", "Musc +20, +2 Musc exp", "teddybear");
-	addJewel("owl", "Myst +20, +2 Myst exp", "owl");
-	addJewel("puma", "Moxie +20, +2 Moxie exp", "blackcat");
-	addJewel("hyena", "+20 Monster Level", "lionface");
-	addJewel("mouse", "+10% Items, +20% Meat", "mouseskull");
-	addJewel("weasel", "Dodge first attack, 10-20 HP regen", "weasel");
-	addJewel("fish", "Lets you breathe underwater", "fish");
-
-	picker.pickerFinish("Cool jewels!");
-}
-
-void pickerGAP() {
-	buffer picker;
-	picker.pickerStart("gap", "Activate a Superpower");
-
-	void addSuperpower(effect power, string desc, int duration) {
-		string href = sideCommand("gap " + power.to_string().substring(6));
-		picker.pickerEffectOption("Activate", power, desc, duration, href, true);
-	}
-
-	addSuperpower($effect[Super Skill], "Combat Skills/Spells cost 0 MP", 5);
-	addSuperPower($effect[Super Structure], "", 10);
-	addSuperPower($effect[Super Vision], "", 20);
-	addSuperPower($effect[Super Speed], "", 20);
-	addSuperPower($effect[Super Accuracy], "", 10);
-
-	picker.pickerFinish("Loading Superpowers...");
-}
-
-void pickerForceUpgrade() {
-	buffer picker;
-	picker.pickerStart("theforce", "Pick an upgrade");
-
-	void addUpgrade(int upgrade, string name, string desc, string icon) {
-		picker.pickerGenericOption("Install", name, desc, "",
-			sideCommand('ashq visit_url("main.php?action=may4", false); visit_url("choice.php?pwd=&whichchoice=1386&option=' + upgrade.to_string() + '");'),
-			true, itemimage(icon + '.gif'));
-	}
-
-	addUpgrade(1, "Enhanced Kaiburr Crystal", "15-20 MP regen", "crystal");
-	addUpgrade(2, "Purple Beam Crystal", "+20 Monster Level", "nacrystal1");
-	addUpgrade(3, "Force Resistance Multiplier", "+3 Prismatic Res", "wonderwall");
-	addUpgrade(4, "Empathy Chip", "+10 Familiar Weight", "spiritorb");
-
-	picker.pickerFinish("Applying upgrade...");
-}
-
-void pickerPillKeeper() {
-	buffer picker;
-	picker.pickerStart("pillkeeper", "Pop a pill");
-
-	void addPill(string pill, string desc, string command, string icon) {
-		string pillLink = '<a class="change" href="' + sideCommand("pillkeeper " + command) + '">';
-
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(pillLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('.gif" title="Take ');
-		picker.append(pill);
-		picker.append(' (');
-		picker.append(desc);
-		picker.append(')" /></a></td><td colspan="2">');
-		picker.append(pillLink);
-		picker.append('<b>Take</b> ');
-		picker.append(pill);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span></a></td></tr>');
-	}
-
-	addPill("Explodinall", "Force all item drops from your next fight", "explode", "goldenlight");
-	addPill("Extendicillin", "Double the duration of your next potion", "extend", "potion1");
-	addPill("Sneakisol", "Force a non-combat", "noncombat", "clarabell");
-	addPill("Rainbowolin", "Stupendous resistance to all elements (30 turns)", "element", "rrainbow");
-	addPill("Hulkien", "+100% to all stats (30 turns)", "stat", "getbig");
-	addPill("Fidoxene", "All your familiars are at least 20 lbs (30 turns)", "familiar", "pill5");
-	addPill("Surprise Me", "Force a semi-rare. Even repeats!", "semirare", "spreadsheet");
-	addPill("Telecybin", "Adventure Randomly! (30 turns)", "random", "calendar");
-
-	picker.pickerFinish("Popping pills!");
-}
-
 void pickerPowerfulGlove() {
 	buffer picker;
 	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
@@ -803,172 +666,6 @@ void pickerPowerfulGlove() {
 	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)");
 
 	picker.pickerFinish("Entering cheat code...");
-}
-
-string retroHeroToIcon(string hero) {
-	switch(hero) {
-		case "muscle":
-		case "vampire":
-			return "retrocape1.gif";
-		case "mysticality":
-		case "heck":
-			return "retrocape2.gif";
-		case "moxie":
-		case "robot":
-			return "retrocape3.gif";
-	}
-	abort("Unrecognized hero " + hero);
-	return "";
-}
-
-void pickerRetroSuperCapeMeta() {
-	buffer picker;
-	picker.pickerStart("retrosupercapemeta", "Switch up your cape");
-
-	void addCombo(string name, string hero, string mode, boolean enabled) {
-		boolean active = false;
-		if(get_property("retroCapeSuperhero") == hero && get_property("retroCapeWashingInstructions") == mode) {
-			enabled = false;
-			active = true;
-		}
-
-		picker.append('<tr class="pickitem');
-		if(!enabled) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(retroHeroToIcon(hero));
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>CURRENT</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("retrocape " + hero + " " + mode));
-			picker.append('"><b>CONFIGURE</b> to ');
-		}
-		picker.append(name);
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
-	}
-
-	string mainstatHero = my_primestat().to_string().to_lower_case();
-	switch(my_primestat()) {
-		case $stat[Muscle]: mainstatHero = "vampire"; break;
-		case $stat[Mysticality]: mainstatHero = "heck"; break;
-		case $stat[Moxie]: mainstatHero = "robot"; break;
-	}
-	addCombo("get mainstat exp", mainstatHero, "thrill", true);
-	addCombo("yellow ray", "heck", "kiss", have_effect($effect[Everything Looks Yellow]) == 0);
-	addCombo("purge evil", "vampire", "kill", true);
-	addCombo("resist elements", "vampire", "hold", true);
-	addCombo("spooky lantern", "heck", "kill", true);
-	addCombo("stun enemies", "heck", "hold", true);
-
-	picker.pickerFinish("Configuring your cape...");
-}
-
-void pickerRetroSuperCapeAll() {
-	buffer pickerHero, pickerVampire, pickerHeck, pickerRobot;
-
-	void addHero(string name, string desc, string picker) {
-		pickerHero.append('<tr class="pickitem"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		pickerHero.append(retroHeroToIcon(picker));
-		pickerHero.append('" /></td><td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercape');
-		pickerHero.append(picker);
-		pickerHero.append('" href="#"><b>PICK</b> ');
-		pickerHero.append(name);
-		pickerHero.append('<br /><span class="descline">');
-		pickerHero.append(parseMods(desc, true));
-		pickerHero.append('</span></a></td></tr>');
-	}
-
-	void addMode(buffer picker, string name, string desc, string hero, string nameShort, boolean parse) {
-		boolean active = get_property("retroCapeSuperhero") == hero && get_property("retroCapeWashingInstructions") == nameShort;
-
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(retroHeroToIcon(hero));
-		picker.append('" /></td><td colspan="2">');
-		if(!active) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("retrocape " + hero + " " + nameShort));
-			picker.append('"><b>PICK</b> ');
-		}
-		else {
-			picker.append('<b>CURRENT</b>: ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(parse ? parseMods(desc, true) : desc);
-		picker.append('</span>');
-		if(active) picker.append('</a>');
-		picker.append('</td></tr>');
-	}
-
-	// Hero picker
-	pickerHero.pickerStart("retrosupercapeall", "Pick a hero");
-	addHero("Vampire Slicer", "Muscle +30%, Maximum HP +50", "vampire");
-	addHero("Heck General", "Mysticality +30%, Maximum MP +50", "heck");
-	addHero("Robot Police", "Moxie +30%, Maximum HP/MP +25", "robot");
-	pickerHero.pickerFinish("Picking mode...");
-
-	// Vampire picker
-	pickerVampire.pickerStart("retrosupercapevampire", "Pick a mode");
-	pickerVampire.addMode("Hold Me", "Serious Resistance to All Elements (+3)", "vampire", "hold", true);
-	pickerVampire.addMode("Thrill Me", "+3 Muscle Stats Per Fight", "vampire", "thrill", true);
-	pickerVampire.addMode("Kiss Me", "Allows vampiric smooching (HP drain)", "vampire", "kiss", false);
-	pickerVampire.addMode("Kill Me", "Lets you instantly kill undead foes with a sword (reduces evil in Cyrpt)", "vampire", "kill", false);
-	pickerVampire.pickerFinish("Configuring your cape...");
-
-	// Heck picker
-	pickerHeck.pickerStart("retrosupercapeheck", "Pick a mode");
-	pickerHeck.addMode("Hold Me", "Stuns foes at the start of combat", "heck", "hold", false);
-	pickerHeck.addMode("Thrill Me", "+3 Mysticality Stats Per Fight", "heck", "thrill", true);
-	pickerHeck.addMode("Kiss Me", "Lets you unleash the Devil's kiss (100 turn cooldown yellow ray)", "heck", "kiss", false);
-	pickerHeck.addMode("Kill Me", "A Heck Clown will make your spells spookier (Spooky lantern)", "heck", "kill", false);
-	pickerHeck.pickerFinish("Configuring your cape...");
-
-	// Robot picker
-	pickerRobot.pickerStart("retrosupercaperobot", "Pick a mode");
-	pickerRobot.addMode("Hold Me", "Allows you to handcuff opponents (Delevel attack)", "robot", "hold", false);
-	pickerRobot.addMode("Thrill Me", "+3 Moxie Stats Per Fight", "robot", "thrill", true);
-	pickerRobot.addMode("Kiss Me", "Enable a Sleaze attack", "robot", "kiss", false);
-	pickerRobot.addMode("Kill Me", "Lets you perform a super-accurate attack with a gun (guaranteed crit)", "robot", "kill", false);
-	pickerRobot.pickerFinish("Configuring your cape...");
-}
-
-string retroSupercapeCurrentSetupName() {
-	string hero = get_property("retroCapeSuperhero");
-	string mode = get_property("retroCapeWashingInstructions");
-
-	switch(hero) {
-		case "vampire": // muscle
-			switch(mode) {
-				case "hold": return "resistances";
-				case "thrill": return my_primestat() == $stat[Muscle] ? "mainstat exp" : "mus exp";
-				case "kiss": return "draining kiss";
-				case "kill": return "purge evil";
-			}
-			break;
-		case "heck": // mysticality
-			switch(mode) {
-				case "hold": return "stun foes";
-				case "thrill": return my_primestat() == $stat[Mysticality] ? "mainstat exp" : "mys exp";
-				case "kiss": return "yellow ray";
-				case "kill": return "spooky lantern";
-			}
-			break;
-		case "robot": // moxie
-			switch(mode) {
-				case "hold": return "handcuff";
-				case "thrill": return my_primestat() == $stat[Moxie] ? "mainstat exp" : "mox exp";
-				case "kiss": return "sleaze attack";
-				case "kill": return "gun crit";
-			}
-			break;
-	}
-
-	return "???";
 }
 
 void pickerBackupCamera() {
@@ -1014,85 +711,6 @@ void pickerBackupCamera() {
 	picker.pickerFinish("Configuring your camera...");
 }
 
-effect [int] getBeardOrder() {
-	effect [int] baseBeardOrder = {
-		$effect[Spectacle Moustache],
-		$effect[Toiletbrush Moustache],
-		$effect[Barbell Moustache],
-		$effect[Grizzly Beard],
-		$effect[Surrealist's Moustache],
-		$effect[Musician's Musician's Moustache],
-		$effect[Gull-Wing Moustache],
-		$effect[Space Warlord's Beard],
-		$effect[Pointy Wizard Beard],
-		$effect[Cowboy Stache],
-		$effect[Friendly Chops]
-	};
-
-	effect [int] beardOrder;
-	int classId = my_class().to_int();
-	int classIdMod = ((classId<=6)?classId:classId+1)% 6;
-	for(int i = 0; i < 11; ++i) {
-		int nextBeard = (classIdMod * i) % 11;
-		beardOrder[i] = baseBeardOrder[nextBeard];
-	}
-
-	return beardOrder;
-}
-
-effect getCurrBeard() {
-	foreach beard in $effects[
-		Spectacle Moustache,
-		Toiletbrush Moustache,
-		Barbell Moustache,
-		Grizzly Beard,
-		Surrealist's Moustache,
-		Musician's Musician's Moustache,
-		Gull-Wing Moustache,
-		Space Warlord's Beard,
-		Pointy Wizard Beard,
-		Cowboy Stache,
-		Friendly Chops
-	] {
-		if(have_effect(beard) > 0) {
-			return beard;
-		}
-	}
-	return $effect[none];
-}
-
-int getCurrBeardNum() {
-	foreach i,beard in getBeardOrder() {
-		if(have_effect(beard) > 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-int getLastBeardNum() {
-	effect lastBeard = get_property("lastBeardBuff").to_effect();
-	if(lastBeard == $effect[none]) {
-		return 0;
-	}
-	foreach i,beard in getBeardOrder() {
-		if(beard == lastBeard) {
-			return i;
-		}
-	}
-	return 0;
-}
-
-effect getNextBeard() {
-	effect [int] beardOrder = getBeardOrder();
-	int currBeardNum = getCurrBeardNum();
-	if(currBeardNum == -1) {
-		int lastBeardNum = getLastBeardNum();
-		return beardOrder[(lastBeardNum + 1) % 11];
-	}
-	return beardOrder[(currBeardNum + 1) % 11];
-}
-
 // This isn't really a picker, it just uses the picker layout
 void pickerFakeDaylightShavingsHelmet() {
 	buffer picker;
@@ -1126,14 +744,6 @@ void pickerFakeDaylightShavingsHelmet() {
 	}
 
 	picker.pickerFinish();
-}
-
-int locketFightsRemaining() {
-	string fought = get_property("_locketMonstersFought");
-	if(fought.length() == 0) {
-		return 3;
-	}
-	return max(3 - fought.split_string(",").count(), 0);
 }
 
 void pickerUnbrella() {
@@ -1415,7 +1025,7 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
 			break;
 		case $item[The Crown of Ed the Undying]:
-			pickerEdpiece();
+			picker_edpiece();
 			start_option(in_slot, FORCE_MODIFY);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickeredpiece" href="#">Change decoration (currently ');
 			if(get_property("edPiece") == "")
@@ -1492,7 +1102,7 @@ void pickerGear(slot s) {
 			break;
 		case $item[Greatest American Pants]:
 			if(get_property("_gapBuffs").to_int() < 5) {
-				pickerGAP();
+				picker_gap();
 				start_option(in_slot, false);
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickergap" href="#">');
 				picker.append('Activate Super Power (');
@@ -1513,7 +1123,7 @@ void pickerGear(slot s) {
 		case $item[Fourth of May Cosplay Saber]:
 		case $item[replica Fourth of May Cosplay Saber]:
 			if(get_property("_saberMod") == "0") {
-				pickerForceUpgrade();
+				picker_theforce();
 				start_option(in_slot, true);
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickertheforce" href="#">Install daily upgrade</a></td></tr>');
 			}
@@ -1525,7 +1135,7 @@ void pickerGear(slot s) {
 			break;
 		case $item[Eight Days a Week Pill Keeper]:
 			if(!get_property("_freePillKeeperUsed").to_boolean() || (spleen_limit() - my_spleen_use() >= 3)) {
-				pickerPillKeeper();
+				picker_pillkeeper();
 				start_option(in_slot, false);
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
 			}
@@ -1557,8 +1167,8 @@ void pickerGear(slot s) {
 			}
 			break;
 		case $item[unwrapped knock-off retro superhero cape]:
-			pickerRetroSuperCapeMeta();
-			pickerRetroSuperCapeAll();
+			picker_retrosupercapemeta();
+			picker_retrosupercapeall();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapemeta" href="#">Change to optimal setups!</a></td></tr>');
 			start_option(in_slot, true);

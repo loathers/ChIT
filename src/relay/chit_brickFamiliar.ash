@@ -506,8 +506,6 @@ int hasBjornDrops(familiar f) {
 	return 0;
 }
 
-int locketFightsRemaining();
-
 // TODO: Move this function to chit_brickGear.ash
 int hasDrops(item it) {
 	switch(it) {
@@ -683,8 +681,6 @@ string familiar_image(familiar f) {
 int NO_MODIFY = 0;
 int MODIFY = 1;
 int FORCE_MODIFY = 2; // Some items only want to be modified in special cases, like the edpiece
-
-string retroHeroToIcon(string hero);
 
 string item_image(item it, int modify_image)
 {

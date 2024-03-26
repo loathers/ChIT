@@ -1,6 +1,8 @@
 script "Character Information Toolbox";
 since r27735; // Asdon Martin keyfob (on ring)
 import "chit_global.ash";
+import "chit_itemInfo.ash";
+import "chit_familiarInfo.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
