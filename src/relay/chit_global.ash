@@ -23,22 +23,22 @@ record buff {
 };
 
 record extra_info {
+	string optionImage; // leave blank for own image
 	// picker options
 	string pickerName;
 	string pickerLauncherText;
-	string pickerImage; // leave blank for own image
 	// fold option
 	string foldText;
 	// generic option
 	string genericLinkText;
-	string genericLinkAttrs;
+	attrmap genericLinkAttrs;
 };
 
 extra_info extraInfoPicker(string name, string launcherText, string image) {
 	extra_info info;
 	info.pickerName = name;
 	info.pickerLauncherText = launcherText;
-	info.pickerImage = image;
+	info.optionImage = image;
 	return info;
 }
 
@@ -46,17 +46,27 @@ extra_info extraInfoPicker(string name, string launcherText) {
 	return extraInfoPicker(name, launcherText, '');
 }
 
-extra_info extraInfoFoldable(string text) {
+extra_info extraInfoFoldable(string text, string image) {
 	extra_info info;
 	info.foldText = text;
+	info.optionImage = image;
+	return info;
+}
+
+extra_info extraInfoFoldable(string text) {
+	return extraInfoFoldable(text, '');
+}
+
+extra_info extraInfoGenericLink(string text, attrmap attrs, string image) {
+	extra_info info;
+	info.genericLinkText = text;
+	info.genericLinkAttrs = attrs;
+	info.optionImage = image;
 	return info;
 }
 
 extra_info extraInfoGenericLink(string text, attrmap attrs) {
-	extra_info info;
-	info.genericLinkText = text;
-	info.genericLinkAttrs = attrs;
-	return info;
+	return extraInfoGenericLink(text, attrs, '');
 }
 
 record item_info {

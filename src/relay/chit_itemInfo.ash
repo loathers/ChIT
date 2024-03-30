@@ -7,7 +7,7 @@ string edpieceToImage(string edpiece) {
 		case 'owl': return itemimage('owl.gif');
 		case 'puma': return itemimage('blackcat.gif');
 		case 'hyena': return itemimage('lionface.gif');
-		case 'mouse': return itemimage('mouseskill.gif');
+		case 'mouse': return itemimage('mouseskull.gif');
 		case 'weasel': return itemimage('weasel.gif');
 		case 'fish': return itemimage('fish.gif');
 	}
@@ -445,7 +445,7 @@ void addDrops(item_info info, drop_info[int] drops) {
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if(drop.singular.substring(0, 1) != '%') {
+			if(drop.singular != '' && drop.singular.substring(0, 1) != '%') {
 				toAdd += ' ';
 			}
 			toAdd += (left == 1) ? drop.singular : drop.plural;
@@ -710,6 +710,124 @@ void picker_jurassicparka() {
 	addMode("pterodactyl", "+5% noncom, +50% init, +2 Hot Res", "jparka9.gif");
 
 	picker.pickerFinish("Pulling dino tab...");
+}
+
+void picker_cincho() {
+	int cinch = 100 - get_property("_cinchUsed").to_int();
+
+	buffer picker;
+	picker.pickerStart('cincho', "Use some cinch (" + cinch + " available)");
+
+	void addSkill(skill sk, string imageSuffix, string desc, int cinchCost) {
+		boolean canUse = cinch >= cinchCost && !sk.combat;
+
+		picker.append('<tr class="pickitem');
+		if(!canUse) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/cincho');
+		picker.append(imageSuffix);
+		picker.append('.gif" /></td><td colspan="2">');
+		if(canUse) {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("cast " + sk.to_string()));
+			picker.append('"><b>Cincho:</b> ');
+		}
+		else {
+			picker.append('Cincho: ');
+		}
+		picker.append(sk.to_string().substring(8));
+		picker.append(' (');
+		picker.append(cinchCost);
+		picker.append(' cinch)<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(canUse) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addSkill($skill[Cincho: Confetti Extravaganza], "confetti", "Double substats from this fight, but get smacked", 5);
+	addSkill($skill[Cincho: Dispense Salt and Lime], "lime", "Triples stat gain from next drink", 25);
+	addSkill($skill[Cincho: Fiesta Exit], "exit", "Force a noncom", 60);
+	addSkill($skill[Cincho: Party Foul], "swear", "Damage, weaken, and stun", 5);
+	addSkill($skill[Cincho: Party Soundtrack], "music", "30 adv +5lbs", 25);
+	addSkill($skill[Cincho: Projectile Piñata], "candy", "Damage, stun, get candy", 5);
+
+	picker.pickerFinish("Using Cinch...");
+}
+
+void picker_august() {
+	int used = get_property("_augSkillsCast").to_int();
+	int usable = 5;
+	int today = today_to_string().to_int() % 100;
+	if(can_interact()) {
+		++usable;
+		if(get_property("_augTodayCast").to_boolean()) {
+			++used;
+		}
+	}
+
+	buffer picker;
+	picker.pickerStart('august', "Celebrate some holidays (" + used + "/" + usable + " used)");
+
+	void addSkill(skill sk, int num, string desc) {
+		boolean canUse = !get_property("_aug" + num + "Cast").to_boolean();
+		picker.append('<tr class="pickitem');
+		if(!canUse) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(sk.image);
+		picker.append('" /></td><td colspan="2">');
+		if(canUse) {
+			picker.append('<a class="change" target=mainpane href="runskillz.php?action=Skillz&whichskill=');
+			picker.append(sk.to_int());
+			picker.append('&pwd=');
+			picker.append(my_hash());
+			picker.append('"><b>Celebrate</b> ');
+		}
+		picker.append(sk.name);
+		if(can_interact() && num == today) {
+			picker.append(' (free today)');
+		}
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(canUse) {
+			picker.append('</a>');
+		}
+		picker.append('</td></tr>');
+	}
+
+	addSkill($skill[Aug. 1st: Mountain Climbing Day!], 1, "30 adv effect that gives bonuses in mountains.");
+	addSkill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day], 2, "Become Lucky!");
+	addSkill($skill[Aug. 3rd: Watermelon Day!], 3, "Acquire 1 watermelon (big food that gives seeds).");
+	addSkill($skill[Aug. 4th: Water Balloon Day!], 4, "Acquire 3 water balloons (usable for effect/trophy).");
+	addSkill($skill[Aug. 5th: Oyster Day!], 5, "Acquire 3 random oyster eggs.");
+	addSkill($skill[Aug. 6th: Fresh Breath Day!], 6, "30 adv effect +moxie +combat.");
+	addSkill($skill[Aug. 7th: Lighthouse Day!], 7, "30 adv effect +item +meat.");
+	addSkill($skill[Aug. 8th: Cat Day!], 8, "Free fight a random cat.");
+	addSkill($skill[Aug. 9th: Hand Holding Day!], 9, "1 use of a minor olfaction.");
+	addSkill($skill[Aug. 10th: World Lion Day!], 10, "30 adv effect that lets you banish for its duration.");
+	addSkill($skill[Aug. 11th: Presidential Joke Day!], 11, "50 x level mys substats.");
+	addSkill($skill[Aug. 12th: Elephant Day!], 12, "50 x level mus substats.");
+	addSkill($skill[Aug. 13th: Left/Off Hander's Day!], 13, "30 adv effect doubling power of off-hands.");
+	addSkill($skill[Aug. 14th: Financial Awareness \ Day!], 14, "Pay 100 x level meat for 150 x level meat.");
+	addSkill($skill[Aug. 15th: Relaxation Day!], 15, "Restore hp/mp, get booze ingredients.");
+	addSkill($skill[Aug. 16th: Roller Coaster Day!], 16, "-1 fullness, 30 adv effect of +food drops.");
+	addSkill($skill[Aug. 17th: Thriftshop Day!], 17, "Coupon for 1 item 1000 meat or less.");
+	addSkill($skill[Aug. 18th: Serendipity Day!], 18, "30 adv effect of getting random stuff.");
+	addSkill($skill[Aug. 19th: Honey Bee Awareness Day!], 19, "30 adv effect of sometimes fighting bees.");
+	addSkill($skill[Aug. 20th: Mosquito Day!], 20, "30 adv effect of hp regen.");
+	addSkill($skill[Aug. 21st: Spumoni Day!], 21, "20 x level all substats.");
+	addSkill($skill[Aug. 22nd: Tooth Fairy Day!], 22, "Free fight a tooth golem.");
+	addSkill($skill[Aug. 23rd: Ride the Wind Day!], 23, "50 x level mox substats.");
+	addSkill($skill[Aug. 24th: Waffle Day!], 24, "Acquire 3 waffles (food/monster swap combat item).");
+	addSkill($skill[Aug. 25th: Banana Split Day!], 25, "Acquire 1 banana spit (food that gives banana).");
+	addSkill($skill[Aug. 26th: Toilet Paper Day!], 26, "Acquire 1 handful of toilet paper (removes a negative effect).");
+	addSkill($skill[Aug. 27th: Just Because Day!], 27, "20 adv of 3 random good effects.");
+	addSkill($skill[Aug. 28th: Race Your Mouse Day!], 28, "Acquire melting fam equip based on current fam.");
+	addSkill($skill[Aug. 29th: More Herbs, Less Salt \ Day!], 29, "Acquire 3 bottles of Mrs. Rush (boosts substats from food).");
+	addSkill($skill[Aug. 30th: Beach Day!], 30, "Acquire 1 baywatch (melting +7adv/+2fites/-2mp cost acc).");
+	addSkill($skill[Aug. 31st: Cabernet Sauvignon \ Day!], 31, "Acquire 2 bottles of Cabernet Sauvignon (booze that helps find booze).");
+
+	picker.pickerFinish("Celebrating a holiday...");
 }
 
 /*****************************************************
@@ -1032,12 +1150,31 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			info.addDrop(new drop_info('_monkeyPawWishesUsed', 5, 'wish', 'wishes'));
 			int wishesUsed = max(0, min(5, get_property('_monkeyPawWishesUsed').to_int()));
 			info.image = itemimage('monkeypaw' + wishesUsed + '.gif');
+			if(wishesUsed < 5) {
+				skill currSkill = monkeyPawSkill(wishesUsed);
+				skill nextSkill = monkeyPawSkill(wishesUsed + 1);
+				string linkText = 'Wish for an item or effect<br />'
+					+ '<span class="descline">Current skill: ' + currSkill + ' (' + monkeyPawSkillDesc(currSkill) + ')<br />'
+					+ 'Next skill: ' + nextSkill + ' (' + monkeyPawSkillDesc(nextSkill) + ')</span>';
+				info.addExtra(extraInfoGenericLink(linkText, attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'main.php?pwd=' + my_hash() + '&action=cmonk',
+				}, itemimage('monkeypaw' + (wishesUsed + 1) + '.gif')));
+			}
 			break;
 		}
 		case $item[Cincho de Mayo]:
-		case $item[replica Cincho de Mayo]:
+		case $item[replica Cincho de Mayo]: {
 			info.addDrop(new drop_info('_cinchUsed', 100, 'cinch'));
+			int restsTaken = get_property('_cinchoRests').to_int();
+			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
+			int freeRestsLeft = total_free_rests() - get_property('timesRested').to_int();
+			info.addExtra(extraInfoPicker('cincho', 'Use some cinch<br /><span class="descline">'
+				+ restsTaken + ' rests taken, will gain ' + cinchToGain + ', '
+				+ (freeRestsLeft > 0 ? freeRestsLeft.to_string() : 'no') + ' free rests left</span>'));
 			break;
+		}
 		case $item[august scepter]:
 		case $item[replica august scepter]: {
 			drops_info drops = { new drop_info('_augSkillsCast', 5, 'skill', 'skills') };
@@ -1045,6 +1182,43 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				drops[drops.count()] = new drop_info('_augTodayCast', LIMIT_BOOL, 'today');
 			}
 			info.addDrops(drops);
+			int [int] usedToday;
+			for(int i = 1; i <= 31; ++i) {
+				if(get_property('_aug' + i + 'Cast').to_boolean()) {
+					usedToday[usedToday.count()] = i;
+				}
+			}
+			int todayNum = today_to_string().to_int() % 100;
+			string [int] descStuff;
+			if(usedToday.count() > 0) {
+				buffer usedTodayStr;
+				usedTodayStr.append('Used today: ');
+				for(int i = 0; i < usedToday.count(); ++i) {
+					if(i != 0) {
+						usedTodayStr.append(', ');
+					}
+					usedTodayStr.append(usedToday[i]);
+					if(can_interact() && usedToday[i] == todayNum) {
+						usedTodayStr.append(' (free)');
+					}
+				}
+				descStuff[descStuff.count()] = usedTodayStr.to_string();
+			}
+			if(can_interact() && !get_property('_augTodayCast').to_boolean()) {
+				descStuff[descStuff.count()] = todayNum + ' free today';
+			}
+			string pickerText = 'Celebrate some holidays';
+			if(descStuff.count() > 0) {
+				pickerText += '<br /><span class="descline">';
+				for(int i = 0; i < descStuff.count(); ++i) {
+					if(i != 0) {
+						pickerText += ', ';
+					}
+					pickerText += descStuff[i];
+				}
+				pickerText += '</span>';
+			}
+			info.addExtra(extraInfoPicker('august', pickerText));
 			break;
 		}
 		case $item[carnivorous potted plant]: {

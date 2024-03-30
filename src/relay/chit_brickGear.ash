@@ -633,124 +633,6 @@ void addFavGear() {
 	}
 }
 
-void pickerCincho() {
-	int cinch = 100 - get_property("_cinchUsed").to_int();
-
-	buffer picker;
-	picker.pickerStart('cincho', "Use some cinch (" + cinch + " available)");
-
-	void addSkill(skill sk, string imageSuffix, string desc, int cinchCost) {
-		boolean canUse = cinch >= cinchCost && !sk.combat;
-
-		picker.append('<tr class="pickitem');
-		if(!canUse) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/cincho');
-		picker.append(imageSuffix);
-		picker.append('.gif" /></td><td colspan="2">');
-		if(canUse) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("cast " + sk.to_string()));
-			picker.append('"><b>Cincho:</b> ');
-		}
-		else {
-			picker.append('Cincho: ');
-		}
-		picker.append(sk.to_string().substring(8));
-		picker.append(' (');
-		picker.append(cinchCost);
-		picker.append(' cinch)<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(canUse) picker.append('</a>');
-		picker.append('</td></tr>');
-	}
-
-	addSkill($skill[Cincho: Confetti Extravaganza], "confetti", "Double substats from this fight, but get smacked", 5);
-	addSkill($skill[Cincho: Dispense Salt and Lime], "lime", "Triples stat gain from next drink", 25);
-	addSkill($skill[Cincho: Fiesta Exit], "exit", "Force a noncom", 60);
-	addSkill($skill[Cincho: Party Foul], "swear", "Damage, weaken, and stun", 5);
-	addSkill($skill[Cincho: Party Soundtrack], "music", "30 adv +5lbs", 25);
-	addSkill($skill[Cincho: Projectile Piñata], "candy", "Damage, stun, get candy", 5);
-
-	picker.pickerFinish("Using Cinch...");
-}
-
-void pickerAugust() {
-	int used = get_property("_augSkillsCast").to_int();
-	int usable = 5;
-	int today = today_to_string().to_int() % 100;
-	if(can_interact()) {
-		++usable;
-		if(get_property("_augTodayCast").to_boolean()) {
-			++used;
-		}
-	}
-
-	buffer picker;
-	picker.pickerStart('august', "Celebrate some holidays (" + used + "/" + usable + " used)");
-
-	void addSkill(skill sk, int num, string desc) {
-		boolean canUse = !get_property("_aug" + num + "Cast").to_boolean();
-		picker.append('<tr class="pickitem');
-		if(!canUse) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(sk.image);
-		picker.append('" /></td><td colspan="2">');
-		if(canUse) {
-			picker.append('<a class="change" target=mainpane href="runskillz.php?action=Skillz&whichskill=');
-			picker.append(sk.to_int());
-			picker.append('&pwd=');
-			picker.append(my_hash());
-			picker.append('"><b>Celebrate</b> ');
-		}
-		picker.append(sk.name);
-		if(can_interact() && num == today) {
-			picker.append(' (free today)');
-		}
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(canUse) {
-			picker.append('</a>');
-		}
-		picker.append('</td></tr>');
-	}
-
-	addSkill($skill[Aug. 1st: Mountain Climbing Day!], 1, "30 adv effect that gives bonuses in mountains.");
-	addSkill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day], 2, "Become Lucky!");
-	addSkill($skill[Aug. 3rd: Watermelon Day!], 3, "Acquire 1 watermelon (big food that gives seeds).");
-	addSkill($skill[Aug. 4th: Water Balloon Day!], 4, "Acquire 3 water balloons (usable for effect/trophy).");
-	addSkill($skill[Aug. 5th: Oyster Day!], 5, "Acquire 3 random oyster eggs.");
-	addSkill($skill[Aug. 6th: Fresh Breath Day!], 6, "30 adv effect +moxie +combat.");
-	addSkill($skill[Aug. 7th: Lighthouse Day!], 7, "30 adv effect +item +meat.");
-	addSkill($skill[Aug. 8th: Cat Day!], 8, "Free fight a random cat.");
-	addSkill($skill[Aug. 9th: Hand Holding Day!], 9, "1 use of a minor olfaction.");
-	addSkill($skill[Aug. 10th: World Lion Day!], 10, "30 adv effect that lets you banish for its duration.");
-	addSkill($skill[Aug. 11th: Presidential Joke Day!], 11, "50 x level mys substats.");
-	addSkill($skill[Aug. 12th: Elephant Day!], 12, "50 x level mus substats.");
-	addSkill($skill[Aug. 13th: Left/Off Hander's Day!], 13, "30 adv effect doubling power of off-hands.");
-	addSkill($skill[Aug. 14th: Financial Awareness \ Day!], 14, "Pay 100 x level meat for 150 x level meat.");
-	addSkill($skill[Aug. 15th: Relaxation Day!], 15, "Restore hp/mp, get booze ingredients.");
-	addSkill($skill[Aug. 16th: Roller Coaster Day!], 16, "-1 fullness, 30 adv effect of +food drops.");
-	addSkill($skill[Aug. 17th: Thriftshop Day!], 17, "Coupon for 1 item 1000 meat or less.");
-	addSkill($skill[Aug. 18th: Serendipity Day!], 18, "30 adv effect of getting random stuff.");
-	addSkill($skill[Aug. 19th: Honey Bee Awareness Day!], 19, "30 adv effect of sometimes fighting bees.");
-	addSkill($skill[Aug. 20th: Mosquito Day!], 20, "30 adv effect of hp regen.");
-	addSkill($skill[Aug. 21st: Spumoni Day!], 21, "20 x level all substats.");
-	addSkill($skill[Aug. 22nd: Tooth Fairy Day!], 22, "Free fight a tooth golem.");
-	addSkill($skill[Aug. 23rd: Ride the Wind Day!], 23, "50 x level mox substats.");
-	addSkill($skill[Aug. 24th: Waffle Day!], 24, "Acquire 3 waffles (food/monster swap combat item).");
-	addSkill($skill[Aug. 25th: Banana Split Day!], 25, "Acquire 1 banana spit (food that gives banana).");
-	addSkill($skill[Aug. 26th: Toilet Paper Day!], 26, "Acquire 1 handful of toilet paper (removes a negative effect).");
-	addSkill($skill[Aug. 27th: Just Because Day!], 27, "20 adv of 3 random good effects.");
-	addSkill($skill[Aug. 28th: Race Your Mouse Day!], 28, "Acquire melting fam equip based on current fam.");
-	addSkill($skill[Aug. 29th: More Herbs, Less Salt \ Day!], 29, "Acquire 3 bottles of Mrs. Rush (boosts substats from food).");
-	addSkill($skill[Aug. 30th: Beach Day!], 30, "Acquire 1 baywatch (melting +7adv/+2fites/-2mp cost acc).");
-	addSkill($skill[Aug. 31st: Cabernet Sauvignon \ Day!], 31, "Acquire 2 bottles of Cabernet Sauvignon (booze that helps find booze).");
-
-	picker.pickerFinish("Celebrating a holiday...");
-}
-
 int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
@@ -795,302 +677,79 @@ void pickerGear(slot s) {
 		start_option(it, modify_image ? MODIFY : NO_MODIFY);
 	}
 
-	// give configurable gear some love if it's in slot
-	item fold_from(item original) {
-		foreach it in get_related(in_slot, "fold")
-			if(it != in_slot)
-				return it;
-		return $item[none];
-	}
-	string cmd;
-	switch(in_slot) {
-		case $item[buddy bjorn]:
-			pickerFamiliar(my_bjorned_familiar(), "bjornify", "Change bjorned buddy :D");
-			start_option(in_slot, false);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbjornify" href="#">Pick a buddy to bjornify!</a></td></tr>');
-			break;
-		case $item[crown of thrones]:
-			pickerFamiliar(my_enthroned_familiar(), "enthrone", "Put a familiar on your head :D");
-			start_option(in_slot, false);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerenthrone" href="#">Pick a familiar to enthrone!</a></td></tr>');
-			break;
-		case $item[The Crown of Ed the Undying]:
-			picker_edpiece();
-			start_option(in_slot, FORCE_MODIFY);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickeredpiece" href="#">Change decoration (currently ');
-			if(get_property("edPiece") == "")
-				picker.append('none');
-			else
-				picker.append(get_property("edPiece"));
-			picker.append(')</a></td></tr>');
-			break;
-		case $item[jarlsberg's pan]:
-			              cmd = "Shake Portal Open";
-		case $item[jarlsberg's pan (cosmic portal mode)]:
-			if(cmd == "") cmd = "Shake Portal Closed";
-		case $item[Boris's Helm]:
-			if(cmd == "") cmd = "Twist Horns Askew";
-		case $item[Boris's Helm (askew)]:
-			if(cmd == "") cmd = "Untwist Horns";
-		case $item[Sneaky Pete's leather jacket]:
-			if(cmd == "") cmd = "Pop Collar Aggressively";
-		case $item[Sneaky Pete's leather jacket (collar popped)]:
-			if(cmd == "") cmd = "Unpop Collar";
-			item other = fold_from(in_slot);
-			start_option(other, true);
-			picker.append('<td colspan="2"><a class="change" href="');
-			picker.append(sideCommand("fold " + other));
-			picker.append('">');
-			picker.append(cmd);
-			picker.append('</a></td></tr>');
-			break;
-		case $item[over-the-shoulder Folder Holder]:
-		case $item[replica over-the-shoulder Folder Holder]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?action=useholder">Manage your folders.</a></td></tr>');
-			break;
-		case $item[fish hatchet]:
-			              cmd = "Get Wood";
-		case $item[codpiece]:
-			if(cmd == "") cmd = "Wring Out";
-		case $item[bass clarinet]:
-		  if(cmd == "") cmd = "Drain Spit";
-		  if(!to_boolean(get_property("_floundryItemUsed"))) {
-				start_option(in_slot, true);
-				picker.append('<td colspan="2"><a class="change" href="');
-				picker.append(sideCommand("use 1 " + to_string(in_slot) + ";equip " + to_string(s) + " " + to_string(in_slot)));
-				picker.append('">');
-				picker.append(cmd);
-				picker.append('</a></td></tr>');
-			}
-			break;
-		case $item[Kremlin's Greatest Briefcase]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="place.php?whichplace=kgb">Examine the briefcase.</a></td></tr>');
-			break;
-		case $item[FantasyRealm G. E. M.]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="place.php?whichplace=realm_fantasy">Visit FantasyRealm.</a></td></tr>');
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="shop.php?whichshop=fantasyrealm">Spend Rubees.</a></td></tr>');
-			break;
-		case $item[PirateRealm eyepatch]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="place.php?whichplace=realm_pirate">Visit PirateRealm.</a></td></tr>');
-			break;
-		case $item[latte lovers member's mug]:
-			int refills = 3 - get_property("_latteRefillsUsed").to_int();
-			if(refills > 0) {
-				start_option(in_slot, true);
-				picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-					'href="main.php?latte=1">Get a refill.</a></td></tr>');
-			}
-			break;
-		case $item[Greatest American Pants]:
-			if(get_property("_gapBuffs").to_int() < 5) {
-				picker_gap();
-				start_option(in_slot, false);
-				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickergap" href="#">');
-				picker.append('Activate Super Power (');
-				picker.append(5 - get_property("_gapBuffs").to_int());
-				picker.append(' left)</a></td></tr>');
-			}
-			break;
-		case $item[Kramco Sausage-o-Matic&trade;]:
-		case $item[replica Kramco Sausage-o-Matic&trade;]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="inventory.php?action=grind"><b>Grind</b> (' + available_amount($item[magical sausage casing]).formatInt() + ' casings available):<br />');
-			picker.append(get_property("sausageGrinderUnits").to_int().formatInt() + " / " + (111 * (1 + get_property("_sausagesMade").to_int())).formatInt() + " units.<br />");
-			picker.append(get_property("_sausagesEaten").to_int().formatInt() + "/23 sausages eaten today.<br />");
-			picker.append(get_property("_sausageFights").to_int().formatInt() + " goblins encountered today.");
-			picker.append('</a></td></tr>');
-			break;
-		case $item[Fourth of May Cosplay Saber]:
-		case $item[replica Fourth of May Cosplay Saber]:
-			if(get_property("_saberMod") == "0") {
-				picker_theforce();
-				start_option(in_slot, true);
-				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickertheforce" href="#">Install daily upgrade</a></td></tr>');
-			}
-			break;
-		case $item[Beach Comb]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="main.php?comb=1"><b>Comb</b> beach</a></td></tr>');
-			break;
-		case $item[Eight Days a Week Pill Keeper]:
-			if(!get_property("_freePillKeeperUsed").to_boolean() || (spleen_limit() - my_spleen_use() >= 3)) {
-				picker_pillkeeper();
-				start_option(in_slot, false);
-				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpillkeeper" href="#">Pop a pill!</a></td></tr>');
-			}
-			break;
-		case $item[Powerful Glove]:
-		case $item[replica Powerful Glove]:
-			int batteryUsed = get_property("_powerfulGloveBatteryPowerUsed").to_int();
-			if(batteryUsed < 100) {
-				picker_powerfulglove();
-				start_option(in_slot, false);
-				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpowerfulglove" href="#">Enter a cheat code!</a></td></tr>');
-			}
-			break;
-		case $item[Guzzlr tablet]:
-			start_option(in_slot, false);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-				'href="inventory.php?tap=guzzlr"><b>Tap</b> tablet</a></td></tr>');
-			break;
-		case $item[Cargo Cultist Shorts]:
-		case $item[replica Cargo Cultist Shorts]:
-			if(!get_property("_cargoPocketEmptied").to_boolean()) {
-				start_option(in_slot, false);
-				string [int] pocketsEmptied = get_property("cargoPocketsEmptied").split_string(",");
-				int pocketsLeft = 666 - pocketsEmptied.count();
-				picker.append('<td colspan="2"><a class="visit done" target=mainpane ' +
-					'href="inventory.php?action=pocket"><b>Pick</b> pocket (');
-				picker.append(pocketsLeft);
-				picker.append(' left)</a></td></tr>');
-			}
-			break;
-		case $item[unwrapped knock-off retro superhero cape]:
-			picker_retrosupercapemeta();
-			picker_retrosupercapeall();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapemeta" href="#">Change to optimal setups!</a></td></tr>');
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup! (currently ' + retroSupercapeCurrentSetupName() + ')</a></td></tr>');
-			break;
-		case $item[backup camera]:
-			picker_backupcamera();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera (currently ' + get_property("backupCameraMode") + ')</a></td></tr>');
-			break;
-		case $item[Daylight Shavings Helmet]:
-			picker_fakebeard();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerfakebeard" href="#"><b>Check</b> upcoming beards</a></td></tr>');
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="account_facialhair.php"><b>Adjust</b> your facial hair</a></td></tr>');
-			break;
-		case $item[combat lover's locket]:
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?reminisce=1"><b>Reminisce</b> about past loves</a></td></tr>');
-			break;
-		case $item[unbreakable umbrella]:
-			picker_unbrella();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerunbrella" href="#"><b>Reconfigure</b> your umbrella</a></td></tr>');
-			break;
-		case $item[designer sweatpants]:
-		case $item[replica designer sweatpants]:
-			picker_sweatpants();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" ');
-			picker.append('rel="chit_pickersweatpants" href="#"><b>Use</b> some sweat</a>');
-			picker.append('</td></tr>');
-			break;
-		case $item[Jurassic Parka]:
-		case $item[replica Jurassic Parka]:
-			picker_jurassicparka();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" ');
-			picker.append('rel="chit_pickerjurassicparka" href="#"><b>Pick</b> parka mode</a>');
-			picker.append('</td></tr>');
-			break;
-		case $item[cursed monkey's paw]:
-			int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
-			if(wishesUsed >= 0 && wishesUsed < 5) {
-				skill currSkill = monkeyPawSkill(wishesUsed);
-				skill nextSkill = monkeyPawSkill(wishesUsed + 1);
-				start_option(in_slot, true);
-				picker.append('<td colspan="2"><a class="visit done" target=mainpane href="main.php?pwd=');
-				picker.append(my_hash());
-				picker.append('&action=cmonk"><b>Wish</b> for an item or effect<br /><span class="descline">Current skill: ');
-				picker.append(currSkill);
-				picker.append(' (');
-				picker.append(monkeyPawSkillDesc(currSkill));
-				picker.append(')<br />Next skill: ');
-				picker.append(nextSkill);
-				picker.append(' (');
-				picker.append(monkeyPawSkillDesc(nextSkill));
-				picker.append(')</a></td></tr>');
-			}
-			break;
-		case $item[Cincho de Mayo]:
-		case $item[replica Cincho de Mayo]:
-			int restsTaken = get_property("_cinchoRests").to_int();
-			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
-			int freeRestsLeft = total_free_rests() - get_property("timesRested").to_int();
-			pickerCincho();
-			start_option(in_slot, true);
-			picker.append('<td colspan="2"><a class="chit_launcher done" ');
-			picker.append('rel="chit_pickercincho" href="#"><b>Use</b> some cinch<br /><span class="descline">');
-			picker.append(get_property("_cinchoRests"));
-			picker.append(' rests taken, will gain ');
-			picker.append(cinchToGain);
-			picker.append(', ');
-			picker.append(freeRestsLeft > 0 ? freeRestsLeft.to_string() : 'no');
-			picker.append(' free rests left</span></a>');
-			picker.append('</td></tr>');
-			break;
-		case $item[august scepter]:
-		case $item[replica august scepter]:
-			int augUsed = get_property("_augSkillsCast").to_int();
-			int augUsable = 5;
-			if(can_interact()) {
-				++augUsable;
-				if(get_property("_augTodayCast").to_boolean()) {
-					++augUsed;
+	item_info info = getItemInfo(in_slot);
+	foreach i, extra in info.extra {
+		string descid = in_slot.descid;
+		string image = extra.optionImage;
+		item foldFrom = $item[none];
+		if(extra.foldText != '') {
+			foreach it in get_related(in_slot, 'fold') {
+				if(it != in_slot) {
+					foldFrom = it;
+					break;
 				}
 			}
-			if(augUsed >= augUsable) {
-				break;
+			descid = foldFrom.descid;
+			if(image == '') {
+				image = itemimage(foldFrom.image);
 			}
-			pickerAugust();
-			start_option(in_slot, true);
-			int todayNum = today_to_string().to_int() % 100;
-			picker.append('<td colspan="2"><a class="chit_launcher done" ');
-			picker.append('rel="chit_pickeraugust" href="#"><b>Celebrate</b> some holidays');
-			string [int] descStuff;
-			int [int] usedToday;
-			for(int i = 1; i <= 31; ++i) {
-				if(get_property("_aug" + i + "Cast").to_boolean()) {
-					usedToday[usedToday.count()] = i;
-				}
-			}
-			if(usedToday.count() > 0) {
-				buffer usedTodayStr;
-				usedTodayStr.append('Used today: ');
-				for(int i = 0; i < usedToday.count(); ++i) {
-					if(i != 0) {
-						usedTodayStr.append(", ");
-					}
-					usedTodayStr.append(usedToday[i]);
-					if(usedToday[i] == todayNum) {
-						usedTodayStr.append(" (free)");
-					}
-				}
-				descStuff[descStuff.count()] = usedTodayStr.to_string();
-			}
-			if(can_interact() && !get_property("_augTodayCast").to_boolean()) {
-				descStuff[descStuff.count()] = todayNum + " free today";
-			}
-			if(descStuff.count() > 0) {
-				picker.append('<br /><span class="descline">');
-				for(int i = 0; i < descStuff.count(); ++i) {
-					if(i != 0) {
-						picker.append(', ');
-					}
-					picker.append(descStuff[i]);
-				}
-				picker.append('</span>');
-			}
-			picker.append('</a></td></tr>');
-			break;
+		}
+		if(image == '') {
+			image = itemimage(in_slot.image);
+		}
+		picker.tagStart('tr', attrmap { 'class': 'pickitem' });
+		picker.tagStart('td', attrmap { 'class': 'icon' });
+		picker.tagStart('a', attrmap {
+			'class': 'done',
+			'href': '#',
+			'onclick': 'descitem(' + descid + ',0,event); return false;',
+		});
+		string imgClass = 'chit_icon';
+		if(info.hasDrops) {
+			imgClass += ' hasdrops';
+		}
+		if(info.dangerLevel == DANGER_WARNING) {
+			imgClass += ' warning';
+		}
+		else if(info.dangerLevel == DANGER_DANGEROUS) {
+			imgClass += ' danger';
+		}
+		else if(info.dangerLevel == DANGER_GOOD) {
+			imgClass += ' good';
+		}
+		picker.addImg(image, attrmap {
+			'class': imgClass,
+			'title': 'Click for item description',
+		});
+		picker.tagFinish('a');
+		picker.tagFinish('td');
+		picker.tagStart('td', attrmap { 'colspan': '2' });
+		if(extra.pickerName != '') {
+			string pickerFunc = 'picker_' + extra.pickerName;
+			call void pickerFunc();
+			picker.tagStart('a', attrmap {
+				'class': 'chit_launcher done',
+				'rel': 'chit_picker' + extra.pickerName,
+				'href': '#',
+			});
+			picker.append(extra.pickerLauncherText);
+			picker.tagFinish('a');
+		}
+		else if(extra.foldText != '') {
+			picker.tagStart('a', attrmap {
+				'class': 'change',
+				'href': sideCommand('fold ' + foldFrom.to_string()),
+			});
+			picker.append(extra.foldText);
+			picker.tagFinish('a');
+		}
+		else if(extra.genericLinkText != '') {
+			picker.tagStart('a', extra.genericLinkAttrs);
+			picker.append(extra.genericLinkText);
+			picker.tagFinish('a');
+		}
+		picker.tagFinish('td');
+		picker.tagFinish('tr');
 	}
 
 	void add_favorite_button(buffer result, item it) {
