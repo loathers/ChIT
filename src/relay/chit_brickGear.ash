@@ -633,138 +633,6 @@ void addFavGear() {
 	}
 }
 
-// This isn't really a picker, it just uses the picker layout
-void pickerFakeDaylightShavingsHelmet() {
-	buffer picker;
-	picker.pickerStart("fakebeard", "Check out beard ordering");
-
-	void addBeard(effect beard) {
-		picker.append('<tr class="pickitem');
-		if(have_effect(beard) > 0)
-			picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(beard.image);
-		picker.append('" /></td><td colspan="2">');
-		picker.append(beard.to_string());
-		picker.append('<br /><span class="descline">');
-		picker.append(parseMods(string_modifier(beard, "Evaluated Modifiers")));
-		picker.append('</span></td></tr>');
-	}
-
-	effect [int] beardOrder = getBeardOrder();
-
-	int beardStartNum = getCurrBeardNum();
-	if(beardStartNum == -1) {
-		// this works even if last beard is unknown because we want to start at 0 there
-		// and it returns -1 in that case
-		beardStartNum = (getLastBeardNum() + 1) % 11;
-	}
-
-	for(int i = 0; i < 11; ++i) {
-		int beardToDisplay = (i + beardStartNum) % 11;
-		addBeard(beardOrder[beardToDisplay]);
-	}
-
-	picker.pickerFinish();
-}
-
-void pickerUnbrella() {
-	buffer picker;
-	picker.pickerStart("unbrella", "Reconfigure your unbrella");
-
-	void addSetting(string name, string desc, string command, string icon) {
-		boolean active = get_property("umbrellaState") == name;
-
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Current</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("umbrella " + command));
-			picker.append('"><b>Configure</b> to be ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
-	}
-
-	addSetting("broken", "+25% ML", "broken", "unbrella7.gif");
-	addSetting("forward-facing", "+25 DR, Shield", "forward", "unbrella3.gif");
-	addSetting("bucket style", "+25% Item Drop", "bucket", "unbrella5.gif");
-	addSetting("pitchfork style", "+25 Weapon Damage", "pitchfork", "unbrella8.gif");
-	addSetting("constantly twirling", "+25 Spell Damage", "twirling", "unbrella6.gif");
-	addSetting("cocoon", "-10% combat", "cocoon", "unbrella1.gif");
-
-	picker.pickerFinish("Reconfiguring your unbrella");
-}
-
-void pickerSweatpants() {
-	buffer picker;
-	int sweat = get_property("sweat").to_int();
-	int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
-	picker.pickerStart("sweatpants", "Sweat Magic (" + sweat + "% sweaty)");
-
-	void addSweatSkill(skill sk, string desc, int cost) {
-		boolean noBooze = (sk == $skill[Sweat Out Some Booze])
-			&& (get_property("_sweatOutSomeBoozeUsed").to_int() >= 3);
-		boolean canCast = !sk.combat && cost <= sweat && !noBooze;
-
-		if(noBooze) {
-			desc += '<br />(Already used up for today)';
-		}
-		else if(sweat < cost) {
-			desc += '<br />(Not enough sweat!)';
-		}
-
-		picker.pickerSkillOption(sk, desc, cost + " sweat", canCast);
-	}
-
-	addSweatSkill($skill[Sip Some Sweat], "Restore 50 MP", 5);
-	addSweatSkill($skill[Drench Yourself in Sweat], "+100% Init for 5 turns", 15);
-	addSweatSkill($skill[Sweat Out Some Booze], "Cleanse 1 liver (" + sweatboozeleft
-		+ " left today)", 25);
-	addSweatSkill($skill[Make Sweat-Ade], "Does what the skill name says", 50);
-	addSweatSkill($skill[Sweat Flick], "Deals sweat sleaze damage", 1);
-	addSweatSkill($skill[Sweat Spray], "Deal minor sleaze damage for the rest of combat", 3);
-	addSweatSkill($skill[Sweat Flood], "Stun for 5 rounds", 5);
-	addSweatSkill($skill[Sweat Sip], "Restore 50 MP", 5);
-
-	picker.pickerFinish("Sweating the small stuff...");
-}
-
-void pickerJurassicParka() {
-	buffer picker;
-	string currMode = get_property("parkaMode");
-	int yellowTurns = have_effect($effect[Everything Looks Yellow]);
-	int spikesLeft = 5 - get_property("_spikolodonSpikeUses").to_int();
-	picker.pickerStart('jurassicparka', "Change Parka Mode");
-
-	void addMode(string name, string desc, string image) {
-		string switchLink = '<a class="change" href="' + sideCommand("parka " + name) + '">';
-		boolean current = currMode == name;
-
-		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, "/images/itemimages/" + image, current);
-	}
-
-	addMode("kachungasaur", "Max HP +100%, +50% Meat Drop, +2 Cold Res", "jparka8.gif");
-	addMode("dilophosaur", "+20 All Sleaze Damage, +2 Stench Res, Free Kill Yellow Ray ("
-		+ (yellowTurns > 0 ? (yellowTurns + " adv until usable") : "ready") + ")", "jparka3.gif");
-	addMode("spikolodon", "+" + min(3 * my_level(), 33) + " ML, +2 Sleaze Res, "
-		+ (spikesLeft > 0 ? spikesLeft.to_string() : "no") + " non-com forces left", "jparka2.gif");
-	addMode("ghostasaurus", "10 DR, +50 Max MP, +2 Spooky Res", "jparka1.gif");
-	addMode("pterodactyl", "+5% noncom, +50% init, +2 Hot Res", "jparka9.gif");
-
-	picker.pickerFinish("Pulling dino tab...");
-}
-
 void pickerCincho() {
 	int cinch = 100 - get_property("_cinchUsed").to_int();
 
@@ -1102,7 +970,7 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera (currently ' + get_property("backupCameraMode") + ')</a></td></tr>');
 			break;
 		case $item[Daylight Shavings Helmet]:
-			pickerFakeDaylightShavingsHelmet();
+			picker_fakebeard();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerfakebeard" href="#"><b>Check</b> upcoming beards</a></td></tr>');
 			start_option(in_slot, true);
@@ -1113,13 +981,13 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="visit done" target=mainpane href="inventory.php?reminisce=1"><b>Reminisce</b> about past loves</a></td></tr>');
 			break;
 		case $item[unbreakable umbrella]:
-			pickerUnbrella();
+			picker_unbrella();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerunbrella" href="#"><b>Reconfigure</b> your umbrella</a></td></tr>');
 			break;
 		case $item[designer sweatpants]:
 		case $item[replica designer sweatpants]:
-			pickerSweatpants();
+			picker_sweatpants();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
 			picker.append('rel="chit_pickersweatpants" href="#"><b>Use</b> some sweat</a>');
@@ -1127,7 +995,7 @@ void pickerGear(slot s) {
 			break;
 		case $item[Jurassic Parka]:
 		case $item[replica Jurassic Parka]:
-			pickerJurassicParka();
+			picker_jurassicparka();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" ');
 			picker.append('rel="chit_pickerjurassicparka" href="#"><b>Pick</b> parka mode</a>');

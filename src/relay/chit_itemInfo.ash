@@ -136,6 +136,41 @@ string beardToShorthand(effect beard) {
 	return shorthands[beard];
 }
 
+// This isn't really a picker, it just uses the picker layout
+void picker_fakebeard() {
+	buffer picker;
+	picker.pickerStart("fakebeard", "Check out beard ordering");
+
+	void addBeard(effect beard) {
+		picker.append('<tr class="pickitem');
+		if(have_effect(beard) > 0)
+			picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(beard.image);
+		picker.append('" /></td><td colspan="2">');
+		picker.append(beard.to_string());
+		picker.append('<br /><span class="descline">');
+		picker.append(parseMods(string_modifier(beard, "Evaluated Modifiers")));
+		picker.append('</span></td></tr>');
+	}
+
+	effect [int] beardOrder = getBeardOrder();
+
+	int beardStartNum = getCurrBeardNum();
+	if(beardStartNum == -1) {
+		// this works even if last beard is unknown because we want to start at 0 there
+		// and it returns -1 in that case
+		beardStartNum = (getLastBeardNum() + 1) % 11;
+	}
+
+	for(int i = 0; i < 11; ++i) {
+		int beardToDisplay = (i + beardStartNum) % 11;
+		addBeard(beardOrder[beardToDisplay]);
+	}
+
+	picker.pickerFinish();
+}
+
 /*****************************************************
 	cursed monkey's paw support
 *****************************************************/
@@ -580,6 +615,103 @@ void picker_backupcamera() {
 	picker.pickerFinish("Configuring your camera...");
 }
 
+void picker_unbrella() {
+	buffer picker;
+	picker.pickerStart("unbrella", "Reconfigure your unbrella");
+
+	void addSetting(string name, string desc, string command, string icon) {
+		boolean active = get_property("umbrellaState") == name;
+
+		picker.append('<tr class="pickitem');
+		if(active) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('" /></td><td colspan="2">');
+		if(active) {
+			picker.append('<b>Current</b>: ');
+		}
+		else {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("umbrella " + command));
+			picker.append('"><b>Configure</b> to be ');
+		}
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(!active) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addSetting("broken", "+25% ML", "broken", "unbrella7.gif");
+	addSetting("forward-facing", "+25 DR, Shield", "forward", "unbrella3.gif");
+	addSetting("bucket style", "+25% Item Drop", "bucket", "unbrella5.gif");
+	addSetting("pitchfork style", "+25 Weapon Damage", "pitchfork", "unbrella8.gif");
+	addSetting("constantly twirling", "+25 Spell Damage", "twirling", "unbrella6.gif");
+	addSetting("cocoon", "-10% combat", "cocoon", "unbrella1.gif");
+
+	picker.pickerFinish("Reconfiguring your unbrella");
+}
+
+void picker_sweatpants() {
+	buffer picker;
+	int sweat = get_property("sweat").to_int();
+	int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
+	picker.pickerStart("sweatpants", "Sweat Magic (" + sweat + "% sweaty)");
+
+	void addSweatSkill(skill sk, string desc, int cost) {
+		boolean noBooze = (sk == $skill[Sweat Out Some Booze])
+			&& (get_property("_sweatOutSomeBoozeUsed").to_int() >= 3);
+		boolean canCast = !sk.combat && cost <= sweat && !noBooze;
+
+		if(noBooze) {
+			desc += '<br />(Already used up for today)';
+		}
+		else if(sweat < cost) {
+			desc += '<br />(Not enough sweat!)';
+		}
+
+		picker.pickerSkillOption(sk, desc, cost + " sweat", canCast);
+	}
+
+	addSweatSkill($skill[Sip Some Sweat], "Restore 50 MP", 5);
+	addSweatSkill($skill[Drench Yourself in Sweat], "+100% Init for 5 turns", 15);
+	addSweatSkill($skill[Sweat Out Some Booze], "Cleanse 1 liver (" + sweatboozeleft
+		+ " left today)", 25);
+	addSweatSkill($skill[Make Sweat-Ade], "Does what the skill name says", 50);
+	addSweatSkill($skill[Sweat Flick], "Deals sweat sleaze damage", 1);
+	addSweatSkill($skill[Sweat Spray], "Deal minor sleaze damage for the rest of combat", 3);
+	addSweatSkill($skill[Sweat Flood], "Stun for 5 rounds", 5);
+	addSweatSkill($skill[Sweat Sip], "Restore 50 MP", 5);
+
+	picker.pickerFinish("Sweating the small stuff...");
+}
+
+void picker_jurassicparka() {
+	buffer picker;
+	string currMode = get_property("parkaMode");
+	int yellowTurns = have_effect($effect[Everything Looks Yellow]);
+	int spikesLeft = 5 - get_property("_spikolodonSpikeUses").to_int();
+	picker.pickerStart('jurassicparka', "Change Parka Mode");
+
+	void addMode(string name, string desc, string image) {
+		string switchLink = '<a class="change" href="' + sideCommand("parka " + name) + '">';
+		boolean current = currMode == name;
+
+		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, "/images/itemimages/" + image, current);
+	}
+
+	addMode("kachungasaur", "Max HP +100%, +50% Meat Drop, +2 Cold Res", "jparka8.gif");
+	addMode("dilophosaur", "+20 All Sleaze Damage, +2 Stench Res, Free Kill Yellow Ray ("
+		+ (yellowTurns > 0 ? (yellowTurns + " adv until usable") : "ready") + ")", "jparka3.gif");
+	addMode("spikolodon", "+" + min(3 * my_level(), 33) + " ML, +2 Sleaze Res, "
+		+ (spikesLeft > 0 ? spikesLeft.to_string() : "no") + " non-com forces left", "jparka2.gif");
+	addMode("ghostasaurus", "10 DR, +50 Max MP, +2 Spooky Res", "jparka1.gif");
+	addMode("pterodactyl", "+5% noncom, +50% init, +2 Hot Res", "jparka9.gif");
+
+	picker.pickerFinish("Pulling dino tab...");
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
@@ -844,6 +976,12 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(nextBeard != $effect[none]) {
 				info.addToDesc(beardToShorthand(nextBeard) + (getCurrBeard() != $effect[none] ? ' next' : ' due'));
 			}
+			info.addExtra(extraInfoPicker('fakebeard', 'Check upcoming beards'));
+			info.addExtra(extraInfoGenericLink('Adjust your facial hair', attrmap {
+				'class': 'visit done',
+				'target': 'mainpane',
+				'href': 'account_facialhair.php',
+			}));
 			break;
 		}
 		case $item[cursed magnifying glass]:
@@ -852,9 +990,15 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[combat lover's locket]:
 			info.addDrop(new drop_info('', locketFightsRemaining(), 'reminiscence', 'reminiscences'));
+			info.addExtra(extraInfoGenericLink('Reminisce about past loves', attrmap {
+				'class': 'visit done',
+				'target': 'mainpane',
+				'href': 'inventory.php?reminisce=1',
+			}));
 			break;
 		case $item[unbreakable umbrella]:
 			info.addToDesc(get_property('umbrellaState'));
+			info.addExtra(extraInfoPicker('unbrella', 'Reconfigure your umbrella'));
 			break;
 		case $item[June cleaver]: {
 			int juneFights = get_property('_juneCleaverFightsLeft').to_int();
@@ -873,6 +1017,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('sweat', LIMIT_TOTAL, '% sweat'),
 				new drop_info('_sweatOutSomeBoozeUsed', 3, 'booze sweat', 'booze sweats'),
 			});
+			info.addExtra(extraInfoPicker('sweatpants', 'Use some sweat'));
 			break;
 		case $item[Jurassic Parka]:
 		case $item[replica Jurassic Parka]: {
@@ -880,6 +1025,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(parkaMode.length() > 0) {
 				info.addToDesc(parkaMode + ' mode');
 			}
+			info.addExtra(extraInfoPicker('jurassicparka', 'Pick parka mode'));
 			break;
 		}
 		case $item[cursed monkey's paw]: {
