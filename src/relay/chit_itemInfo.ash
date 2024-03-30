@@ -537,6 +537,49 @@ void picker_powerfulglove() {
 	picker.pickerFinish("Entering cheat code...");
 }
 
+void picker_backupcamera() {
+	buffer picker;
+	picker.pickerStart("backupcamera", "Configure your camera");
+
+	void addSetting(string name, string desc, string command, string icon) {
+		boolean active = get_property("backupCameraMode") == command;
+		boolean needsVerb = !name.starts_with('<b>');
+
+		picker.append('<tr class="pickitem');
+		if(active) picker.append(' currentitem');
+		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
+		picker.append(icon);
+		picker.append('" /></td><td colspan="2">');
+		if(active) {
+			picker.append('<b>Current</b>: ');
+		}
+		else {
+			picker.append('<a class="change" href="');
+			picker.append(sideCommand("backupcamera " + command));
+			picker.append('">');
+			if(needsVerb) picker.append('<b>Toggle</b> to ');
+		}
+		picker.append(name);
+		picker.append('<br /><span class="descline">');
+		picker.append(desc);
+		picker.append('</span>');
+		if(!active) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	if(get_property("backupCameraReverserEnabled").to_boolean()) {
+		addSetting("<b>Disable</b> reverser", "Make everything confusing", "reverser off", "backcamera.gif");
+	}
+	else {
+		addSetting("<b>Enable</b> reverser", "Make everything look normal", "reverser on", "backcamera.gif");
+	}
+	addSetting("Infrared Spectrum", "+50% Meat Drops", "meat", "meat.gif");
+	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
+	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
+
+	picker.pickerFinish("Configuring your camera...");
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
@@ -602,6 +645,8 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				info.dangerLevel = DANGER_DANGEROUS;
 				info.addToDesc('REVERSER NOT ENABLED!');
 			}
+			info.addExtra(extraInfoPicker('backupcamera', 'Configure your camera (currently '
+				+ get_property('backupCameraMode') + ')'));
 			break;
 		case $item[V for Vivala mask]:
 		case $item[replica V for Vivala mask]:

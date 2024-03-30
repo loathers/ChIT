@@ -633,84 +633,6 @@ void addFavGear() {
 	}
 }
 
-void pickerPowerfulGlove() {
-	buffer picker;
-	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
-	picker.pickerStart("powerfulglove", "Cheat at life (" + batteryLeft + "% left)");
-
-	void addCheat(skill cheat, string desc) {
-		string cheatLink = '<a class="change" href="' + sideCommand("cast 1 " + cheat.to_string()) + '">';
-
-		picker.append('<tr class="pickitem');
-		if(cheat.combat) picker.append(' currentitem');
-		picker.append('"><td class="icon"><a class="done" onclick=\'javascript:poop("desc_skill.php?whichskill=');
-		picker.append(cheat.to_int());
-		picker.append('&self=true","skill", 350, 300)\' href="#"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(cheat.image);
-		picker.append('" title="Pop out skill description" /></a></td><td colspan="2">');
-		if(!cheat.combat) {
-			picker.append(cheatLink);
-			picker.append('<b>ENTER</b> ');
-		}
-		picker.append(cheat.to_string());
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		if(cheat.combat) picker.append('<br />(Available in combat)');
-		picker.append('</span></a></td></tr>');
-	}
-
-	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)");
-	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)");
-	if(batteryLeft >= 10)
-		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)");
-	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)");
-
-	picker.pickerFinish("Entering cheat code...");
-}
-
-void pickerBackupCamera() {
-	buffer picker;
-	picker.pickerStart("backupcamera", "Configure your camera");
-
-	void addSetting(string name, string desc, string command, string icon) {
-		boolean active = get_property("backupCameraMode") == command;
-		boolean needsVerb = !name.starts_with('<b>');
-
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Current</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("backupcamera " + command));
-			picker.append('">');
-			if(needsVerb) picker.append('<b>Toggle</b> to ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
-	}
-
-	if(get_property("backupCameraReverserEnabled").to_boolean()) {
-		addSetting("<b>Disable</b> reverser", "Make everything confusing", "reverser off", "backcamera.gif");
-	}
-	else {
-		addSetting("<b>Enable</b> reverser", "Make everything look normal", "reverser on", "backcamera.gif");
-	}
-	addSetting("Infrared Spectrum", "+50% Meat Drops", "meat", "meat.gif");
-	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
-	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
-
-	picker.pickerFinish("Configuring your camera...");
-}
-
 // This isn't really a picker, it just uses the picker layout
 void pickerFakeDaylightShavingsHelmet() {
 	buffer picker;
@@ -1144,7 +1066,7 @@ void pickerGear(slot s) {
 		case $item[replica Powerful Glove]:
 			int batteryUsed = get_property("_powerfulGloveBatteryPowerUsed").to_int();
 			if(batteryUsed < 100) {
-				pickerPowerfulGlove();
+				picker_powerfulglove();
 				start_option(in_slot, false);
 				picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerpowerfulglove" href="#">Enter a cheat code!</a></td></tr>');
 			}
@@ -1175,7 +1097,7 @@ void pickerGear(slot s) {
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercapeall" href="#">Change to any setup! (currently ' + retroSupercapeCurrentSetupName() + ')</a></td></tr>');
 			break;
 		case $item[backup camera]:
-			pickerBackupCamera();
+			picker_backupcamera();
 			start_option(in_slot, true);
 			picker.append('<td colspan="2"><a class="chit_launcher done" rel="chit_pickerbackupcamera" href="#"><b>Configure</b> your camera (currently ' + get_property("backupCameraMode") + ')</a></td></tr>');
 			break;
