@@ -39,21 +39,25 @@ void picker_edpiece() {
 /*****************************************************
 	Daylight Shavings Helmet support
 *****************************************************/
-effect [int] getBeardOrder() {
-	effect [int] baseBeardOrder = {
-		$effect[Spectacle Moustache],
-		$effect[Toiletbrush Moustache],
-		$effect[Barbell Moustache],
-		$effect[Grizzly Beard],
-		$effect[Surrealist's Moustache],
-		$effect[Musician's Musician's Moustache],
-		$effect[Gull-Wing Moustache],
-		$effect[Space Warlord's Beard],
-		$effect[Pointy Wizard Beard],
-		$effect[Cowboy Stache],
-		$effect[Friendly Chops]
-	};
+boolean [effect] beardList = $effects[
+	Spectacle Moustache,
+	Toiletbrush Moustache,
+	Barbell Moustache,
+	Grizzly Beard,
+	Surrealist's Moustache,
+	Musician's Musician's Moustache,
+	Gull-Wing Moustache,
+	Space Warlord's Beard,
+	Pointy Wizard Beard,
+	Cowboy Stache,
+	Friendly Chops
+];
 
+effect [int] getBeardOrder() {
+	effect [int] baseBeardOrder;
+	foreach beard in beardList {
+		baseBeardOrder[baseBeardOrder.count()] = beard;
+	}
 	effect [int] beardOrder;
 	int classId = my_class().to_int();
 	int classIdMod = ((classId<=6)?classId:classId+1)% 6;
@@ -66,19 +70,7 @@ effect [int] getBeardOrder() {
 }
 
 effect getCurrBeard() {
-	foreach beard in $effects[
-		Spectacle Moustache,
-		Toiletbrush Moustache,
-		Barbell Moustache,
-		Grizzly Beard,
-		Surrealist's Moustache,
-		Musician's Musician's Moustache,
-		Gull-Wing Moustache,
-		Space Warlord's Beard,
-		Pointy Wizard Beard,
-		Cowboy Stache,
-		Friendly Chops
-	] {
+	foreach beard in beardList {
 		if(have_effect(beard) > 0) {
 			return beard;
 		}
