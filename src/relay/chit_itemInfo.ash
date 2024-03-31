@@ -111,21 +111,20 @@ effect getNextBeard() {
 }
 
 string beardToShorthand(effect beard) {
-	string [effect] shorthands = {
-		$effect[Spectacle Moustache]: 'item/spooky',
-		$effect[Toiletbrush Moustache]: 'ML/stench',
-		$effect[Barbell Moustache]: 'mus/gear',
-		$effect[Grizzly Beard]: 'mp reg/cold',
-		$effect[Surrealist's Moustache]: 'mys/food',
-		$effect[Musician's Musician's Moustache]: 'mox/booze',
-		$effect[Gull-Wing Moustache]: 'init/hot',
-		$effect[Space Warlord's Beard]: 'wpn dmg/crit',
-		$effect[Pointy Wizard Beard]: 'spl dmg/crit',
-		$effect[Cowboy Stache]: 'rng dmg/hp/mp',
-		$effect[Friendly Chops]: 'meat/sleaze'
-	};
-
-	return shorthands[beard];
+	switch(beard) {
+		case $effect[Spectacle Moustache]: return 'item/spooky';
+		case $effect[Toiletbrush Moustache]: return 'ML/stench';
+		case $effect[Barbell Moustache]: return 'mus/gear';
+		case $effect[Grizzly Beard]: return 'mp reg/cold';
+		case $effect[Surrealist's Moustache]: return 'mys/food';
+		case $effect[Musician's Musician's Moustache]: return 'mox/booze';
+		case $effect[Gull-Wing Moustache]: return 'init/hot';
+		case $effect[Space Warlord's Beard]: return 'wpn dmg/crit';
+		case $effect[Pointy Wizard Beard]: return 'spl dmg/crit';
+		case $effect[Cowboy Stache]: return 'rng dmg/hp/mp';
+		case $effect[Friendly Chops]: return 'meat/sleaze';
+		default: return '';
+	}
 }
 
 // This isn't really a picker, it just uses the picker layout
