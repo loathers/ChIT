@@ -354,7 +354,7 @@ int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
-	item_info info = getItemInfo(in_slot);
+	chit_info info = getItemInfo(in_slot);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
 
 	buffer picker;
@@ -524,7 +524,7 @@ void pickerGear(slot s) {
 	boolean [item] displayedItems;
 
 	boolean add_gear_option(buffer b, item it, string reason) {
-		item_info optionInfo = getItemInfo(it);
+		chit_info optionInfo = getItemInfo(it);
 		int danger_level = dangerLevel(it, s);
 		string cmd;
 		string action = "";

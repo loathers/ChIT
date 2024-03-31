@@ -1,5 +1,5 @@
-familiar_info getFamiliarInfo(familiar f) {
-	familiar_info info;
+chit_info getFamiliarInfo(familiar f, slot s) {
+	chit_info info;
 	info.image = itemimage(f.image);
 
 	switch(f) {
@@ -40,4 +40,8 @@ familiar_info getFamiliarInfo(familiar f) {
 	}
 
 	return info;
+}
+
+chit_info getFamiliarInfo(familiar f) {
+	return getFamiliarInfo(f, $slot[familiar]);
 }

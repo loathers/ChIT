@@ -3729,12 +3729,12 @@ void pickOutfit() {
 			noGearBrick = false;
 	if(noGearBrick) {
 		foreach it in favGear {
-			item_info info = getItemInfo(it);
+			chit_info info = getItemInfo(it);
 			special.addGear(it, namedesc(info));
 		}
 		foreach reason in recommendedGear {
 			foreach it in recommendedGear[reason] {
-				item_info info = getItemInfo(it);
+				chit_info info = getItemInfo(it);
 				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + namedesc(info));
 			}
 		}
@@ -4257,7 +4257,7 @@ void bakeHeader() {
 				string singlefamfav = singlefamfavmatch.group(0);
 				singlefamfav = singlefamfav.replace_string("[[", "[");
 				// Attend to familiar images also. (This uses mdofied familiar images!)
-				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), familiar_image(fam));
+				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), getFamiliarInfo(fam).image);
 				replacefamfavs += singlefamfav + ",";
 			}
 		}

@@ -506,178 +506,6 @@ int hasBjornDrops(familiar f) {
 	return 0;
 }
 
-// TODO: Move this function to chit_brickGear.ash
-int hasDrops(item it) {
-	switch(it) {
-		case $item[V for Vivala mask]:
-		case $item[replica V for Vivala mask]:
-			return 10 - to_int(get_property("_vmaskAdv"));
-		case $item[mayfly bait necklace]: return 30 - to_int(get_property("_mayflySummons"));
-		case $item[buddy bjorn]: return hasBjornDrops(my_bjorned_familiar());
-		case $item[crown of thrones]: return hasBjornDrops(my_enthroned_familiar());
-		case $item[pantsgiving]: return 10 - to_int(get_property("_pantsgivingCrumbs"));
-		// not exactly drops per se, but it's still beneficial to have these on until you max the counter
-		case $item[stinky cheese eye]: case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
-			return max(100 - to_int(get_property("_stinkyCheeseCount")), 0);
-		// also not exactly drops per se, but... yep
-		case $item[bone abacus]:
-			return max(1000 - to_int(get_property("boneAbacusVictories")), 0);
-		case $item[The Jokester's gun]:
-			if(get_property("_firedJokestersGun").to_boolean() == false)
-				return 1;
-			break;
-		case $item[Greatest American Pants]:
-		case $item[replica Greatest American Pants]:
-			if(get_property("_gapBuffs").to_int() < 5)
-				return 1;
-			// intentional fallthrough
-		case $item[navel ring of navel gazing]:
-			int runs = to_int(get_property("_navelRunaways"));
-			if(runs < 9) return 9 - runs;
-			break;
-		case $item[protonic accelerator pack]:
-			int turnsToGhost = to_int(get_property("nextParanormalActivity")) - total_turns_played();
-			string ghostLoc = get_property("ghostLocation");
-			if(ghostLoc != "" || turnsToGhost <= 0)
-				return 1;
-			break;
-		case $item[Kremlin's Greatest Briefcase]:
-			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
-			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
-			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
-			return darts + drinks + clicks;
-		case $item[deceased crimbo tree]:
-			int needles = to_int(get_property("garbageTreeCharge"));
-			return needles;
-		case $item[broken champagne bottle]:
-			int ounces = to_int(get_property("garbageChampagneCharge"));
-			return ounces;
-		case $item[makeshift garbage shirt]:
-			int scraps = to_int(get_property("garbageShirtCharge"));
-			return scraps;
-		case $item[mafia middle finger ring]:
-			if(get_property("_mafiaMiddleFingerRingUsed").to_boolean() == false)
-				return 1;
-			break;
-		case $item[FantasyRealm G. E. M.]:
-			matcher m = create_matcher("(\\d+) hours? remaining", chitSource["fantasyRealm"]);
-			if(find(m)) {
-				int hours = m.group(1).to_int();
-				return hours;
-			}
-			break;
-		case $item[latte lovers member's mug]:
-			int refills = 3 - get_property("_latteRefillsUsed").to_int();
-			if(refills > 0 || !get_property("_latteBanishUsed").to_boolean() ||
-					!get_property("_latteCopyUsed").to_boolean() ||
-					!get_property("_latteDrinkUsed").to_boolean())
-				return 1;
-			break;
-		case $item[&quot;I Voted!&quot; sticker]:
-			if((total_turns_played() % 11 == 1) &&
-				(total_turns_played() != get_property("lastVoteMonsterTurn").to_int()) &&
-				(get_property("_voteFreeFights").to_int() < 3))
-				return 1;
-			break;
-		case $item[Lil' Doctor&trade; bag]:
-			return 9 - get_property("_otoscopeUsed").to_int() - get_property("_reflexHammerUsed").to_int() - get_property("_chestXRayUsed").to_int();
-		case $item[Fourth of May Cosplay Saber]:
-		case $item[replica Fourth of May Cosplay Saber]:
-			return 5 - get_property("_saberForceUses").to_int();
-		case $item[Beach Comb]:
-			return 11 - get_property("_freeBeachWalksUsed").to_int();
-		case $item[Powerful Glove]:
-		case $item[replica Powerful Glove]:
-			return 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
-		case $item[Eight Days a Week Pill Keeper]:
-			int uses = (spleen_limit() - my_spleen_use()) / 3;
-			if(!get_property("_freePillKeeperUsed").to_boolean()) ++uses;
-			return uses;
-		case $item[vampyric cloake]:
-			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
-			return transformsLeft;
-		case $item[Cargo Cultist Shorts]:
-		case $item[replica Cargo Cultist Shorts]:
-			return get_property("_cargoPocketEmptied").to_boolean() ? 0 : 1;
-		case $item[backup camera]:
-			// 5 extra uses in You, Robot
-			return (my_path().id == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
-		case $item[familiar scrapbook]:
-			return get_property("scrapbookCharges").to_int() / 100;
-		case $item[industrial fire extinguisher]:
-		case $item[replica industrial fire extinguisher]:
-			return get_property("_fireExtinguisherCharge").to_int();
-		case $item[Daylight Shavings Helmet]:
-			foreach beard in $effects[Spectacle Moustache, Toiletbrush Moustache, Barbell Moustache, Grizzly Beard, Surrealist's Moustache, Musician's Musician's Moustache, Gull-Wing Moustache, Space Warlord's Beard, Pointy Wizard Beard, Cowboy Stache, Friendly Chops] {
-				if(have_effect(beard) > 0)
-				 return 0;
-			}
-			return 1;
-		case $item[cursed magnifying glass]:
-			if(get_property("cursedMagnifyingGlassCount").to_int() >= 13)
-				return 1;
-			break;
-		case $item[combat lover's locket]:
-			return locketFightsRemaining();
-		case $item[June cleaver]:
-			return (get_property("_juneCleaverFightsLeft").to_int() == 0) ? 1 : 0;
-		case $item[designer sweatpants]:
-		case $item[replica designer sweatpants]:
-			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
-			return max(sweatboozeleft, 0);
-		case $item[cursed monkey's paw]:
-			if(get_property("_monkeyPawWishesUsed").to_int() < 5) {
-				return 1;
-			}
-			break;
-		case $item[Cincho de Mayo]:
-		case $item[replica Cincho de Mayo]:
-			int cinch = 100 - get_property("_cinchUsed").to_int();
-			if(cinch > 0) return 1;
-			break;
-		case $item[august scepter]:
-		case $item[replica august scepter]:
-			int augUsed = get_property("_augSkillsCast").to_int();
-			int augUsable = 5;
-			if(can_interact()) {
-				++augUsable;
-				if(get_property("_augTodayCast").to_boolean()) {
-					++augUsed;
-				}
-			}
-			if(augUsed < augUsable) {
-				return 1;
-			}
-			break;
-	}
-
-	return 0;
-}
-
-// Set familiar image, including path to image. Some familiar images are purposefully changed, others need to be normalized.
-string familiar_image(familiar f) {
-	switch(f) {
-	case $familiar[none]: return "/images/itemimages/antianti.gif";
-	case $familiar[Fancypants Scarecrow]: return "/images/itemimages/pantscrow2.gif";
-	case $familiar[Disembodied Hand]: return "/images/itemimages/dishand.gif";
-	case $familiar[Mad Hatrack]: return "/images/itemimages/hatrack.gif";
-
-	case $familiar[Crimbo Shrub]:  // Get rid of that Gollywog look!
-		if(to_boolean(vars["chit.familiar.anti-gollywog"]))
-			return imagePath + 'crimboshrub_fxx_ckb.gif';
-		break;
-
-	case $familiar[Happy Medium]:
-		switch(f.image) {
-			case "medium_1.gif": return imagePath + 'medium_blue.gif';
-			case "medium_2.gif": return imagePath + 'medium_orange.gif';
-			case "medium_3.gif": return imagePath + 'medium_red.gif';
-		}
-		break;
-	}
-	return '/images/itemimages/' + f.image;
-}
-
 int hasDrops(familiar f) {
 	int drops = 0;
 
@@ -927,6 +755,7 @@ boolean isWeirdo(familiar f) {
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
+	chit_info info = getFamiliarInfo(f);
 	boolean pokeFam = (my_path().name == "Pocket Familiars");
 	familiar is100 = $familiar[none];
 	if(!isBjorn)
@@ -1074,7 +903,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 	}
 	else {
 		result.append('" src="');
-		result.append(familiar_image(f));
+		result.append(info.image);
 		result.append('" />');
 	}
 }
@@ -1208,7 +1037,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	picker.append('</a></td>');
 
 	picker.append('<td class="icon"><a target=charpane class="change" href="'+sideCommand("familiar none")+'">');
-	picker.append('<img src='+familiar_image($familiar[none])+' title="Use no familiar" />');
+	picker.append('<img src='+getFamiliarInfo($familiar[none]).image+' title="Use no familiar" />');
 	picker.append('</a></td>');
 
 	picker.append('<td colspan="2"><a target=mainpane class="visit done" href="familiar.php">');

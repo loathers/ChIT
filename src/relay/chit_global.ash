@@ -22,6 +22,12 @@ record buff {
 	boolean isIntrinsic;
 };
 
+// some constants
+int DANGER_NONE = 0;
+int DANGER_WARNING = 1;
+int DANGER_DANGEROUS = 2;
+int DANGER_GOOD = -1;
+
 record extra_info {
 	string optionImage; // leave blank for own image
 	// picker options
@@ -69,7 +75,7 @@ extra_info extraInfoGenericLink(string text, attrmap attrs) {
 	return extraInfoGenericLink(text, attrs, '');
 }
 
-record item_info {
+record chit_info {
 	string name;
 	string desc;
 	boolean hasDrops;
@@ -78,7 +84,7 @@ record item_info {
 	extra_info[int] extra;
 };
 
-string namedesc(item_info info) {
+string namedesc(chit_info info) {
 	string res = info.name;
 	if(info.desc != '') {
 		res += ' (' + info.desc + ')';
@@ -86,21 +92,117 @@ string namedesc(item_info info) {
 	return res;
 }
 
-record familiar_info {
-	string desc;
-	int dropsLeft;
-	string dropName;
-	int bjornDropsLeft;
-	string bjornDropName;
-	int dangerLevel;
-	string image;
+void addImg(buffer result, string imgSrc, attrmap attrs);
+
+void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
+	string imgClass = 'chit_icon';
+	if(info.hasDrops) {
+		imgClass += ' hasdrops';
+	}
+	if(info.dangerLevel == DANGER_WARNING) {
+		imgClass += ' warning';
+	}
+	else if(info.dangerLevel == DANGER_DANGEROUS) {
+		imgClass += ' danger';
+	}
+	else if(info.dangerLevel == DANGER_GOOD) {
+		imgClass += ' good';
+	}
+
+	attrmap imgAttrs = {
+		'class': imgClass,
+		'title': title,
+	};
+	if(onclick != '') {
+		imgAttrs['onclick'] = onclick;
+	}
+	result.addImg(info.image, imgAttrs);
+}
+
+void addToDesc(chit_info info, string toAdd) {
+	if(info.desc != '') {
+		info.desc += ', ';
+	}
+	info.desc += toAdd;
+}
+
+// if limit is 0, the prop is a total rather than something to subtract from limit
+int LIMIT_TOTAL = 0;
+// if limit is -1, the prop is a boolean and you have 1 left to come if false
+int LIMIT_BOOL = -1;
+// if limit is -2, the prop is a boolean and you have 1 left to come if true
+int LIMIT_BOOL_INVERTED = -2;
+
+record drop_info {
+	// if propName is '', limit is instead how many are left
+	string propName;
+	int limit;
+	string singular;
+	// if this is '', use singular for plural as well
+	// because of how new works, can just be left off for those cases
+	string plural;
 };
 
-// some constants
-int DANGER_NONE = 0;
-int DANGER_WARNING = 1;
-int DANGER_DANGEROUS = 2;
-int DANGER_GOOD = -1;
+typedef drop_info[int] drops_info;
+
+void addDrops(chit_info info, drop_info[int] drops) {
+	string toAdd = '';
+	boolean onlyBoolProps = true;
+	foreach i, drop in drops {
+		int left = 0;
+		if(drop.limit == LIMIT_BOOL) {
+			if(!get_property(drop.propName).to_boolean()) {
+				left = 1;
+			}
+		}
+		else if(drop.limit == LIMIT_BOOL_INVERTED) {
+			if(get_property(drop.propName).to_boolean()) {
+				left = 1;
+			}
+		}
+		else if(drop.limit == LIMIT_TOTAL) {
+			onlyBoolProps = false;
+			left = get_property(drop.propName).to_int();
+		}
+		else if(drop.propName != '') {
+			onlyBoolProps = false;
+			left = drop.limit - get_property(drop.propName).to_int();
+		}
+		else {
+			onlyBoolProps = false;
+			left = drop.limit;
+		}
+
+		if(left > 0) {
+			if(toAdd != '') {
+				toAdd += '/';
+			}
+			if(drop.limit >= 0) {
+				toAdd += left;
+			}
+			if(drop.plural == '') {
+				drop.plural = drop.singular;
+			}
+			if(drop.limit >= 0 && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
+				toAdd += ' ';
+			}
+			toAdd += (left == 1) ? drop.singular : drop.plural;
+		}
+	}
+	if(toAdd != '') {
+		toAdd += onlyBoolProps ? ' available' : ' left';
+		info.addToDesc(toAdd);
+		info.hasDrops = true;
+	}
+}
+
+void addDrop(chit_info info, drop_info drop) {
+	info.addDrops(drops_info { drop });
+}
+
+void addExtra(chit_info info, extra_info extra) {
+	info.extra[info.extra.count()] = extra;
+}
 
 /*****************************************************
 	Veracity's vProps

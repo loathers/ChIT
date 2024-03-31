@@ -322,96 +322,6 @@ void picker_retrosupercapeall() {
 }
 
 /*****************************************************
-	utility functions
-*****************************************************/
-void addToDesc(item_info info, string toAdd) {
-	if(info.desc != '') {
-		info.desc += ', ';
-	}
-	info.desc += toAdd;
-}
-
-// if limit is 0, the prop is a total rather than something to subtract from limit
-int LIMIT_TOTAL = 0;
-// if limit is -1, the prop is a boolean and you have 1 left to come if false
-int LIMIT_BOOL = -1;
-// if limit is -2, the prop is a boolean and you have 1 left to come if true
-int LIMIT_BOOL_INVERTED = -2;
-
-record drop_info {
-	// if propName is '', limit is instead how many are left
-	string propName;
-	int limit;
-	string singular;
-	// if this is '', use singular for plural as well
-	// because of how new works, can just be left off for those cases
-	string plural;
-};
-
-typedef drop_info[int] drops_info;
-
-void addDrops(item_info info, drop_info[int] drops) {
-	string toAdd = '';
-	boolean onlyBoolProps = true;
-	foreach i, drop in drops {
-		int left = 0;
-		if(drop.limit == LIMIT_BOOL) {
-			if(!get_property(drop.propName).to_boolean()) {
-				left = 1;
-			}
-		}
-		else if(drop.limit == LIMIT_BOOL_INVERTED) {
-			if(get_property(drop.propName).to_boolean()) {
-				left = 1;
-			}
-		}
-		else if(drop.limit == LIMIT_TOTAL) {
-			onlyBoolProps = false;
-			left = get_property(drop.propName).to_int();
-		}
-		else if(drop.propName != '') {
-			onlyBoolProps = false;
-			left = drop.limit - get_property(drop.propName).to_int();
-		}
-		else {
-			onlyBoolProps = false;
-			left = drop.limit;
-		}
-
-		if(left > 0) {
-			if(toAdd != '') {
-				toAdd += '/';
-			}
-			if(drop.limit >= 0) {
-				toAdd += left;
-			}
-			if(drop.plural == '') {
-				drop.plural = drop.singular;
-			}
-			if(drop.limit >= 0 && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
-				toAdd += ' ';
-			}
-			toAdd += (left == 1) ? drop.singular : drop.plural;
-		}
-	}
-	if(toAdd != '') {
-		toAdd += onlyBoolProps ? ' available' : ' left';
-		info.addToDesc(toAdd);
-		info.hasDrops = true;
-	}
-}
-
-familiar_info getFamiliarInfo(familiar f);
-
-void addDrop(item_info info, drop_info drop) {
-	info.addDrops(drops_info { drop });
-}
-
-void addExtra(item_info info, extra_info extra) {
-	info.extra[info.extra.count()] = extra;
-}
-
-/*****************************************************
 	Misc pickers
 *****************************************************/
 void pickerFamiliar(familiar f, string cmd, string title);
@@ -776,8 +686,10 @@ void picker_august() {
 /*****************************************************
 	The bulky function itself
 *****************************************************/
-item_info getItemInfo(item it, slot relevantSlot) {
-	item_info info;
+chit_info getFamiliarInfo(familiar f, slot s);
+
+chit_info getItemInfo(item it, slot relevantSlot) {
+	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
 
@@ -786,16 +698,20 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			info.image = itemimage('blank.gif');
 			break;
 		case $item[Buddy Bjorn]: {
-			familiar_info bjornInfo = getFamiliarInfo(my_bjorned_familiar());
+			chit_info bjornInfo = getFamiliarInfo(my_bjorned_familiar(), $slot[buddy-bjorn]);
 			info.image = bjornInfo.image;
-			info.addDrop(new drop_info('', bjornInfo.bjornDropsLeft, bjornInfo.bjornDropName));
+			if(bjornInfo.desc != '') {
+				info.addToDesc(bjornInfo.desc);
+			}
 			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
 			break;
 		}
 		case $item[Crown of Thrones]: {
-			familiar_info crownInfo = getFamiliarInfo(my_enthroned_familiar());
+			chit_info crownInfo = getFamiliarInfo(my_enthroned_familiar(), $slot[crown-of-thrones]);
 			info.image = crownInfo.image;
-			info.addDrop(new drop_info('', crownInfo.bjornDropsLeft, crownInfo.bjornDropName));
+			if(crownInfo.desc != '') {
+				info.addToDesc(crownInfo.desc);
+			}
 			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
 			break;
 		}
@@ -1039,6 +955,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			effect nextBeard = getNextBeard();
 			if(nextBeard != $effect[none]) {
 				info.addToDesc(beardToShorthand(nextBeard) + (getCurrBeard() != $effect[none] ? ' next' : ' due'));
+				info.hasDrops = true;
 			}
 			info.addExtra(extraInfoPicker('fakebeard', '<b>Check</b> upcoming beards'));
 			info.addExtra(extraInfoGenericLink('<b>Adjust</b> your facial hair', attrmap {
@@ -1289,6 +1206,43 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			info.addToDesc(retroSupercapeCurrentSetupName());
 			info.image = retroHeroToIcon(get_property('retroCapeSuperhero'));
 			break;
+		case $item[The Jokester's gun]:
+			info.addDrop(new drop_info('_firedJokestersGun', LIMIT_BOOL, 'firing'));
+			break;
+		case $item[protonic accelerator pack]: {
+			int turnsToGhost = get_property('nextParanormalActivity').to_int() - total_turns_played();
+			string ghostLoc = get_property("ghostLocation");
+			if(ghostLoc != '') {
+				info.addToDesc('ghost at ' + ghostLoc);
+				info.hasDrops = true;
+			}
+			else if(turnsToGhost <= 0) {
+				info.addToDesc('ghost due');
+				info.hasDrops = true;
+			}
+			else {
+				info.addToDesc('ghost in ' + turnsToGhost);
+			}
+			break;
+		}
+		case $item[mafia middle finger ring]:
+			info.addDrop(new drop_info('_mafiaMiddleFingerRingUsed', LIMIT_BOOL, 'banish'));
+			break;
+		case $item[&quot;I Voted!&quot; sticker]: {
+			int turnsPlayed = 1;
+			int turnsToFight = (1 - (turnsPlayed % 11)) % 11;
+			if(turnsToFight == 0 && turnsPlayed != get_property('lastVoteMonsterTurn').to_int()) {
+				info.addToDesc('vote monster due');
+				info.hasDrops = true;
+			}
+			else {
+				if(turnsToFight == 0) {
+					turnsToFight = 11;
+				}
+				info.addToDesc('vote monster in ' + turnsToFight);
+			}
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1318,35 +1272,14 @@ item_info getItemInfo(item it, slot relevantSlot) {
 	return info;
 }
 
-item_info getItemInfo(item it) {
+chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
 void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
-	item_info info = getItemInfo(it);
-
-	string imgClass = 'chit_icon';
-	if(info.hasDrops) {
-		imgClass += ' hasdrops';
-	}
-	if(info.dangerLevel == DANGER_WARNING) {
-		imgClass += ' warning';
-	}
-	else if(info.dangerLevel == DANGER_DANGEROUS) {
-		imgClass += ' danger';
-	}
-	else if(info.dangerLevel == DANGER_GOOD) {
-		imgClass += ' good';
-	}
-
-	attrmap imgAttrs = {
-		'class': imgClass,
-		'title': title,
-	};
-	if(popupDescOnClick) {
-		imgAttrs['onclick'] = 'descitem(' + it.descid + ',0,event); return false;';
-	}
-	result.addImg(info.image, imgAttrs);
+	chit_info info = getItemInfo(it);
+	result.addInfoIcon(info, title,
+		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
 }
 
 void addItemIcon(buffer result, item it, string title) {
