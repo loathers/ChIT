@@ -486,49 +486,6 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	picker.pickerFinish();
 }
 
-int checkDrops(string counter_prop, int limit) {
-	return limit - to_int(get_property(counter_prop));
-}
-
-int hasBjornDrops(familiar f) {
-	switch(f) {
-		case $familiar[grimstone golem]: return checkDrops("_grimstoneMaskDropsCrown",1);
-		case $familiar[grim brother]: return checkDrops("_grimFairyTaleDropsCrown",2);
-		case $familiar[trick-or-treating tot]: return checkDrops("_hoardedCandyDropsCrown",3);
-		case $familiar[optimistic candle]: return checkDrops("_optimisticCandleDropsCrown",3);
-		case $familiar[garbage fire]: return checkDrops("_garbageFireDropsCrown",3);
-		case $familiar[twitching space critter]: return checkDrops("_spaceFurDropsCrown",1);
-		case $familiar[Machine Elf]: return checkDrops("_abstractionDropsCrown",25);
-		case $familiar[Adventurous Spelunker]: return checkDrops("_oreDropsCrown",6);
-		case $familiar[Puck Man]: case $familiar[Ms. Puck Man]: return checkDrops("_yellowPixelDropsCrown", 25);
-	}
-
-	return 0;
-}
-
-int hasDrops(familiar f) {
-	int drops = 0;
-
-	if(f.drops_limit > 0)
-		drops += f.drops_limit - f.drops_today;
-
-	return drops;
-}
-
-boolean need_drop(familiar f) {
-	if(!can_interact())
-		switch(f) {
-		case $familiar[Grimstone Golem]:
-			return available_amount($item[grimstone mask]) + available_amount($item[ornate dowsing rod]) == 0;
-		case $familiar[Angry Jung Man]:
-			return available_amount($item[psychoanalytic jar])
-				+ available_amount($item[jar of psychoses (The Crackpot Mystic)])
-				+ available_amount($item[digital key]) == 0;
-		case $familiar[Gelatinous Cubeling]: return in_hardcore();
-		}
-	return true;
-}
-
 // status: hasdrops (blue border), alldrops (purple border), danger (red border), good (green border)
 // good is intended to say BRING THIS WITH YOU RIGHT NOW NO MATTER WHAT, just about
 // danger is obviously meant to say DO NOT USE THIS FAMILIAR RIGHT NOW
@@ -755,82 +712,24 @@ boolean isWeirdo(familiar f) {
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
-	chit_info info = getFamiliarInfo(f);
+	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[familiar] : $slot[buddy-bjorn]);
 	boolean pokeFam = (my_path().name == "Pocket Familiars");
-	familiar is100 = $familiar[none];
-	if(!isBjorn)
-		is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
-
-	buffer iconInfo;
 	int status = STATUS_NORMAL;
 
-	int dropsLeft = isBjorn ? hasBjornDrops(f) : hasDrops(f);
-	if(pokeFam && !isBjorn)
-		dropsLeft = 0;
+	buffer iconInfo;
+	iconInfo.append(info.desc);
 
-	if(dropsLeft > 0) {
-		iconInfo.append(dropsLeft);
-		iconInfo.append(" ");
-		// certain familiars drop different things in the crown/bjorn
-		if(isBjorn && $familiars[Machine Elf, Adventurous Spelunker, Puck Man, Ms. Puck Man] contains f) {
-			switch(f) {
-				case $familiar[Machine Elf]:
-					iconInfo.append("abstraction");
-					if(dropsLeft > 1) iconInfo.append("s");
-					break;
-				case $familiar[Adventurous Spelunker]:
-					iconInfo.append("non-quest ore");
-					break;
-				case $familiar[Puck Man]:
-				case $familiar[Ms. Puck Man]:
-					iconInfo.append("yellow pixel");
-					if(dropsLeft > 1) iconInfo.append("s");
-					break;
-			}
-		}
-		else if(f.drop_item != $item[none])
-			iconInfo.append(dropsLeft > 1 ? f.drop_item.plural : f.drop_item);
-		else {
-			if(f.drop_name != "") {
-				iconInfo.append(f.drop_name);
-				if(dropsLeft > 1)
-					iconInfo.append("s");
-			} else switch(f) {
-				case $familiar[trick-or-treating tot]:
-					if(dropsLeft > 1) iconInfo.append("candies");
-					else iconInfo.append("candy");
-					break;
-				case $familiar[optimistic candle]:
-					iconInfo.append("wax");
-					break;
-				case $familiar[garbage fire]:
-					iconInfo.append("newspaper");
-					if(dropsLeft > 1) iconInfo.append("s");
-					break;
-				case $familiar[twitching space critter]:
-					iconInfo.append("fur");
-					break;
-			}
-		}
-
-		if(f.drops_today == 0 && need_drop(f))
-			status = STATUS_ALLDROPS;
-		else
-			status = STATUS_HASDROPS;
+	if(info.hasDrops == DROPS_ALL) {
+		status = STATUS_ALLDROPS;
+	}
+	else if(info.hasDrops == DROPS_SOME) {
+		status = STATUS_HASDROPS;
 	}
 
-	if(!isBjorn && !pokeFam) {
-		int fightsLeft = f.fights_limit - f.fights_today;
-		if(fightsLeft > 0)
-		{
-			status = STATUS_ALLDROPS;
-			iconInfo.append(", ");
-			iconInfo.append(fightsLeft);
-			iconInfo.append(" fight");
-			if(fightsLeft != 1)
-				iconInfo.append("s");
-		}
+	if(pokeFam && !isBjorn)
+		info.hasDrops = DROPS_NONE;
 
+	if(!isBjorn && !pokeFam) {
 		int specialStatus = iconInfoSpecial(f, iconInfo);
 		if(specialStatus > status)
 			status = specialStatus;
@@ -850,11 +749,10 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 			status = STATUS_DANGER;
 	}
 
-	if(is100 != $familiar[none]) {
-		if(is100 != f)
-			status = STATUS_DANGER;
-		else
-			status = STATUS_GOOD;
+	switch(info.dangerLevel) {
+		case DANGER_WARNING: status = STATUS_DANGER; break;
+		case DANGER_DANGEROUS: status = STATUS_DANGER; break;
+		case DANGER_GOOD: status = STATUS_GOOD; break;
 	}
 
 	boolean isWeirdo = f.isWeirdo();

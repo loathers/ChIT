@@ -703,6 +703,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(bjornInfo.desc != '') {
 				info.addToDesc(bjornInfo.desc);
 			}
+			info.hasDrops = bjornInfo.hasDrops;
 			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
 			break;
 		}
@@ -712,6 +713,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(crownInfo.desc != '') {
 				info.addToDesc(crownInfo.desc);
 			}
+			info.hasDrops = crownInfo.hasDrops;
 			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
 			break;
 		}
@@ -804,10 +806,11 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			int runs = get_property('_navelRunaways').to_int();
 			if(runs < 3) {
 				info.addToDesc('100% free run');
-				info.hasDrops = true;
+				info.hasDrops = DROPS_ALL;
 			}
 			else if(runs < 6) {
 				info.addToDesc('80% free run');
+				info.hasDrops = DROPS_SOME;
 			}
 			else if(runs < 9) {
 				info.addToDesc('50% free run');
@@ -955,7 +958,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			effect nextBeard = getNextBeard();
 			if(nextBeard != $effect[none]) {
 				info.addToDesc(beardToShorthand(nextBeard) + (getCurrBeard() != $effect[none] ? ' next' : ' due'));
-				info.hasDrops = true;
+				info.hasDrops = DROPS_ALL;
 			}
 			info.addExtra(extraInfoPicker('fakebeard', '<b>Check</b> upcoming beards'));
 			info.addExtra(extraInfoGenericLink('<b>Adjust</b> your facial hair', attrmap {
@@ -995,7 +998,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		case $item[June cleaver]: {
 			int juneFights = get_property('_juneCleaverFightsLeft').to_int();
 			if(juneFights == 0) {
-				info.hasDrops = true;
+				info.hasDrops = DROPS_ALL;
 				info.addToDesc('noncom now!');
 			}
 			else {
@@ -1214,11 +1217,11 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			string ghostLoc = get_property("ghostLocation");
 			if(ghostLoc != '') {
 				info.addToDesc('ghost at ' + ghostLoc);
-				info.hasDrops = true;
+				info.hasDrops = DROPS_ALL;
 			}
 			else if(turnsToGhost <= 0) {
 				info.addToDesc('ghost due');
-				info.hasDrops = true;
+				info.hasDrops = DROPS_SOME;
 			}
 			else {
 				info.addToDesc('ghost in ' + turnsToGhost);
@@ -1229,11 +1232,12 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			info.addDrop(new drop_info('_mafiaMiddleFingerRingUsed', LIMIT_BOOL, 'banish'));
 			break;
 		case $item[&quot;I Voted!&quot; sticker]: {
-			int turnsPlayed = 1;
-			int turnsToFight = (1 - (turnsPlayed % 11)) % 11;
+			int turnsPlayed = total_turns_played();
+			int turnsToFight = (12 - (turnsPlayed % 11)) % 11;
 			if(turnsToFight == 0 && turnsPlayed != get_property('lastVoteMonsterTurn').to_int()) {
-				info.addToDesc('vote monster due');
-				info.hasDrops = true;
+				boolean isFree = get_property('_voteFreeFights').to_int() < 3;
+				info.addToDesc(isFree ? 'free vote monster due' : 'vote monster due');
+				info.hasDrops = isFree ? DROPS_ALL : DROPS_SOME;
 			}
 			else {
 				if(turnsToFight == 0) {

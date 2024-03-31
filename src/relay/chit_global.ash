@@ -28,6 +28,10 @@ int DANGER_WARNING = 1;
 int DANGER_DANGEROUS = 2;
 int DANGER_GOOD = -1;
 
+int DROPS_NONE = 0;
+int DROPS_SOME = 1;
+int DROPS_ALL = 2;
+
 record extra_info {
 	string optionImage; // leave blank for own image
 	// picker options
@@ -78,7 +82,7 @@ extra_info extraInfoGenericLink(string text, attrmap attrs) {
 record chit_info {
 	string name;
 	string desc;
-	boolean hasDrops;
+	int hasDrops;
 	int dangerLevel;
 	string image;
 	extra_info[int] extra;
@@ -96,9 +100,14 @@ void addImg(buffer result, string imgSrc, attrmap attrs);
 
 void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 	string imgClass = 'chit_icon';
-	if(info.hasDrops) {
+
+	if(info.hasDrops == DROPS_SOME) {
 		imgClass += ' hasdrops';
 	}
+	else if(info.hasDrops == DROPS_ALL) {
+		imgClass += ' alldrops';
+	}
+
 	if(info.dangerLevel == DANGER_WARNING) {
 		imgClass += ' warning';
 	}
@@ -132,6 +141,8 @@ int LIMIT_TOTAL = 0;
 int LIMIT_BOOL = -1;
 // if limit is -2, the prop is a boolean and you have 1 left to come if true
 int LIMIT_BOOL_INVERTED = -2;
+// if limit is -3, there is no limit to the amount that can drop
+int LIMIT_INFINITE = -3;
 
 record drop_info {
 	// if propName is '', limit is instead how many are left
@@ -145,45 +156,72 @@ record drop_info {
 
 typedef drop_info[int] drops_info;
 
-void addDrops(chit_info info, drop_info[int] drops) {
+boolean addDrops(chit_info info, drop_info[int] drops) {
 	string toAdd = '';
 	boolean onlyBoolProps = true;
+	boolean onlyInfinite = true;
+	int bestDrop = DROPS_NONE;
 	foreach i, drop in drops {
+		if(drop.limit != LIMIT_INFINITE) {
+			onlyInfinite = false;
+		}
+
 		int left = 0;
 		if(drop.limit == LIMIT_BOOL) {
 			if(!get_property(drop.propName).to_boolean()) {
 				left = 1;
+				bestDrop = DROPS_ALL;
 			}
 		}
 		else if(drop.limit == LIMIT_BOOL_INVERTED) {
 			if(get_property(drop.propName).to_boolean()) {
 				left = 1;
+				bestDrop = DROPS_ALL;
 			}
+		}
+		else if(drop.limit == LIMIT_INFINITE) {
+			onlyBoolProps = false;
+			left = -1;
 		}
 		else if(drop.limit == LIMIT_TOTAL) {
 			onlyBoolProps = false;
 			left = get_property(drop.propName).to_int();
+			if(bestDrop < DROPS_SOME) {
+				bestDrop = DROPS_SOME;
+			}
 		}
 		else if(drop.propName != '') {
 			onlyBoolProps = false;
 			left = drop.limit - get_property(drop.propName).to_int();
+			if(left == drop.limit) {
+				bestDrop = DROPS_ALL;
+			}
+			else if(left > 0 && bestDrop < DROPS_ALL) {
+				bestDrop = DROPS_SOME;
+			}
 		}
 		else {
 			onlyBoolProps = false;
 			left = drop.limit;
 		}
 
-		if(left > 0) {
+		if(left != 0) {
 			if(toAdd != '') {
 				toAdd += '/';
 			}
 			if(drop.limit >= 0) {
-				toAdd += left;
+				if(left >= 0) {
+					toAdd += left;
+				}
 			}
+			else if(drop.limit == LIMIT_INFINITE) {
+				toAdd += '&infin;';
+			}
+
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if(drop.limit >= 0 && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
+			if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
 				toAdd += ' ';
 			}
 			toAdd += (left == 1) ? drop.singular : drop.plural;
@@ -192,8 +230,12 @@ void addDrops(chit_info info, drop_info[int] drops) {
 	if(toAdd != '') {
 		toAdd += onlyBoolProps ? ' available' : ' left';
 		info.addToDesc(toAdd);
-		info.hasDrops = true;
+		if(info.hasDrops < bestDrop) {
+			info.hasDrops = bestDrop;
+		}
+		return true;
 	}
+	return false;
 }
 
 void addDrop(chit_info info, drop_info drop) {

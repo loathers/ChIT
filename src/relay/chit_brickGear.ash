@@ -418,8 +418,11 @@ void pickerGear(slot s) {
 			'onclick': 'descitem(' + descid + ',0,event); return false;',
 		});
 		string imgClass = 'chit_icon';
-		if(info.hasDrops) {
+		if(info.hasDrops == DROPS_SOME) {
 			imgClass += ' hasdrops';
+		}
+		else if(info.hasDrops == DROPS_ALL) {
+			imgClass += ' alldrops';
 		}
 		if(info.dangerLevel == DANGER_WARNING) {
 			imgClass += ' warning';
