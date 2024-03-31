@@ -746,7 +746,7 @@ string parseMods(string evm, boolean span) {
 	enew.set_length(0);
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
-		+"|Maximum HP( Percent|):([^,]+), Maximum MP\\6:([^,]+)"
+		+"|Maximum HP( Percent|): ([^,]+), Maximum MP\\6: ([^,]+)"
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
 		+'|Avatar: "([^"]+)"'
 		+'|[^ ]* Limit: 0'	// This is mostly for Cowrruption vs Cow Puncher having no limit
@@ -818,6 +818,8 @@ string parseMods(string evm, boolean span) {
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
 	evm = replace_string(evm,"Damage","Dmg");
+	evm = replace_string(evm,"Critical Hit","Crit");
+	evm = replace_string(evm,"Spell Critical","Spell Crit");
 	evm = replace_string(evm,"Initiative","Init");
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");
