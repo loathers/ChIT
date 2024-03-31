@@ -599,6 +599,11 @@ void pickerAddImage(buffer picker, string src) {
 
 void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs) {
 	picker.pickerStartOption(usable);
+
+	if(href == '') {
+		usable = false;
+	}
+
 	picker.pickerAddImage(imgsrc, imgLink, imgAttrs);
 	picker.tagStart('td', attrmap { 'colspan': '2' });
 	if(usable) {
@@ -663,10 +668,12 @@ void pickerSelectionOption(buffer picker, string name, string desc, string cmd, 
 string parseEff(effect eff);
 
 void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
-	if(desc == "") {
+	if(desc == '') {
 		desc = parseEff(eff);
 	}
-	desc += ' (' + duration + ' turns)';
+	if(duration > 0) {
+		desc += ' (' + duration + ' turns)';
+	}
 
 	picker.pickerGenericOption(verb, eff.to_string(), desc, "", href, usable, itemimage(eff.image), attrmap {
 		'class': 'done',

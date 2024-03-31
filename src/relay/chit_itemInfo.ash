@@ -134,16 +134,7 @@ void picker_fakebeard() {
 	picker.pickerStart("fakebeard", "Check out beard ordering");
 
 	void addBeard(effect beard) {
-		picker.append('<tr class="pickitem');
-		if(have_effect(beard) > 0)
-			picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(beard.image);
-		picker.append('" /></td><td colspan="2">');
-		picker.append(beard.to_string());
-		picker.append('<br /><span class="descline">');
-		picker.append(parseMods(string_modifier(beard, "Evaluated Modifiers")));
-		picker.append('</span></td></tr>');
+		picker.pickerEffectOption('', beard, '', 0, '', have_effect(beard) == 0);
 	}
 
 	effect [int] beardOrder = getBeardOrder();
@@ -835,14 +826,14 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			familiar_info bjornInfo = getFamiliarInfo(my_bjorned_familiar());
 			info.image = bjornInfo.image;
 			info.addDrop(new drop_info('', bjornInfo.bjornDropsLeft, bjornInfo.bjornDropName));
-			info.addExtra(extraInfoPicker('bjornify', 'Pick a buddy to bjornify!'));
+			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
 			break;
 		}
 		case $item[Crown of Thrones]: {
 			familiar_info crownInfo = getFamiliarInfo(my_enthroned_familiar());
 			info.image = crownInfo.image;
 			info.addDrop(new drop_info('', crownInfo.bjornDropsLeft, crownInfo.bjornDropName));
-			info.addExtra(extraInfoPicker('enthrone', 'Pick a buddy to enthrone!'));
+			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
 			break;
 		}
 		case $item[Mega Gem]:
@@ -887,7 +878,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				info.dangerLevel = DANGER_DANGEROUS;
 				info.addToDesc('REVERSER NOT ENABLED!');
 			}
-			info.addExtra(extraInfoPicker('backupcamera', 'Configure your camera (currently '
+			info.addExtra(extraInfoPicker('backupcamera', '<b>Configure</b> your camera (currently '
 				+ get_property('backupCameraMode') + ')'));
 			break;
 		case $item[V for Vivala mask]:
@@ -948,7 +939,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(info.name != 'navel ring') {
 				info.addDrop(new drop_info('_gapBuffs', 5, 'super power', 'super powers'));
 				if(get_property('_gapBuffs').to_int() < 5) {
-					info.addExtra(extraInfoPicker('gap', 'Activate Super Power.'));
+					info.addExtra(extraInfoPicker('gap', '<b>Activate</b> Super Power.'));
 				}
 			}
 			break;
@@ -959,7 +950,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('_kgbDispenserUses', 3, 'drink', 'drinks'),
 				new drop_info('_kgbClicksUsed', 22, 'click', 'clicks'),
 			});
-			info.addExtra(extraInfoGenericLink('Examine the briefcase.', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Examine</b> the briefcase.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=kgb',
@@ -980,12 +971,12 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				int hours = m.group(1).to_int();
 				info.addDrop(new drop_info('', hours, 'hour', 'hours'));
 			}
-			info.addExtra(extraInfoGenericLink('Visit FantasyRealm.', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Visit</b> FantasyRealm.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=realm_fantasy',
 			}));
-			info.addExtra(extraInfoGenericLink('Spend Rubees.', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Spend</b> Rubees.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'shop.php?whichshop=fantasyrealm',
@@ -1001,7 +992,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('_latteDrinkUsed', LIMIT_BOOL, 'gulp'),
 			});
 			if(get_property('_latteRefillsUsed').to_int() < 3) {
-				info.addExtra(extraInfoGenericLink('Get a refill.', attrmap {
+				info.addExtra(extraInfoGenericLink('<b>Get</b> a refill.', attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
 					'href': 'main.php?latte=1',
@@ -1029,13 +1020,13 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('_saberForceUses', 5, 'force', 'forces'),
 			});
 			if(unmodded) {
-				info.addExtra(extraInfoPicker('theforce', 'Install daily upgrade'));
+				info.addExtra(extraInfoPicker('theforce', '<b>Install</b> daily upgrade'));
 			}
 			break;
 		}
 		case $item[Beach Comb]:
 			info.addDrop(new drop_info('_freeBeachWalksUsed', 11, 'free comb', 'free combs'));
-			info.addExtra(extraInfoGenericLink('Comb the beach', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Comb</b> the beach', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'main.php?comb=1',
@@ -1045,7 +1036,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 		case $item[replica Powerful Glove]:
 			info.addDrop(new drop_info('_powerfulGloveBatteryPowerUsed', 100, '% battery'));
 			if(get_property('_powerfulGloveBatteryPowerUsed').to_int() < 100) {
-				info.addExtra(extraInfoPicker('powerfulglove', 'Enter a cheat code!'));
+				info.addExtra(extraInfoPicker('powerfulglove', '<b>Enter</b> a cheat code!'));
 			}
 			break;
 		case $item[[10462]fire flower]:
@@ -1060,7 +1051,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(!get_property('_cargoPocketEmptied').to_boolean()) {
 				string[int] pocketsEmptied = get_property('cargoPocketsEmptied').split_string(',');
 				int pocketsLeft = 666 - pocketsEmptied.count();
-				info.addExtra(extraInfoGenericLink('Pick a pocket', attrmap {
+				info.addExtra(extraInfoGenericLink('<b>Pick</b> a pocket', attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
 					'href': 'inventory.php?action=pocket',
@@ -1086,8 +1077,8 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(nextBeard != $effect[none]) {
 				info.addToDesc(beardToShorthand(nextBeard) + (getCurrBeard() != $effect[none] ? ' next' : ' due'));
 			}
-			info.addExtra(extraInfoPicker('fakebeard', 'Check upcoming beards'));
-			info.addExtra(extraInfoGenericLink('Adjust your facial hair', attrmap {
+			info.addExtra(extraInfoPicker('fakebeard', '<b>Check</b> upcoming beards'));
+			info.addExtra(extraInfoGenericLink('<b>Adjust</b> your facial hair', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'account_facialhair.php',
@@ -1100,7 +1091,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[combat lover's locket]:
 			info.addDrop(new drop_info('', locketFightsRemaining(), 'reminiscence', 'reminiscences'));
-			info.addExtra(extraInfoGenericLink('Reminisce about past loves', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Reminisce</b> about past loves', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?reminisce=1',
@@ -1108,7 +1099,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[unbreakable umbrella]:
 			info.addToDesc(get_property('umbrellaState'));
-			info.addExtra(extraInfoPicker('unbrella', 'Reconfigure your umbrella'));
+			info.addExtra(extraInfoPicker('unbrella', '<b>Reconfigure</b> your umbrella'));
 			break;
 		case $item[June cleaver]: {
 			int juneFights = get_property('_juneCleaverFightsLeft').to_int();
@@ -1127,7 +1118,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('sweat', LIMIT_TOTAL, '% sweat'),
 				new drop_info('_sweatOutSomeBoozeUsed', 3, 'booze sweat', 'booze sweats'),
 			});
-			info.addExtra(extraInfoPicker('sweatpants', 'Use some sweat'));
+			info.addExtra(extraInfoPicker('sweatpants', '<b>Use</b> some sweat'));
 			break;
 		case $item[Jurassic Parka]:
 		case $item[replica Jurassic Parka]: {
@@ -1135,7 +1126,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(parkaMode.length() > 0) {
 				info.addToDesc(parkaMode + ' mode');
 			}
-			info.addExtra(extraInfoPicker('jurassicparka', 'Pick parka mode'));
+			info.addExtra(extraInfoPicker('jurassicparka', '<b>Pick</b> parka mode'));
 			break;
 		}
 		case $item[cursed monkey's paw]: {
@@ -1145,7 +1136,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(wishesUsed < 5) {
 				skill currSkill = monkeyPawSkill(wishesUsed);
 				skill nextSkill = monkeyPawSkill(wishesUsed + 1);
-				string linkText = 'Wish for an item or effect<br />'
+				string linkText = '<b>Wish</b> for an item or effect<br />'
 					+ '<span class="descline">Current skill: ' + currSkill + ' (' + monkeyPawSkillDesc(currSkill) + ')<br />'
 					+ 'Next skill: ' + nextSkill + ' (' + monkeyPawSkillDesc(nextSkill) + ')</span>';
 				info.addExtra(extraInfoGenericLink(linkText, attrmap {
@@ -1162,7 +1153,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			int restsTaken = get_property('_cinchoRests').to_int();
 			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
 			int freeRestsLeft = total_free_rests() - get_property('timesRested').to_int();
-			info.addExtra(extraInfoPicker('cincho', 'Use some cinch<br /><span class="descline">'
+			info.addExtra(extraInfoPicker('cincho', '<b>Use</b> some cinch<br /><span class="descline">'
 				+ restsTaken + ' rests taken, will gain ' + cinchToGain + ', '
 				+ (freeRestsLeft > 0 ? freeRestsLeft.to_string() : 'no') + ' free rests left</span>'));
 			break;
@@ -1199,7 +1190,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(can_interact() && !get_property('_augTodayCast').to_boolean()) {
 				descStuff[descStuff.count()] = todayNum + ' free today';
 			}
-			string pickerText = 'Celebrate some holidays';
+			string pickerText = '<b>Celebrate</b> some holidays';
 			if(descStuff.count() > 0) {
 				pickerText += '<br /><span class="descline">';
 				for(int i = 0; i < descStuff.count(); ++i) {
@@ -1223,27 +1214,27 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			if(currPiece == '') {
 				currPiece = 'none';
 			}
-			info.addExtra(extraInfoPicker('edpiece','Change decoration (currently ' + currPiece + ')',
+			info.addExtra(extraInfoPicker('edpiece','<b>Change</b> decoration (currently ' + currPiece + ')',
 				edpieceToImage(currPiece)));
 			break;
 		}
 		case $item[Jarlsberg's pan]:
-			info.addExtra(extraInfoFoldable('Shake Portal Open'));
+			info.addExtra(extraInfoFoldable('<b>Shake</b> Portal Open'));
 			break;
 		case $item[Jarlsberg's pan (Cosmic portal mode)]:
-			info.addExtra(extraInfoFoldable('Shake Portal Closed'));
+			info.addExtra(extraInfoFoldable('<b>Shake</b> Portal Closed'));
 			break;
 		case $item[Boris's Helm]:
-			info.addExtra(extraInfoFoldable('Twist Horns Askew'));
+			info.addExtra(extraInfoFoldable('<b>Twist</b> Horns Askew'));
 			break;
 		case $item[Boris's Helm (askew)]:
-			info.addExtra(extraInfoFoldable('Untwist Horns'));
+			info.addExtra(extraInfoFoldable('<b>Untwist</b> Horns'));
 			break;
 		case $item[Sneaky Pete's leather jacket]:
-			info.addExtra(extraInfoFoldable('Pop Collar Aggressively'));
+			info.addExtra(extraInfoFoldable('<b>Pop</b> Collar Aggressively'));
 			break;
 		case $item[Sneaky Pete's leather jacket (collar popped)]:
-			info.addExtra(extraInfoFoldable('Unpop Collar'));
+			info.addExtra(extraInfoFoldable('<b>Unpop</b> Collar'));
 			break;
 			/* relevant foldable code
 			item other = fold_from(in_slot);
@@ -1256,20 +1247,20 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			*/
 		case $item[over-the-shoulder Folder Holder]:
 		case $item[replica over-the-shoulder Folder Holder]:
-			info.addExtra(extraInfoGenericLink('Manage your folders.', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Manage</b> your folders.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?action=useholder',
 			}));
 			break;
 		case $item[fish hatchet]:
-			string floundryText = 'Get Wood';
+			string floundryText = '<b>Get</b> Wood';
 			// intentional fallthrough
 		case $item[codpiece]:
-			if(floundryText == '') floundryText = 'Wring Out';
+			if(floundryText == '') floundryText = '<b>Wring</b> Out';
 			// intentional fallthrough one more time
 		case $item[bass clarinet]:
-			if(floundryText == '') floundryText = 'Drain Spit';
+			if(floundryText == '') floundryText = '<b>Drain</b> Spit';
 			if(!get_property('_floundryItemUsed').to_boolean()) {
 				info.addExtra(extraInfoGenericLink(floundryText, attrmap {
 					'class': 'change',
@@ -1279,7 +1270,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		case $item[PirateRealm eyepatch]:
-			info.addExtra(extraInfoGenericLink('Spend Rubees.', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Spend</b> Fun.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=realm_pirate',
@@ -1287,7 +1278,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[Kramco Sausage-o-Matic&trade;]:
 		case $item[replica Kramco Sausage-o-Matic&trade;]: {
-			string linkText = 'Grind (' + available_amount($item[magical sausage casing]).formatInt()
+			string linkText = '<b>Grind</b> (' + available_amount($item[magical sausage casing]).formatInt()
 				+ ' casings available):<br />' + get_property('sausageGrinderUnits').to_int().formatInt()
 				+ '/' + (111 * (1 + get_property('_sausagesMage').to_int())).formatInt()
 				+ ' units.<br />' + get_property('_sausageFights').to_int().formatInt()
@@ -1301,19 +1292,19 @@ item_info getItemInfo(item it, slot relevantSlot) {
 		case $item[Eight Days a Week Pill Keeper]:
 			info.addDrop(new drop_info('_freePillKeeperUsed', LIMIT_BOOL, 'free pill'));
 			if(!get_property('_freePillKeeperUsed').to_boolean() || (spleen_limit() - my_spleen_use() >= 3)) {
-				info.addExtra(extraInfoPicker('pillkeeper', 'Pop a pill!'));
+				info.addExtra(extraInfoPicker('pillkeeper', '<b>Pop</b> a pill!'));
 			}
 			break;
 		case $item[Guzzlr tablet]:
-			info.addExtra(extraInfoGenericLink('Tap tablet', attrmap {
+			info.addExtra(extraInfoGenericLink('<b>Tap</b> tablet', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?tap=guzzlr',
 			}));
 			break;
 		case $item[unwrapped knock-off retro superhero cape]:
-			info.addExtra(extraInfoPicker('retrosupercapemeta', 'Change to optimal setups!'));
-			info.addExtra(extraInfoPicker('retrosupercapeall', 'Change to any setup!'));
+			info.addExtra(extraInfoPicker('retrosupercapemeta', '<b>Change</b> to optimal setups!'));
+			info.addExtra(extraInfoPicker('retrosupercapeall', '<b>Change</b> to any setup!'));
 			info.addToDesc(retroSupercapeCurrentSetupName());
 			break;
 	}
