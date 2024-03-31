@@ -24,289 +24,6 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 
-
-// done
-string gearName(item it, slot s) {
-	string name = to_string(it);
-	string notes = "";
-
-	switch(it) {
-		case $item[V for Vivala mask]:
-		case $item[replica V for Vivala mask]:
-			if(hasDrops(it) > 0) notes = hasDrops(it) + ' adv gainable';
-			break;
-		case $item[mayfly bait necklace]:
-			if(hasDrops(it) > 0) notes = hasDrops(it) + ' summons left';
-			break;
-		case $item[pantsgiving]:
-			notes = (10 - to_int(get_property("_pantsgivingCrumbs"))) + ' crumbs left, ' + (5- to_int(get_property("_pantsgivingBanish"))) + ' banishes';
-			break;
-		case $item[amulet of extreme plot significance]: name = "amulet of plot significance"; break;
-		case $item[encrypted micro-cassette recorder]: name = "micro-cassette recorder"; break;
-		case $item[stinky cheese eye]:
-			if(!to_boolean(get_property("_stinkyCheeseBanisherUsed")))
-				notes = "banish available, ";
-			// no break intentionally
-		case $item[stinky cheese sword]: case $item[stinky cheese diaper]: case $item[stinky cheese wheel]: case $item[Staff of Queso Escusado]:
-			notes += to_int(get_property("_stinkyCheeseCount")) + '/100';
-			break;
-		case $item[bone abacus]:
-			if(get_property("boneAbacusVictories").to_int() < 1000)
-				notes += get_property("boneAbacusVictories") + "/1000";
-			break;
-		case $item[navel ring of navel gazing]:
-		case $item[replica navel ring of navel gazing]:
-			name = (it == $item[replica navel ring of navel gazing]) ? "replica navel ring" : "navel ring";
-			// no break intentionally
-		case $item[Greatest American Pants]:
-		case $item[replica Greatest American Pants]:
-			int runs = to_int(get_property("_navelRunaways"));
-			if(runs < 3) notes = "100% free run";
-			else if(runs < 6) notes = "80% free run";
-			else if(runs < 9) notes = "50% free run";
-			else notes = "20% free run";
-			if(it == $item[Greatest American Pants] && get_property("_gapBuffs").to_int() < 5)
-				notes += ", " + (5 - get_property("_gapBuffs").to_int()) + " super powers";
-			break;
-		case $item[Kremlin\'s Greatest Briefcase]:
-			int darts = 3 - to_int(get_property("_kgbTranquilizerDartUses"));
-			if(darts > 0) notes = darts + " darts";
-			int drinks = 3 - to_int(get_property("_kgbDispenserUses"));
-			if(drinks > 0) notes += (notes == "" ? "" : ", ") + drinks + " drinks";
-			int clicks = max(22 - to_int(get_property("_kgbClicksUsed")), 0);
-			if(clicks > 0) notes += (notes == "" ? "" : ", ") + clicks + " clicks";
-			break;
-		case $item[deceased crimbo tree]:
-			int needles = to_int(get_property("garbageTreeCharge"));
-			if(needles > 0)
-				notes = needles + " needles";
-			break;
-		case $item[broken champagne bottle]:
-			int ounces = to_int(get_property("garbageChampagneCharge"));
-			if(ounces > 0)
-				notes = ounces + " ounces";
-			break;
-		case $item[makeshift garbage shirt]:
-			int scraps = to_int(get_property("garbageShirtCharge"));
-			if(scraps > 0)
-				notes = scraps + " scraps";
-			break;
-		case $item[FantasyRealm G. E. M.]:
-			matcher m = create_matcher("(\\d+) hours? remaining", chitSource["fantasyRealm"]);
-			if(find(m)) {
-				int hours = m.group(1).to_int();
-				if(hours > 0)
-					notes = hours + " hours";
-			}
-			break;
-		case $item[latte lovers member\'s mug]:
-			name = "latte";
-			int refills = 3 - get_property("_latteRefillsUsed").to_int();
-			if(refills > 0)
-				notes = refills;
-			else
-				notes = "no";
-			notes += " refill";
-			if(refills != 1)
-				notes += "s";
-			string [int] latteThings;
-			if(!get_property("_latteBanishUsed").to_boolean())
-				latteThings[latteThings.count()] = "throw";
-			if(!get_property("_latteCopyUsed").to_boolean())
-				latteThings[latteThings.count()] = "share";
-			if(!get_property("_latteDrinkUsed").to_boolean())
-				latteThings[latteThings.count()] = "gulp";
-			if(latteThings.count() > 0) {
-				notes += ", ";
-				for(int i = 0; i < latteThings.count(); ++i) {
-					notes += latteThings[i];
-					if(i < latteThings.count() - 1)
-						notes += "/";
-				}
-				notes += " available";
-			}
-			break;
-		case $item[Lil\' Doctor&trade; bag]:
-			int otoscopes = 3 - get_property("_otoscopeUsed").to_int();
-			int reflexes = 3 - get_property("_reflexHammerUsed").to_int();
-			int xrays = 3 - get_property("_chestXRayUsed").to_int();
-			if(otoscopes > 0)
-				notes = otoscopes + " otoscope" + (otoscopes == 1 ? "" : "s");
-			if(reflexes > 0)
-			{
-				if(notes != "")
-					notes += ", ";
-				notes += reflexes + " hammer" + (reflexes == 1 ? "" : "s");
-			}
-			if(xrays > 0)
-			{
-				if(notes != "")
-					notes += ", ";
-				notes += xrays + " x-ray" + (xrays == 1 ? "" : "s");
-			}
-			break;
-		case $item[Red Roger\'s red left foot]:
-			notes = "island";
-			break;
-		case $item[Red Roger\'s red right foot]:
-			notes = "sailing";
-			break;
-		case $item[Fourth of May Cosplay Saber]:
-			int forceUses = 5 - get_property("_saberForceUses").to_int();
-			if(forceUses > 0) {
-				notes = forceUses + " force uses";
-			}
-			break;
-		case $item[Beach Comb]:
-			int beachCombs = 11 - get_property("_freeBeachWalksUsed").to_int();
-			if(beachCombs > 0) {
-				notes = beachCombs + " free combs";
-			}
-			break;
-		case $item[Powerful Glove]:
-		case $item[replica Powerful Glove]:
-			int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
-			notes = batteryLeft + "% battery";
-			break;
-		case $item[[10462]fire flower]:
-			name = "fire flower";
-			break;
-		case $item[vampyric cloake]:
-			int transformsLeft = 10 - get_property("_vampyreCloakeFormUses").to_int();
-			notes = transformsLeft + " transformations";
-			break;
-		case $item[Cargo Cultist Shorts]:
-		case $item[replica Cargo Cultist Shorts]:
-			boolean pocketEmptied = get_property("_cargoPocketEmptied").to_boolean();
-			if(!pocketEmptied)
-				notes = "pocket pickable";
-			break;
-		case $item[backup camera]:
-			// 5 extra uses in You, Robot
-			int backupsLeft = (my_path().id == 41 ? 16 : 11) - get_property("_backUpUses").to_int();
-			string backupMonster = get_property("lastCopyableMonster");
-			notes = backupsLeft + " backups left: " + (backupMonster == "" ? "nothing yet" : backupMonster);
-			if(!get_property("backupCameraReverserEnabled").to_boolean()) {
-				notes += ", REVERSER NOT ENABLED!";
-			}
-			break;
-		case $item[familiar scrapbook]:
-			notes = get_property("scrapbookCharges") + " scraps";
-			break;
-		case $item[industrial fire extinguisher]:
-		case $item[replica industrial fire extinguisher]:
-			int extinguisherCharge = get_property("_fireExtinguisherCharge").to_int();
-			if(extinguisherCharge <= 0) {
-				notes = "empty";
-			}
-			else {
-				notes = extinguisherCharge + "% full";
-			}
-			break;
-		case $item[mafia thumb ring]:
-			int thumbAdvs = get_property("_mafiaThumbRingAdvs").to_int();
-			if(thumbAdvs > 0) {
-				notes = thumbAdvs + " adv gained";
-			}
-			break;
-		case $item[Daylight Shavings Helmet]:
-			effect nextBeard = getNextBeard();
-			if(nextBeard != $effect[none]) {
-				notes = beardToShorthand(nextBeard);
-				if(getCurrBeard() != $effect[none]) {
-					notes += " next";
-				}
-				else {
-					notes += " due";
-				}
-			}
-			break;
-		case $item[cursed magnifying glass]:
-			notes += get_property("cursedMagnifyingGlassCount") + "/13 charge, " + get_property("_voidFreeFights") + "/5 free";
-			break;
-		case $item[combat lover's locket]:
-			int locketFights = locketFightsRemaining();
-			if(locketFights > 0) {
-				notes += locketFights + " reminiscence" + (locketFights == 1 ? "" : "s") + " remain";
-			}
-			else {
-				notes += "done reminiscing";
-			}
-			break;
-		case $item[unbreakable umbrella]:
-			notes += get_property("umbrellaState");
-			break;
-		case $item[June cleaver]:
-			int juneFights = get_property("_juneCleaverFightsLeft").to_int();
-			if(juneFights == 0) {
-				notes += "noncom now!";
-			}
-			else {
-				notes += juneFights + " to noncom";
-			}
-			break;
-		case $item[designer sweatpants]:
-		case $item[replica designer sweatpants]:
-			int sweat = max(min(100, get_property("sweat").to_int()), 0);
-			int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
-			notes += sweat + "% sweaty";
-			if(sweatboozeleft > 0) {
-				notes += ", " + sweatboozeleft + " booze sweats";
-			}
-			break;
-		case $item[Jurassic Parka]:
-		case $item[replica Jurassic Parka]:
-			string parkaMode = get_property("parkaMode");
-			if(parkaMode.length() > 0) {
-				notes += parkaMode + " mode";
-			}
-			break;
-		case $item[cursed monkey's paw]:
-			int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
-			if(wishesUsed >=0 && wishesUsed < 5) {
-				notes += (5 - wishesUsed) + " wishes left";
-			}
-			else if(wishesUsed >= 5) {
-				notes += "no wishes left";
-			}
-			break;
-		case $item[Cincho de Mayo]:
-		case $item[replica Cincho de Mayo]:
-			int cinch = 100 - get_property("_cinchUsed").to_int();
-			notes += (cinch > 0 ? cinch.to_string() : "no") + " cinch";
-			break;
-		case $item[august scepter]:
-		case $item[replica august scepter]:
-			int augSkillsCast = get_property("_augSkillsCast").to_int();
-			int augSkillsCastable = 5;
-			if(can_interact()) {
-				++augSkillsCastable;
-				if(get_property("_augTodayCast").to_boolean()) {
-					++augSkillsCast;
-				}
-			}
-			notes += augSkillsCast + "/" + augSkillsCastable + " used";
-			break;
-		case $item[carnivorous potted plant]:
-			int plantFreeKills = get_property("_carnivorousPottedPlantWins").to_int();
-			notes = plantFreeKills + " free kills [" +  (1.0 / (20.0 + plantFreeKills) * 100) + "% swallow chance]";
-			break;
-	}
-
-	if(equipped_item(s) == it && s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
-		if(it != $item[latte lovers member\'s mug] && !it.isImportantOffhand()) {
-			if(notes != "")
-				notes += ", ";
-			notes += "latte unlock available!";
-		}
-	}
-
-	if(notes != "")
-		name += " (" + notes + ")";
-
-	return name;
-}
-
 string [string] defaults;
 boolean defaults_initialized = false;
 
@@ -637,6 +354,7 @@ int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
+	item_info info = getItemInfo(in_slot);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
 
 	buffer picker;
@@ -664,20 +382,15 @@ void pickerGear(slot s) {
 
 	boolean any_options = false;
 	// for use with custom context suggestions
-	void start_option(item it, int modify_image) {
+	void start_option(item it) {
 		# any_options = true;
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
 		picker.append(it.descid);
 		picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
-		picker.addItemIcon(it, "Click for item description", dangerLevel(it, s), modify_image);
+		picker.addItemIcon(it, "Click for item description");
 		picker.append('</a></td>');
 	}
 
-	void start_option(item it, boolean modify_image) {
-		start_option(it, modify_image ? MODIFY : NO_MODIFY);
-	}
-
-	item_info info = getItemInfo(in_slot);
 	foreach i, extra in info.extra {
 		string descid = in_slot.descid;
 		string image = extra.optionImage;
@@ -752,6 +465,14 @@ void pickerGear(slot s) {
 		picker.tagFinish('tr');
 	}
 
+	// give configurable gear some love if it's in slot
+	item fold_from(item original) {
+		foreach it in get_related(in_slot, "fold")
+			if(it != in_slot)
+				return it;
+		return $item[none];
+	}
+
 	void add_favorite_button(buffer result, item it) {
 		result.append('<a class="change chit_favbutton" href="');
 		if(favGear contains it) {
@@ -769,14 +490,9 @@ void pickerGear(slot s) {
 
 	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
-		start_option(in_slot,true);
-		picker.append('<td><a class="change" href="');
-		picker.append(sideCommand("unequip " + s));
-		picker.append('"><span style="font-weight:bold;">unequip</span> ');
-		picker.append(gearName(in_slot, s));
-		picker.append('</a></td><td>');
-		picker.add_favorite_button(in_slot);
-		picker.append('</td></tr>');
+		buffer favButton;
+		favButton.add_favorite_button(in_slot);
+		picker.pickerGenericOption('unequip', info.name, info.desc, '', sideCommand('unequip ' + s), true, info.image, false, attrmap {}, attrmap {}, favButton.to_string());
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
 		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
@@ -808,6 +524,7 @@ void pickerGear(slot s) {
 	boolean [item] displayedItems;
 
 	boolean add_gear_option(buffer b, item it, string reason) {
+		item_info optionInfo = getItemInfo(it);
 		int danger_level = dangerLevel(it, s);
 		string cmd;
 		string action = "";
@@ -884,9 +601,9 @@ void pickerGear(slot s) {
 			}
 			b.append('>');
 			if(take_action)
-				b.addItemIcon(it,gearName(it, s) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description',danger_level);
+				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description');
 			else
-				b.addItemIcon(it,'&#013;Right click for description',danger_level);
+				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Right click for description');
 			if(take_action)
 				b.append('</a>');
 			b.append('</span>');
@@ -898,7 +615,7 @@ void pickerGear(slot s) {
 			b.append(',0,event); return false;" onclick="descitem(');
 			b.append(it.descid);
 			b.append(',0,event)" href="#">');
-			b.addItemIcon(it,"Click for item description",danger_level);
+			b.addItemIcon(it,"Click for item description");
 			b.append('</a></td><td>');
 			if(take_action) {
 				b.append('<a class="change" href="');
@@ -914,11 +631,11 @@ void pickerGear(slot s) {
 			b.append(' ');
 			b.append(action_description);
 			b.append('</span> ');
-			b.append(gearName(it, s));
+			b.append(namedesc(optionInfo));
 			if(reason != "favorites") {
-				b.append(' (');
+				b.append(' [');
 				b.append(reason);
-				b.append(')');
+				b.append(']');
 			}
 			if(take_action)
 				b.append('</a>');
@@ -936,7 +653,7 @@ void pickerGear(slot s) {
 			b.append(it.descid);
 			b.append(',0,event)" href="#">');
 
-			b.addItemIcon(it,"Click for item description",danger_level);
+			b.addItemIcon(it,"Click for item description");
 			b.append('</a></div><div style="max-width:160px;">');
 			//b.add_favorite_button(it);
 			if(take_action) {
@@ -953,7 +670,7 @@ void pickerGear(slot s) {
 			b.append(' ');
 			b.append(action_description);
 			b.append('</span> ');
-			b.append(gearName(it, s));
+			b.append(namedesc(optionInfo));
 			if(take_action)
 				b.append('</a>');
 			b.append('</div></div>');
@@ -1268,7 +985,7 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + gearName(equipped_item(s), s), dangerLevel(equipped_item(s), s));
+		result.addItemIcon(equipped_item(s), s + ": " + namedesc(getItemInfo(equipped_item(s))));
 		result.append('</a></span>');
 		pickerGear(s);
 	}

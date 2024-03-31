@@ -22,7 +22,7 @@ void picker_edpiece() {
 
 	void addJewel(string jewel, string desc) {
 		picker.pickerSelectionOption('a golden ' + jewel, desc,
-			'edpiece ' + jewel, edpieceToImage(jewel),  jewel == current);
+			'edpiece ' + jewel, edpieceToImage(jewel), jewel == current);
 	}
 
 	addJewel('bear', 'Musc +20, +2 Musc exp');
@@ -198,13 +198,13 @@ string retroHeroToIcon(string hero) {
 	switch(hero) {
 		case 'muscle':
 		case 'vampire':
-			return 'retrocape1.gif';
+			return itemimage('retrocape1.gif');
 		case 'mysticality':
 		case 'heck':
-			return 'retrocape2.gif';
+			return itemimage('retrocape2.gif');
 		case 'moxie':
 		case 'robot':
-			return 'retrocape3.gif';
+			return itemimage('retrocape3.gif');
 	}
 	abort('Unrecognized hero ' + hero);
 	return '';
@@ -248,29 +248,15 @@ void picker_retrosupercapemeta() {
 	buffer picker;
 	picker.pickerStart('retrosupercapemeta', 'Switch up your cape');
 
-	void addCombo(string name, string hero, string mode, boolean enabled) {
+	void addCombo(string name, string hero, string mode, boolean enabled, string desc) {
 		boolean active = false;
 		if(get_property('retroCapeSuperhero') == hero && get_property('retroCapeWashingInstructions') == mode) {
 			enabled = false;
 			active = true;
 		}
 
-		picker.append('<tr class="pickitem');
-		if(!enabled) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(retroHeroToIcon(hero));
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>CURRENT</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand('retrocape ' + hero + ' ' + mode));
-			picker.append('"><b>CONFIGURE</b> to ');
-		}
-		picker.append(name);
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption(name, desc, 'retrocape ' + hero + ' ' + mode,
+			retroHeroToIcon(hero), active, enabled);
 	}
 
 	string mainstatHero = my_primestat().to_string().to_lower_case();
@@ -279,12 +265,12 @@ void picker_retrosupercapemeta() {
 		case $stat[Mysticality]: mainstatHero = 'heck'; break;
 		case $stat[Moxie]: mainstatHero = 'robot'; break;
 	}
-	addCombo('get mainstat exp', mainstatHero, 'thrill', true);
-	addCombo('yellow ray', 'heck', 'kiss', have_effect($effect[Everything Looks Yellow]) == 0);
-	addCombo('purge evil', 'vampire', 'kill', true);
-	addCombo('resist elements', 'vampire', 'hold', true);
-	addCombo('spooky lantern', 'heck', 'kill', true);
-	addCombo('stun enemies', 'heck', 'hold', true);
+	addCombo('get mainstat exp', mainstatHero, 'thrill', true, '+3 exp');
+	addCombo('yellow ray', 'heck', 'kiss', have_effect($effect[Everything Looks Yellow]) == 0, 'Unleash the Devil\'s Kiss');
+	addCombo('purge evil', 'vampire', 'kill', true, 'requires a sword');
+	addCombo('resist elements', 'vampire', 'hold', true, parseMods('Prismatic Resistance +3'));
+	addCombo('spooky lantern', 'heck', 'kill', true, 'duplicates spell damage as spooky');
+	addCombo('stun enemies', 'heck', 'hold', true, 'at combat start');
 
 	picker.pickerFinish('Configuring your cape...');
 }
@@ -293,39 +279,14 @@ void picker_retrosupercapeall() {
 	buffer pickerHero, pickerVampire, pickerHeck, pickerRobot;
 
 	void addHero(string name, string desc, string picker) {
-		pickerHero.append('<tr class="pickitem"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		pickerHero.append(retroHeroToIcon(picker));
-		pickerHero.append('" /></td><td colspan="2"><a class="chit_launcher done" rel="chit_pickerretrosupercape');
-		pickerHero.append(picker);
-		pickerHero.append('" href="#"><b>PICK</b> ');
-		pickerHero.append(name);
-		pickerHero.append('<br /><span class="descline">');
-		pickerHero.append(parseMods(desc, true));
-		pickerHero.append('</span></a></td></tr>');
+		pickerHero.pickerPickerOption(name, parseMods(desc), '', 'retrosupercape' + picker, retroHeroToIcon(picker));
 	}
 
 	void addMode(buffer picker, string name, string desc, string hero, string nameShort, boolean parse) {
 		boolean active = get_property('retroCapeSuperhero') == hero && get_property('retroCapeWashingInstructions') == nameShort;
 
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(retroHeroToIcon(hero));
-		picker.append('" /></td><td colspan="2">');
-		if(!active) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand('retrocape ' + hero + ' ' + nameShort));
-			picker.append('"><b>PICK</b> ');
-		}
-		else {
-			picker.append('<b>CURRENT</b>: ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(parse ? parseMods(desc, true) : desc);
-		picker.append('</span>');
-		if(active) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption(name, parse ? parseMods(desc) : desc,
+			'retrocape ' + hero + ' ' + nameShort, retroHeroToIcon(hero), active);
 	}
 
 	// Hero picker
@@ -427,7 +388,7 @@ void addDrops(item_info info, drop_info[int] drops) {
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if(drop.singular != '' && drop.singular.substring(0, 1) != '%') {
+			if(drop.limit >= 0 && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
 				toAdd += ' ';
 			}
 			toAdd += (left == 1) ? drop.singular : drop.plural;
@@ -680,7 +641,7 @@ void picker_jurassicparka() {
 		string switchLink = '<a class="change" href="' + sideCommand("parka " + name) + '">';
 		boolean current = currMode == name;
 
-		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, "/images/itemimages/" + image, current);
+		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, itemimage(image), current);
 	}
 
 	addMode("kachungasaur", "Max HP +100%, +50% Meat Drop, +2 Cold Res", "jparka8.gif");
@@ -818,9 +779,12 @@ void picker_august() {
 item_info getItemInfo(item it, slot relevantSlot) {
 	item_info info;
 	info.name = it.to_string();
-	info.image = it.image;
+	info.image = itemimage(it.image);
 
 	switch(it) {
+		case $item[none]:
+			info.image = itemimage('blank.gif');
+			break;
 		case $item[Buddy Bjorn]: {
 			familiar_info bjornInfo = getFamiliarInfo(my_bjorned_familiar());
 			info.image = bjornInfo.image;
@@ -1096,10 +1060,21 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				'href': 'inventory.php?reminisce=1',
 			}));
 			break;
-		case $item[unbreakable umbrella]:
-			info.addToDesc(get_property('umbrellaState'));
+		case $item[unbreakable umbrella]: {
+			string state = get_property('umbrellaState');
+			info.addToDesc(state);
 			info.addExtra(extraInfoPicker('unbrella', '<b>Reconfigure</b> your umbrella'));
+			switch(state) {
+				case 'broken': info.image = itemimage('unbrella7.gif'); break;
+				case 'forward-facing': info.image = itemimage('unbrella3.gif'); break;
+				case 'bucket style': info.image = itemimage('unbrella5.gif'); break;
+				case 'pitchfork style': info.image = itemimage('unbrella8.gif'); break;
+				case 'constantly twirling': info.image = itemimage('unbrella6.gif'); break;
+				case 'cocoon': info.image = itemimage('unbrella1.gif'); break;
+				default: print('Invalid umbrellaState ' + state + '???', 'red'); break;
+			}
 			break;
+		}
 		case $item[June cleaver]: {
 			int juneFights = get_property('_juneCleaverFightsLeft').to_int();
 			if(juneFights == 0) {
@@ -1126,6 +1101,13 @@ item_info getItemInfo(item it, slot relevantSlot) {
 				info.addToDesc(parkaMode + ' mode');
 			}
 			info.addExtra(extraInfoPicker('jurassicparka', '<b>Pick</b> parka mode'));
+			switch(parkamode) {
+				case 'kachungasaur': info.image = itemimage('jparka8.gif'); break;
+				case 'dilophosaur': info.image = itemimage('jparka3.gif'); break;
+				case 'spikolodon': info.image = itemimage('jparka2.gif'); break;
+				case 'ghostasaurus': info.image = itemimage('jparka1.gif'); break;
+				case 'pterodactyl': info.image = itemimage('jparka9.gif'); break;
+			}
 			break;
 		}
 		case $item[cursed monkey's paw]: {
@@ -1161,7 +1143,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 		case $item[replica august scepter]: {
 			drops_info drops = { new drop_info('_augSkillsCast', 5, 'skill', 'skills') };
 			if(can_interact()) {
-				drops[drops.count()] = new drop_info('_augTodayCast', LIMIT_BOOL, 'today');
+				drops[drops.count()] = new drop_info('_augTodayCast', LIMIT_BOOL, 'today\'s freebie');
 			}
 			info.addDrops(drops);
 			int [int] usedToday;
@@ -1305,6 +1287,7 @@ item_info getItemInfo(item it, slot relevantSlot) {
 			info.addExtra(extraInfoPicker('retrosupercapemeta', '<b>Change</b> to optimal setups!'));
 			info.addExtra(extraInfoPicker('retrosupercapeall', '<b>Change</b> to any setup!'));
 			info.addToDesc(retroSupercapeCurrentSetupName());
+			info.image = retroHeroToIcon(get_property('retroCapeSuperhero'));
 			break;
 	}
 
@@ -1337,4 +1320,35 @@ item_info getItemInfo(item it, slot relevantSlot) {
 
 item_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
+}
+
+void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
+	item_info info = getItemInfo(it);
+
+	string imgClass = 'chit_icon';
+	if(info.hasDrops) {
+		imgClass += ' hasdrops';
+	}
+	if(info.dangerLevel == DANGER_WARNING) {
+		imgClass += ' warning';
+	}
+	else if(info.dangerLevel == DANGER_DANGEROUS) {
+		imgClass += ' danger';
+	}
+	else if(info.dangerLevel == DANGER_GOOD) {
+		imgClass += ' good';
+	}
+
+	attrmap imgAttrs = {
+		'class': imgClass,
+		'title': title,
+	};
+	if(popupDescOnClick) {
+		imgAttrs['onclick'] = 'descitem(' + it.descid + ',0,event); return false;';
+	}
+	result.addImg(info.image, imgAttrs);
+}
+
+void addItemIcon(buffer result, item it, string title) {
+	addItemIcon(result, it, title, false);
 }

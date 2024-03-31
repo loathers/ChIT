@@ -78,6 +78,14 @@ record item_info {
 	extra_info[int] extra;
 };
 
+string namedesc(item_info info) {
+	string res = info.name;
+	if(info.desc != '') {
+		res += ' (' + info.desc + ')';
+	}
+	return res;
+}
+
 record familiar_info {
 	string desc;
 	int dropsLeft;
@@ -597,7 +605,7 @@ void pickerAddImage(buffer picker, string src) {
 	pickerAddImage(picker, src, false, attrmap {});
 }
 
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs) {
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
 	picker.pickerStartOption(usable);
 
 	if(href == '') {
@@ -605,9 +613,19 @@ void pickerGenericOption(buffer picker, string verb, string noun, string desc, s
 	}
 
 	picker.pickerAddImage(imgsrc, imgLink, imgAttrs);
-	picker.tagStart('td', attrmap { 'colspan': '2' });
+	attrmap tdAttrs;
+	if(rightSection == '') {
+		tdAttrs['colspan'] = '2';
+	}
+	picker.tagStart('td', tdAttrs);
 	if(usable) {
-		picker.tagStart('a', attrmap { 'class': 'change', 'href': href });
+		if(linkAttrs['href'] != '') {
+			linkAttrs['href'] = href;
+		}
+		if(linkAttrs['class'] != '') {
+			linkAttrs['class'] = 'change';
+		}
+		picker.tagStart('a', linkAttrs);
 		picker.tagStart('b');
 		picker.append(verb);
 		picker.tagFinish('b');
@@ -629,7 +647,20 @@ void pickerGenericOption(buffer picker, string verb, string noun, string desc, s
 		picker.tagFinish('a');
 	}
 	picker.tagFinish('td');
+	if(rightSection != '') {
+		picker.tagStart('td');
+		picker.append(rightSection);
+		picker.tagFinish('td');
+	}
 	picker.pickerFinishOption();
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs, attrmap linkAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgLink, imgAttrs, linkAttrs, '');
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgLink, imgAttrs, attrmap {});
 }
 
 void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc) {
@@ -638,6 +669,13 @@ void pickerGenericOption(buffer picker, string verb, string noun, string desc, s
 
 void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs) {
 	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, true, imgAttrs);
+}
+
+void pickerPickerOption(buffer picker, string noun, string desc, string parenthetical, string pickerToLaunch, string imgSrc) {
+	pickerGenericOption(picker, 'Pick', noun, desc, parenthetical, '#', true, imgSrc, false, attrmap {}, attrmap {
+		'class': 'chit_launcher done',
+		'rel': 'chit_picker' + pickerToLaunch,
+	});
 }
 
 void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
@@ -658,11 +696,12 @@ void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetica
 }
 
 // Examples: Edpiece, Jurassic Parka, etc
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable) {
+	picker.pickerGenericOption(current ? 'Current:' : 'Select', name, desc, "", sideCommand(cmd), usable, img);
+}
+
 void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
-	if(current) {
-		name = '<b>Current</b>: ' + name;
-	}
-	picker.pickerGenericOption('Select', name, desc, "", sideCommand(cmd), !current, img);
+	picker.pickerSelectionOption(name, desc, cmd, img, !current, current);
 }
 
 string parseEff(effect eff);

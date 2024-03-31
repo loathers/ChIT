@@ -678,116 +678,6 @@ string familiar_image(familiar f) {
 	return '/images/itemimages/' + f.image;
 }
 
-int NO_MODIFY = 0;
-int MODIFY = 1;
-int FORCE_MODIFY = 2; // Some items only want to be modified in special cases, like the edpiece
-
-string item_image(item it, int modify_image)
-{
-	if(it == $item[none])
-		return '/images/itemimages/blank.gif';
-
-	if(modify_image != NO_MODIFY)
-	{
-		switch(it)
-		{
-			case $item[Buddy Bjorn]:
-				if(my_bjorned_familiar() != $familiar[none])
-					return familiar_image(my_bjorned_familiar());
-				break;
-			case $item[Crown of Thrones]:
-				if(my_enthroned_familiar() != $familiar[none])
-					return familiar_image(my_enthroned_familiar());
-				break;
-			case $item[unwrapped knock-off retro superhero cape]:
-				return "/images/itemimages/" + retroHeroToIcon(get_property("retroCapeSuperhero"));
-			case $item[unbreakable umbrella]:
-				switch(get_property("umbrellaState")) {
-					case "broken": return "/images/itemimages/unbrella7.gif";
-					case "forward-facing": return "/images/itemimages/unbrella3.gif";
-					case "bucket style": return "/images/itemimages/unbrella5.gif";
-					case "pitchfork style": return "/images/itemimages/unbrella8.gif";
-					case "constantly twirling": return "/images/itemimages/unbrella6.gif";
-					case "cocoon": return "/images/itemimages/unbrella1.gif";
-					default:
-						print("Invalid umbrellaState " + get_property("umbrellaState") + "???", "red");
-						break;
-				}
-				break;
-			case $item[Jurassic Parka]:
-			case $item[replica Jurassic Parka]:
-				switch(get_property("parkaMode")) {
-					case "kachungasaur": return "/images/itemimages/jparka8.gif";
-					case "dilophosaur": return "/images/itemimages/jparka3.gif";
-					case "spikolodon": return "/images/itemimages/jparka2.gif";
-					case "ghostasaurus": return "/images/itemimages/jparka1.gif";
-					case "pterodactyl": return "/images/itemimages/jparka9.gif";
-				}
-				break;
-			case $item[cursed monkey's paw]:
-				int wishesUsed = get_property("_monkeyPawWishesUsed").to_int();
-				if(wishesUsed >= 0 && wishesUsed <= 5) {
-					return "/images/itemimages/monkeypaw" + wishesUsed + ".gif";
-				}
-				break;
-		}
-	}
-
-	if(modify_image == FORCE_MODIFY)
-	{
-		switch(it)
-		{
-			case $item[The Crown of Ed the Undying]:
-				switch(get_property("edPiece"))
-				{
-					case "bear": return '/images/itemimages/teddybear.gif';
-					case "owl": return '/images/itemimages/owl.gif';
-					case "puma": return '/images/itemimages/blackcat.gif';
-					case "hyena": return '/images/itemimages/lionface.gif';
-					case "mouse": return '/images/itemimages/mouseskull.gif';
-					case "weasel": return '/images/itemimages/weasel.gif';
-					case "fish": return '/images/itemimages/fish.gif';
-				}
-				break;
-		}
-	}
-
-	return '/images/itemimages/' + it.image;
-}
-
-string item_image(item it)
-{
-	return item_image(it, MODIFY);
-}
-
-void addItemIcon(buffer result, item it, string title, int danger_level, int modify_image) {
-	result.append('<img class="chit_icon');
-	if(hasDrops(it) > 0)
-		result.append(' hasdrops');
-
-	if(danger_level == 1)
-		result.append(' warning');
-	else if(danger_level > 1)
-		result.append(' danger');
-	else if(danger_level < 0)
-		result.append(' good');
-
-	result.append('" src="');
-	result.append(item_image(it, modify_image));
-	result.append('" title="');
-	result.append(title);
-	result.append('" />');
-}
-void addItemIcon(buffer result, item it, string title, int danger_level, boolean modify_image) {
-	addItemIcon(result,it,title,danger_level,modify_image ? MODIFY : NO_MODIFY);
-}
-void addItemIcon(buffer result, item it, string title, int danger_level) {
-	addItemIcon(result,it,title,danger_level,true);
-}
-void addItemIcon(buffer result, item it, string title) {
-	addItemIcon(result,it,title,0);
-}
-
 int hasDrops(familiar f) {
 	int drops = 0;
 
@@ -1314,7 +1204,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	if(is100 != $familiar[none])
 		danger_level = (is100 == current) ? 2 : -1;
 	picker.append('<tr class="pickitem"><td class="icon"><a target=mainpane class="visit done" href="familiar.php">');
-	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium", danger_level);
+	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium");
 	picker.append('</a></td>');
 
 	picker.append('<td class="icon"><a target=charpane class="change" href="'+sideCommand("familiar none")+'">');

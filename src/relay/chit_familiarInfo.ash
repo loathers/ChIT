@@ -1,6 +1,6 @@
 familiar_info getFamiliarInfo(familiar f) {
 	familiar_info info;
-	info.image = f.image;
+	info.image = itemimage(f.image);
 
 	switch(f) {
 		case $familiar[none]:

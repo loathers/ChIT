@@ -3626,7 +3626,6 @@ void allCurrency(buffer result) {
 	result.append('</li></ul></div>');
 }
 
-// This function also makes use of gearName() which is in chit_brickGear.ash
 void pickOutfit() {
 	location loc = my_location();
 	if(loc == $location[none]) // Possibly beccause a fax was used
@@ -3729,11 +3728,16 @@ void pickOutfit() {
 		if(vars["chit." + layout + ".layout"].contains_text("gear"))
 			noGearBrick = false;
 	if(noGearBrick) {
-		foreach it in favGear
-			special.addGear(it, gearName(it, it.to_slot()));
-		foreach reason in recommendedGear
-			foreach it in recommendedGear[reason]
-				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + gearName(it, it.to_slot()));
+		foreach it in favGear {
+			item_info info = getItemInfo(it);
+			special.addGear(it, namedesc(info));
+		}
+		foreach reason in recommendedGear {
+			foreach it in recommendedGear[reason] {
+				item_info info = getItemInfo(it);
+				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + namedesc(info));
+			}
+		}
 
 		if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 			special.addGear("equip acc3 Talisman o\' Namsilat;equip acc1 Mega+Gem", "Talisman & Mega Gem");
