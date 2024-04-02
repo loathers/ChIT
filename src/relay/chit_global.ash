@@ -32,24 +32,29 @@ int DROPS_NONE = 0;
 int DROPS_SOME = 1;
 int DROPS_ALL = 2;
 
+// str1 is picker name
+// str2 is picker launcher text
+int EXTRA_PICKER = 0;
+// str1 is fold text
+int EXTRA_FOLD = 1;
+// str1 is link text
+// attrs is for the link itself
+int EXTRA_LINK = 2;
+// for mad hatrack and fancypants scarecrow, and who knows, maybe something else in the future
+// str1 is the familiar modifiers
+// str2 is the limit
+int EXTRA_EQUIPFAM = 3;
+
 record extra_info {
-	string optionImage; // leave blank for own image
-	// picker options
-	string pickerName;
-	string pickerLauncherText;
-	// fold option
-	string foldText;
-	// generic option
-	string genericLinkText;
-	attrmap genericLinkAttrs;
+	int extraType;
+	string image; // leave blank for own image
+	string str1;
+	string str2;
+	attrmap attrs;
 };
 
 extra_info extraInfoPicker(string name, string launcherText, string image) {
-	extra_info info;
-	info.pickerName = name;
-	info.pickerLauncherText = launcherText;
-	info.optionImage = image;
-	return info;
+	return new extra_info(EXTRA_PICKER, image, name, launcherText);
 }
 
 extra_info extraInfoPicker(string name, string launcherText) {
@@ -57,26 +62,23 @@ extra_info extraInfoPicker(string name, string launcherText) {
 }
 
 extra_info extraInfoFoldable(string text, string image) {
-	extra_info info;
-	info.foldText = text;
-	info.optionImage = image;
-	return info;
+	return new extra_info(EXTRA_FOLD, image, text);
 }
 
 extra_info extraInfoFoldable(string text) {
 	return extraInfoFoldable(text, '');
 }
 
-extra_info extraInfoGenericLink(string text, attrmap attrs, string image) {
-	extra_info info;
-	info.genericLinkText = text;
-	info.genericLinkAttrs = attrs;
-	info.optionImage = image;
-	return info;
+extra_info extraInfoLink(string text, attrmap attrs, string image) {
+	return new extra_info(EXTRA_LINK, image, text, '', attrs);
 }
 
-extra_info extraInfoGenericLink(string text, attrmap attrs) {
-	return extraInfoGenericLink(text, attrs, '');
+extra_info extraInfoLink(string text, attrmap attrs) {
+	return extraInfoLink(text, attrs, '');
+}
+
+extra_info extraInfoEquipFam(string famEffect, string cap) {
+	return new extra_info(EXTRA_EQUIPFAM, '', famEffect, cap, attrmap {});
 }
 
 record chit_info {
@@ -86,7 +88,18 @@ record chit_info {
 	int dangerLevel;
 	string image;
 	extra_info[int] extra;
+	// for familiars
+	string weirdoTag;
+	string weirdoDivContents;
 };
+
+boolean incDrops(chit_info info, int level) {
+	if(info.hasDrops < level) {
+		info.hasDrops = level;
+		return true;
+	}
+	return false;
+}
 
 string namedesc(chit_info info) {
 	string res = info.name;
@@ -96,6 +109,8 @@ string namedesc(chit_info info) {
 	return res;
 }
 
+void tagStart(buffer result, string type, attrmap attrs);
+void tagFinish(buffer result, string type);
 void addImg(buffer result, string imgSrc, attrmap attrs);
 
 void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
@@ -118,6 +133,10 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 		imgClass += ' good';
 	}
 
+	if(info.weirdoTag != '') {
+		imgClass += ' chit_' + info.weirdoTag;
+	}
+
 	attrmap imgAttrs = {
 		'class': imgClass,
 		'title': title,
@@ -125,7 +144,15 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
 	}
-	result.addImg(info.image, imgAttrs);
+
+	if(info.weirdoDivContents == '') {
+		result.addImg(info.image, imgAttrs);
+	}
+	else {
+		result.tagStart('div', imgAttrs);
+		result.append(info.weirdoDivContents);
+		result.tagFinish('div');
+	}
 }
 
 void addToDesc(chit_info info, string toAdd) {
@@ -143,6 +170,10 @@ int LIMIT_BOOL = -1;
 int LIMIT_BOOL_INVERTED = -2;
 // if limit is -3, there is no limit to the amount that can drop
 int LIMIT_INFINITE = -3;
+// if limit is a smaller negative, the limit is periodic, with abs(limit) being the period,
+// and prop being progress along that period
+// hopefully we won't see a periodic drop with a period less than 3, haha
+int LIMIT_PERIODIC = -4;
 
 record drop_info {
 	// if propName is '', limit is instead how many are left
@@ -152,6 +183,7 @@ record drop_info {
 	// if this is '', use singular for plural as well
 	// because of how new works, can just be left off for those cases
 	string plural;
+	boolean unimportant;
 };
 
 typedef drop_info[int] drops_info;
@@ -159,45 +191,71 @@ typedef drop_info[int] drops_info;
 boolean addDrops(chit_info info, drop_info[int] drops) {
 	string toAdd = '';
 	boolean onlyBoolProps = true;
-	boolean onlyInfinite = true;
+	// please put periodic drops first if they have others as well
+	boolean onlyPeriodic = true;
 	int bestDrop = DROPS_NONE;
+
+	void upDrops(int level, drop_info info) {
+		if(info.unimportant) {
+			level = DROPS_NONE;
+		}
+		if(bestDrop < level) {
+			bestDrop = level;
+		}
+	}
+
 	foreach i, drop in drops {
-		if(drop.limit != LIMIT_INFINITE) {
-			onlyInfinite = false;
+		if(drop.limit > LIMIT_PERIODIC) {
+			onlyPeriodic = false;
 		}
 
 		int left = 0;
 		if(drop.limit == LIMIT_BOOL) {
 			if(!get_property(drop.propName).to_boolean()) {
 				left = 1;
-				bestDrop = DROPS_ALL;
+				upDrops(DROPS_ALL, drop);
 			}
 		}
 		else if(drop.limit == LIMIT_BOOL_INVERTED) {
 			if(get_property(drop.propName).to_boolean()) {
 				left = 1;
-				bestDrop = DROPS_ALL;
+				upDrops(DROPS_ALL, drop);
 			}
+		}
+		else if(drop.limit == LIMIT_TOTAL) {
+			onlyBoolProps = false;
+			left = get_property(drop.propName).to_int();
+			upDrops(DROPS_SOME, drop);
 		}
 		else if(drop.limit == LIMIT_INFINITE) {
 			onlyBoolProps = false;
 			left = -1;
 		}
-		else if(drop.limit == LIMIT_TOTAL) {
-			onlyBoolProps = false;
-			left = get_property(drop.propName).to_int();
-			if(bestDrop < DROPS_SOME) {
-				bestDrop = DROPS_SOME;
+		else if(drop.limit <= LIMIT_PERIODIC) {
+			int timeToDrop = -1 * drop.limit - get_property(drop.propName).to_int();
+			if(timeToDrop <= 1) {
+				upDrops(DROPS_ALL, drop);
 			}
+			else if(timeToDrop <= 5 && drop.limit <= -30) {
+				upDrops(DROPS_SOME, drop);
+			}
+			if(toAdd != '') {
+				toAdd += ', ';
+			}
+			toAdd += timeToDrop + ' turn';
+			if(timeToDrop != 1) {
+				toAdd += 's';
+			}
+			toAdd += ' to ' + drop.singular;
 		}
 		else if(drop.propName != '') {
 			onlyBoolProps = false;
 			left = drop.limit - get_property(drop.propName).to_int();
 			if(left == drop.limit) {
-				bestDrop = DROPS_ALL;
+				upDrops(DROPS_ALL, drop);
 			}
-			else if(left > 0 && bestDrop < DROPS_ALL) {
-				bestDrop = DROPS_SOME;
+			else if(left > 0) {
+				upDrops(DROPS_SOME, drop);
 			}
 		}
 		else {
@@ -207,7 +265,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 
 		if(left != 0) {
 			if(toAdd != '') {
-				toAdd += '/';
+				toAdd += ', ';
 			}
 			if(drop.limit >= 0) {
 				if(left >= 0) {
@@ -228,18 +286,18 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		}
 	}
 	if(toAdd != '') {
-		toAdd += onlyBoolProps ? ' available' : ' left';
-		info.addToDesc(toAdd);
-		if(info.hasDrops < bestDrop) {
-			info.hasDrops = bestDrop;
+		if(!onlyPeriodic) {
+			toAdd += onlyBoolProps ? ' available' : ' left';
 		}
+		info.addToDesc(toAdd);
+		info.incDrops(bestDrop);
 		return true;
 	}
 	return false;
 }
 
-void addDrop(chit_info info, drop_info drop) {
-	info.addDrops(drops_info { drop });
+boolean addDrop(chit_info info, drop_info drop) {
+	return info.addDrops(drops_info { drop });
 }
 
 void addExtra(chit_info info, extra_info extra) {

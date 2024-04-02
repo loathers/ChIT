@@ -703,7 +703,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(bjornInfo.desc != '') {
 				info.addToDesc(bjornInfo.desc);
 			}
-			info.hasDrops = bjornInfo.hasDrops;
+			info.incDrops(bjornInfo.hasDrops);
 			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
 			break;
 		}
@@ -713,7 +713,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(crownInfo.desc != '') {
 				info.addToDesc(crownInfo.desc);
 			}
-			info.hasDrops = crownInfo.hasDrops;
+			info.incDrops(crownInfo.hasDrops);
 			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
 			break;
 		}
@@ -806,11 +806,11 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			int runs = get_property('_navelRunaways').to_int();
 			if(runs < 3) {
 				info.addToDesc('100% free run');
-				info.hasDrops = DROPS_ALL;
+				info.incDrops(DROPS_ALL);
 			}
 			else if(runs < 6) {
 				info.addToDesc('80% free run');
-				info.hasDrops = DROPS_SOME;
+				info.incDrops(DROPS_SOME);
 			}
 			else if(runs < 9) {
 				info.addToDesc('50% free run');
@@ -832,7 +832,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('_kgbDispenserUses', 3, 'drink', 'drinks'),
 				new drop_info('_kgbClicksUsed', 22, 'click', 'clicks'),
 			});
-			info.addExtra(extraInfoGenericLink('<b>Examine</b> the briefcase.', attrmap {
+			info.addExtra(extraInfoLink('<b>Examine</b> the briefcase.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=kgb',
@@ -853,12 +853,12 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				int hours = m.group(1).to_int();
 				info.addDrop(new drop_info('', hours, 'hour', 'hours'));
 			}
-			info.addExtra(extraInfoGenericLink('<b>Visit</b> FantasyRealm.', attrmap {
+			info.addExtra(extraInfoLink('<b>Visit</b> FantasyRealm.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=realm_fantasy',
 			}));
-			info.addExtra(extraInfoGenericLink('<b>Spend</b> Rubees.', attrmap {
+			info.addExtra(extraInfoLink('<b>Spend</b> Rubees.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'shop.php?whichshop=fantasyrealm',
@@ -874,7 +874,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				new drop_info('_latteDrinkUsed', LIMIT_BOOL, 'gulp'),
 			});
 			if(get_property('_latteRefillsUsed').to_int() < 3) {
-				info.addExtra(extraInfoGenericLink('<b>Get</b> a refill.', attrmap {
+				info.addExtra(extraInfoLink('<b>Get</b> a refill.', attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
 					'href': 'main.php?latte=1',
@@ -908,7 +908,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		}
 		case $item[Beach Comb]:
 			info.addDrop(new drop_info('_freeBeachWalksUsed', 11, 'free comb', 'free combs'));
-			info.addExtra(extraInfoGenericLink('<b>Comb</b> the beach', attrmap {
+			info.addExtra(extraInfoLink('<b>Comb</b> the beach', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'main.php?comb=1',
@@ -933,7 +933,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(!get_property('_cargoPocketEmptied').to_boolean()) {
 				string[int] pocketsEmptied = get_property('cargoPocketsEmptied').split_string(',');
 				int pocketsLeft = 666 - pocketsEmptied.count();
-				info.addExtra(extraInfoGenericLink('<b>Pick</b> a pocket', attrmap {
+				info.addExtra(extraInfoLink('<b>Pick</b> a pocket', attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
 					'href': 'inventory.php?action=pocket',
@@ -958,10 +958,10 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			effect nextBeard = getNextBeard();
 			if(nextBeard != $effect[none]) {
 				info.addToDesc(beardToShorthand(nextBeard) + (getCurrBeard() != $effect[none] ? ' next' : ' due'));
-				info.hasDrops = DROPS_ALL;
+				info.incDrops(DROPS_ALL);
 			}
 			info.addExtra(extraInfoPicker('fakebeard', '<b>Check</b> upcoming beards'));
-			info.addExtra(extraInfoGenericLink('<b>Adjust</b> your facial hair', attrmap {
+			info.addExtra(extraInfoLink('<b>Adjust</b> your facial hair', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'account_facialhair.php',
@@ -974,7 +974,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[combat lover's locket]:
 			info.addDrop(new drop_info('', locketFightsRemaining(), 'reminiscence', 'reminiscences'));
-			info.addExtra(extraInfoGenericLink('<b>Reminisce</b> about past loves', attrmap {
+			info.addExtra(extraInfoLink('<b>Reminisce</b> about past loves', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?reminisce=1',
@@ -998,7 +998,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		case $item[June cleaver]: {
 			int juneFights = get_property('_juneCleaverFightsLeft').to_int();
 			if(juneFights == 0) {
-				info.hasDrops = DROPS_ALL;
+				info.incDrops(DROPS_ALL);
 				info.addToDesc('noncom now!');
 			}
 			else {
@@ -1040,7 +1040,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				string linkText = '<b>Wish</b> for an item or effect<br />'
 					+ '<span class="descline">Current skill: ' + currSkill + ' (' + monkeyPawSkillDesc(currSkill) + ')<br />'
 					+ 'Next skill: ' + nextSkill + ' (' + monkeyPawSkillDesc(nextSkill) + ')</span>';
-				info.addExtra(extraInfoGenericLink(linkText, attrmap {
+				info.addExtra(extraInfoLink(linkText, attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
 					'href': 'main.php?pwd=' + my_hash() + '&action=cmonk',
@@ -1148,7 +1148,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			*/
 		case $item[over-the-shoulder Folder Holder]:
 		case $item[replica over-the-shoulder Folder Holder]:
-			info.addExtra(extraInfoGenericLink('<b>Manage</b> your folders.', attrmap {
+			info.addExtra(extraInfoLink('<b>Manage</b> your folders.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?action=useholder',
@@ -1163,7 +1163,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		case $item[bass clarinet]:
 			if(floundryText == '') floundryText = '<b>Drain</b> Spit';
 			if(!get_property('_floundryItemUsed').to_boolean()) {
-				info.addExtra(extraInfoGenericLink(floundryText, attrmap {
+				info.addExtra(extraInfoLink(floundryText, attrmap {
 					'class': 'change',
 					'href': sideCommand('use 1 ' + it.to_string() + '; equip '
 						+ relevantSlot.to_string() + ' ' + it.to_string()),
@@ -1171,7 +1171,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		case $item[PirateRealm eyepatch]:
-			info.addExtra(extraInfoGenericLink('<b>Spend</b> Fun.', attrmap {
+			info.addExtra(extraInfoLink('<b>Spend</b> Fun.', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'place.php?whichplace=realm_pirate',
@@ -1184,7 +1184,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				+ '/' + (111 * (1 + get_property('_sausagesMage').to_int())).formatInt()
 				+ ' units.<br />' + get_property('_sausageFights').to_int().formatInt()
 				+ ' goblins encountered today.';
-			info.addExtra(extraInfoGenericLink(linkText, attrmap {
+			info.addExtra(extraInfoLink(linkText, attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?action=grind',
@@ -1197,7 +1197,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		case $item[Guzzlr tablet]:
-			info.addExtra(extraInfoGenericLink('<b>Tap</b> tablet', attrmap {
+			info.addExtra(extraInfoLink('<b>Tap</b> tablet', attrmap {
 				'class': 'visit done',
 				'target': 'mainpane',
 				'href': 'inventory.php?tap=guzzlr',
@@ -1217,11 +1217,11 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			string ghostLoc = get_property("ghostLocation");
 			if(ghostLoc != '') {
 				info.addToDesc('ghost at ' + ghostLoc);
-				info.hasDrops = DROPS_ALL;
+				info.incDrops(DROPS_ALL);
 			}
 			else if(turnsToGhost <= 0) {
 				info.addToDesc('ghost due');
-				info.hasDrops = DROPS_SOME;
+				info.incDrops(DROPS_SOME);
 			}
 			else {
 				info.addToDesc('ghost in ' + turnsToGhost);
@@ -1237,7 +1237,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(turnsToFight == 0 && turnsPlayed != get_property('lastVoteMonsterTurn').to_int()) {
 				boolean isFree = get_property('_voteFreeFights').to_int() < 3;
 				info.addToDesc(isFree ? 'free vote monster due' : 'vote monster due');
-				info.hasDrops = isFree ? DROPS_ALL : DROPS_SOME;
+				info.incDrops(isFree ? DROPS_ALL : DROPS_SOME);
 			}
 			else {
 				if(turnsToFight == 0) {

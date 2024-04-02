@@ -393,9 +393,9 @@ void pickerGear(slot s) {
 
 	foreach i, extra in info.extra {
 		string descid = in_slot.descid;
-		string image = extra.optionImage;
+		string image = extra.image;
 		item foldFrom = $item[none];
-		if(extra.foldText != '') {
+		if(extra.extraType == EXTRA_FOLD) {
 			foreach it in get_related(in_slot, 'fold') {
 				if(it != in_slot) {
 					foldFrom = it;
@@ -440,28 +440,28 @@ void pickerGear(slot s) {
 		picker.tagFinish('a');
 		picker.tagFinish('td');
 		picker.tagStart('td', attrmap { 'colspan': '2' });
-		if(extra.pickerName != '') {
-			string pickerFunc = 'picker_' + extra.pickerName;
+		if(extra.extraType == EXTRA_PICKER) {
+			string pickerFunc = 'picker_' + extra.str1;
 			call void pickerFunc();
 			picker.tagStart('a', attrmap {
 				'class': 'chit_launcher done',
-				'rel': 'chit_picker' + extra.pickerName,
+				'rel': 'chit_picker' + extra.str1,
 				'href': '#',
 			});
-			picker.append(extra.pickerLauncherText);
+			picker.append(extra.str2);
 			picker.tagFinish('a');
 		}
-		else if(extra.foldText != '') {
+		else if(extra.extraType == EXTRA_FOLD) {
 			picker.tagStart('a', attrmap {
 				'class': 'change',
 				'href': sideCommand('fold ' + foldFrom.to_string()),
 			});
-			picker.append(extra.foldText);
+			picker.append(extra.str1);
 			picker.tagFinish('a');
 		}
-		else if(extra.genericLinkText != '') {
-			picker.tagStart('a', extra.genericLinkAttrs);
-			picker.append(extra.genericLinkText);
+		else if(extra.extraType != EXTRA_LINK) {
+			picker.tagStart('a', extra.attrs);
+			picker.append(extra.str1);
 			picker.tagFinish('a');
 		}
 		picker.tagFinish('td');

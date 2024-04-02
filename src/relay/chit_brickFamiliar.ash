@@ -486,324 +486,26 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	picker.pickerFinish();
 }
 
-// status: hasdrops (blue border), alldrops (purple border), danger (red border), good (green border)
-// good is intended to say BRING THIS WITH YOU RIGHT NOW NO MATTER WHAT, just about
-// danger is obviously meant to say DO NOT USE THIS FAMILIAR RIGHT NOW
-// hasdrops means there's limited stuff to gain today, so it'd be a good idea to bring it
-// alldrops means it hasn't dropped ANY of its stuff, or has some really valuable daily resource available
-
-int STATUS_NORMAL = 0;
-int STATUS_HASDROPS = 1;
-int STATUS_ALLDROPS = 2;
-int STATUS_GOOD = 3;
-int STATUS_DANGER = 4;
-
-int iconInfoSpecial(familiar f, buffer iconInfo) {
-	switch(f) {
-	case $familiar[Fist Turkey]:
-		int statsLeft = 15 - to_int(get_property("_turkeyMuscle")) - to_int(get_property("_turkeyMyst")) - to_int(get_property("_turkeyMoxie"));
-		if(statsLeft > 0) {
-			iconInfo.append(", ");
-			iconInfo.append(statsLeft);
-			iconInfo.append(" stat");
-			if(statsLeft != 1)
-				iconInfo.append("s");
-			// The stats are nice, but they don't warrant highlighting outside of The Source, where they're super important.
-			if(my_path().name == "The Source")
-				return STATUS_HASDROPS;
-			else
-				return STATUS_NORMAL;
-		}
-		break;
-	case $familiar[Steam-Powered Cheerleader]:
-		int steamPercent = ceil(to_float(get_property("_cheerleaderSteam")) / 2);
-		if(steamPercent > 0) {
-			iconInfo.append(steamPercent);
-			iconInfo.append("% steam");
-			if(steamPercent > 50)
-				return STATUS_ALLDROPS;
-			return STATUS_HASDROPS;
-		}
-		break;
-	case $familiar[Slimeling]:
-		float fullness = to_float(get_property("slimelingFullness"));
-		if(fullness > 0) {
-			iconInfo.append(", ~");
-			iconInfo.append(fullness);
-			iconInfo.append(" fullness");
-		}
-		int stacksDue = to_int(get_property("slimelingStacksDue"));
-		int stacksDropped = to_int(get_property("slimelingStacksDropped"));
-		if(stacksDue > 0 && stacksDue > stacksDropped) {
-			iconInfo.append(", ");
-			iconInfo.append(stacksDropped);
-			iconInfo.append("/");
-			iconInfo.append(stacksDue);
-			iconInfo.append(" stacks dropped");
-			if(stacksDropped == 0)
-				return STATUS_ALLDROPS;
-			return STATUS_HASDROPS;
-		}
-		break;
-	case $familiar[gelatinous cubeling]:
-		boolean needPole = available_amount($item[eleven-foot pole]) < 1;
-		boolean needRing = available_amount($item[ring of detect boring doors]) < 1;
-		boolean needPick = available_amount($item[pick-o-matic lockpicks]) < 1;
-		if(needPole)
-			iconInfo.append("Pole, ");
-		if(needRing)
-			iconInfo.append("Ring, ");
-		if(needPick)
-			iconInfo.append("Pick");
-		if(needPole || needRing || needPole)
-			return STATUS_ALLDROPS;
-		break;
-	case $familiar[Crimbo Shrub]:
-		switch(get_property("shrubGifts")) {
-		case "yellow":
-			if(have_effect($effect[Everything Looks Yellow]) > 0)
-				break;
-			iconInfo.append("Ready to fire!");
-			return STATUS_ALLDROPS;
-		case "meat":
-			if(have_effect($effect[Everything Looks Red]) > 0)
-				break;
-			iconInfo.append("Ready to fire!");
-			return STATUS_ALLDROPS;
-		case "": // If Crimbo Shrub has not yet been set up this ascension
-			iconInfo.append("Needs to be decorated!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Rockin' Robin]:
-		if(get_property("rockinRobinProgress").to_int() > 24) {
-			iconInfo.append("Egg soon!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Optimistic Candle]:
-		if(get_property("optimisticCandleProgress").to_int() > 24) {
-			iconInfo.append("Wax soon!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Garbage Fire]:
-		if(get_property("garbageFireProgress").to_int() > 24) {
-			iconInfo.append("Garbage soon!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Intergnat]:
-		int status = STATUS_NORMAL;
-		string demon = get_property("demonName12");
-		if(length(demon) < 5 || substring(demon,0,5) != "Neil ") {
-			iconInfo.append("Demon name unknown");
-			status = STATUS_HASDROPS;
-		}
-		else {
-			iconInfo.append("Demon name is ");
-			iconInfo.append(demon);
-		}
-		if(!can_interact()) {
-			if(available_amount($item[scroll of ancient forbidden unspeakable evil]) == 0) {
-				iconInfo.append(",\n    Need AFUE scroll");
-				status = STATUS_HASDROPS;
-			}
-			if(available_amount($item[thin black candle]) < 3) {
-				if(!iconInfo.contains_text("Need AFUE scroll"))
-					iconInfo.append(",\n    Need ");
-				else
-					iconInfo.append(", Need ");
-				iconInfo.append(to_string(3 - available_amount($item[thin black candle])));
-				iconInfo.append(" more candles");
-				status = STATUS_HASDROPS;
-			}
-		}
-		return status;
-	case $familiar[Reanimated Reanimator]:
-		if(get_property("_badlyRomanticArrows").to_int() == 0) {
-			iconInfo.append("Wink available");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Space Jellyfish]:
-		int spaceJellyfishDrops = to_int(get_property("_spaceJellyfishDrops"));
-		iconInfo.append(spaceJellyfishDrops+" jelly sucked");
-		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7) {
-			iconInfo.append(", Sea jelly available");
-			return STATUS_ALLDROPS;
-		}
-		if(spaceJellyfishDrops == 0)
-			return STATUS_ALLDROPS;
-		if(spaceJellyfishDrops < 3)
-			return STATUS_HASDROPS;
-		break;
-	case $familiar[XO Skeleton]:
-		int hugs = 11 - get_property("_xoHugsUsed").to_int();
-		if(hugs > 0) {
-			iconInfo.append(hugs + " hug" + (hugs == 1 ? "" : "s"));
-			return STATUS_HASDROPS;
-		}
-		break;
-	case $familiar[God Lobster]:
-		int godfights = 3 - get_property("_godLobsterFights").to_int();
-		if(godfights > 0) {
-			iconInfo.append(godfights + " challenge" + (godfights == 1 ? "" : "s"));
-			return STATUS_HASDROPS;
-		}
-		break;
-	case $familiar[Mini-Adventurer]:
-		if(get_property("miniAdvClass").to_int() == 0) {
-			iconInfo.append("No class selected!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Melodramedary]:
-		if(get_property("camelSpit").to_int() >= 100) {
-			iconInfo.append("Ready to spit!");
-			return STATUS_ALLDROPS;
-		}
-		break;
-	case $familiar[Shorter-Order Cook]:
-		int cookCharge = get_property("_shortOrderCookCharge").to_int();
-		int cookChargeNeeded = have_equipped($item[blue plate]) ? 9 : 11;
-		boolean cookDropNextTurn = cookCharge + 1 >= cookChargeNeeded;
-		if(cookDropNextTurn) {
-			iconInfo.append("Drop next turn!");
-			return STATUS_ALLDROPS;
-		}
-		else {
-			iconInfo.append(cookCharge + "/" + cookChargeNeeded + " to drop");
-		}
-		break;
-	}
-	return STATUS_NORMAL;
-}
-
-string getWeirdoDivContents(familiar f) {
-	if(vars["chit.familiar.iconize-weirdos"].to_boolean()) {
-		return "";
-	}
-
-	buffer result;
-
-	switch(f) {
-		case $familiar[Melodramedary]:
-			result.append('<img src="/images/otherimages/camelfam_left.gif" border=0 />');
-			for(int i = 0; i < f.familiar_weight() / 5; ++i) {
-				result.append('<img src="/images/otherimages/camelfam_middle.gif" border=0 />');
-			}
-			result.append('<img src="/images/otherimages/camelfam_right.gif" border=0 />');
-			break;
-		case $familiar[Left-Hand Man]:
-			matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
-			if(leftyMatcher.find()) {
-				result.append(leftyMatcher.group(1));
-			}
-			break;
-	}
-
-	return result.to_string();
-}
-
-boolean isWeirdo(familiar f) {
-	return f.getWeirdoDivContents() != "";
-}
-
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
-	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[familiar] : $slot[buddy-bjorn]);
-	boolean pokeFam = (my_path().name == "Pocket Familiars");
-	int status = STATUS_NORMAL;
+	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
 
-	buffer iconInfo;
-	iconInfo.append(info.desc);
-
-	if(info.hasDrops == DROPS_ALL) {
-		status = STATUS_ALLDROPS;
-	}
-	else if(info.hasDrops == DROPS_SOME) {
-		status = STATUS_HASDROPS;
+	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
+	if(reason != '') {
+		info.addToDesc('recommended for ' + reason);
 	}
 
-	if(pokeFam && !isBjorn)
-		info.hasDrops = DROPS_NONE;
-
-	if(!isBjorn && !pokeFam) {
-		int specialStatus = iconInfoSpecial(f, iconInfo);
-		if(specialStatus > status)
-			status = specialStatus;
-	}
-
-	if(reason != "") {
-		iconInfo.append(", recommended for ");
-		iconInfo.append(reason);
-	}
-
-	string blackForestState = get_property("questL11Black");
-	// You should probably bring a bird with you if you don't have a hatchling and you're looking for the black market
-	if(!isBjorn && !pokeFam && (f == $familiar[Reassembled Blackbird] || f == $familiar[Reconstituted Crow])) {
-		if((blackForestState == "started" || blackForestState == "step1") && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0)
-			status = STATUS_GOOD;
-		else
-			status = STATUS_DANGER;
-	}
-
-	switch(info.dangerLevel) {
-		case DANGER_WARNING: status = STATUS_DANGER; break;
-		case DANGER_DANGEROUS: status = STATUS_DANGER; break;
-		case DANGER_GOOD: status = STATUS_GOOD; break;
-	}
-
-	boolean isWeirdo = f.isWeirdo();
-
-	result.append('<');
-	result.append(isWeirdo ? 'div' : 'img');
-	result.append(' class="chit_icon');
-	switch(status) {
-	case STATUS_HASDROPS:
-		result.append(' hasdrops');
-		break;
-	case STATUS_ALLDROPS:
-		result.append(' alldrops');
-		break;
-	case STATUS_GOOD:
-		result.append(' good');
-		break;
-	case STATUS_DANGER:
-		result.append(' danger');
-		break;
-	}
-	if(isWeirdo) {
-		result.append(' chit_');
-		result.append(f.to_string().to_lower_case().replace_string(" ", ""));
-	}
+	string titleStr = '';
 	if(title) {
-		result.append('" title="');
-		result.append(f.name);
-		result.append(' (the ');
-		result.append(f);
-		result.append(')');
-		string info = to_string(iconInfo);
-		if(info != "") {
-			result.append(' (');
-			if(char_at(info,0) != ",")
-				result.append(info);
-			else
-				result.append(substring(info,2));
-			result.append(')');
+		titleStr = f.name + ' (the ' + f + ')';
+		if(info.desc != '') {
+			matcher m = create_matcher('<[^>]+>', info.desc);
+			string safeDesc = m.replace_all('');
+			titleStr += ' (' + safeDesc + ')';
 		}
 	}
-	if(isWeirdo) {
-		result.append('">');
-		result.append(f.getWeirdoDivContents());
-		result.append('</div>');
-	}
-	else {
-		result.append('" src="');
-		result.append(info.image);
-		result.append('" />');
-	}
+
+	result.addInfoIcon(info, titleStr, '');
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
@@ -1381,58 +1083,6 @@ void FamVampyre() {
 	chitBricks["familiar"] = result;
 }
 
-void pickerSnapper() {
-	buffer picker;
-	picker.pickerStart("snapper", "Guide me!");
-
-	void addPhylum(phylum phy, string phylumPlural, item get, string desc) {
-		if(phylumPlural == "")
-			phylumPlural = phy.to_string() + "s";
-
-		string phyLinkName = (phy == $phylum[mer-kin]) ? "merkin" : phy.to_string();
-		string guideLink = '<a class="change" href="' + sideCommand("ashq visit_url('familiar.php?action=guideme&pwd'); visit_url('choice.php?pwd&whichchoice=1396&option=1&cat=" + phyLinkName + "')") + '">';
-
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
-		picker.append(get.descid);
-		picker.append(',0,event); return false;" onclick="descitem(');
-		picker.append(get.descid);
-		picker.append(',0,event)"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(phy.image);
-		picker.append('" title="Click for item description of snapper drop" /></a></td><td colspan="2">');
-		picker.append(guideLink);
-		picker.append('<b>Guide</b> me towards ');
-		picker.append(phylumPlural);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span></a></td></tr>');
-	}
-
-	addPhylum($phylum[beast], "", $item[patch of extra-warm fur], "Potion, 20 turns of Superhuman Cold Resistance");
-	addPhylum($phylum[bug], "", $item[a bug's lymph], "Spleen size 1, 60 turns of HP +100% and 8-10 HP Regen");
-	addPhylum($phylum[constellation], "", $item[micronova], "Combat item, yellow ray");
-	addPhylum($phylum[construct], "", $item[industrial lubricant], "Spleen size 1, 30 turns of +150% init");
-	addPhylum($phylum[demon], "", $item[infernal snowball], "Potion, 20 turns of Superhuman Hot Resistance");
-	addPhylum($phylum[dude], "", $item[human musk], "Combat item, all day banish (first 3 free)");
-	addPhylum($phylum[elemental], "elementals", $item[livid energy], "Spleen size 1, 60 turns of +50% MP and 3-5 MP Regen");
-	addPhylum($phylum[elf], "elves", $item[peppermint syrup], "Potion, 20 turns of +50% Candy Drops");
-	addPhylum($phylum[fish], "fish", $item[fish sauce], "Spleen size 1, 30 turns of Fishy");
-	addPhylum($phylum[goblin], "", $item[guffin], "Food size 3, awesome quality");
-	addPhylum($phylum[hippy], "hippies", $item[organic potpourri], "Potion, 20 turns of Superhuman Stench Resistance");
-	addPhylum($phylum[hobo], "", $item[beggin' cologne], "Spleen size 1, 60 turns of +100% Meat");
-	addPhylum($phylum[horror], "", $item[powdered madness], "Combat item, free kill (up to 5 a day)");
-	addPhylum($phylum[humanoid], "", $item[vial of humanoid growth hormone], "Spleen size 1, 30 turns of +50% Muscle Gains");
-	addPhylum($phylum[mer-kin], "mer-kin", $item[mer-kin eyedrops], "Potion, 20 turns of +30% Underwater Item Drops");
-	addPhylum($phylum[orc], "", $item[boot flask], "Booze size 3, awesome quality");
-	addPhylum($phylum[penguin], "", $item[envelope full of meat], "Usable for ~1k meat");
-	addPhylum($phylum[pirate], "", $item[Shantix&trade;], "Spleen size 1, 30 turns of +50% Moxie Gains");
-	addPhylum($phylum[plant], "", $item[goodberry], "Combat item, full HP recovery");
-	addPhylum($phylum[slime], "", $item[extra-strength goo], "Potion, 20 turns of Superhuman Sleaze Resistance");
-	addPhylum($phylum[undead], "undead", $item[unfinished pleasure], "Potion, 20 turns of Superhuman Spooky Resistance");
-	addPhylum($phylum[weird], "weirdos", $item[non-Euclidean angle], "Spleen size 1, 30 turns of +50% Mysticality Gains");
-
-	picker.pickerFinish("Changing guidance...");
-}
-
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -1465,7 +1115,40 @@ void bakeFamiliar() {
 	string mummingicon = "";
 
 	familiar myfam = my_familiar();
+	chit_info famInfo = getFamiliarInfo(myfam);
 	item famitem = $item[none];
+
+	if(famInfo.extra.count() > 0) {
+		if(famInfo.extra.count() > 1) {
+			abort('support for multiple extras on fams not there yet');
+		}
+		buffer followbuffer;
+		extra_info extra = famInfo.extra[0];
+		switch(extra.extraType) {
+			case EXTRA_PICKER:
+				string pickerFunc = 'picker_' + extra.str1;
+				call void pickerFunc();
+				followbuffer.tagStart('a', attrmap {
+					'class': 'chit_launcher',
+					'rel': 'chit_picker' + extra.str1,
+					'href': '#',
+				});
+				followbuffer.append(extra.str2);
+				followbuffer.tagFinish('a');
+				break;
+			case EXTRA_LINK:
+				followbuffer.tagStart('a', extra.attrs);
+				followbuffer.append(extra.str1);
+				followbuffer.tagFinish('a');
+				break;
+			case EXTRA_EQUIPFAM:
+			// todo
+				break;
+			default:
+				abort('not there yet');
+		}
+		name_followup = ' (' + followbuffer + ')';
+	}
 
 	if(myfam != $familiar[none]) {
 		famtype = to_string(myfam);
@@ -1544,294 +1227,6 @@ void bakeFamiliar() {
 		famweight = to_string(familiar_weight(myfam) + weight_adjustment());
 	}
 
-	// Get familiar specific info
-	switch(myfam) {
-	case $familiar[Mad Hatrack]:
-	case $familiar[Fancypants Scarecrow]:
-		if(famitem != $item[none]) {
-			matcher m = create_matcher('Familiar Effect: \\"(.*?), cap (.*?)\\"', string_modifier(famitem, "Modifiers"));
-			if(find(m)) {
-				info = replace_string(m.group(1), "x", " x ");
-				if(group_count(m) > 1 ) {
-					famweight = famweight + " / " + m.group(2);
-					weight_title = "Buffed/Max Weight";
-				}
-			} else info = "Unknown effect";
-		} else info = "None";
-		break;
-	case $familiar[Reanimated Reanimator]:
-		name_followup += ' (<a target=mainpane href="main.php?talktoreanimator=1">chat</a>)';
-		buffer wink;
-		iconInfoSpecial(myfam,wink);
-		info = wink;
-		break;
-	case $familiar[Grim Brother]:
-		if(source.contains_text(">talk</a>)"))
-			name_followup += ' (<a target=mainpane href="familiar.php?action=chatgrim&pwd='+my_hash()+'">talk</a>)';
-		break;
-	case $familiar[Crimbo Shrub]:
-		if(get_property("_shrubDecorated") == "false")
-			name_followup += ' (<a target=mainpane href="inv_use.php?pwd='+my_hash()+'&which=3&whichitem=7958">decorate</a>)';
-		buffer mods;
-		foreach shrub in $strings[shrubTopper, shrubLights, shrubGarland, shrubGifts] {
-			string decoration = get_property(shrub);
-			if(length(decoration) > 0) {
-				if(length(mods) > 0)
-					mods.append(", ");
-				mods.append(decoration);
-			}
-		}
-		if(info != "")
-			mods = mods.replace_string("PvP", "PvP: "+info.replace_string(" charges", ""));
-		info = parseMods(mods);
-		if(get_property("shrubGifts") == "yellow")
-			info = info.replace_string(", Yellow", ", <span style='color:#999933'>Yellow</span>");
-		else if(get_property("shrubGifts") == "meat")
-			info = info.replace_string("Meat", "<span style='color:#FE2E2E'>Meat</span>");
-		break;
-	case $familiar[Mini-Crimbot]:
-		if(source.contains_text(">configure</a>)"))
-			switch(get_property("crimbotChassis")) {
-			case 'Low-Light Operations Frame':
-				info = 'Block, ';
-				break;
-			case 'Smile-O-Matic':
-				info = 'Stats, ';
-				break;
-			case 'Music Box Box':
-				info = 'Spooky Damage, ';
-				break;
-			case 'Chewing Unit':
-				info = 'Meat, ';
-				break;
-			}
-			switch(get_property("crimbotArm")) {
-			case 'T8-ZR Pacification Delivery System':
-				info += 'MP, ';
-				break;
-			case '4.077 Field Medic Syringe':
-				info += 'HP, ';
-				break;
-			case 'Frostronic Hypercoil':
-				info += 'Cold Damage, ';
-				break;
-			case 'STAL-1 UltraFist':
-				info += 'Physical Damage, ';
-				break;
-			}
-			switch(get_property("crimbotPropulsion")) {
-			case 'V-TOP Frictionless Monocycle Wheel':
-				info += 'Initiative';
-				break;
-			case 'X-1 Hover Rocket':
-				info += 'Hot Damage';
-				break;
-			case 'Lambada-Class Dancing Legs':
-				info += 'Items';
-				break;
-			case 'T-NMN Tank Treads':
-				info += 'Delevel';
-				break;
-			}
-			info = '<a target=mainpane title="Configure your Mini-Crimbot" href="main.php?action=minicrimbot">'
-				+ (info == ""? "configure": parseMods(info)) + '</a>';
-		break;
-	case $familiar[Puck Man]: case $familiar[Ms. Puck Man]:
-		info = '<a class="visit blue-link" target="mainpane" title="Visit the Crackpot Mystic" href="shop.php?whichshop=mystic">' + to_string(item_amount($item[Yellow Pixel])) + ' yellow pixels</a>, ' + info;
-		break;
-	case $familiar[Machine Elf]:
-		string isBlue = "";
-		int thought = item_amount($item[abstraction: thought]);
-		int action = item_amount($item[abstraction: action]);
-		int sensation = item_amount($item[abstraction: sensation]);
-		boolean haveDuped = get_property("lastDMTDuplication").to_int() >= my_ascensions();
-		if(thought > 0 && action > 0 && sensation > 0)
-			isBlue = " blue-link";
-		info = '<a class="visit' + isBlue + '" target="mainpane" title="DMT mixing: '
-			+ thought + ' item, ' + action + ' weight, ' + sensation + ' init'
-			+ ' possible" href="place.php?whichplace=dmt">' + myFam.fights_today + '/' + myFam.fights_limit + ' combats</a>, '
-			+ myFam.drops_today + '/'  + myFam.drops_limit + ' snowglobe, dupe ' + (haveDuped ? "used" : "available");
-		break;
-	case $familiar[Intergnat]:
-		if(item_amount($item[BACON]) > 0) {
-			if(length(info) > 0)
-				info = ", " + info;
-
-			info = '<a class="visit blue-link" target="mainpane" title="Internet Meme Shop" href="shop.php?whichshop=bacon&pwd='+my_hash()+'">' + to_string(item_amount($item[BACON])) + ' BACON</a>' + info;
-		}
-		string demon = get_property("demonName12");
-		if(length(demon) < 5 || substring(demon,0,5) != "Neil ")
-			info += (length(info) > 0? ', ':'') + '<span title="You haven\'t discovered the full name of the Intergnat demon yet this ascension">Demon?</span>';
-		if(!can_interact() && available_amount($item[scroll of ancient forbidden unspeakable evil]) == 0)
-			info += (length(info) > 0? ', ':'') + "AFUE scroll";
-		if(!can_interact() && available_amount($item[thin black candle]) < 3)
-			info += (length(info) > 0? ', ':'') + to_string(3 - available_amount($item[thin black candle])) + " candles";
-		break;
-	case $familiar[Fist Turkey]:
-		int muscgains = to_int(get_property("_turkeyMuscle"));
-		int mystgains = to_int(get_property("_turkeyMyst"));
-		int moxgains = to_int(get_property("_turkeyMoxie"));
-		info += ', <span title="' + muscgains + '/5 musc, ' + mystgains  + '/5 myst, ' + moxgains + '/5 moxie">' + (muscgains + mystgains + moxgains) + '/15 stats</span>';
-		break;
-	case $familiar[Nosy Nose]:
-		info = get_property("nosyNoseMonster");
-		if(info == "") info = "Nothing Sniffed";
-		break;
-	case $familiar[Gelatinous Cubeling]:
-		buffer b;
-		iconInfoSpecial(myfam, b);
-		info = b;
-		break;
-	case $familiar[Space Jellyfish]:
-		if(!get_property("_seaJellyHarvested").to_boolean() && my_level() >= 11 && my_class().to_int() < 7)
-			info += ', <a class="visit blue-link" target="mainpane" title="To the sea!" href="'
-				+ (get_property("questS01OldGuy") == "unstarted"? 'oldman.php': 'place.php?whichplace=thesea&action=thesea_left2')
-				+ '">Sea jelly available</a>';
-		break;
-	case $familiar[XO Skeleton]:
-		int xs = item_amount($item[X]);
-		int os = item_amount($item[O]);
-		int hugs = 11 - get_property("_xoHugsUsed").to_int();
-		string xprog = get_property("xoSkeleltonXProgress");
-		string yprog = get_property("xoSkeleltonOProgress");
-		info = '<a class="visit" target="mainpane" title="eXpend some Xes and blOw some Os!" '
-			+ 'href="shop.php?whichshop=xo">' +  xs + (xs == 1 ? ' X' : " Xes") + ' (' + xprog + '/9), '
-			+ os + (os == 1 ? ' O' : " Os") + ' (' + yprog + '/9)</a>';
-		if(hugs > 0)
-			info = hugs + " hug" + (hugs == 1 ? "" : "s") + ", " + info;
-		break;
-	case $familiar[God Lobster]:
-		int godfights = 3 - get_property("_godLobsterFights").to_int();
-		if(godfights > 0)
-			info += '<a target=mainpane href="main.php?fightgodlobster=1" title="Challenge the God Lobster">'
-				+ godfights + " challenge" + (godfights == 1 ? "" : "s") + '</a>';
-		break;
-	case $familiar[Cat Burglar]:
-		if(source.index_of('<a target=mainpane href=main.php?heist=1>heist time!</a>') != -1)
-			info += '<br><a target=mainpane href=main.php?heist=1>heist time!</a>';
-		break;
-	case $familiar[Robortender]:
-		string [int] roboDrinks = split_string(get_property("_roboDrinks"), ",");
-		float lepLev = 1;
-		string res = "";
-		foreach i,s in roboDrinks {
-			string addition = "";
-			switch(s) {
-				case "literal grasshopper": addition = "+3 musc/com"; break;
-				case "eighth plague": addition = "+5 musc/com"; break;
-				case "double entendre": addition = "0.5xFairy"; break;
-				case "single entendre": addition = "1xFairy"; break;
-				case "Phlegethon": addition = "hot damage"; break;
-				case "reverse Tantalus": addition = "hot damage!"; break;
-				case "Siberian sunrise": addition = "cold damage"; break;
-				case "elemental caipiroska": addition = "cold damage!"; break;
-				case "mentholated wine": addition = "candy"; break;
-				case "Feliz Navidad": addition = "candy!"; break;
-				case "low tide martini": addition = "aquatic"; break;
-				case "Bloody Nora": addition = "aquatic!"; break;
-				case "shroomtini": addition = "+3 mox/com"; break;
-				case "moreltini": addition = "+5 mox/com"; break;
-				case "morning dew": addition = "mp"; break;
-				case "hell in a bucket": addition = "mp!"; break;
-				case "whiskey squeeze": addition = "junk"; break;
-				case "Newark": addition = "junk!"; break;
-				case "great old fashioned": addition = "spooky damage"; break;
-				case "R'lyeh": addition = "spooky damage!"; break;
-				case "Gnomish sagngria": addition = "phys damage"; break;
-				case "Gnollish sangria": addition = "phys damage!"; break;
-				case "vodka stinger": addition = "stench damage"; break;
-				case "vodka barracuda": addition = "stench damage!"; break;
-				case "extremely slippery nipple": addition = "hp"; break;
-				case "Mysterious Island iced tea": addition = "hp!"; break;
-				case "piscatini": lepLev = 1.5; break;
-				case "drive-by shooting": lepLev = 2; break;
-				case "Churchill": addition = "sleaze damage"; break;
-				case "gunner's daughter": addition = "sleaze damage!"; break;
-				case "soilzerac": addition = "+3 myst/com"; break;
-				case "dirt julep": addition = "+5 myst/com"; break;
-				case "London frog": addition = "0.5xPotato"; break;
-				case "Simepore slime": addition = "1xPotato"; break;
-				case "nothingtini": addition = "delevels"; break;
-				case "Phil Collins": addition = "delevels!"; break;
-			}
-			if(addition != "") {
-				res += ", " + addition;
-			}
-		}
-		// get rid of the .0 when it's 1 or 2
-		info = (floor(lepLev) == lepLev ? floor(lepLev) : lepLev) + "xLep" + res;
-		break;
-	case $familiar[Red-Nosed Snapper]:
-		pickerSnapper();
-		info += ' &bull; <a class="chit_launcher done" rel="chit_pickersnapper" href="#">guide me!</a>';
-		break;
-	case $familiar[Ghost of Crimbo Commerce]:
-		string ghostItem = get_property("commerceGhostItem");
-		if(ghostItem != "") {
-			info += 'Buy <a target=mainpane href="mall.php?justitems=0&pudnuggler=%22' +
-				ghostItem.url_encode() + '%22">' + ghostItem + '</a>!';
-			break;
-		}
-		int commerceCharge = get_property("commerceGhostCombats").to_int();
-		if(commerceCharge >= 9) {
-			info += "Mall ask next turn!";
-		}
-		else {
-			info += commerceCharge + "/10 combats to mall ask";
-		}
-		break;
-	case $familiar[Reagnimated Gnome]:
-		int gnomeAdv = get_property("_gnomeAdv").to_int();
-		if(gnomeAdv > 0) {
-			info += gnomeAdv + " adv gained";
-		}
-		break;
-	case $familiar[Temporal Riftlet]:
-		int riftletAdv = get_property("_riftletAdv").to_int();
-		if(riftletAdv > 0) {
-			info += riftletAdv + " adv gained";
-		}
-		break;
-	case $familiar[Vampire Vintner]:
-		if(available_amount($item[1950 Vampire Vintner wine]) > 0) {
-			info += "Already have wine!";
-		}
-		break;
-	case $familiar[Shorter-Order Cook]:
-		int cookCharge = get_property("_shortOrderCookCharge").to_int();
-		int cookChargeNeeded = have_equipped($item[blue plate]) ? 9 : 11;
-		boolean cookDropNextTurn = cookCharge + 1 >= cookChargeNeeded;
-		if(cookDropNextTurn) {
-			info += "Drop next turn!";
-		}
-		else {
-			info += cookCharge + "/" + cookChargeNeeded + " to drop";
-		}
-		break;
-	case $familiar[Stocking Mimic]:
-		boolean candyBagDropped = get_property("_bagOfCandy").to_boolean();
-		info += candyBagDropped ? "bag dropped today" : "can drop bag today";
-		break;
-	case $familiar[grey goose]:
-		int famweight = familiar_weight(myfam);
-		info += famweight + "lb";
-		if(famweight > 1) info += "s";
-		int target = max(famweight + 1, 6);
-		if(famweight < 20) {
-			int expToGo = target**2 - myfam.experience;
-			int combats = ceil(expToGo / (numeric_modifier("Familiar Experience") + 1));
-			info += ", " +  expToGo + " exp";
-			if(combats != expToGo) {
-				info += ' <span title="gaining '
-				+ floor(numeric_modifier("Familiar Experience")) + ' fam exp per combat">(' + combats
-				+ " fight" + (combats > 1 ? "s" : "") + ")</span>";
-			}
-			info += " to " + target + "lb";
-			if(target > 1) info += "s";
-		}
-		break;
-	}
-
 	//Get equipment info
 	if(myfam == $familiar[Comma Chameleon]) {
 		famitem = $item[none];
@@ -1840,7 +1235,7 @@ void bakeFamiliar() {
 		if (find(actorMatcher)) {
 			actortype = group(actorMatcher, 1);
 			equipimage = to_familiar(actortype).image;
-			info = actortype;
+			//info = actortype;
 		}
 	} else {
 		famitem = familiar_equipped_equipment(my_familiar());
@@ -1857,14 +1252,14 @@ void bakeFamiliar() {
 						case "goatee": equipimage = "snowface4.gif"; break;
 						case "hat": equipimage = "snowface5.gif"; break;
 					}
-					info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
+					//info += (length(info) == 0? "": ", ") + get_property("_carrotNoseDrops")+"/3 carrots";
 				}
 				break;
 			case $item[miniature crystal ball]:
-				info += (length(info) == 0 ? "" : ", ") + '<a class="visit" target="mainpane" href="inventory.php?ponder=1">ponder</a>';
+				//info += (length(info) == 0 ? "" : ", ") + '<a class="visit" target="mainpane" href="inventory.php?ponder=1">ponder</a>';
 				break;
 			case $item[Mayflower bouquet]:
-				info += (length(info) == 0 ? "" : ", ") + get_property("_mayflowerDrops") + " flowers";
+				//info += (length(info) == 0 ? "" : ", ") + get_property("_mayflowerDrops") + " flowers";
 				break;
 		}
 	}
@@ -1879,9 +1274,6 @@ void bakeFamiliar() {
 	} else 	if (famitem == $item[moveable feast]) {
 		charges = get_property("_feastUsed") + " / 5";
 		chargeTitle = "Familiars Feasted";
-	} else 	if ( (myfam == $familiar[Pair of Stomping Boots]) && (get_property("bootsCharged") == "true") ) {
-		charges = "GO";
-		chargeTitle = "Your Boots are charged and ready for some stomping";
 	}
 
 	string hover = "Visit your terrarium";
@@ -1904,8 +1296,8 @@ void bakeFamiliar() {
 	}
 
 	//Add final touches to additional info
-	if (info != "") {
-		info = '<br><span style="color:#606060;font-weight:normal">(' + info + ')</span>';
+	if (famInfo.desc != "") {
+		famInfo.desc = '<br><span style="color:#606060;font-weight:normal">(' + famInfo.desc + ')</span>';
 	}
 
 	//Add base weight to weight title
@@ -1939,7 +1331,7 @@ void bakeFamiliar() {
 	}
 	result.append('</tr><tr>');
 	result.append('<td class="');
-	if(myfam.isWeirdo()) result.append('weird');
+	if(famInfo.weirdoTag != '') result.append('weird');
 	result.append('icon" title="' + hover_famicon + '">');
 	if (protect) {
 		result.addFamiliarIcon(myfam, false, false);
@@ -1949,7 +1341,7 @@ void bakeFamiliar() {
 		result.append('</a>');
 	}
 	result.append('</td>');
-	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + info + '</td>');
+	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + famInfo.desc + '</td>');
 	if (myfam == $familiar[none]) {
 		result.append('<td class="icon">');
 		result.append('</td>');
