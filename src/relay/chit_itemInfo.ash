@@ -395,32 +395,14 @@ void picker_powerfulglove() {
 	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
 	picker.pickerStart("powerfulglove", "Cheat at life (" + batteryLeft + "% left)");
 
-	void addCheat(skill cheat, string desc) {
-		string cheatLink = '<a class="change" href="' + sideCommand("cast 1 " + cheat.to_string()) + '">';
-
-		picker.append('<tr class="pickitem');
-		if(cheat.combat) picker.append(' currentitem');
-		picker.append('"><td class="icon"><a class="done" onclick=\'javascript:poop("desc_skill.php?whichskill=');
-		picker.append(cheat.to_int());
-		picker.append('&self=true","skill", 350, 300)\' href="#"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(cheat.image);
-		picker.append('" title="Pop out skill description" /></a></td><td colspan="2">');
-		if(!cheat.combat) {
-			picker.append(cheatLink);
-			picker.append('<b>ENTER</b> ');
-		}
-		picker.append(cheat.to_string());
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		if(cheat.combat) picker.append('<br />(Available in combat)');
-		picker.append('</span></a></td></tr>');
+	void addCheat(skill cheat, string desc, int battery) {
+		picker.pickerSkillOption(cheat, desc, battery + '% battery', battery <= batteryLeft);
 	}
 
-	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns (5% battery)");
-	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns (5% battery)");
-	if(batteryLeft >= 10)
-		addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone (10% battery)");
-	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half (5% battery)");
+	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns", 5);
+	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns", 5);
+	addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone", 10);
+	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half", 5);
 
 	picker.pickerFinish("Entering cheat code...");
 }
@@ -431,36 +413,9 @@ void picker_backupcamera() {
 
 	void addSetting(string name, string desc, string command, string icon) {
 		boolean active = get_property("backupCameraMode") == command;
-		boolean needsVerb = !name.starts_with('<b>');
-
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Current</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("backupcamera " + command));
-			picker.append('">');
-			if(needsVerb) picker.append('<b>Toggle</b> to ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption(name, desc, 'backupcamera ' + command, itemimage(icon), active);
 	}
 
-	if(get_property("backupCameraReverserEnabled").to_boolean()) {
-		addSetting("<b>Disable</b> reverser", "Make everything confusing", "reverser off", "backcamera.gif");
-	}
-	else {
-		addSetting("<b>Enable</b> reverser", "Make everything look normal", "reverser on", "backcamera.gif");
-	}
 	addSetting("Infrared Spectrum", "+50% Meat Drops", "meat", "meat.gif");
 	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
 	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
@@ -758,6 +713,16 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			if(!get_property('backupCameraReverserEnabled').to_boolean()) {
 				info.dangerLevel = DANGER_DANGEROUS;
 				info.addToDesc('REVERSER NOT ENABLED!');
+				info.addExtra(extraInfoLink('<b>Enable</b> reverser', attrmap {
+					'class': 'change',
+					'href': sideCommand('backupcamera reverser on'),
+				}));
+			}
+			else {
+				info.addExtra(extraInfoLink('<b>Disable</b> reverser', 'not recommended', attrmap {
+					'class': 'change',
+					'href': sideCommand('backupcamera reverser off'),
+				}));
 			}
 			info.addExtra(extraInfoPicker('backupcamera', '<b>Configure</b> your camera (currently '
 				+ get_property('backupCameraMode') + ')'));

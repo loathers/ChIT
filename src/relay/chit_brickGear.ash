@@ -459,9 +459,15 @@ void pickerGear(slot s) {
 			picker.append(extra.str1);
 			picker.tagFinish('a');
 		}
-		else if(extra.extraType != EXTRA_LINK) {
+		else if(extra.extraType == EXTRA_LINK) {
 			picker.tagStart('a', extra.attrs);
 			picker.append(extra.str1);
+			if(extra.str2 != '') {
+				picker.tagSelfClosing('br');
+				picker.tagStart('span', attrmap { 'class': 'descline' });
+				picker.append(extra.str2);
+				picker.tagFinish('span');
+			}
 			picker.tagFinish('a');
 		}
 		picker.tagFinish('td');

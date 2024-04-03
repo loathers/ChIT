@@ -38,6 +38,7 @@ int EXTRA_PICKER = 0;
 // str1 is fold text
 int EXTRA_FOLD = 1;
 // str1 is link text
+// str2 is optional for descline
 // attrs is for the link itself
 int EXTRA_LINK = 2;
 // for mad hatrack and fancypants scarecrow, and who knows, maybe something else in the future
@@ -69,8 +70,16 @@ extra_info extraInfoFoldable(string text) {
 	return extraInfoFoldable(text, '');
 }
 
+extra_info extraInfoLink(string text, string desc, attrmap attrs, string image) {
+	return new extra_info(EXTRA_LINK, image, text, desc, attrs);
+}
+
+extra_info extraInfoLink(string text, string desc, attrmap attrs) {
+	return extraInfoLink(text, desc, attrs, '');
+}
+
 extra_info extraInfoLink(string text, attrmap attrs, string image) {
-	return new extra_info(EXTRA_LINK, image, text, '', attrs);
+	return extraInfoLink(text, '', attrs, image);
 }
 
 extra_info extraInfoLink(string text, attrmap attrs) {
@@ -714,6 +723,10 @@ void tagFinish(buffer buf, string type) {
 
 void tagSelfClosing(buffer buf, string type, attrmap attrs) {
 	tagStart(buf, type, attrs, true);
+}
+
+void tagSelfClosing(buffer buf, string type) {
+	tagSelfClosing(buf, type, attrmap {});
 }
 
 void addImg(buffer buf, string src, attrmap attrs) {
