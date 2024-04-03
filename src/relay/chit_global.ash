@@ -153,6 +153,9 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
 	}
+	if(imgAttrs contains 'onclick') {
+		imgAttrs['class'] += ' cursor';
+	}
 
 	if(info.weirdoDivContents == '') {
 		result.addImg(info.image, imgAttrs);
@@ -843,14 +846,14 @@ void pickerAddImage(buffer picker, string src) {
 	pickerAddImage(picker, src, false, attrmap {});
 }
 
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string leftSection, attrmap linkAttrs, string rightSection) {
 	picker.pickerStartOption(usable);
 
 	if(href == '') {
 		usable = false;
 	}
 
-	picker.pickerAddImage(imgsrc, imgAttrs.count() > 0, imgAttrs);
+	picker.append(leftSection);
 	attrmap tdAttrs;
 	if(rightSection == '') {
 		tdAttrs['colspan'] = '2';
@@ -891,6 +894,13 @@ void pickerGenericOption(buffer picker, string verb, string noun, string desc, s
 		picker.tagFinish('td');
 	}
 	picker.pickerFinishOption();
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
+	buffer leftSection;
+	leftSection.pickerAddImage(imgsrc, imgAttrs.count() > 0, imgAttrs);
+
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, leftSection, linkAttrs, rightSection);
 }
 
 void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs) {

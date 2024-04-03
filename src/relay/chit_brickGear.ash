@@ -412,11 +412,6 @@ void pickerGear(slot s) {
 		}
 		picker.tagStart('tr', attrmap { 'class': 'pickitem' });
 		picker.tagStart('td', attrmap { 'class': 'icon' });
-		picker.tagStart('a', attrmap {
-			'class': 'done',
-			'href': '#',
-			'onclick': 'descitem(' + descid + ',0,event); return false;',
-		});
 		string imgClass = 'chit_icon';
 		if(info.hasDrops == DROPS_SOME) {
 			imgClass += ' hasdrops';
@@ -433,6 +428,10 @@ void pickerGear(slot s) {
 		else if(info.dangerLevel == DANGER_GOOD) {
 			imgClass += ' good';
 		}
+		picker.tagStart('a', attrmap {
+			'onclick': 'descitem(' + descid + ',0,event); return false;',
+			'href': '#',
+		});
 		picker.addImg(image, attrmap {
 			'class': imgClass,
 			'title': 'Click for item description',
@@ -499,9 +498,14 @@ void pickerGear(slot s) {
 
 	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
+		buffer itemImage;
+		itemImage.tagStart('td', attrmap { 'class': 'chit_icon' });
+		itemImage.addItemIcon(in_slot, 'Click for item description', true);
+		itemImage.tagFinish('td');
 		buffer favButton;
 		favButton.add_favorite_button(in_slot);
-		picker.pickerGenericOption('unequip', info.name, info.desc, '', sideCommand('unequip ' + s), true, info.image, attrmap {}, attrmap {}, favButton.to_string());
+		picker.pickerGenericOption('unequip', info.name, info.desc, '',
+			sideCommand('unequip ' + s), true, itemImage, attrmap {}, favButton);
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
 		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
@@ -619,7 +623,7 @@ void pickerGear(slot s) {
 			break;
 
 		case "oldschool":
-			b.append('<tr class="pickitem"><td class="icon"><a class="done" oncontextmenu="descitem(');
+			b.append('<tr class="pickitem"><td class="icon"><a oncontextmenu="descitem(');
 			b.append(it.descid);
 			b.append(',0,event); return false;" onclick="descitem(');
 			b.append(it.descid);
@@ -656,7 +660,7 @@ void pickerGear(slot s) {
 		default:
 			b.append('<div class="chit_flexitem" style="order:');
 			b.append(danger_level);
-			b.append(';"><div><a class="done" oncontextmenu="descitem(');
+			b.append(';"><div><a oncontextmenu="descitem(');
 			b.append(it.descid);
 			b.append(',0,event); return false;" onclick="descitem(');
 			b.append(it.descid);
