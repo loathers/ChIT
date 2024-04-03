@@ -207,6 +207,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 	}
 
 	foreach i, drop in drops {
+		boolean percentile = drop.singular != '' && drop.singular.substring(0, 1) == '%';
 		if(drop.limit > LIMIT_PERIODIC) {
 			onlyPeriodic = false;
 		}
@@ -280,7 +281,10 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			}
 			if(drop.limit >= 0) {
 				if(left >= 0) {
-					toAdd += left + '/' + drop.limit;
+					toAdd += left;
+					if(!percentile) {
+						toAdd += '/' + drop.limit;
+					}
 				}
 			}
 			else if(drop.limit == LIMIT_INFINITE) {
@@ -295,7 +299,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
+			if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && !percentile) {
 				toAdd += ' ';
 			}
 			toAdd += (left == 1) ? drop.singular : drop.plural;
