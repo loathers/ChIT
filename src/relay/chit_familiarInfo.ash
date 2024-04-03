@@ -161,6 +161,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 								break;
 							case 'PvP':
 								info.addToDesc('PvP (' + get_property('_shrubCharge') + '/20)');
+								break;
 							default:
 								info.addToDesc(deco);
 								break;
