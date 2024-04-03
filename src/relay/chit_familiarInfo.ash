@@ -625,6 +625,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					toAdd += ' to ' + target + 'lbs';
 					info.addToDesc(toAdd);
 				}
+				break;
 			}
 			case $familiar[Pair of Stomping Boots]: {
 				drops[drops.count()] = new drop_info('bootsCharged', LIMIT_BOOL_INVERTED, 'stomp');
