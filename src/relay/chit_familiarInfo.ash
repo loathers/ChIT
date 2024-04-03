@@ -159,7 +159,8 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 							case 'meat':
 								info.addToDesc('<span style="color:#FE2E2E">Meat</span>');
 								break;
-							// TODO: Something about PvP?
+							case 'PvP':
+								info.addToDesc('PvP (' + get_property('_shrubCharge') + '/20)');
 							default:
 								info.addToDesc(deco);
 								break;
