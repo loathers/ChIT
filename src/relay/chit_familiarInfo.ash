@@ -705,3 +705,134 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 chit_info getFamiliarInfo(familiar f) {
 	return getFamiliarInfo(f, $slot[familiar]);
 }
+
+// isBjorn also applies for the crown, just for the sake of a shorter name
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
+	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
+
+	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
+	if(reason != '') {
+		info.addToDesc('recommended for ' + reason);
+	}
+
+	string titleStr = '';
+	if(title) {
+		titleStr = f.name + ' (the ' + f + ')';
+		if(info.desc != '') {
+			matcher m = create_matcher('<[^>]+>', info.desc);
+			string safeDesc = m.replace_all('');
+			titleStr += ' (' + safeDesc + ')';
+		}
+	}
+
+	result.addInfoIcon(info, titleStr, '');
+}
+
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
+	addFamiliarIcon(result, f, isBjorn, title, "");
+}
+
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
+	addFamiliarIcon(result, f, isBjorn, true);
+}
+
+void addFamiliarIcon(buffer result, familiar f) {
+	addFamiliarIcon(result, f, false);
+}
+
+record fam_rec {
+	familiar f;
+	string reason;
+};
+
+fam_rec [int] getFamRecs(slot s) {
+	familiar activeFam =
+		s == $slot[familiar] ? my_familiar()
+		: s == $slot[buddy-bjorn] ? my_bjorned_familiar()
+		: s == $slot[crown-of-thrones] ? my_enthroned_familiar()
+		: $familiar[none];
+
+	fam_rec [int] recs;
+	void addRec(familiar f, string reason) {
+		foreach i, rec in recs {
+			if(rec.f == f) {
+				// show additional reason instead of recomminding repeatedly
+				rec.reason += ', ' + reason;
+				return;
+			}
+		}
+		recs[recs.count()] = new fam_rec(f, reason);
+	}
+	void addFirstIf(boolean condition, boolean [familiar] fams, string reason) {
+		if(!condition) {
+			return;
+		}
+		foreach f in fams {
+			// no need to recommend something if it's already in use,
+			// but we can recommend alternatives maybe
+			if(have_familiar(f) && be_good(f) && activeFam != f) {
+				addRec(f, reason);
+				return;
+			}
+		}
+	}
+
+	// I believe this to be exhaustive for both normal and bjorn fams, at least at present
+	boolean [familiar] mlFams = s == $slot[familiar]
+		? $familiars[Purse Rat]
+		: $familiars[El Vibrato Megadrone, Bark Scorpion, Intergnat, Patriotic Eagle];
+	// This will probably fall slightly out of date as more things for the bjorn get added
+	boolean [familiar] initFams = s == $slot[familiar]
+		? $familiars[Xiblaxian Holo-Companion, Cute Meteor, Oily Woim, Happy Medium]
+		: $familiars[Cotton Candy Carnie, Temporal Riftlet, Untamed Turtle, Feather Boa Constrictor,
+			Levitating Potato, Origami Towel Crane, Emo Squid, Evil Teddy Bear, Mini-Skulldozer, Cuddlefish,
+			Squamous Gibberer, Teddy Bear, Teddy Borg];
+	// I'm pretty sure this isn't even exhaustive now, but it doesn't matter a ton since
+	// at least Imitation Crab is permastandard
+	boolean [familiar] skinFams = s == $slot[familiar]
+		? $familiars[Shorter-Order Cook, Mu, Imitation Crab, Sludgepuppy, Mini-Crimbot, Warbear Drone]
+		: $familiars[Frumious Bandersnatch, Howling Balloon Monkey,
+			Baby Mutant Rattlesnake, Mutant Cactus Bud];
+	// the bjorn crown part will get outdated, not that that matters a ton
+	boolean [familiar] resFams = s == $slot[familiar]
+		? $familiars[Mu, Exotic Parrot]
+		: $familiars[Twitching Space Critter, Bad Vibe, Bulky Buddy Box, Holiday Log, Pet Coral,
+			Pet Rock, Synthetic Rock, Toothsome Rock, Exotic Parrot];
+
+	
+	boolean highlandsTime = $strings[step1, step2] contains get_property('questL09Topping');
+	string nsQuest = get_property('questL13Final');
+
+	if(s == $slot[familiar]) {
+		addFirstIf($strings[started, step1] contains get_property('questL11Black') &&
+			(item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0,
+			$familiars[Reconstituted Crow, Reassembled Blackbird], 'black forest');
+
+		addFirstIf(get_property('questM03Bugbear') == 'step2', $familiars[Flaming Gravy Fairy, Frozen Gravy Fairy,
+			Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], 'felonia');
+	}
+
+	// this is probably not an exhaustive list of reasons to want ML
+	addFirstIf(get_property('questL03Rat') == 'step1', mlFams, 'rat kings');
+	addFirstIf(get_property('cyrptCrannyEvilness').to_int() > 13, mlFams, 'ghuol whelps');
+	addFirstIf(highlandsTime && get_property('oilPeakProgress').to_float() > 0, mlFams, 'oil peak');
+	addFirstIf(available_amount($item[unstable fulminate]) > 0, mlFams, 'wine bomb');
+
+	// this is also probably not an exhaustive list of reasons to want init
+	addFirstIf(get_property('cyrptAlcoveEvilness').to_int() > 13, initFams, 'modern zmobie');
+	addFirstIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7
+		&& initiative_modifier() < 40, initFams, 'twin peaks');
+	addFirstIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0, initFams, 'init test');
+
+	addFirstIf(nsQuest == 'step6', skinFams, 'towerkilling');
+
+	boolean kitchenTime = get_property('questM20Necklace') == 'started';
+	boolean cantTakeTheHeat = numeric_modifier('Hot Resistance') < 9 || numeric_modifier('Stench Resistance') < 9;
+	addFirstIf(kitchenTime && cantTakeTheHeat, resFams, 'haunted kitchen');
+	addFirstIf($strings[step3, step4] contains get_property('questL08Trapper')
+		&& numeric_modifier('Cold Resistance') < 5, resFams, 'misty peak');
+	addFirstIf(highlandsTime && get_property('booPeakProgress').to_int() > 0, resFams, 'surviving a-boo clues');
+	addFirstIf(nsQuest == 'step4', resFams, 'hedge maze');
+	
+	return recs;
+}

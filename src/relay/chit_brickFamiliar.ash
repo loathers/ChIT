@@ -486,46 +486,18 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	picker.pickerFinish();
 }
 
-// isBjorn also applies for the crown, just for the sake of a shorter name
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
-	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
-
-	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
-	if(reason != '') {
-		info.addToDesc('recommended for ' + reason);
-	}
-
-	string titleStr = '';
-	if(title) {
-		titleStr = f.name + ' (the ' + f + ')';
-		if(info.desc != '') {
-			matcher m = create_matcher('<[^>]+>', info.desc);
-			string safeDesc = m.replace_all('');
-			titleStr += ' (' + safeDesc + ')';
-		}
-	}
-
-	result.addInfoIcon(info, titleStr, '');
-}
-
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
-	addFamiliarIcon(result, f, isBjorn, title, "");
-}
-
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
-	addFamiliarIcon(result, f, isBjorn, true);
-}
-
-void addFamiliarIcon(buffer result, familiar f) {
-	addFamiliarIcon(result, f, false);
-}
-
 void pickerFamiliar(familiar current, string cmd, string display)
 {
 	familiar is100 = to_familiar(to_int(get_property("singleFamiliarRun")));
 	// if this isn't the main familiar picker we don't care about 100% runs
 	if(cmd != "familiar")
 		is100 = $familiar[none];
+
+	slot correspondingSlot =
+		cmd == 'familiar' ? $slot[familiar]
+		: cmd == 'bjornify' ? $slot[buddy-bjorn]
+		: cmd == 'enthrone' ? $slot[crown-of-thrones]
+		: $slot[none];
 
 	buffer picker;
 	picker.pickerStart(cmd, display);
@@ -568,63 +540,8 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	foreach f in favorite_familiars()
 		tryAddFamiliar(f);
 
-	boolean recIf(boolean condition, familiar fam, string reason) {
-		if(condition) return tryAddFamiliar(fam, reason);
-		return false;
-	}
-
-	void recIf(boolean condition, boolean [familiar] fams, string reason) {
-		if(condition) {
-			foreach fam in fams {
-				if(recIf(condition, fam, reason))
-					return;
-			}
-		}
-	}
-
-	// Familiars recommended for quests
-	string nsQuest = get_property("questL13Final");
-	boolean needSkinHelper = (nsQuest == "step6" && available_amount($item[beehive]) < 1);
-	string orcChasm = get_property("questL09Topping");
-	boolean highlandsTime = (orcChasm == "step1" || orcChasm == "step2");
-
-	if(cmd == "familiar") {
-		string blackForestState = get_property("questL11Black");
-		boolean needGuide = (($strings[started, step1] contains blackForestState) && (item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0);
-		recIf(needGuide, $familiars[Reconstituted Crow, Reassembled Blackbird], "black forest");
-
-		// Probably incomplete list of reasons you'd want the purse rat
-		boolean [familiar] mlFams = $familiars[Purse Rat]; // There's only one atm that I know of but who knows what the future holds
-		// Typical tavern, you might want to bring the purse rat to up rat king chance
-		recIf(get_property("questL03Rat") == "step1", mlFams, "rat kings");
-		recIf(to_int(get_property("cyrptCrannyEvilness")) > 26, mlFams, "ghuol whelps");
-		recIf(highlandsTime && to_float(get_property("oilPeakProgress")) > 0, mlFams, "oil peak");
-		recIf(available_amount($item[unstable fulminate]) > 0, mlFams, "wine bomb");
-
-		// Maybe incomplete list of reasons you'd want an init familiar
-		boolean [familiar] initFams = $familiars[Xiblaxian Holo-Companion, Oily Woim];
-		recIf(to_int(get_property("cyrptAlcoveEvilness")) > 26, initFams, "modern zmobie");
-		recIf(highlandsTime && ((to_int(get_property("twinPeakProgress")) & 7) == 7) && (initiative_modifier() < 40), initFams, "twin peaks");
-		recIf(nsQuest != "unstarted" && to_int(get_property("nsContestants1")) < 0, initFams, "init test");
-
-		// The Imitation Crab is incredibly useful for tower killing the wall of skin
-		recIf(needSkinHelper, $familiars[Imitation Crab, Sludgepuppy, Mini-Crimbot, Warbear Drone], "wall of skin");
-
-		boolean [familiar] resFams = $familiars[Exotic Parrot];
-		boolean kitchenTime = get_property("questM20Necklace") == "started" && to_int(get_property("writingDesksDefeated")) == 0 && get_property("chateauMonster") != "writing desk";
-		boolean cantTakeTheHeat = numeric_modifier("Hot Resistance") < 9 || numeric_modifier("Stench Resistance") < 9; // or the stench...
-		recIf(kitchenTime && cantTakeTheHeat, resFams, "haunted kitchen");
-		string trapper = get_property("questL08Trapper");
-		recIf((trapper == "step3" || trapper == "step4") && numeric_modifier("Cold Resistance") < 5, resFams, "misty peak");
-		recIf(highlandsTime && to_int(get_property("booPeakProgress")) > 0, resFams, "surviving a-boo clues");
-		recIf(nsQuest == "step4", resFams, "hedge maze");
-
-		recIf(get_property("questM03Bugbear") == "step2", $familiars[Flaming Gravy Fairy, Frozen Gravy Fairy, Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], "felonia");
-	}
-	else {
-		// Recommendations for the crown/bjorn
-		recIf(needSkinHelper, $familiars[Frumious Bandersnatch, Howling Balloon Monkey, Baby Mutant Rattlesnake, Mutant Cactus Bud], "wall of skin");
-	}
+	foreach i, rec in getFamRecs(correspondingSlot)
+		tryAddFamiliar(rec.f, rec.reason);
 
 	if(anyIcons)
 		picker.append('</td></tr>');
@@ -1118,12 +1035,8 @@ void bakeFamiliar() {
 	chit_info famInfo = getFamiliarInfo(myfam);
 	item famitem = $item[none];
 
-	if(famInfo.extra.count() > 0) {
-		if(famInfo.extra.count() > 1) {
-			abort('support for multiple extras on fams not there yet');
-		}
+	foreach i, extra in famInfo.extra {
 		buffer followbuffer;
-		extra_info extra = famInfo.extra[0];
 		switch(extra.extraType) {
 			case EXTRA_PICKER:
 				string pickerFunc = 'picker_' + extra.str1;
@@ -1147,7 +1060,14 @@ void bakeFamiliar() {
 			default:
 				abort('not there yet');
 		}
-		name_followup = ' (' + followbuffer + ')';
+		string followstr = followbuffer;
+		if(followstr != '') {
+			// only one of the followup type extras is supported at once atm
+			if(name_followup != '') {
+				print('Found a second name_followup attempt for fam ' + myfam, 'red');
+			}
+			name_followup = ' (' + followstr + ')';
+		}
 	}
 
 	if(myfam != $familiar[none]) {
