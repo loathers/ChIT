@@ -495,7 +495,7 @@ void pickerGear(slot s) {
 	if(in_slot != $item[none]) {
 		buffer favButton;
 		favButton.add_favorite_button(in_slot);
-		picker.pickerGenericOption('unequip', info.name, info.desc, '', sideCommand('unequip ' + s), true, info.image, false, attrmap {}, attrmap {}, favButton.to_string());
+		picker.pickerGenericOption('unequip', info.name, info.desc, '', sideCommand('unequip ' + s), true, info.image, attrmap {}, attrmap {}, favButton.to_string());
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
 		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {

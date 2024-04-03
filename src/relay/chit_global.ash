@@ -250,7 +250,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		}
 		else if(drop.propName != '') {
 			onlyBoolProps = false;
-			left = drop.limit - get_property(drop.propName).to_int();
+			left = max(drop.limit - get_property(drop.propName).to_int(), 0);
 			if(left == drop.limit) {
 				upDrops(DROPS_ALL, drop);
 			}
@@ -807,24 +807,24 @@ void pickerAddImage(buffer picker, string src) {
 	pickerAddImage(picker, src, false, attrmap {});
 }
 
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
 	picker.pickerStartOption(usable);
 
 	if(href == '') {
 		usable = false;
 	}
 
-	picker.pickerAddImage(imgsrc, imgLink, imgAttrs);
+	picker.pickerAddImage(imgsrc, imgAttrs.count() > 0, imgAttrs);
 	attrmap tdAttrs;
 	if(rightSection == '') {
 		tdAttrs['colspan'] = '2';
 	}
 	picker.tagStart('td', tdAttrs);
 	if(usable) {
-		if(linkAttrs['href'] != '') {
+		if(linkAttrs['href'] == '') {
 			linkAttrs['href'] = href;
 		}
-		if(linkAttrs['class'] != '') {
+		if(linkAttrs['class'] == '') {
 			linkAttrs['class'] = 'change';
 		}
 		picker.tagStart('a', linkAttrs);
@@ -857,24 +857,20 @@ void pickerGenericOption(buffer picker, string verb, string noun, string desc, s
 	picker.pickerFinishOption();
 }
 
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs, attrmap linkAttrs) {
-	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgLink, imgAttrs, linkAttrs, '');
-}
-
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, boolean imgLink, attrmap imgAttrs) {
-	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgLink, imgAttrs, attrmap {});
-}
-
-void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc) {
-	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, false, attrmap {});
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgAttrs, linkAttrs, '');
 }
 
 void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs) {
-	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, true, imgAttrs);
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgAttrs, attrmap {});
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, attrmap {});
 }
 
 void pickerPickerOption(buffer picker, string noun, string desc, string parenthetical, string pickerToLaunch, string imgSrc) {
-	pickerGenericOption(picker, 'Pick', noun, desc, parenthetical, '#', true, imgSrc, false, attrmap {}, attrmap {
+	pickerGenericOption(picker, 'Pick', noun, desc, parenthetical, '#', true, imgSrc, attrmap {}, attrmap {
 		'class': 'chit_launcher done',
 		'rel': 'chit_picker' + pickerToLaunch,
 	});
@@ -899,11 +895,14 @@ void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetica
 
 // Examples: Edpiece, Jurassic Parka, etc
 void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable) {
-	picker.pickerGenericOption(current ? 'Current:' : 'Select', name, desc, "", sideCommand(cmd), usable, img);
+	if(current) {
+		name = '<b>Current</b>: ' + name;
+	}
+	picker.pickerGenericOption('Select', name, desc, '', sideCommand(cmd), usable, img);
 }
 
 void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
-	picker.pickerSelectionOption(name, desc, cmd, img, !current, current);
+	picker.pickerSelectionOption(name, desc, cmd, img, current, !current);
 }
 
 string parseEff(effect eff);

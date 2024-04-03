@@ -1167,60 +1167,13 @@ void bakeFamiliar() {
 		famname = group(nameMatcher, 1);
 	}
 
-	//Drops
-	matcher dropMatcher = create_matcher("<b>Familiar:</b>\\s*(\?:<br>)?\\s*\\((.*?)\\)</font>", source);
-	if (find(dropMatcher)){
-		info = group(dropMatcher, 1).replace_string("<br>", ", ");
-		switch ( myfam ) {
-			case $familiar[frumious bandersnatch]:
-				boolean knowOde = have_skill($skill[The Ode to Booze]);
-				boolean haveOde = have_effect($effect[Ode to Booze]) > 0;
-				if(knowOde && !haveOde) {
-					info = 'Runaways: ' + info + ' (<a class="change" title="cast 1 The Ode to Booze" href="' + sideCommand("cast 1 The Ode to Booze") + '">Need Ode</a>)';
-				}
-				else if(haveOde) {
-					info = "Runaways: " + info + " (Ready!)";
-				}
-				else {
-					info = '<s title="You Don\'t have access to Ode :(">Runaways: ' + info + ' (Need Ode)</s>';
-				}
-				break;
-			case $familiar[rogue program]:
-				info = "Tokens: " + info;
-				break;
-			case $familiar[green pixie]:
-				info = "Absinthe: " + info;
-				break;
-			case $familiar[baby sandworm]:
-				info = "Agua: " + info;
-				break;
-			case $familiar[llama lama]:
-				info = "Gongs: " + info;
-				break;
-			case $familiar[astral badger]:
-				info = "Shrooms: " + info;
-				break;
-			case $familiar[Bloovian Groose]:
-				info = "Grease: " + info;
-				break;
-			case $familiar[blavious kloop]:
-				info = "Folio: " + info;
-				break;
-			case $familiar[Steam-Powered Cheerleader]:
-				// Truncate the decimal
-				info = replace_first(create_matcher("\\.\\d", info), "");
-				break;
-			default:
+	// Default mafia markup
+	if(famInfo.desc == '') {
+		matcher dropMatcher = create_matcher("<b>Familiar:</b>\\s*(\?:<br>)?\\s*\\((.*?)\\)</font>", source);
+		if (find(dropMatcher)){
+			famInfo.desc = group(dropMatcher, 1).replace_string("<br>", ", ");
 		}
 	}
-
-	// Show Reanimator parts
-	if(myfam == $familiar[Reanimated Reanimator])
-		foreach l in $strings[Arm, Leg, Skull, Wing, WeirdPart] {
-			string prop = get_property("reanimator"+l+"s");
-			if(prop != "0")
-				info += (length(info) == 0? "": ", ") + prop + " "+ l +(prop == "1"? "": "s");
-		}
 
 	//Get Familiar Weight
 	if (myfam != $familiar[none]) {
@@ -1235,7 +1188,6 @@ void bakeFamiliar() {
 		if (find(actorMatcher)) {
 			actortype = group(actorMatcher, 1);
 			equipimage = to_familiar(actortype).image;
-			//info = actortype;
 		}
 	} else {
 		famitem = familiar_equipped_equipment(my_familiar());
