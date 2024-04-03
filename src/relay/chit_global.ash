@@ -184,6 +184,8 @@ record drop_info {
 	// because of how new works, can just be left off for those cases
 	string plural;
 	boolean unimportant;
+	boolean useLeft;
+	int left;
 };
 
 typedef drop_info[int] drops_info;
@@ -210,7 +212,16 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		}
 
 		int left = 0;
-		if(drop.limit == LIMIT_BOOL) {
+		if(drop.useLeft) {
+			left = drop.left;
+			if(left == drop.limit) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else if(left > 0) {
+				upDrops(DROPS_SOME, drop);
+			}
+		}
+		else if(drop.limit == LIMIT_BOOL) {
 			if(!get_property(drop.propName).to_boolean()) {
 				left = 1;
 				upDrops(DROPS_ALL, drop);
@@ -263,27 +274,30 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			left = drop.limit;
 		}
 
-		if(left != 0) {
-			if(toAdd != '') {
-				toAdd += ', ';
-			}
-			if(drop.limit >= 0) {
-				if(left >= 0) {
-					toAdd += left;
-				}
-			}
-			else if(drop.limit == LIMIT_INFINITE) {
-				toAdd += '&infin;';
-			}
-
-			if(drop.plural == '') {
-				drop.plural = drop.singular;
-			}
-			if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
-				toAdd += ' ';
-			}
-			toAdd += (left == 1) ? drop.singular : drop.plural;
+		if(toAdd != '') {
+			toAdd += ', ';
 		}
+		if(drop.limit >= 0) {
+			if(left >= 0) {
+				toAdd += left + '/' + drop.limit;
+			}
+		}
+		else if(drop.limit == LIMIT_INFINITE) {
+			toAdd += '&infin;';
+		}
+		else if(drop.limit == LIMIT_BOOL || drop.limit == LIMIT_BOOL_INVERTED) {
+			if(left == 0) {
+				toAdd += 'No ';
+			}
+		}
+
+		if(drop.plural == '') {
+			drop.plural = drop.singular;
+		}
+		if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && drop.singular != '' && drop.singular.substring(0, 1) != '%') {
+			toAdd += ' ';
+		}
+		toAdd += (left == 1) ? drop.singular : drop.plural;
 	}
 	if(toAdd != '') {
 		if(!onlyPeriodic) {

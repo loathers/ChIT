@@ -662,13 +662,15 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 
 		if(f.drops_limit > 0) {
 			int dropsLeft = f.drops_limit - f.drops_today;
-			if(dropsLeft > 0) {
-				if(f.drop_item != $item[none]) {
-					drops[drops.count()] = new drop_info('', dropsLeft, f.drop_item, f.drop_item.plural);
+			if(f.drop_item != $item[none]) {
+				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_item, f.drop_item.plural, false, true, dropsLeft);
+			}
+			else {
+				string plural = f.drop_name;
+				if(plural.substring(plural.length() - 1) != 's') {
+					plural += 's';
 				}
-				else {
-					drops[drops.count()] = new drop_info('', dropsLeft, f.drop_name, f.drop_name + 's');
-				}
+				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_name, plural, false, true, dropsLeft);
 			}
 		}
 
