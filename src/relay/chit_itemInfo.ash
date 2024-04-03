@@ -653,22 +653,26 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			info.image = itemimage('blank.gif');
 			break;
 		case $item[Buddy Bjorn]: {
-			chit_info bjornInfo = getFamiliarInfo(my_bjorned_familiar(), $slot[buddy-bjorn]);
-			info.image = bjornInfo.image;
-			if(bjornInfo.desc != '') {
-				info.addToDesc(bjornInfo.desc);
+			if(my_bjorned_familiar() != $familiar[none]) {
+				chit_info bjornInfo = getFamiliarInfo(my_bjorned_familiar(), $slot[buddy-bjorn]);
+				info.image = bjornInfo.image;
+				if(bjornInfo.desc != '') {
+					info.addToDesc(bjornInfo.desc);
+				}
+				info.incDrops(bjornInfo.hasDrops);
 			}
-			info.incDrops(bjornInfo.hasDrops);
 			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
 			break;
 		}
 		case $item[Crown of Thrones]: {
-			chit_info crownInfo = getFamiliarInfo(my_enthroned_familiar(), $slot[crown-of-thrones]);
-			info.image = crownInfo.image;
-			if(crownInfo.desc != '') {
-				info.addToDesc(crownInfo.desc);
+			if(my_enthroned_familiar() != $familiar[none]) {
+				chit_info crownInfo = getFamiliarInfo(my_enthroned_familiar(), $slot[crown-of-thrones]);
+				info.image = crownInfo.image;
+				if(crownInfo.desc != '') {
+					info.addToDesc(crownInfo.desc);
+				}
+				info.incDrops(crownInfo.hasDrops);
 			}
-			info.incDrops(crownInfo.hasDrops);
 			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
 			break;
 		}
