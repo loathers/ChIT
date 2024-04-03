@@ -215,6 +215,9 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		int left = 0;
 		if(drop.useLeft) {
 			left = drop.left;
+			if(drop.limit > 1) {
+				onlyBoolProps = false;
+			}
 			if(left == drop.limit) {
 				upDrops(DROPS_ALL, drop);
 			}
@@ -279,7 +282,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			if(toAdd != '') {
 				toAdd += ', ';
 			}
-			if(drop.limit >= 0) {
+			if(drop.limit > 1) {
 				if(left >= 0) {
 					toAdd += left;
 					if(!percentile) {
@@ -299,7 +302,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if((drop.limit >= 0 || drop.limit == LIMIT_INFINITE) && !percentile) {
+			if((drop.limit > 1 || drop.limit == LIMIT_INFINITE) && !percentile) {
 				toAdd += ' ';
 			}
 			toAdd += (left == 1) ? drop.singular : drop.plural;
