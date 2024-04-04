@@ -649,55 +649,31 @@ void pickerAsdon() {
 		boolean current = have_effect(style) > 0;
 		boolean canDo = !current && get_fuel() >= 37;
 		string name = style.to_string().split_string(" ")[1];
-		string driveLink = '<a class="change" href="' + sideCommand("asdonmartin drive " + name.to_lower_case()) + '">';
-
-		picker.append('<tr class="pickitem');
-		if(!canDo) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		if(canDo) picker.append(driveLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(style.image);
-		picker.append('" title="');
-		picker.append(style.to_string());
-		picker.append('" />');
-		if(canDo) picker.append('</a>');
-		picker.append('</td><td colspan="2">');
 		if(current) {
-			picker.append('<b>Currently Driving</b> ');
+			name = '<b>Currently Driving</b> ' + name;
 		}
-		else {
-			if(canDo) picker.append(driveLink);
-			picker.append('<b>Drive</b> ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		if(style == $effect[Driving Wastefully]) picker.append("Oil Peak pressure reduction");
-		else picker.append(parseEff(style));
-		picker.append('</span>');
-		if(canDo) picker.append('</a>');
-		picker.append('</td></tr>');
+
+		picker.pickerEffectOption('Drive', name, style, '', 30,
+			sideCommand('asdonmartin drive ' + name.to_lower_case()), canDo);
 	}
 
 	foreach eff in $effects[Driving Obnoxiously, Driving Stealthily, Driving Wastefully, Driving Safely, Driving Recklessly, Driving Intimidatingly, Driving Quickly, Driving Observantly, Driving Waterproofly] {
 		addDriving(eff);
 	}
 
-	string workshedLink = '<a class="change visit done" href="campground.php?action=workshed" target="mainpane">';
-	picker.append('<tr class="pickitem"><td class-"icon">');
-	picker.append(workshedLink);
-	picker.append('<img class="chit_icon" src="/images/itemimages/');
-	picker.append($item[Asdon Martin keyfob (on ring)].image);
-	picker.append('" title="Visit your workshed" /></a></td><td colspan="2">');
-	picker.append(workshedLink);
-	picker.append('<b>Visit</b> your workshed</a></td></tr>');
+	picker.pickerGenericOption('Visit', 'your workshed', '', '', 'campground.php?action=workshed',
+		true, itemimage($item[Asdon Martin keyfob (on ring)].image), attrmap {}, attrmap {
+			'class': 'change visit done',
+			'target': 'mainpane',
+		}
+	);
 
 	if(isDriving()) {
-		string stopLink = '<a class="change" href="' + sideCommand("asdonmartin drive clear") + '">';
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(stopLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/antianti.gif" title="Stop driving" /></a></td><td colspan="2">');
-		picker.append(stopLink);
-		picker.append('<b>Stop</b> Driving</a></td></tr>');
+		picker.pickerGenericOption('Stop', 'driving', '', '', sideCommand('asdonmartin drive clear'),
+			true, itemimage('antianti.gif'), attrmap {}, attrmap {
+				'class': 'change',
+			}
+		);
 	}
 
 	picker.pickerFinish("Adjusting driving style...");

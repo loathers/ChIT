@@ -356,16 +356,15 @@ void picker_theforce() {
 	buffer picker;
 	picker.pickerStart('theforce', 'Pick an upgrade');
 
-	void addUpgrade(int upgrade, string name, string desc, string icon) {
-		picker.pickerGenericOption('Install', name, desc, '',
-			sideCommand('ashq visit_url("main.php?action=may4", false); visit_url("choice.php?pwd=&whichchoice=1386&option=' + upgrade.to_string() + '");'),
+	void addUpgrade(string upgrade, string name, string desc, string icon) {
+		picker.pickerGenericOption('Install', name, desc, '', sideCommand('saber ' + upgrade),
 			true, itemimage(icon + '.gif'));
 	}
 
-	addUpgrade(1, 'Enhanced Kaiburr Crystal', '15-20 MP regen', 'crystal');
-	addUpgrade(2, 'Purple Beam Crystal', '+20 Monster Level', 'nacrystal1');
-	addUpgrade(3, 'Force Resistance Multiplier', '+3 Prismatic Res', 'wonderwall');
-	addUpgrade(4, 'Empathy Chip', '+10 Familiar Weight', 'spiritorb');
+	addUpgrade('mp', 'Enhanced Kaiburr Crystal', '15-20 MP regen', 'crystal');
+	addUpgrade('ml', 'Purple Beam Crystal', '+20 Monster Level', 'nacrystal1');
+	addUpgrade('resistance', 'Force Resistance Multiplier', '+3 Prismatic Res', 'wonderwall');
+	addUpgrade('familiar', 'Empathy Chip', '+10 Familiar Weight', 'spiritorb');
 
 	picker.pickerFinish('Applying upgrade...');
 }
@@ -429,26 +428,7 @@ void picker_unbrella() {
 
 	void addSetting(string name, string desc, string command, string icon) {
 		boolean active = get_property("umbrellaState") == name;
-
-		picker.append('<tr class="pickitem');
-		if(active) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(icon);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Current</b>: ');
-		}
-		else {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("umbrella " + command));
-			picker.append('"><b>Configure</b> to be ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(!active) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerSelectionOption(name, desc, 'umbrella ' + command, itemimage(icon), active);
 	}
 
 	addSetting("broken", "+25% ML", "broken", "unbrella7.gif");
@@ -526,38 +506,16 @@ void picker_cincho() {
 	buffer picker;
 	picker.pickerStart('cincho', "Use some cinch (" + cinch + " available)");
 
-	void addSkill(skill sk, string imageSuffix, string desc, int cinchCost) {
-		boolean canUse = cinch >= cinchCost && !sk.combat;
-
-		picker.append('<tr class="pickitem');
-		if(!canUse) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/cincho');
-		picker.append(imageSuffix);
-		picker.append('.gif" /></td><td colspan="2">');
-		if(canUse) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand("cast " + sk.to_string()));
-			picker.append('"><b>Cincho:</b> ');
-		}
-		else {
-			picker.append('Cincho: ');
-		}
-		picker.append(sk.to_string().substring(8));
-		picker.append(' (');
-		picker.append(cinchCost);
-		picker.append(' cinch)<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(canUse) picker.append('</a>');
-		picker.append('</td></tr>');
+	void addSkill(skill sk, string desc, int cinchCost) {
+		picker.pickerSkillOption(sk, desc, cinchCost + ' cinch', cinch >= cinchCost);
 	}
 
-	addSkill($skill[Cincho: Confetti Extravaganza], "confetti", "Double substats from this fight, but get smacked", 5);
-	addSkill($skill[Cincho: Dispense Salt and Lime], "lime", "Triples stat gain from next drink", 25);
-	addSkill($skill[Cincho: Fiesta Exit], "exit", "Force a noncom", 60);
-	addSkill($skill[Cincho: Party Foul], "swear", "Damage, weaken, and stun", 5);
-	addSkill($skill[Cincho: Party Soundtrack], "music", "30 adv +5lbs", 25);
-	addSkill($skill[Cincho: Projectile Piñata], "candy", "Damage, stun, get candy", 5);
+	addSkill($skill[Cincho: Confetti Extravaganza], "Double substats from this fight, but get smacked", 5);
+	addSkill($skill[Cincho: Dispense Salt and Lime], "Triples stat gain from next drink", 25);
+	addSkill($skill[Cincho: Fiesta Exit], "Force a noncom", 60);
+	addSkill($skill[Cincho: Party Foul], "Damage, weaken, and stun", 5);
+	addSkill($skill[Cincho: Party Soundtrack], "30 adv +5lbs", 25);
+	addSkill($skill[Cincho: Projectile Piñata], "Damage, stun, get candy", 5);
 
 	picker.pickerFinish("Using Cinch...");
 }
@@ -578,29 +536,7 @@ void picker_august() {
 
 	void addSkill(skill sk, int num, string desc) {
 		boolean canUse = !get_property("_aug" + num + "Cast").to_boolean();
-		picker.append('<tr class="pickitem');
-		if(!canUse) picker.append(' currentitem');
-		picker.append('"><td class="icon"><img class="chit_icon" src="/images/itemimages/');
-		picker.append(sk.image);
-		picker.append('" /></td><td colspan="2">');
-		if(canUse) {
-			picker.append('<a class="change" target=mainpane href="runskillz.php?action=Skillz&whichskill=');
-			picker.append(sk.to_int());
-			picker.append('&pwd=');
-			picker.append(my_hash());
-			picker.append('"><b>Celebrate</b> ');
-		}
-		picker.append(sk.name);
-		if(can_interact() && num == today) {
-			picker.append(' (free today)');
-		}
-		picker.append('<br /><span class="descline">');
-		picker.append(desc);
-		picker.append('</span>');
-		if(canUse) {
-			picker.append('</a>');
-		}
-		picker.append('</td></tr>');
+		picker.pickerSkillOption(sk, desc, (can_interact() && num == today) ? 'free today' : '', canUse);
 	}
 
 	addSkill($skill[Aug. 1st: Mountain Climbing Day!], 1, "30 adv effect that gives bonuses in mountains.");

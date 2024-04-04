@@ -932,7 +932,6 @@ void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetica
 	}
 
 	picker.pickerGenericOption('Cast', sk.to_string(), desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
-		'class': 'done',
 		'onclick': "javascript:poop('desc_skill.php?whichskill=" + sk.to_int() + "&self=true','skill',350,300);",
 		'title': 'Pop out skill description',
 		'href': '#',
@@ -953,7 +952,10 @@ void pickerSelectionOption(buffer picker, string name, string desc, string cmd, 
 
 string parseEff(effect eff);
 
-void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
+void pickerEffectOption(buffer picker, string verb, string name, effect eff, string desc, int duration, string href, boolean usable) {
+	if(name == '') {
+		name = eff;
+	}
 	if(desc == '') {
 		desc = parseEff(eff);
 	}
@@ -961,12 +963,16 @@ void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int
 		desc += ' (' + duration + ' turns)';
 	}
 
-	picker.pickerGenericOption(verb, eff.to_string(), desc, "", href, usable, itemimage(eff.image), attrmap {
+	picker.pickerGenericOption(verb, name, desc, "", href, usable, itemimage(eff.image), attrmap {
 		'class': 'done',
 		'onclick': "javascript:eff('" + eff.descid + "');",
 		'title': 'Pop out effect description',
 		'href': '#',
 	});
+}
+
+void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
+	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
 }
 
 /*****************************************************
