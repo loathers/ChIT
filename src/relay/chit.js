@@ -62,6 +62,11 @@ $(document).ready(function () {
 		$(".chit_skeleton").hide();
 	});
 
+	$('[title][title!=]').each(function() {
+		var tip = new Opentip(this);
+		tip.setContent($(this).attr('title'));
+		$(this).removeAttr('title');
+	});
 	
 	//Tool Launchers
 	$(".tool_launcher").live("click", function(e) {

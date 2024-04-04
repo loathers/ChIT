@@ -4208,11 +4208,13 @@ void bakeHeader() {
 	result.replace_string('<html>', '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">\n<html>');
 
 	//Add CSS to the <head> tag -- chit_custom.css overrides the default chit.css stylesheet.
-	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n<link rel="stylesheet" href="chit_custom.css">\n</head>');
+	result.replace_string('</head>', '\n<link rel="stylesheet" href="chit.css">\n<link rel="stylesheet" href="chit_opentip.css">\n<link rel="stylesheet" href="chit_custom.css">\n</head>');
 
 	//Add JavaScript just before the <body> tag.
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
-	result.replace_string('<body', '\n<script type="text/javascript" src="chit.js"></script>\n<body');
+	string jsReplacement = '\n<script type="text/javascript" src="chit_opentip.js"></script>\n'
+		+ '<script type="text/javascript" src="chit.js"></script>\n<body';
+	result.replace_string('<body', jsReplacement);
 
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');

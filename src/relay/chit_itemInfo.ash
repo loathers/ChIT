@@ -1444,6 +1444,14 @@ chit_info getItemInfo(item it) {
 
 void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
 	chit_info info = getItemInfo(it);
+	if(title.length() < 2 || title.substring(title.length() - 2) != ': ') {
+		title += '<br />';
+	}
+	title += info.name;
+	if(info.desc != '') {
+		matcher m = create_matcher(', ', info.desc);
+		title += '<br />' + m.replace_all('<br />');
+	}
 	result.addInfoIcon(info, title,
 		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
 }
