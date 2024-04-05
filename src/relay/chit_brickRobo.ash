@@ -21,6 +21,8 @@ int roboPartNumber;
 string roboPartType;
 
 void addRoboOption(buffer picker, string name, string desc, int scrap) {
+    // TODO: Convert this, but it's complicated enough I don't want to do so outside of You, Robot
+    // because then I can't test it
     string capitalizedPart = roboPartType.substring(0, 1).to_upper_case() + roboPartType.substring(1);
     boolean isActive = get_property("youRobot" + capitalizedPart).to_int() == roboPartNumber;
     boolean isUnavailable = isActive || my_robot_scraps() < scrap;
