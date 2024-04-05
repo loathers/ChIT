@@ -661,6 +661,19 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}
 				break;
 			}
+			case $familiar[Chest Mimic]: {
+				int eggsLayable = min(11 - get_property('_mimicEggsObtained').to_int(), floor(f.experience / 50));
+				drops[drops.count()] = new drop_info('_mimicEggsObtained', 11, 'egg laying', 'egg layings');
+				info.addToDesc(f.experience + ' exp');
+				if(eggsLayable > 0) {
+					info.addToDesc(eggsLayable + ' layable');
+				}
+				info.addExtra(extraInfoLink('DNA Bank', attrmap {
+					'target': 'mainpane',
+					'href': 'place.php?whichplace=town_right&action=townright_dna',
+				}));
+				break;
+			}
 		}
 
 		if(f.drops_limit > 0) {
