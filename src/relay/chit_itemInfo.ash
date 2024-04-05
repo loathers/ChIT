@@ -338,12 +338,24 @@ boolean [item] aprilingBandSectionInstruments = $items[
 	Apriling band piccolo,
 ];
 
+string [item] aprilingBandSectionInstrumentProps = {
+	$item[Apriling band saxophone]: '_aprilBandSaxophoneUses',
+	$item[Apriling band quad tom]: '_aprilBandTomUses',
+	$item[Apriling band tuba]: '_aprilBandTubaUses',
+	$item[Apriling band staff]: '_aprilBandStaffUses',
+	$item[Apriling band piccolo]: '_aprilBandPiccoloUses',
+};
+
+string [item] aprilingBandSectionInstrumentAbilities = {
+	$item[Apriling band saxophone]: 'Get Lucky!',
+	$item[Apriling band quad tom]: 'Free fight a sandworm',
+	$item[Apriling band tuba]: 'Force a noncom',
+	$item[Apriling band staff]: 'Get a random effect',
+	$item[Apriling band piccolo]: 'Give current fam +40 exp',
+};
+
 int aprilingBandSectionsEnrolled() {
-	int res = 0;
-	foreach it in aprilingBandSectionInstruments {
-		res += available_amount(it);
-	}
-	return res;
+	return get_property('_aprilBandInstruments').to_int();
 }
 
 void picker_aprilbandsong() {
@@ -366,20 +378,24 @@ void picker_aprilbandsection() {
 	picker.pickerStart('aprilbandsection', 'Join a Section (' + (2 - aprilingBandSectionsEnrolled())
 		+ ' left)');
 
-	void sectionOption(item it, string section, int choiceNum, string ability) {
+	void sectionOption(item it, string section, int choiceNum) {
 		string cmd = 'ashq visit_url("inventory.php?pwd=' + my_hash() + '&action=apriling"); '
 			+ 'visit_url("choice.php?pwd=' + my_hash() + '&whichchoice=1526&option=' + choiceNum + '");';
-		string desc = parseMods(string_modifier(it, 'Evaluated Modifiers')) + '<br />Can '
-			+ ability + ' 3x per day';
-		picker.pickerItemOption(it, 'Join', 'the ' + section, desc, '', sideCommand(cmd),
-			available_amount(it) == 0);
+		string desc = parseMods(string_modifier(it, 'Evaluated Modifiers')) + '<br />'
+			+ aprilingBandSectionInstrumentAbilities[it] + ' 3x per day';
+		boolean have = available_amount(it) > 0;
+		string name = 'the ' + section;
+		if(have) {
+			name = '<b>Joined</b> ' + name;
+		}
+		picker.pickerItemOption(it, 'Join', name, desc, '', sideCommand(cmd), !have);
 	}
 
-	sectionOption($item[Apriling band saxophone], 'sax section', 4, 'get Lucky!');
-	sectionOption($item[Apriling band quad tom], 'percussion section', 5, 'free fight a sandworm');
-	sectionOption($item[Apriling band tuba], 'tuba section', 6, 'force a noncom');
-	sectionOption($item[Apriling band staff], 'drum majors', 7, 'get a random effect');
-	sectionOption($item[Apriling band piccolo], 'piccolo section', 8, 'give current fam +40 exp');
+	sectionOption($item[Apriling band saxophone], 'sax section', 4);
+	sectionOption($item[Apriling band quad tom], 'percussion section', 5);
+	sectionOption($item[Apriling band tuba], 'tuba section', 6);
+	sectionOption($item[Apriling band staff], 'drum majors', 7);
+	sectionOption($item[Apriling band piccolo], 'piccolo section', 8);
 
 	picker.pickerFinish('Joining a Section...');
 }
@@ -1216,16 +1232,49 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		}
 		case $item[Apriling Band Helmet]:
+			drops_info drops;
 			if(total_turns_played() >= get_property('nextAprilBandTurn').to_int()) {
 				info.addExtra(extraInfoPicker('aprilbandsong', '<b>Change</b> the marching song'));
+				drops[drops.count()] = new drop_info('', 1, 'song change');
 			}
 			else {
 				info.addToDesc((get_property('nextAprilBandTurn').to_int() - total_turns_played()) + ' adv to song change');
 			}
 			if(aprilingBandSectionsEnrolled() < 2) {
 				info.addExtra(extraInfoPicker('aprilbandsection', '<b>Join</b> a section'));
+				drops[drops.count()] = new drop_info('_aprilBandInstruments', 2, 'section enroll', 'section enrolls');
+			}
+			info.addDrops(drops);
+			foreach inst in aprilingBandSectionInstruments {
+				if(item_amount(inst) + equipped_amount(inst) > 0) {
+					int playsLeft = 3 - get_property(aprilingBandSectionInstrumentProps[inst]).to_int();
+					if(playsLeft > 0) {
+						info.addExtra(extraInfoLink('<b>Play</b> ' + inst,
+							aprilingBandSectionInstrumentAbilities[inst] + ' (' + playsLeft + ' left)',
+							attrmap {
+								'class': 'visit done',
+								'target': 'mainpane',
+								'href': 'inventory.php?pwd=' + my_hash() + '&iid=' + inst.to_int() + '&action=aprilplay',
+							}, itemimage(inst.image)));
+					}
+				}
 			}
 			break;
+		case $item[Apriling band saxophone]:
+		case $item[Apriling band quad tom]:
+		case $item[Apriling band tuba]:
+		case $item[Apriling band staff]:
+		case $item[Apriling band piccolo]: {
+			boolean hasPlays = info.addDrop(new drop_info(aprilingBandSectionInstrumentProps[it], 3, 'play', 'plays'));
+			if(hasPlays) {
+				info.addExtra(extraInfoLink('<b>Play</b> ' + it, aprilingBandSectionInstrumentAbilities[it], attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'inventory.php?pwd=' + my_hash() + '&iid=' + it.to_int() + '&action=aprilplay',
+				}));
+			}
+			break;
+		}
 	}
 
 	// latte reminder
