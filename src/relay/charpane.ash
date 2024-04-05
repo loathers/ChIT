@@ -708,38 +708,31 @@ void pickerHoloRecord() {
 		int price = npc_price(holorecord);
 		boolean active = have_effect(eff) > 0;
 		int copies = item_amount(holorecord);
-		boolean canDo = !active && ((price > 0 && my_meat() > price) || copies > 0);
+		boolean canDo = (price > 0 && my_meat() >= price) || copies > 0;
+		string name = holorecord;
+		string desc = holorecord == $item[The Pigs holo-record] ? 'Food gives +100% more Adventures'
+			: holorecord == $item[Drunk Uncles holo-record] ? 'Booze gives +100% more Adventures'
+			: parseEff(eff);
+		if(!canDo) {
+			if(price == 0) {
+				desc += '<br />Not Unlocked';
+			}
+			else if(price > my_meat()) {
+				desc += '<br />Can\'t Afford';
+			}
+		}
+		else if(copies > 0) {
+			desc += '<br />' + copies + (copies > 1 ? ' copies' : ' copy');
+		}
+		else {
+			desc += '<br />' + price + ' meat';
+		}
+		string cmd = 'use 1 ' + holorecord;
+		if(nowPlaying != $effect[none]) {
+			cmd = 'shrug ' + nowPlaying + '; ' + cmd;
+		}
 
-		picker.append('<tr class="pickitem');
-		if(!canDo) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(eff.image);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Now Playing</b>: ');
-		}
-		else if(canDo) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand((nowPlaying != $effect[none] ? ("shrug " + nowPlaying.to_string() + "; ") : "") + "use 1 " + holorecord.to_string()));
-			picker.append('"><b>Play</b> ');
-		}
-		else if(price == 0) {
-			picker.append("<b>(Not unlocked)</b> ");
-		}
-		else if(price > my_meat()) {
-			picker.append("<b>(Can't afford)</b> ");
-		}
-		picker.append(holorecord.to_string());
-		if(copies == 0 && price > 0) picker.append(' (' + price + ' meat)');
-		else if(copies > 0) picker.append(' (' + item_amount(holorecord) + ' cop' + (copies > 1 ? 'ies' : 'y') + ')');
-		picker.append('<br /><span class="descline">');
-		if(holorecord == $item[The Pigs holo-record]) picker.append('Food gives +100% more Adventures');
-		else if(holorecord == $item[Drunk Uncles holo-record]) picker.append('Booze gives +100% more Adventures');
-		else picker.append(parseEff(eff));
-		picker.append('</span>');
-		if(canDo) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerEffectOption(active ? 'Extend' : 'Play', name, eff, desc, canDo ? 10 : 0, sideCommand(cmd), canDo);
 	}
 
 	foreach holorecord in $items[
