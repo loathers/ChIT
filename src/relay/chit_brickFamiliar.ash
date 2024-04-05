@@ -200,36 +200,12 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		string current = get_property("snowsuit");
 
 		void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
-			string faceLink = '<a class="change" href="' + sideCommand("snowsuit " + face) + '">';
-
-			picker.append('<tr class="pickitem');
-			if(face == current) picker.append(' currentitem');
-			picker.append('"><td class="icon">');
-			if(face != current) picker.append(faceLink);
-			picker.append('<img class="chit_icon');
-			if(drops) picker.append(' hasdrops');
-			picker.append('" src="/images/itemimages/');
-			picker.append(icon);
-			picker.append('.gif" title="');
-			if(face == current) picker.append('Current: ');
-			else picker.append('Add ');
-			picker.append(desc1);
-			picker.append(' ');
-			picker.append(desc2);
-			picker.append('" />');
-			if(face != current) picker.append('</a>');
-			picker.append('</td><td colspan="2">');
-			if(face != current) {
-				picker.append(faceLink);
-				picker.append('<b>Switch</b> to ');
+			string imgClass = 'chit_icon';
+			if(drops) {
+				imgClass += ' hasdrops';
 			}
-			else picker.append('<b>Current</b>: ');
-			picker.append(desc1);
-			picker.append('<br /><span class="descline">');
-			picker.append(desc2);
-			picker.append('</span>');
-			if(face != current) picker.append('</a>');
-			picker.append('</td></tr>');
+			picker.pickerSelectionOption(desc1, desc2, 'snowsuit ' + face, itemimage(icon + '.gif'),
+				face == current, true, attrmap { 'class': imgClass });
 		}
 
 		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
