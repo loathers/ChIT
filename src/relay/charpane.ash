@@ -1284,6 +1284,7 @@ void bakeEffects() {
 			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
 			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
 			new noncommod("pillminder.gif", "sneakisol", "avoiding fights until something cool happens"),
+			new noncommod("saxophone.gif", "saxophone", "tuba playing has scared away most monsters"),
 		};
 
 		foreach i,noncom in nomcommods {
