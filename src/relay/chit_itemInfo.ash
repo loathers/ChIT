@@ -251,7 +251,6 @@ void picker_retrosupercapemeta() {
 	void addCombo(string name, string hero, string mode, boolean enabled, string desc) {
 		boolean active = false;
 		if(get_property('retroCapeSuperhero') == hero && get_property('retroCapeWashingInstructions') == mode) {
-			enabled = false;
 			active = true;
 		}
 

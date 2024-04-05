@@ -826,15 +826,12 @@ void pickerFinishOption(buffer picker) {
 	picker.tagFinish('tr');
 }
 
-void pickerAddImage(buffer picker, string src, boolean withLink, attrmap linkAttrs) {
+void pickerAddImage(buffer picker, string src, boolean withLink, attrmap imgAttrs) {
 	picker.tagStart('td', attrmap { 'class': 'icon' });
-	if(withLink) {
-		picker.tagStart('a', linkAttrs);
+	if(!(imgAttrs contains 'class')) {
+		imgAttrs['class'] = 'chit_icon';
 	}
-	picker.addImg(src, attrmap { 'class': 'chit_icon' });
-	if(withLink) {
-		picker.tagFinish('a');
-	}
+	picker.addImg(src, imgAttrs);
 	picker.tagFinish('td');
 }
 
@@ -934,20 +931,24 @@ void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetica
 	picker.pickerGenericOption('Cast', sk.to_string(), desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
 		'onclick': "javascript:poop('desc_skill.php?whichskill=" + sk.to_int() + "&self=true','skill',350,300);",
 		'title': 'Pop out skill description',
-		'href': '#',
 	});
 }
 
 // Examples: Edpiece, Jurassic Parka, etc
-void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable) {
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable, attrmap imgAttrs) {
 	if(current) {
 		name = '<b>Current</b>: ' + name;
+		usable = false;
 	}
-	picker.pickerGenericOption('Select', name, desc, '', sideCommand(cmd), usable, img);
+	picker.pickerGenericOption('Select', name, desc, '', sideCommand(cmd), usable, img, imgAttrs);
+}
+
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable) {
+	pickerSelectionOption(picker, name, desc, cmd, img, current, usable, attrmap {});
 }
 
 void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
-	picker.pickerSelectionOption(name, desc, cmd, img, current, !current);
+	picker.pickerSelectionOption(name, desc, cmd, img, current, true);
 }
 
 string parseEff(effect eff);
@@ -967,10 +968,8 @@ void pickerEffectOption(buffer picker, string verb, string name, effect eff, str
 	}
 
 	picker.pickerGenericOption(verb, name, desc, "", href, usable, itemimage(eff.image), attrmap {
-		'class': 'done',
 		'onclick': "javascript:eff('" + eff.descid + "');",
 		'title': 'Pop out effect description',
-		'href': '#',
 	});
 }
 
