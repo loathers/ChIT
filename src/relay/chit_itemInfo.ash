@@ -1275,6 +1275,26 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		}
+		case $item[Everfull Dart Holster]: {
+			int thrown = get_property('dartsThrown').to_int();
+			int skillLevel = floor(square_root(thrown));
+			int nextLevelReq = (skillLevel + 1) ** 2;
+			int toNextLevel = nextLevelReq - thrown;
+			int dartsLeft = get_property('_dartsLeft').to_int();
+			if(skillLevel < 1) {
+				info.addToDesc('unskilled');
+			}
+			else {
+				info.addToDesc(skillLevel + ' skill');
+			}
+			info.addToDesc(toNextLevel + ' to improve');
+			if(skillLevel > 0) {
+				// darts left is 0 until you've gone in to combat with them, so just don't show yet
+				info.addToDesc(dartsLeft + ' darts');
+			}
+			// TODO: Maybe some perk tracking, once I've worked that out
+			break;
+		}
 	}
 
 	// latte reminder
