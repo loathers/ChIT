@@ -962,6 +962,9 @@ void pickerEffectOption(buffer picker, string verb, string name, effect eff, str
 	if(duration > 0) {
 		desc += ' (' + duration + ' turns)';
 	}
+	else if(duration < 0) {
+		desc += ' (intrinsic)';
+	}
 
 	picker.pickerGenericOption(verb, name, desc, "", href, usable, itemimage(eff.image), attrmap {
 		'class': 'done',
@@ -973,6 +976,21 @@ void pickerEffectOption(buffer picker, string verb, string name, effect eff, str
 
 void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
 	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
+}
+
+void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
+
+void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string rightSection) {
+	buffer iconSection;
+	iconSection.tagStart('td', attrmap { 'class': 'chit_icon' });
+	iconSection.addItemIcon(it, 'Click for item description', true);
+	iconSection.tagFinish('td');
+
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, iconSection, attrmap {}, rightSection);
+}
+
+void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable) {
+	pickerItemOption(picker, it, verb, noun, desc, parenthetical, href, usable, '');
 }
 
 /*****************************************************

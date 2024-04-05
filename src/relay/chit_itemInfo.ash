@@ -322,6 +322,69 @@ void picker_retrosupercapeall() {
 }
 
 /*****************************************************
+	apriling band helmet support
+*****************************************************/
+boolean [effect] aprilingBandSongs = $effects[
+	Apriling Band Patrol Beat,
+	Apriling Band Battle Cadence,
+	Apriling Band Celebration Bop,
+];
+
+boolean [item] aprilingBandSectionInstruments = $items[
+	Apriling band saxophone,
+	Apriling band quad tom,
+	Apriling band tuba,
+	Apriling band staff,
+	Apriling band piccolo,
+];
+
+int aprilingBandSectionsEnrolled() {
+	int res = 0;
+	foreach it in aprilingBandSectionInstruments {
+		res += available_amount(it);
+	}
+	return res;
+}
+
+void picker_aprilbandsong() {
+	buffer picker;
+	picker.pickerStart('aprilbandsong', 'Conduct the Band');
+
+	int choiceNum = 1;
+	foreach eff in aprilingBandSongs {
+		string cmd = 'ashq visit_url("inventory.php?pwd=' + my_hash() + '&action=apriling"); '
+			+ 'visit_url("choice.php?pwd=' + my_hash() + '&whichchoice=1526&option=' + choiceNum + '");';
+		picker.pickerEffectOption('Conduct', 'the ' + eff, eff, '', -1, sideCommand(cmd), have_effect(eff) == 0);
+		++choiceNum;
+	}
+
+	picker.pickerFinish('Conducting the Band...');
+}
+
+void picker_aprilbandsection() {
+	buffer picker;
+	picker.pickerStart('aprilbandsection', 'Join a Section (' + (2 - aprilingBandSectionsEnrolled())
+		+ ' left)');
+
+	void sectionOption(item it, string section, int choiceNum, string ability) {
+		string cmd = 'ashq visit_url("inventory.php?pwd=' + my_hash() + '&action=apriling"); '
+			+ 'visit_url("choice.php?pwd=' + my_hash() + '&whichchoice=1526&option=' + choiceNum + '");';
+		string desc = parseMods(string_modifier(it, 'Evaluated Modifiers')) + '<br />Can '
+			+ ability + ' 3x per day';
+		picker.pickerItemOption(it, 'Join', 'the ' + section, desc, '', sideCommand(cmd),
+			available_amount(it) == 0);
+	}
+
+	sectionOption($item[Apriling band saxophone], 'sax section', 4, 'get Lucky!');
+	sectionOption($item[Apriling band quad tom], 'percussion section', 5, 'free fight a sandworm');
+	sectionOption($item[Apriling band tuba], 'tuba section', 6, 'force a noncom');
+	sectionOption($item[Apriling band staff], 'drum majors', 7, 'get a random effect');
+	sectionOption($item[Apriling band piccolo], 'piccolo section', 8, 'give current fam +40 exp');
+
+	picker.pickerFinish('Joining a Section...');
+}
+
+/*****************************************************
 	Misc pickers
 *****************************************************/
 void pickerFamiliar(familiar f, string cmd, string title);
@@ -1152,6 +1215,17 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		}
+		case $item[Apriling Band Helmet]:
+			if(total_turns_played() >= get_property('nextAprilBandTurn').to_int()) {
+				info.addExtra(extraInfoPicker('aprilbandsong', '<b>Change</b> the marching song'));
+			}
+			else {
+				info.addToDesc((get_property('nextAprilBandTurn').to_int() - total_turns_played()) + ' adv to song change');
+			}
+			if(aprilingBandSectionsEnrolled() < 2) {
+				info.addExtra(extraInfoPicker('aprilbandsection', '<b>Join</b> a section'));
+			}
+			break;
 	}
 
 	// latte reminder

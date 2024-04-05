@@ -498,14 +498,10 @@ void pickerGear(slot s) {
 
 	// option to unequip current item, or blurb about the slot being empty
 	if(in_slot != $item[none]) {
-		buffer itemImage;
-		itemImage.tagStart('td', attrmap { 'class': 'chit_icon' });
-		itemImage.addItemIcon(in_slot, 'Click for item description', true);
-		itemImage.tagFinish('td');
 		buffer favButton;
 		favButton.add_favorite_button(in_slot);
-		picker.pickerGenericOption('unequip', info.name, info.desc, '',
-			sideCommand('unequip ' + s), true, itemImage, attrmap {}, favButton);
+		picker.pickerItemOption(in_slot, 'unequip', info.name, info.desc, '',
+			sideCommand('unequip ' + s), true, favButton);
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');
 		if(s == $slot[off-hand] && weapon_hands(equipped_item($slot[weapon])) > 1) {
