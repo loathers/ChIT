@@ -210,6 +210,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}
 				break;
 			case $familiar[Grim Brother]:
+				drops[drops.count()] = new drop_info('_grimBuff', LIMIT_BOOL, 'buff');
 				if(!get_property('_grimBuff').to_boolean()) {
 					info.addExtra(extraInfoLink('talk', attrmap {
 						'target': 'mainpane',
@@ -647,7 +648,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					}));
 				}
 				else if(haveOde) {
-					info.addToDesc('Can run');
+					info.addToDesc('Could run');
 				}
 				else {
 					info.addToDesc('Need Ode :(');
@@ -677,16 +678,18 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 		}
 
 		if(f.drops_limit > 0) {
-			int dropsLeft = f.drops_limit - f.drops_today;
 			if(f.drop_item != $item[none]) {
-				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_item, f.drop_item.plural, false, true, dropsLeft);
+				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_item, f.drop_item.plural, false, true, f.drops_today);
 			}
 			else {
 				string plural = f.drop_name;
-				if(plural.substring(plural.length() - 1) != 's') {
+				if(plural.substring(plural.length() - 1) == 'y') {
+					plural = plural.substring(0, plural.length() - 1) + 'ies';
+				}
+				else if(plural.substring(plural.length() - 1) != 's') {
 					plural += 's';
 				}
-				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_name, plural, false, true, dropsLeft);
+				drops[drops.count()] = new drop_info('', f.drops_limit, f.drop_name, plural, false, true, f.drops_today);
 			}
 		}
 

@@ -196,17 +196,14 @@ record drop_info {
 	// because of how new works, can just be left off for those cases
 	string plural;
 	boolean unimportant;
-	boolean useLeft;
-	int left;
+	boolean useDropped;
+	int dropped;
 };
 
 typedef drop_info[int] drops_info;
 
 boolean addDrops(chit_info info, drop_info[int] drops) {
 	string toAdd = '';
-	boolean onlyBoolProps = true;
-	// please put periodic drops first if they have others as well
-	boolean onlyPeriodic = true;
 	int bestDrop = DROPS_NONE;
 
 	void upDrops(int level, drop_info info) {
@@ -220,43 +217,45 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 
 	foreach i, drop in drops {
 		boolean percentile = drop.singular != '' && drop.singular.substring(0, 1) == '%';
-		if(drop.limit > LIMIT_PERIODIC) {
-			onlyPeriodic = false;
-		}
 
-		int left = 0;
-		if(drop.useLeft) {
-			left = drop.left;
-			if(drop.limit > 1) {
-				onlyBoolProps = false;
-			}
-			if(left == drop.limit) {
+		int dropped = 0;
+		// if this is -1 dropped is instead left
+		int limit = 0;
+		if(drop.useDropped) {
+			dropped = drop.dropped;
+			limit = drop.limit;
+			if(dropped == 0) {
 				upDrops(DROPS_ALL, drop);
 			}
-			else if(left > 0) {
+			else if(dropped < limit) {
 				upDrops(DROPS_SOME, drop);
 			}
 		}
 		else if(drop.limit == LIMIT_BOOL) {
+			limit = 1;
 			if(!get_property(drop.propName).to_boolean()) {
-				left = 1;
 				upDrops(DROPS_ALL, drop);
+			}
+			else {
+				dropped = 1;
 			}
 		}
 		else if(drop.limit == LIMIT_BOOL_INVERTED) {
+			limit = 1;
 			if(get_property(drop.propName).to_boolean()) {
-				left = 1;
 				upDrops(DROPS_ALL, drop);
+			}
+			else {
+				dropped = 1;
 			}
 		}
 		else if(drop.limit == LIMIT_TOTAL) {
-			onlyBoolProps = false;
-			left = get_property(drop.propName).to_int();
+			dropped = get_property(drop.propName).to_int();
+			limit = -1;
 			upDrops(DROPS_SOME, drop);
 		}
 		else if(drop.limit == LIMIT_INFINITE) {
-			onlyBoolProps = false;
-			left = -1;
+			dropped = -1;
 		}
 		else if(drop.limit <= LIMIT_PERIODIC) {
 			int timeToDrop = -1 * drop.limit - get_property(drop.propName).to_int();
@@ -276,54 +275,48 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			toAdd += ' to ' + drop.singular;
 		}
 		else if(drop.propName != '') {
-			onlyBoolProps = false;
-			left = max(drop.limit - get_property(drop.propName).to_int(), 0);
-			if(left == drop.limit) {
+			dropped = max(get_property(drop.propName).to_int(), 0);
+			limit = drop.limit;
+			if(dropped == 0) {
 				upDrops(DROPS_ALL, drop);
 			}
-			else if(left > 0) {
+			else if(dropped < limit) {
 				upDrops(DROPS_SOME, drop);
 			}
 		}
 		else {
-			onlyBoolProps = false;
-			left = drop.limit;
+			limit = -1;
+			dropped = drop.limit;
 		}
 
 		if(drop.limit > LIMIT_PERIODIC) {
 			if(toAdd != '') {
 				toAdd += ', ';
 			}
-			if(drop.limit > 1) {
-				if(left >= 0) {
-					toAdd += left;
-					if(!percentile) {
-						toAdd += '/' + drop.limit;
-					}
-				}
+
+			if(drop.limit == LIMIT_INFINITE) {
+				toAdd += 'drops';
 			}
-			else if(drop.limit == LIMIT_INFINITE) {
-				toAdd += '&infin;';
+			else if(limit == -1) {
+				toAdd += dropped;
 			}
-			else if(drop.limit == LIMIT_BOOL || drop.limit == LIMIT_BOOL_INVERTED) {
-				if(left == 0) {
-					toAdd += 'No ';
-				}
+			else if(percentile) {
+				toAdd += (limit - dropped);
+			}
+			else {
+				toAdd += dropped + '/' + limit;
 			}
 
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if((drop.limit > 1 || drop.limit == LIMIT_INFINITE) && !percentile) {
+			if((drop.limit > LIMIT_PERIODIC) && !percentile) {
 				toAdd += ' ';
 			}
-			toAdd += (left == 1) ? drop.singular : drop.plural;
+			toAdd += (limit == 1) ? drop.singular : drop.plural;
 		}
 	}
 	if(toAdd != '') {
-		if(!onlyPeriodic) {
-			toAdd += onlyBoolProps ? ' available' : ' left';
-		}
 		info.addToDesc(toAdd);
 		info.incDrops(bestDrop);
 		return true;
