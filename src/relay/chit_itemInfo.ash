@@ -1231,6 +1231,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				'target': 'mainpane',
 				'href': 'inventory.php?action=grind',
 			}));
+			break;
 		}
 		case $item[Eight Days a Week Pill Keeper]:
 			info.addDrop(new drop_info('_freePillKeeperUsed', LIMIT_BOOL, 'free pill'));
