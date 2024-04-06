@@ -1339,6 +1339,27 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			int nextLevelReq = (skillLevel + 1) ** 2;
 			int toNextLevel = nextLevelReq - thrown;
 			int dartsLeft = get_property('_dartsLeft').to_int();
+			int accuracy = 25;
+			int cooldown = 50;
+			int capacity = 3;
+			string [int] perks = get_property('everfullDartPerks').split_string(',');
+			foreach i, perk in perks {
+				switch(perk) {
+					case 'You are less impressed by bullseyes':
+					case 'Bullseyes do not impress you much':
+						cooldown -= 10;
+						break;
+					case '25% Better bullseye targeting':
+					case '25% More Accurate bullseye targeting':
+					case '25% better chance to hit bullseyes':
+						accuracy += 25;
+						break;
+					case 'Expand your dart capacity by 1':
+						// this string is used twice instead of with variants
+						capacity += 1;
+						break;
+				}
+			}
 			if(skillLevel < 1) {
 				info.addToDesc('unskilled');
 			}
@@ -1348,9 +1369,12 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			info.addToDesc(toNextLevel + ' to improve');
 			if(skillLevel > 0) {
 				// darts left is 0 until you've gone in to combat with them, so just don't show yet
-				info.addToDesc(dartsLeft + ' darts');
+				info.addToDesc(dartsLeft + '/' + capacity + ' darts');
 			}
-			// TODO: Maybe some perk tracking, once I've worked that out
+			if(have_effect($effect[Everything looks red]) == 0) {
+				info.addToDesc(accuracy + '% bullseye chance, ' + cooldown + ' adv cooldown');
+				info.incDrops(accuracy == 100 ? DROPS_ALL : DROPS_SOME);
+			}
 			break;
 		}
 		case $item[candy cane sword cane]: {
