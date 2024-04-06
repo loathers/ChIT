@@ -66,6 +66,7 @@ $(document).ready(function () {
 		extends: 'standard',
 		target: true,
 		stem: true,
+		tipJoint: 'top',
 		borderColor: 'black',
 		background: 'white',
 	};
