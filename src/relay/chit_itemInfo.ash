@@ -438,7 +438,7 @@ CCSwordZoneInfo getCCSwordZoneInfo(location l) {
 		case $location[Madness Bakery]: return new CCSwordZoneInfo('MadnessBakery', false, CCSWORD_DAILY, 'peppermint donut');
 		case $location[The Haunted Bedroom]: return new CCSwordZoneInfo('HauntedBedroom', false, CCSWORD_DAILY, 'lucky-ish pill');
 		case $location[The Haunted Library]: return new CCSwordZoneInfo('HauntedLibrary', false, CCSWORD_DAILY, 'sword + substats');
-		case $location[The Shore, Inc.]: return new CCSwordZoneInfo('Shore', true, CCSWORD_LIFETIME, '2 scrip, stats, buff');
+		case $location[The Shore\, Inc. Travel Agency]: return new CCSwordZoneInfo('Shore', true, CCSWORD_LIFETIME, '2 scrip, stats, buff');
 		case $location[The Black Forest]: return new CCSwordZoneInfo('BlackForest', true, CCSWORD_LIFETIME, 'exploration progress');
 		case $location[The Spooky Forest]: return new CCSwordZoneInfo('SpookyForest', false, CCSWORD_DAILY, 'fruits');
 		case $location[The Daily Dungeon]: return new CCSwordZoneInfo('Daily Dungeon', true, CCSWORD_LIFETIME, 'fat loot token');
