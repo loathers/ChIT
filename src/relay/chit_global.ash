@@ -10,6 +10,8 @@ boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/relayimages/chit/";
 
+typedef string[string] attrmap;
+
 record buff {
 	effect eff;
 	string effectName;
@@ -19,6 +21,316 @@ record buff {
 	int effectTurns;
 	boolean isIntrinsic;
 };
+
+// some constants
+int DANGER_NONE = 0;
+int DANGER_WARNING = 1;
+int DANGER_DANGEROUS = 2;
+int DANGER_GOOD = -1;
+
+int DROPS_NONE = 0;
+int DROPS_SOME = 1;
+int DROPS_ALL = 2;
+
+// str1 is picker name
+// str2 is picker launcher text
+int EXTRA_PICKER = 0;
+// str1 is fold text
+int EXTRA_FOLD = 1;
+// str1 is link text
+// str2 is optional for descline
+// attrs is for the link itself
+int EXTRA_LINK = 2;
+// for mad hatrack and fancypants scarecrow, and who knows, maybe something else in the future
+// str1 is the familiar modifiers
+// str2 is the limit
+int EXTRA_EQUIPFAM = 3;
+
+record extra_info {
+	int extraType;
+	string image; // leave blank for own image
+	string str1;
+	string str2;
+	attrmap attrs;
+};
+
+extra_info extraInfoPicker(string name, string launcherText, string image) {
+	return new extra_info(EXTRA_PICKER, image, name, launcherText);
+}
+
+extra_info extraInfoPicker(string name, string launcherText) {
+	return extraInfoPicker(name, launcherText, '');
+}
+
+extra_info extraInfoFoldable(string text, string image) {
+	return new extra_info(EXTRA_FOLD, image, text);
+}
+
+extra_info extraInfoFoldable(string text) {
+	return extraInfoFoldable(text, '');
+}
+
+extra_info extraInfoLink(string text, string desc, attrmap attrs, string image) {
+	return new extra_info(EXTRA_LINK, image, text, desc, attrs);
+}
+
+extra_info extraInfoLink(string text, string desc, attrmap attrs) {
+	return extraInfoLink(text, desc, attrs, '');
+}
+
+extra_info extraInfoLink(string text, attrmap attrs, string image) {
+	return extraInfoLink(text, '', attrs, image);
+}
+
+extra_info extraInfoLink(string text, attrmap attrs) {
+	return extraInfoLink(text, attrs, '');
+}
+
+extra_info extraInfoEquipFam(string famEffect, string cap) {
+	return new extra_info(EXTRA_EQUIPFAM, '', famEffect, cap, attrmap {});
+}
+
+record chit_info {
+	string name;
+	string desc;
+	int hasDrops;
+	int dangerLevel;
+	string image;
+	extra_info[int] extra;
+	// for familiars
+	string weirdoTag;
+	string weirdoDivContents;
+};
+
+boolean incDrops(chit_info info, int level) {
+	if(info.hasDrops < level) {
+		info.hasDrops = level;
+		return true;
+	}
+	return false;
+}
+
+string namedesc(chit_info info) {
+	string res = info.name;
+	if(info.desc != '') {
+		res += ' (' + info.desc + ')';
+	}
+	return res;
+}
+
+void tagStart(buffer result, string type, attrmap attrs);
+void tagFinish(buffer result, string type);
+void addImg(buffer result, string imgSrc, attrmap attrs);
+
+void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
+	string imgClass = 'chit_icon';
+
+	if(info.hasDrops == DROPS_SOME) {
+		imgClass += ' hasdrops';
+	}
+	else if(info.hasDrops == DROPS_ALL) {
+		imgClass += ' alldrops';
+	}
+
+	if(info.dangerLevel == DANGER_WARNING) {
+		imgClass += ' warning';
+	}
+	else if(info.dangerLevel == DANGER_DANGEROUS) {
+		imgClass += ' danger';
+	}
+	else if(info.dangerLevel == DANGER_GOOD) {
+		imgClass += ' good';
+	}
+
+	if(info.weirdoTag != '') {
+		imgClass += ' chit_' + info.weirdoTag;
+	}
+
+	attrmap imgAttrs = {
+		'class': imgClass,
+		'title': title,
+	};
+	if(onclick != '') {
+		imgAttrs['onclick'] = onclick;
+	}
+	if(imgAttrs contains 'onclick') {
+		imgAttrs['class'] += ' cursor';
+	}
+
+	if(info.weirdoDivContents == '') {
+		result.addImg(info.image, imgAttrs);
+	}
+	else {
+		result.tagStart('div', imgAttrs);
+		result.append(info.weirdoDivContents);
+		result.tagFinish('div');
+	}
+}
+
+void addToDesc(chit_info info, string toAdd) {
+	if(info.desc != '') {
+		info.desc += ', ';
+	}
+	info.desc += toAdd;
+}
+
+// if limit is 0, the prop is a total rather than something to subtract from limit
+int LIMIT_TOTAL = 0;
+// if limit is -1, the prop is a boolean and you have 1 left to come if false
+int LIMIT_BOOL = -1;
+// if limit is -2, the prop is a boolean and you have 1 left to come if true
+int LIMIT_BOOL_INVERTED = -2;
+// if limit is -3, there is no limit to the amount that can drop
+int LIMIT_INFINITE = -3;
+// if limit is a smaller negative, the limit is periodic, with abs(limit) being the period,
+// and prop being progress along that period
+// hopefully we won't see a periodic drop with a period less than 3, haha
+int LIMIT_PERIODIC = -4;
+
+record drop_info {
+	// if propName is '', limit is instead how many are left
+	string propName;
+	int limit;
+	string singular;
+	// if this is '', use singular for plural as well
+	// because of how new works, can just be left off for those cases
+	string plural;
+	boolean unimportant;
+	boolean useDropped;
+	int dropped;
+};
+
+typedef drop_info[int] drops_info;
+
+boolean addDrops(chit_info info, drop_info[int] drops) {
+	string toAdd = '';
+	int bestDrop = DROPS_NONE;
+
+	void upDrops(int level, drop_info info) {
+		if(info.unimportant) {
+			level = DROPS_NONE;
+		}
+		if(bestDrop < level) {
+			bestDrop = level;
+		}
+	}
+
+	foreach i, drop in drops {
+		boolean percentile = drop.singular != '' && drop.singular.substring(0, 1) == '%';
+
+		int dropped = 0;
+		// if this is -1 dropped is instead left
+		int limit = 0;
+		if(drop.useDropped) {
+			dropped = drop.dropped;
+			limit = drop.limit;
+			if(dropped == 0) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else if(dropped < limit) {
+				upDrops(DROPS_SOME, drop);
+			}
+		}
+		else if(drop.limit == LIMIT_BOOL) {
+			limit = 1;
+			if(!get_property(drop.propName).to_boolean()) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else {
+				dropped = 1;
+			}
+		}
+		else if(drop.limit == LIMIT_BOOL_INVERTED) {
+			limit = 1;
+			if(get_property(drop.propName).to_boolean()) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else {
+				dropped = 1;
+			}
+		}
+		else if(drop.limit == LIMIT_TOTAL) {
+			dropped = get_property(drop.propName).to_int();
+			limit = -1;
+			upDrops(DROPS_SOME, drop);
+		}
+		else if(drop.limit == LIMIT_INFINITE) {
+			dropped = -1;
+		}
+		else if(drop.limit <= LIMIT_PERIODIC) {
+			int timeToDrop = -1 * drop.limit - get_property(drop.propName).to_int();
+			if(timeToDrop <= 1) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else if(timeToDrop <= 5 && drop.limit <= -30) {
+				upDrops(DROPS_SOME, drop);
+			}
+			if(toAdd != '') {
+				toAdd += ', ';
+			}
+			toAdd += timeToDrop + ' turn';
+			if(timeToDrop != 1) {
+				toAdd += 's';
+			}
+			toAdd += ' to ' + drop.singular;
+		}
+		else if(drop.propName != '') {
+			dropped = max(get_property(drop.propName).to_int(), 0);
+			limit = drop.limit;
+			if(dropped == 0) {
+				upDrops(DROPS_ALL, drop);
+			}
+			else if(dropped < limit) {
+				upDrops(DROPS_SOME, drop);
+			}
+		}
+		else {
+			limit = -1;
+			dropped = drop.limit;
+		}
+
+		if(drop.limit > LIMIT_PERIODIC) {
+			if(toAdd != '') {
+				toAdd += ', ';
+			}
+
+			if(drop.limit == LIMIT_INFINITE) {
+				toAdd += 'drops';
+			}
+			else if(limit == -1) {
+				toAdd += dropped;
+			}
+			else if(percentile) {
+				toAdd += (limit - dropped);
+			}
+			else {
+				toAdd += dropped + '/' + limit;
+			}
+
+			if(drop.plural == '') {
+				drop.plural = drop.singular;
+			}
+			if((drop.limit > LIMIT_PERIODIC) && !percentile) {
+				toAdd += ' ';
+			}
+			toAdd += (limit == 1) ? drop.singular : drop.plural;
+		}
+	}
+	if(toAdd != '') {
+		info.addToDesc(toAdd);
+		info.incDrops(bestDrop);
+		return true;
+	}
+	return false;
+}
+
+boolean addDrop(chit_info info, drop_info drop) {
+	return info.addDrops(drops_info { drop });
+}
+
+void addExtra(chit_info info, extra_info extra) {
+	info.extra[info.extra.count()] = extra;
+}
 
 /*****************************************************
 	Veracity's vProps
@@ -360,36 +672,317 @@ string progressCustom(int current, int limit, int severity, boolean active) {
 }
 
 /*****************************************************
+	HTML functions
+*****************************************************/
+int[string] tagsOpen;
+
+void tagStart(buffer buf, string type, attrmap attrs, boolean selfClosing) {
+	if(!selfClosing) {
+		tagsOpen[type] += 1;
+	}
+
+	buf.append('<');
+	buf.append(type);
+	foreach attr, value in attrs {
+		buf.append(' ');
+		buf.append(attr);
+		buf.append('="');
+		// TODO: Escape " in value
+		buf.append(value);
+		buf.append('"');
+	}
+	if(selfClosing) {
+		buf.append(' /');
+	}
+	buf.append('>');
+}
+
+void tagStart(buffer buf, string type, attrmap attrs) {
+	tagStart(buf, type, attrs, false);
+}
+
+void tagStart(buffer buf, string type) {
+	tagStart(buf, type, attrmap {});
+}
+
+void tagFinish(buffer buf, string type) {
+	if(tagsOpen[type] < 1) {
+		print('Tried to close a <' + type + '> without opening one first', 'red');
+	}
+	else {
+		tagsOpen[type] -= 1;
+	}
+	buf.append('</');
+	buf.append(type);
+	buf.append('>');
+}
+
+void tagSelfClosing(buffer buf, string type, attrmap attrs) {
+	tagStart(buf, type, attrs, true);
+}
+
+void tagSelfClosing(buffer buf, string type) {
+	tagSelfClosing(buf, type, attrmap {});
+}
+
+void addImg(buffer buf, string src, attrmap attrs) {
+	attrs['src'] = src;
+	buf.tagSelfClosing('img', attrs);
+}
+
+string itemimage(string src) {
+	return '/images/itemimages/' + src;
+}
+
+void br(buffer buf) {
+	buf.tagSelfClosing('br', attrmap {});
+}
+
+/*****************************************************
 	Picker functions
 *****************************************************/
+string[int] pickerStack;
 
-void pickerStart(buffer picker, string rel, string message) {
-	picker.append('<div id="chit_picker');
-	picker.append(rel);
-	picker.append('" class="chit_skeleton" style="display:none"><table class="chit_picker"><tr><th colspan="3">');
+void pickerStart(buffer picker, string name, string message) {
+	if(chitPickers contains name) {
+		print("Tried to start picker " + name + ", but we already finished that one!", "red");
+	}
+	pickerStack[pickerStack.count()] = name;
+
+	picker.tagStart('div', attrmap {
+		'id': 'chit_picker' + name, 'class': 'chit_skeleton', 'style': 'display:none'
+	});
+	picker.tagStart('table', attrmap {
+		'class': 'chit_picker'
+	});
+	picker.tagStart('tr');
+	picker.tagStart('th', attrmap {
+		'colspan': '3'
+	});
 	picker.append(message);
-	picker.append('</th></tr>');
+	picker.tagFinish('th');
+	picker.tagFinish('tr');
 }
-void pickerStart(buffer picker, string rel, string message, string image) {
-	picker.pickerStart(picker, rel, '<img src="' + imagePath + image + '.png">' + message);
+
+void pickerStart(buffer picker, string name, string message, string image) {
+	picker.pickerStart(picker, name, '<img src="' + imagePath + image + '.png" />' + message);
 }
 
 void addLoader(buffer picker, string message, string subloader) {
-	picker.append('<tr class="pickloader');
-	picker.append(subloader);
-	picker.append('" style="display:none"><td class="info">');
+	picker.tagStart('tr', attrmap {
+		'class': 'pickloader' + subloader, 'style': 'display:none'
+	});
+	picker.tagStart('td', attrmap { 'class': 'info' });
 	picker.append(message);
-	picker.append('</td><td class="icon"><img src="/images/itemimages/karma.gif"></td></tr>');
+	picker.tagFinish('td');
+	picker.tagStart('td', attrmap { 'class': 'icon' });
+	picker.addImg(itemimage('karma.gif'), attrmap {});
+	picker.tagFinish('td');
+	picker.tagFinish('tr');
 }
 
 void addLoader(buffer picker, string message) {
 	addLoader(picker,message,"");
 }
 
+void pickerFinish(buffer picker, string loadingText) {
+	if(pickerStack.count() == 0) {
+		print("Tried to finish a picker, but couldn't because none were open...", "red");
+		return;
+	}
+	if(loadingText != "") {
+		picker.addLoader(loadingText);
+	}
+	picker.tagFinish('table');
+	picker.tagFinish('div');
+	chitPickers[remove pickerStack[pickerStack.count() - 1]] = picker;
+}
+
+void pickerFinish(buffer picker) {
+	pickerFinish(picker, "");
+}
+
 void addSadFace(buffer picker, string message) {
-	picker.append('<tr class="picknone"><td class="info" colspan="3">');
+	picker.tagStart('tr', attrmap { 'class': 'picknone' });
+	picker.tagStart('td', attrmap { 'class': 'info', 'colspan': '3' });
 	picker.append(message);
-	picker.append('</td></tr>');
+	picker.tagFinish('td');
+	picker.tagFinish('tr');
+}
+
+void pickerStartOption(buffer picker, boolean usable) {
+	picker.tagStart('tr', attrmap { 'class': 'pickitem' + (usable ? '' : ' currentitem') });
+}
+
+void pickerFinishOption(buffer picker) {
+	// Just in case I want to restructure pickers in the future
+	picker.tagFinish('tr');
+}
+
+void pickerAddImage(buffer picker, string src, boolean withLink, attrmap imgAttrs) {
+	picker.tagStart('td', attrmap { 'class': 'icon' });
+	if(!(imgAttrs contains 'class')) {
+		imgAttrs['class'] = 'chit_icon';
+	}
+	picker.addImg(src, imgAttrs);
+	picker.tagFinish('td');
+}
+
+void pickerAddImage(buffer picker, string src, attrmap linkAttrs) {
+	pickerAddImage(picker, src, true, linkAttrs);
+}
+
+void pickerAddImage(buffer picker, string src) {
+	pickerAddImage(picker, src, false, attrmap {});
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string leftSection, attrmap linkAttrs, string rightSection) {
+	picker.pickerStartOption(usable);
+
+	if(href == '') {
+		usable = false;
+	}
+
+	picker.append(leftSection);
+	attrmap tdAttrs;
+	if(rightSection == '') {
+		tdAttrs['colspan'] = '2';
+	}
+	picker.tagStart('td', tdAttrs);
+	if(usable) {
+		if(linkAttrs['href'] == '') {
+			linkAttrs['href'] = href;
+		}
+		if(linkAttrs['class'] == '') {
+			linkAttrs['class'] = 'change';
+		}
+		picker.tagStart('a', linkAttrs);
+		picker.tagStart('b');
+		picker.append(verb);
+		picker.tagFinish('b');
+		picker.append(' ');
+	}
+	picker.append(noun);
+	if(parenthetical != "") {
+		picker.append(' (');
+		picker.append(parenthetical);
+		picker.append(')');
+	}
+	if(desc != "") {
+		picker.br();
+		picker.tagStart('span', attrmap { 'class': 'descline' });
+		picker.append(desc);
+		picker.tagFinish('span');
+	}
+	if(usable) {
+		picker.tagFinish('a');
+	}
+	picker.tagFinish('td');
+	if(rightSection != '') {
+		picker.tagStart('td');
+		picker.append(rightSection);
+		picker.tagFinish('td');
+	}
+	picker.pickerFinishOption();
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs, string rightSection) {
+	buffer leftSection;
+	leftSection.pickerAddImage(imgsrc, imgAttrs.count() > 0, imgAttrs);
+
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, leftSection, linkAttrs, rightSection);
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs, attrmap linkAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgAttrs, linkAttrs, '');
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc, attrmap imgAttrs) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, imgAttrs, attrmap {});
+}
+
+void pickerGenericOption(buffer picker, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string imgSrc) {
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, imgSrc, attrmap {});
+}
+
+void pickerPickerOption(buffer picker, string noun, string desc, string parenthetical, string pickerToLaunch, string imgSrc) {
+	pickerGenericOption(picker, 'Pick', noun, desc, parenthetical, '#', true, imgSrc, attrmap {}, attrmap {
+		'class': 'chit_launcher done',
+		'rel': 'chit_picker' + pickerToLaunch,
+	});
+}
+
+void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
+	if(sk.combat) {
+		usable = false;
+		if(desc != "") {
+			desc += '<br />';
+		}
+		desc += '(Available in combat)';
+	}
+
+	picker.pickerGenericOption('Cast', sk.to_string(), desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
+		'onclick': "javascript:poop('desc_skill.php?whichskill=" + sk.to_int() + "&self=true','skill',350,300);",
+		'title': 'Pop out skill description',
+	});
+}
+
+// Examples: Edpiece, Jurassic Parka, etc
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable, attrmap imgAttrs) {
+	if(current) {
+		name = '<b>Current</b>: ' + name;
+		usable = false;
+	}
+	picker.pickerGenericOption('Select', name, desc, '', sideCommand(cmd), usable, img, imgAttrs);
+}
+
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current, boolean usable) {
+	pickerSelectionOption(picker, name, desc, cmd, img, current, usable, attrmap {});
+}
+
+void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
+	picker.pickerSelectionOption(name, desc, cmd, img, current, true);
+}
+
+string parseEff(effect eff);
+
+void pickerEffectOption(buffer picker, string verb, string name, effect eff, string desc, int duration, string href, boolean usable) {
+	if(name == '') {
+		name = eff;
+	}
+	if(desc == '') {
+		desc = parseEff(eff);
+	}
+	if(duration > 0) {
+		desc += ' (' + duration + ' turns)';
+	}
+	else if(duration < 0) {
+		desc += ' (intrinsic)';
+	}
+
+	picker.pickerGenericOption(verb, name, desc, "", href, usable, itemimage(eff.image), attrmap {
+		'onclick': "javascript:eff('" + eff.descid + "');",
+		'title': 'Pop out effect description',
+	});
+}
+
+void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
+	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
+}
+
+void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
+
+void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string rightSection) {
+	buffer iconSection;
+	iconSection.tagStart('td', attrmap { 'class': 'icon' });
+	iconSection.addItemIcon(it, 'Click for item description', true);
+	iconSection.tagFinish('td');
+
+	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, iconSection, attrmap {}, rightSection);
+}
+
+void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable) {
+	pickerItemOption(picker, it, verb, noun, desc, parenthetical, href, usable, '');
 }
 
 /*****************************************************
@@ -455,7 +1048,7 @@ string parseMods(string evm, boolean span) {
 	enew.set_length(0);
 	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
-		+"|Maximum HP( Percent|):([^,]+), Maximum MP\\6:([^,]+)"
+		+"|Maximum HP( Percent|): ([^,]+), Maximum MP\\6: ([^,]+)"
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
 		+'|Avatar: "([^"]+)"'
 		+'|[^ ]* Limit: 0'	// This is mostly for Cowrruption vs Cow Puncher having no limit
@@ -527,6 +1120,8 @@ string parseMods(string evm, boolean span) {
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
 	evm = replace_string(evm,"Damage","Dmg");
+	evm = replace_string(evm,"Critical Hit","Crit");
+	evm = replace_string(evm,"Spell Critical","Spell Crit");
 	evm = replace_string(evm,"Initiative","Init");
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");

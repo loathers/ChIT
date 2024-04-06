@@ -21,6 +21,8 @@ int roboPartNumber;
 string roboPartType;
 
 void addRoboOption(buffer picker, string name, string desc, int scrap) {
+    // TODO: Convert this, but it's complicated enough I don't want to do so outside of You, Robot
+    // because then I can't test it
     string capitalizedPart = roboPartType.substring(0, 1).to_upper_case() + roboPartType.substring(1);
     boolean isActive = get_property("youRobot" + capitalizedPart).to_int() == roboPartNumber;
     boolean isUnavailable = isActive || my_robot_scraps() < scrap;
@@ -72,9 +74,7 @@ void pickerRoboTop() {
     picker.addRoboOption("Tesla Blaster", "Spend 1 Energy to deal 100% of your Moxie in damage", 30);
     picker.addRoboOption("Snow Blower", "Spend 1 Energy to deal 100% of your Muscle in Cold damage", 40);
 
-    picker.addLoader("Reassembling...");
-    picker.append('</table></div>');
-    chitPickers["robotop"] = picker;
+    picker.pickerFinish("Reassembling...");
 }
 
 void pickerRoboLeft() {
@@ -93,9 +93,7 @@ void pickerRoboLeft() {
     picker.addRoboOption("Camouflage Curtain", "Monsters will be significantly less attracted to you", 30);
     picker.addRoboOption("Grease Gun", "Spend 1 Energy to deal 100% of your Moxie in Sleaze damage", 40);
 
-    picker.addLoader("Reassembling...");
-    picker.append('</table></div>');
-    chitPickers["roboleft"] = picker;
+    picker.pickerFinish("Reassembling...");
 }
 
 void pickerRoboRight() {
@@ -114,9 +112,7 @@ void pickerRoboRight() {
     picker.addRoboOption("Blaring Speaker", "+30 to Monster Level", 30);
     picker.addRoboOption("Surplus Flamethrower", "Spend 1 Energy to deal 100% of your Mysticality in Hot damage", 40);
 
-    picker.addLoader("Reassembling...");
-    picker.append('</table></div>');
-    chitPickers["roboright"] = picker;
+    picker.pickerFinish("Reassembling...");
 }
 
 void pickerRoboBottom() {
@@ -134,9 +130,7 @@ void pickerRoboBottom() {
     picker.addRoboOption("Tank Treads", "+50 Maximum HP +10 Damage Reduction", 30);
     picker.addRoboOption("Snowplow", "Gain 1 Scrap after each fight", 30);
 
-    picker.addLoader("Reassembling...");
-    picker.append('</table></div>');
-    chitPickers["robobottom"] = picker;
+    picker.pickerFinish("Reassembling...");
 }
 
 void bakeRobo() {

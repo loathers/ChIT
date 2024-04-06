@@ -127,9 +127,11 @@ Vote Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;fon
 Spooky VHS Tape Monster	style:"background-color:#D7D7FF;color:#007C29;font-style:italic;font-weight:bold", image:"2002vhs.gif"
 
 #He-Boulder Major Rays
+#Among many other things
 Everything Looks Blue	style:"color:blue"
 Everything Looks Red	style:"color:red"
 Everything Looks Yellow	style:"color:olive"
+Everything Looks Green	style:"color:green"
 
 #Juju Mask
 Gaze of the Lightning God	style:"color:blue"

@@ -66,41 +66,16 @@ string boomboxImage(int boomboxNum) {
 }
 
 void addBoomboxSong(buffer result, int num) {
-	string link = "";
-	string linkend = "";
-	if(num != currBoombox()) {
-		link = '<a class="change" href="' + sideCommand("boombox " + num) + '">';
-		linkend = '</a>';
-	}
-	result.append('<tr class="pickitem');
-	if(num == currBoombox()) result.append(' currentitem');
-	result.append('"><td class="icon">');
-	result.append(link);
-	result.append('<img class="chit_icon" src="' + boomboxImage(num) + '" width="30px" height="30px" />');
-	result.append(linkend);
-	result.append('</td><td>');
-	result.append(link);
-	if(num == currBoombox())
-		result.append("<b>Current:</b> ");
-	result.append(boomboxSong(num));
-	result.append('<br /><span class="descline">');
-	result.append(parseMods(boomboxBonus(num)));
-	result.append('</span>');
-	if (boomboxItem(num) != $item[SongBoom&trade; BoomBox])
-	{
-		result.append('<br /><span class="descline">Sing Along: ');
-		result.append(boomboxSingAlong(num));
-		result.append('</span>');
-		result.append('<br /><span class="descline">Drop: ');
-		result.append(boomboxItem(num));
-		if (boomboxItem(num).item_amount() > 0)
-		{
-			result.append(' (' + boomboxItem(num).item_amount() + ')');
+	string desc = parseMods(boomboxBonus(num));
+	if(boomboxItem(num) != $item[SongBoom&trade; BoomBox]) {
+		desc += '<br />Sing Along: ' + boomboxSingAlong(num);
+		desc += '<br />Drop: ' + boomboxItem(num);
+		if(item_amount(boomboxItem(num)) > 0) {
+			desc += ' (' + item_amount(boomboxItem(num)) + ')';
 		}
-		result.append('</span>');
 	}
-	result.append(linkend);
-	result.append('</td></tr>');
+	result.pickerSelectionOption(boomboxSong(num), desc, 'boombox ' + num,
+		boomboxImage(num), num == currBoombox());
 }
 
 void pickerBoombox() {
@@ -110,9 +85,7 @@ void pickerBoombox() {
 	for(int i = 1; i <= 6; ++i)
 		picker.addBoomboxSong(i);
 
-	picker.addLoader("Choosing a soundtrack...");
-	picker.append('</table></div>');
-	chitPickers["boombox"] = picker;
+	picker.pickerFinish("Choosing a soundtrack...");
 }
 
 void bakeBoombox() {

@@ -45,30 +45,9 @@ string horseImage(int horseNum) {
 }
 
 void addHorse(buffer result, int num) {
-	string link = "";
-	string linkend = "";
-	if(num != currHorse()) {
-		link = '<a class="change" href="' + sideCommand("horsery " + num) + '">';
-		linkend = '</a>';
-	}
-	result.append('<tr class="pickitem');
-	if(num == currHorse()) result.append(' currentitem');
-	result.append('"><td class="icon">');
-	result.append(link);
-	result.append('<img class="chit_icon" src="' + horseImage(num) + '" width="40px" height="40px" />');
-	result.append(linkend);
-	result.append('</td><td>');
-	result.append(link);
-	if(num == currHorse())
-		result.append("<b>Current:</b> ");
-	else
-		result.append("<b>Hostle</b> a ");
-	result.append(horseName(num));
-	result.append(' Horse<br /><span class="descline">');
-	result.append(parseMods(horseBonus(num)));
-	result.append('</span>');
-	result.append(linkend);
-	result.append('</td></tr>');
+	// I don't THINK there's a way to check if we're on our free hostle of the day...
+	result.pickerSelectionOption('a ' + horseName(num) + ' Horse', parseMods(horseBonus(num)), 'horsery ' + num,
+		horseImage(num), num == currHorse(), true, attrmap { 'width': '40px', 'height': '40px' });
 }
 
 void pickerHorse() {
@@ -78,9 +57,7 @@ void pickerHorse() {
 	for(int i = 1; i <= 4; ++i)
 		picker.addHorse(i);
 
-	picker.addLoader("Hostling your horse...");
-	picker.append('</table></div>');
-	chitPickers["horsery"] = picker;
+	picker.pickerFinish("Hostling your horse...");
 }
 
 void bakeHorsery() {

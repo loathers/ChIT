@@ -1,6 +1,8 @@
 script "Character Information Toolbox";
 since r27735; // Asdon Martin keyfob (on ring)
 import "chit_global.ash";
+import "chit_itemInfo.ash";
+import "chit_familiarInfo.ash";
 import "chit_brickFamiliar.ash"; // This has to be before chit_brickGear due to addItemIcon() and... weirdly enough pickerFamiliar()
 import "chit_brickGear.ash";
 import "chit_brickTracker.ash";
@@ -44,6 +46,7 @@ setvar("chit.gear.layout", "default");
 setvar("chit.gear.favorites", "item", "");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
+setvar("chit.gear.ccswordcanereminder", true);
 setvar("chit.helpers.dancecard", true);
 setvar("chit.helpers.lucky", true);
 setvar("chit.helpers.spookyraven", true);
@@ -619,13 +622,11 @@ void pickerFlavour() {
 	buffer picker;
 	picker.pickerStart("flavour", "Cast Flavour of Magic");
 
-	picker.addLoader("Spiriting flavours...");
 	picker.append('<tr class="pickitem"><td>');
 	picker.addElementMap("elementchart2");
 	picker.append('</td></tr>');
 
-	picker.append('</table></div>');
-	chitPickers["flavour"] = picker;
+	picker.pickerFinish("Spiriting flavours...");
 }
 
 boolean isDriving() {
@@ -638,75 +639,49 @@ boolean isDriving() {
 }
 
 void pickerAsdon() {
-	if(chitPickers["asdon"] != "") {
+	if(chitPickers contains "asdon") {
 		return;
 	}
 
 	buffer picker;
 	picker.pickerStart("asdon", "Drive Differently! (" + get_fuel() + " fuel)");
-	picker.addLoader("Adjusting driving style...");
 
 	void addDriving(effect style) {
 		boolean current = have_effect(style) > 0;
 		boolean canDo = !current && get_fuel() >= 37;
 		string name = style.to_string().split_string(" ")[1];
-		string driveLink = '<a class="change" href="' + sideCommand("asdonmartin drive " + name.to_lower_case()) + '">';
-
-		picker.append('<tr class="pickitem');
-		if(!canDo) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		if(canDo) picker.append(driveLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(style.image);
-		picker.append('" title="');
-		picker.append(style.to_string());
-		picker.append('" />');
-		if(canDo) picker.append('</a>');
-		picker.append('</td><td colspan="2">');
 		if(current) {
-			picker.append('<b>Currently Driving</b> ');
+			name = '<b>Currently Driving</b> ' + name;
 		}
-		else {
-			if(canDo) picker.append(driveLink);
-			picker.append('<b>Drive</b> ');
-		}
-		picker.append(name);
-		picker.append('<br /><span class="descline">');
-		if(style == $effect[Driving Wastefully]) picker.append("Oil Peak pressure reduction");
-		else picker.append(parseEff(style));
-		picker.append('</span>');
-		if(canDo) picker.append('</a>');
-		picker.append('</td></tr>');
+
+		picker.pickerEffectOption('Drive', name, style, '', 30,
+			sideCommand('asdonmartin drive ' + name.to_lower_case()), canDo);
 	}
 
 	foreach eff in $effects[Driving Obnoxiously, Driving Stealthily, Driving Wastefully, Driving Safely, Driving Recklessly, Driving Intimidatingly, Driving Quickly, Driving Observantly, Driving Waterproofly] {
 		addDriving(eff);
 	}
 
-	string workshedLink = '<a class="change visit done" href="campground.php?action=workshed" target="mainpane">';
-	picker.append('<tr class="pickitem"><td class-"icon">');
-	picker.append(workshedLink);
-	picker.append('<img class="chit_icon" src="/images/itemimages/');
-	picker.append($item[Asdon Martin keyfob (on ring)].image);
-	picker.append('" title="Visit your workshed" /></a></td><td colspan="2">');
-	picker.append(workshedLink);
-	picker.append('<b>Visit</b> your workshed</a></td></tr>');
+	picker.pickerGenericOption('Visit', 'your workshed', '', '', 'campground.php?action=workshed',
+		true, itemimage($item[Asdon Martin keyfob (on ring)].image), attrmap {}, attrmap {
+			'class': 'change visit done',
+			'target': 'mainpane',
+		}
+	);
 
 	if(isDriving()) {
-		string stopLink = '<a class="change" href="' + sideCommand("asdonmartin drive clear") + '">';
-		picker.append('<tr class="pickitem"><td class="icon">');
-		picker.append(stopLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/antianti.gif" title="Stop driving" /></a></td><td colspan="2">');
-		picker.append(stopLink);
-		picker.append('<b>Stop</b> Driving</a></td></tr>');
+		picker.pickerGenericOption('Stop', 'driving', '', '', sideCommand('asdonmartin drive clear'),
+			true, itemimage('antianti.gif'), attrmap {}, attrmap {
+				'class': 'change',
+			}
+		);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["asdon"] = picker;
+	picker.pickerFinish("Adjusting driving style...");
 }
 
 void pickerHoloRecord() {
-	if(chitPickers["holorecord"] != "") {
+	if(chitPickers contains "holorecord") {
 		return;
 	}
 
@@ -728,45 +703,37 @@ void pickerHoloRecord() {
 
 	buffer picker;
 	picker.pickerStart("holorecord", "Play some tunes on your Wrist-Boy");
-	picker.addLoader("Putting in the new record...");
 
 	void addRecord(item holorecord) {
 		effect eff = effect_modifier(holorecord, "effect");
 		int price = npc_price(holorecord);
 		boolean active = have_effect(eff) > 0;
 		int copies = item_amount(holorecord);
-		boolean canDo = !active && ((price > 0 && my_meat() > price) || copies > 0);
+		boolean canDo = (price > 0 && my_meat() >= price) || copies > 0;
+		string name = holorecord;
+		string desc = holorecord == $item[The Pigs holo-record] ? 'Food gives +100% more Adventures'
+			: holorecord == $item[Drunk Uncles holo-record] ? 'Booze gives +100% more Adventures'
+			: parseEff(eff);
+		if(!canDo) {
+			if(price == 0) {
+				desc += '<br />Not Unlocked';
+			}
+			else if(price > my_meat()) {
+				desc += '<br />Can\'t Afford';
+			}
+		}
+		else if(copies > 0) {
+			desc += '<br />' + copies + (copies > 1 ? ' copies' : ' copy');
+		}
+		else {
+			desc += '<br />' + price + ' meat';
+		}
+		string cmd = 'use 1 ' + holorecord;
+		if(nowPlaying != $effect[none]) {
+			cmd = 'shrug ' + nowPlaying + '; ' + cmd;
+		}
 
-		picker.append('<tr class="pickitem');
-		if(!canDo) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(eff.image);
-		picker.append('" /></td><td colspan="2">');
-		if(active) {
-			picker.append('<b>Now Playing</b>: ');
-		}
-		else if(canDo) {
-			picker.append('<a class="change" href="');
-			picker.append(sideCommand((nowPlaying != $effect[none] ? ("shrug " + nowPlaying.to_string() + "; ") : "") + "use 1 " + holorecord.to_string()));
-			picker.append('"><b>Play</b> ');
-		}
-		else if(price == 0) {
-			picker.append("<b>(Not unlocked)</b> ");
-		}
-		else if(price > my_meat()) {
-			picker.append("<b>(Can't afford)</b> ");
-		}
-		picker.append(holorecord.to_string());
-		if(copies == 0 && price > 0) picker.append(' (' + price + ' meat)');
-		else if(copies > 0) picker.append(' (' + item_amount(holorecord) + ' cop' + (copies > 1 ? 'ies' : 'y') + ')');
-		picker.append('<br /><span class="descline">');
-		if(holorecord == $item[The Pigs holo-record]) picker.append('Food gives +100% more Adventures');
-		else if(holorecord == $item[Drunk Uncles holo-record]) picker.append('Booze gives +100% more Adventures');
-		else picker.append(parseEff(eff));
-		picker.append('</span>');
-		if(canDo) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerEffectOption(active ? 'Extend' : 'Play', name, eff, desc, canDo ? 10 : 0, sideCommand(cmd), canDo);
 	}
 
 	foreach holorecord in $items[
@@ -781,8 +748,7 @@ void pickerHoloRecord() {
 		addRecord(holorecord);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["holorecord"] = picker;
+	picker.pickerFinish("Putting in the new record...");
 }
 
 effect [int] availableExpressions() {
@@ -802,13 +768,12 @@ effect [int] availableExpressions() {
 }
 
 void pickerExpression() {
-	if(chitPickers["expression"] != "") {
+	if(chitPickers contains "expression") {
 		return;
 	}
 
 	buffer picker;
 	picker.pickerStart("expression", "Express Yourself!");
-	picker.addLoader("Expressing Yourself...");
 
 	void addExpression(effect expression) {
 		boolean current = have_effect(expression) > 0;
@@ -839,8 +804,7 @@ void pickerExpression() {
 		addExpression(expression);
 	}
 
-	picker.append('</table></div>');
-	chitPickers["expression"] = picker;
+	picker.pickerFinish("Expressing Yourself...");
 }
 
 buff parseBuff(string source) {
@@ -1321,6 +1285,7 @@ void bakeEffects() {
 			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
 			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
 			new noncommod("pillminder.gif", "sneakisol", "avoiding fights until something cool happens"),
+			new noncommod("saxophone.gif", "saxophone", "tuba playing has scared away most monsters"),
 		};
 
 		foreach i,noncom in nomcommods {
@@ -1497,9 +1462,7 @@ void pickerFlorist(string[int] planted){
 			picker.append('<td><a href="' + sideCommand("florist plant "+plant) + '">' + plantDesc(plant, true) + '</a></td></tr>');
 		} else picker.append('<tr><td colspan="2">No more plants available to plant here</td></tr>');
 	}
-	picker.addLoader("Planting");
-	picker.append('</table></div>');
-	chitPickers["florist"] = picker;
+	picker.pickerFinish("Planting");
 }
 
 void addPlants(buffer result) {
@@ -1703,7 +1666,6 @@ void pickerThrall() {
 	picker.pickerStart("thrall", "Bind thy Thrall");
 
 	// Check for all thralls
-	picker.addLoader("Binding Thrall...");
 	boolean sad = true;
 	foreach x,t in binds
 		if(have_skill(t.skill) && t != my_thrall()) {
@@ -1719,8 +1681,7 @@ void pickerThrall() {
 			picker.addSadFace("Poor "+my_thrall().name+" has no other thralls to play with.");
 	}
 
-	picker.append('</table></div>');
-	chitPickers["thrall"] = picker;
+	picker.pickerFinish("Binding Thrall...");
 }
 
 void bakeThrall() {
@@ -1841,7 +1802,6 @@ void addCurrentMood(buffer result, boolean picker) {
 void pickMood() {
 	buffer picker;
 	picker.pickerStart("mood", "Select New Mood");
-	picker.addLoader("Getting Moody");
 	string moodname = currentMood();
 	boolean darkRow = false;
 	foreach i,m in get_moods() {
@@ -1885,10 +1845,7 @@ void pickMood() {
 		picker.addCurrentMood(true);
 	}
 
-	picker.append('</table>');
-	picker.append('</div>');
-
-	chitPickers["mood"] = picker.to_string();
+	picker.pickerFinish("Getting Moody");
 }
 
 void bakeToolbar() {
@@ -2303,7 +2260,6 @@ void addFury(buffer result) {
 void pickerSoulSauce() {
 	buffer picker;
 	picker.pickerStart("soulsauce", "Spend Soul Sauce");
-	picker.addLoader("Performing Saucery...");
 
 	void addSauceSkill(skill sk, string desc) {
 		desc += " (" + sk.soulsauce_cost() + " sauce)";
@@ -2341,8 +2297,7 @@ void pickerSoulSauce() {
 	addSauceSkill($skill[Soul Finger], "Delevel monster significantly");
 	addSauceSkill($skill[Soul Blaze], "Deal massive hot damage");
 
-	picker.append('</table></div>');
-	chitPickers["soulsauce"] = picker;
+	picker.pickerFinish("Performing Saucery...");
 }
 
 void addSauce(buffer result) {
@@ -3026,12 +2981,9 @@ void addMCD(buffer result, boolean bake) {
 		buffer picker;
 		picker.pickerStart("mcd", mcdtitle);
 
-		//Loader
-		picker.addLoader(mcdbusy);
 		picker.mcdlist(true);
-		picker.append('</table></div>');
 
-		chitPickers["mcd"] = picker.to_string();
+		picker.pickerFinish(mcdbusy);
 	}
 }
 void addMCD(buffer result) { result.addMCD(false); }
@@ -3645,7 +3597,6 @@ void allCurrency(buffer result) {
 	result.append('</li></ul></div>');
 }
 
-// This function also makes use of gearName() which is in chit_brickGear.ash
 void pickOutfit() {
 	location loc = my_location();
 	if(loc == $location[none]) // Possibly beccause a fax was used
@@ -3748,11 +3699,16 @@ void pickOutfit() {
 		if(vars["chit." + layout + ".layout"].contains_text("gear"))
 			noGearBrick = false;
 	if(noGearBrick) {
-		foreach it in favGear
-			special.addGear(it, gearName(it, it.to_slot()));
-		foreach reason in recommendedGear
-			foreach it in recommendedGear[reason]
-				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + gearName(it, it.to_slot()));
+		foreach it in favGear {
+			chit_info info = getItemInfo(it);
+			special.addGear(it, namedesc(info));
+		}
+		foreach reason in recommendedGear {
+			foreach it in recommendedGear[reason] {
+				chit_info info = getItemInfo(it);
+				special.addGear(it, '<span style="font-weight:bold">(' + reason + ")</span> " + namedesc(info));
+			}
+		}
 
 		if(item_amount($item[Mega Gem]) > 0 && get_property("questL11Palindome") != "finished")
 			special.addGear("equip acc3 Talisman o\' Namsilat;equip acc1 Mega+Gem", "Talisman & Mega Gem");
@@ -3767,11 +3723,7 @@ void pickOutfit() {
 		picker.append(special);
 	}
 
-	picker.addLoader("Getting Dressed");
-	picker.append('</table>');
-	picker.append('</div>');
-
-	chitPickers["outfit"] = picker.to_string();
+	picker.pickerFinish("Getting Dressed");
 }
 
 void bakeCharacter() {
@@ -4276,7 +4228,7 @@ void bakeHeader() {
 				string singlefamfav = singlefamfavmatch.group(0);
 				singlefamfav = singlefamfav.replace_string("[[", "[");
 				// Attend to familiar images also. (This uses mdofied familiar images!)
-				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), familiar_image(fam));
+				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), getFamiliarInfo(fam).image);
 				replacefamfavs += singlefamfav + ",";
 			}
 		}
@@ -5066,4 +5018,14 @@ void main() {
 		set_property("chit.notifyShenanigans.done", "true");
 	}
 	visit_url().modifyPage().write();
+
+	foreach tag, openCount in tagsOpen {
+		if(openCount > 0) {
+			print('Found ' + openCount + ' open <' + tag + '>s', 'red');
+		}
+	}
+
+	foreach i, picker in pickerStack {
+		print('Never finished picker ' + picker, 'red');
+	}
 }
