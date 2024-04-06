@@ -46,6 +46,7 @@ setvar("chit.gear.layout", "default");
 setvar("chit.gear.favorites", "item", "");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
+setvar("chit.gear.ccswordcanereminder", true);
 setvar("chit.helpers.dancecard", true);
 setvar("chit.helpers.lucky", true);
 setvar("chit.helpers.spookyraven", true);

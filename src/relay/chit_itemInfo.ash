@@ -130,7 +130,7 @@ string beardToShorthand(effect beard) {
 // This isn't really a picker, it just uses the picker layout
 void picker_fakebeard() {
 	buffer picker;
-	picker.pickerStart("fakebeard", "Check out beard ordering");
+	picker.pickerStart('fakebeard', 'Check out beard ordering');
 
 	void addBeard(effect beard) {
 		picker.pickerEffectOption('', beard, '', 0, '', have_effect(beard) == 0);
@@ -400,6 +400,76 @@ void picker_aprilbandsection() {
 }
 
 /*****************************************************
+	Candy Cane Sword support
+*****************************************************/
+int CCSWORD_NONE = 0;
+int CCSWORD_UNLIMITED = 1;
+int CCSWORD_LIFETIME = 2;
+int CCSWORD_DAILY = 3;
+
+// no propSuffix for unlimited
+record CCSwordZoneInfo {
+	string propSuffix;
+	boolean isImportant;
+	int type;
+	string desc;
+};
+
+boolean canDo(CCSwordZoneInfo ccscInfo) {
+	if(ccscInfo.type == CCSWORD_UNLIMITED) {
+		return true;
+	}
+	else if(ccscInfo.type == CCSWORD_NONE) {
+		return false;
+	}
+
+	string prop = 'candyCaneSword' + ccscInfo.propSuffix;
+	if(ccscInfo.type == CCSWORD_DAILY) {
+		prop = '_' + prop;
+	}
+	return !get_property(prop).to_boolean();
+}
+
+CCSwordZoneInfo getCCSwordZoneInfo(location l) {
+	switch(l) {
+		// new CCSwordZoneInfo('Lyle', false, CCSWORD_DAILY, 'peppermint rush'); no location to associate
+		case $location[The Sleazy Back Alley]: return new CCSwordZoneInfo('BackAlley', true, CCSWORD_DAILY, 'clover');
+		case $location[The Overgrown Lot]: return new CCSwordZoneInfo('OvergrownLot', false, CCSWORD_DAILY, 'herbs');
+		case $location[Madness Bakery]: return new CCSwordZoneInfo('MadnessBakery', false, CCSWORD_DAILY, 'peppermint donut');
+		case $location[The Haunted Bedroom]: return new CCSwordZoneInfo('HauntedBedroom', false, CCSWORD_DAILY, 'lucky-ish pill');
+		case $location[The Haunted Library]: return new CCSwordZoneInfo('HauntedLibrary', false, CCSWORD_DAILY, 'sword + substats');
+		case $location[The Shore, Inc.]: return new CCSwordZoneInfo('Shore', true, CCSWORD_LIFETIME, '2 scrip, stats, buff');
+		case $location[The Black Forest]: return new CCSwordZoneInfo('BlackForest', true, CCSWORD_LIFETIME, 'exploration progress');
+		case $location[The Spooky Forest]: return new CCSwordZoneInfo('SpookyForest', false, CCSWORD_DAILY, 'fruits');
+		case $location[The Daily Dungeon]: return new CCSwordZoneInfo('Daily Dungeon', true, CCSWORD_LIFETIME, 'fat loot token');
+		case $location[South of the Border]: return new CCSwordZoneInfo('SouthOfTheBorder', false, CCSWORD_DAILY, 'fam exp buff');
+		case $location[The Penultimate Fantasy Airship]: return new CCSwordZoneInfo('', false, CCSWORD_UNLIMITED, 'sgeea and stuff');
+		case $location[The Castle in the Clouds in the Sky (Basement)]:
+			return new CCSwordZoneInfo('', false, CCSWORD_UNLIMITED, 'bit of meat and stats');
+		case $location[A Mob of Zeppelin Protesters]: return new CCSwordZoneInfo('', true, CCSWORD_UNLIMITED, 'double sleaze removal');
+		case $location[The Copperhead Club]: return new CCSwordZoneInfo('CopperheadClub', true, CCSWORD_LIFETIME, 'diamond and gong cut');
+		case $location[Inside the Palindome]:
+			if(get_property('questL11Palindome') == 'finished') {
+				return new CCSwordZoneInfo('Palindome', false, CCSWORD_DAILY, 'papayas');
+			}
+			break;
+		case $location[The eXtreme Slope]: return new CCSwordZoneInfo('', false, CCSWORD_UNLIMITED, 'eXtreme route help');
+		case $location[An Overgrown Shrine (Northeast)]: return new CCSwordZoneInfo('OvergrownShrine', false, CCSWORD_DAILY, '100xLevel meat (free)');
+		case $location[The Hidden Apartment Building]: return new CCSwordZoneInfo('ApartmentBuilding', true, CCSWORD_LIFETIME, '+1 curse level (free)');
+		case $location[The Hidden Bowling Alley]: return new CCSwordZoneInfo('BowlingAlley', true, CCSWORD_LIFETIME, '-1 ball needed');
+		// is this daily or lifetime? Mafia property has no _ but wiki says daily...
+		case $location[The Defiled Cranny]: return new CCSwordZoneInfo('DefiledCranny', false, CCSWORD_LIFETIME, '-11 evil (NOT free)');
+		case $location[Wartime Hippy Camp (Frat Disguise)]:
+		case $location[Wartime Frat House (Hippy Disguise)]:
+			// there are properties for the individual noncoms but if you've used one you wouldn't be verge of war
+			// any more, so just treat it unlimited
+			return new CCSwordZoneInfo('', true, CCSWORD_UNLIMITED, 'easy war start');
+		case $location[The "Fun" House]: return new CCSwordZoneInfo('FunHouse', false, CCSWORD_LIFETIME, '+25% clownosity');
+	}
+	return new CCSwordZoneInfo('', false, CCSWORD_NONE, '');
+}
+
+/*****************************************************
 	Misc pickers
 *****************************************************/
 void pickerFamiliar(familiar f, string cmd, string title);
@@ -469,65 +539,65 @@ void picker_pillkeeper() {
 
 void picker_powerfulglove() {
 	buffer picker;
-	int batteryLeft = 100 - get_property("_powerfulGloveBatteryPowerUsed").to_int();
-	picker.pickerStart("powerfulglove", "Cheat at life (" + batteryLeft + "% left)");
+	int batteryLeft = 100 - get_property('_powerfulGloveBatteryPowerUsed').to_int();
+	picker.pickerStart('powerfulglove', 'Cheat at life (' + batteryLeft + '% left)');
 
 	void addCheat(skill cheat, string desc, int battery) {
 		picker.pickerSkillOption(cheat, desc, battery + '% battery', battery <= batteryLeft);
 	}
 
-	addCheat($skill[CHEAT CODE: Invisible Avatar], "-10% combat rate for 10 turns", 5);
-	addCheat($skill[CHEAT CODE: Triple Size], "+200% all stats for 20 turns", 5);
-	addCheat($skill[CHEAT CODE: Replace Enemy], "Fight something else from the same zone", 10);
-	addCheat($skill[CHEAT CODE: Shrink Enemy], "Cut enemy hp/attack/defense in half", 5);
+	addCheat($skill[CHEAT CODE: Invisible Avatar], '-10% combat rate for 10 turns', 5);
+	addCheat($skill[CHEAT CODE: Triple Size], '+200% all stats for 20 turns', 5);
+	addCheat($skill[CHEAT CODE: Replace Enemy], 'Fight something else from the same zone', 10);
+	addCheat($skill[CHEAT CODE: Shrink Enemy], 'Cut enemy hp/attack/defense in half', 5);
 
-	picker.pickerFinish("Entering cheat code...");
+	picker.pickerFinish('Entering cheat code...');
 }
 
 void picker_backupcamera() {
 	buffer picker;
-	picker.pickerStart("backupcamera", "Configure your camera");
+	picker.pickerStart('backupcamera', 'Configure your camera');
 
 	void addSetting(string name, string desc, string command, string icon) {
-		boolean active = get_property("backupCameraMode") == command;
+		boolean active = get_property('backupCameraMode') == command;
 		picker.pickerSelectionOption(name, desc, 'backupcamera ' + command, itemimage(icon), active);
 	}
 
-	addSetting("Infrared Spectrum", "+50% Meat Drops", "meat", "meat.gif");
-	addSetting("Warning Beep", "+" + (min(3 * my_level(), 50).to_string()) + " ML (scales with level)", "ml", "angry.gif");
-	addSetting("Maximum Framerate", "+100% Initiative", "init", "fast.gif");
+	addSetting('Infrared Spectrum', '+50% Meat Drops', 'meat', 'meat.gif');
+	addSetting('Warning Beep', '+' + (min(3 * my_level(), 50).to_string()) + ' ML (scales with level)', 'ml', 'angry.gif');
+	addSetting('Maximum Framerate', '+100% Initiative', 'init', 'fast.gif');
 
-	picker.pickerFinish("Configuring your camera...");
+	picker.pickerFinish('Configuring your camera...');
 }
 
 void picker_unbrella() {
 	buffer picker;
-	picker.pickerStart("unbrella", "Reconfigure your unbrella");
+	picker.pickerStart('unbrella', 'Reconfigure your unbrella');
 
 	void addSetting(string name, string desc, string command, string icon) {
-		boolean active = get_property("umbrellaState") == name;
+		boolean active = get_property('umbrellaState') == name;
 		picker.pickerSelectionOption(name, desc, 'umbrella ' + command, itemimage(icon), active);
 	}
 
-	addSetting("broken", "+25% ML", "broken", "unbrella7.gif");
-	addSetting("forward-facing", "+25 DR, Shield", "forward", "unbrella3.gif");
-	addSetting("bucket style", "+25% Item Drop", "bucket", "unbrella5.gif");
-	addSetting("pitchfork style", "+25 Weapon Damage", "pitchfork", "unbrella8.gif");
-	addSetting("constantly twirling", "+25 Spell Damage", "twirling", "unbrella6.gif");
-	addSetting("cocoon", "-10% combat", "cocoon", "unbrella1.gif");
+	addSetting('broken', '+25% ML', 'broken', 'unbrella7.gif');
+	addSetting('forward-facing', '+25 DR, Shield', 'forward', 'unbrella3.gif');
+	addSetting('bucket style', '+25% Item Drop', 'bucket', 'unbrella5.gif');
+	addSetting('pitchfork style', '+25 Weapon Damage', 'pitchfork', 'unbrella8.gif');
+	addSetting('constantly twirling', '+25 Spell Damage', 'twirling', 'unbrella6.gif');
+	addSetting('cocoon', '-10% combat', 'cocoon', 'unbrella1.gif');
 
-	picker.pickerFinish("Reconfiguring your unbrella");
+	picker.pickerFinish('Reconfiguring your unbrella');
 }
 
 void picker_sweatpants() {
 	buffer picker;
-	int sweat = get_property("sweat").to_int();
-	int sweatboozeleft = 3 - get_property("_sweatOutSomeBoozeUsed").to_int();
-	picker.pickerStart("sweatpants", "Sweat Magic (" + sweat + "% sweaty)");
+	int sweat = get_property('sweat').to_int();
+	int sweatboozeleft = 3 - get_property('_sweatOutSomeBoozeUsed').to_int();
+	picker.pickerStart('sweatpants', 'Sweat Magic (' + sweat + '% sweaty)');
 
 	void addSweatSkill(skill sk, string desc, int cost) {
 		boolean noBooze = (sk == $skill[Sweat Out Some Booze])
-			&& (get_property("_sweatOutSomeBoozeUsed").to_int() >= 3);
+			&& (get_property('_sweatOutSomeBoozeUsed').to_int() >= 3);
 		boolean canCast = !sk.combat && cost <= sweat && !noBooze;
 
 		if(noBooze) {
@@ -537,119 +607,117 @@ void picker_sweatpants() {
 			desc += '<br />(Not enough sweat!)';
 		}
 
-		picker.pickerSkillOption(sk, desc, cost + " sweat", canCast);
+		picker.pickerSkillOption(sk, desc, cost + ' sweat', canCast);
 	}
 
-	addSweatSkill($skill[Sip Some Sweat], "Restore 50 MP", 5);
-	addSweatSkill($skill[Drench Yourself in Sweat], "+100% Init for 5 turns", 15);
-	addSweatSkill($skill[Sweat Out Some Booze], "Cleanse 1 liver (" + sweatboozeleft
-		+ " left today)", 25);
-	addSweatSkill($skill[Make Sweat-Ade], "Does what the skill name says", 50);
-	addSweatSkill($skill[Sweat Flick], "Deals sweat sleaze damage", 1);
-	addSweatSkill($skill[Sweat Spray], "Deal minor sleaze damage for the rest of combat", 3);
-	addSweatSkill($skill[Sweat Flood], "Stun for 5 rounds", 5);
-	addSweatSkill($skill[Sweat Sip], "Restore 50 MP", 5);
+	addSweatSkill($skill[Sip Some Sweat], 'Restore 50 MP', 5);
+	addSweatSkill($skill[Drench Yourself in Sweat], '+100% Init for 5 turns', 15);
+	addSweatSkill($skill[Sweat Out Some Booze], 'Cleanse 1 liver (' + sweatboozeleft
+		+ ' left today)', 25);
+	addSweatSkill($skill[Make Sweat-Ade], 'Does what the skill name says', 50);
+	addSweatSkill($skill[Sweat Flick], 'Deals sweat sleaze damage', 1);
+	addSweatSkill($skill[Sweat Spray], 'Deal minor sleaze damage for the rest of combat', 3);
+	addSweatSkill($skill[Sweat Flood], 'Stun for 5 rounds', 5);
+	addSweatSkill($skill[Sweat Sip], 'Restore 50 MP', 5);
 
-	picker.pickerFinish("Sweating the small stuff...");
+	picker.pickerFinish('Sweating the small stuff...');
 }
 
 void picker_jurassicparka() {
 	buffer picker;
-	string currMode = get_property("parkaMode");
+	string currMode = get_property('parkaMode');
 	int yellowTurns = have_effect($effect[Everything Looks Yellow]);
-	int spikesLeft = 5 - get_property("_spikolodonSpikeUses").to_int();
-	picker.pickerStart('jurassicparka', "Change Parka Mode");
+	int spikesLeft = 5 - get_property('_spikolodonSpikeUses').to_int();
+	picker.pickerStart('jurassicparka', 'Change Parka Mode');
 
 	void addMode(string name, string desc, string image) {
-		string switchLink = '<a class="change" href="' + sideCommand("parka " + name) + '">';
 		boolean current = currMode == name;
-
-		picker.pickerSelectionOption(name + " mode", desc, "parka " + name, itemimage(image), current);
+		picker.pickerSelectionOption(name + ' mode', desc, 'parka ' + name, itemimage(image), current);
 	}
 
-	addMode("kachungasaur", "Max HP +100%, +50% Meat Drop, +2 Cold Res", "jparka8.gif");
-	addMode("dilophosaur", "+20 All Sleaze Damage, +2 Stench Res, Free Kill Yellow Ray ("
-		+ (yellowTurns > 0 ? (yellowTurns + " adv until usable") : "ready") + ")", "jparka3.gif");
-	addMode("spikolodon", "+" + min(3 * my_level(), 33) + " ML, +2 Sleaze Res, "
-		+ (spikesLeft > 0 ? spikesLeft.to_string() : "no") + " non-com forces left", "jparka2.gif");
-	addMode("ghostasaurus", "10 DR, +50 Max MP, +2 Spooky Res", "jparka1.gif");
-	addMode("pterodactyl", "+5% noncom, +50% init, +2 Hot Res", "jparka9.gif");
+	addMode('kachungasaur', 'Max HP +100%, +50% Meat Drop, +2 Cold Res', 'jparka8.gif');
+	addMode('dilophosaur', '+20 All Sleaze Damage, +2 Stench Res, Free Kill Yellow Ray ('
+		+ (yellowTurns > 0 ? (yellowTurns + ' adv until usable') : 'ready') + ')', 'jparka3.gif');
+	addMode('spikolodon', '+' + min(3 * my_level(), 33) + ' ML, +2 Sleaze Res, '
+		+ (spikesLeft > 0 ? spikesLeft.to_string() : 'no') + ' non-com forces left', 'jparka2.gif');
+	addMode('ghostasaurus', '10 DR, +50 Max MP, +2 Spooky Res', 'jparka1.gif');
+	addMode('pterodactyl', '+5% noncom, +50% init, +2 Hot Res', 'jparka9.gif');
 
-	picker.pickerFinish("Pulling dino tab...");
+	picker.pickerFinish('Pulling dino tab...');
 }
 
 void picker_cincho() {
-	int cinch = 100 - get_property("_cinchUsed").to_int();
+	int cinch = 100 - get_property('_cinchUsed').to_int();
 
 	buffer picker;
-	picker.pickerStart('cincho', "Use some cinch (" + cinch + " available)");
+	picker.pickerStart('cincho', 'Use some cinch (' + cinch + ' available)');
 
 	void addSkill(skill sk, string desc, int cinchCost) {
 		picker.pickerSkillOption(sk, desc, cinchCost + ' cinch', cinch >= cinchCost);
 	}
 
-	addSkill($skill[Cincho: Confetti Extravaganza], "Double substats from this fight, but get smacked", 5);
-	addSkill($skill[Cincho: Dispense Salt and Lime], "Triples stat gain from next drink", 25);
-	addSkill($skill[Cincho: Fiesta Exit], "Force a noncom", 60);
-	addSkill($skill[Cincho: Party Foul], "Damage, weaken, and stun", 5);
-	addSkill($skill[Cincho: Party Soundtrack], "30 adv +5lbs", 25);
-	addSkill($skill[Cincho: Projectile Piñata], "Damage, stun, get candy", 5);
+	addSkill($skill[Cincho: Confetti Extravaganza], 'Double substats from this fight, but get smacked', 5);
+	addSkill($skill[Cincho: Dispense Salt and Lime], 'Triples stat gain from next drink', 25);
+	addSkill($skill[Cincho: Fiesta Exit], 'Force a noncom', 60);
+	addSkill($skill[Cincho: Party Foul], 'Damage, weaken, and stun', 5);
+	addSkill($skill[Cincho: Party Soundtrack], '30 adv +5lbs', 25);
+	addSkill($skill[Cincho: Projectile Piñata], 'Damage, stun, get candy', 5);
 
-	picker.pickerFinish("Using Cinch...");
+	picker.pickerFinish('Using Cinch...');
 }
 
 void picker_august() {
-	int used = get_property("_augSkillsCast").to_int();
+	int used = get_property('_augSkillsCast').to_int();
 	int usable = 5;
 	int today = today_to_string().to_int() % 100;
 	if(can_interact()) {
 		++usable;
-		if(get_property("_augTodayCast").to_boolean()) {
+		if(get_property('_augTodayCast').to_boolean()) {
 			++used;
 		}
 	}
 
 	buffer picker;
-	picker.pickerStart('august', "Celebrate some holidays (" + used + "/" + usable + " used)");
+	picker.pickerStart('august', 'Celebrate some holidays (' + used + '/' + usable + ' used)');
 
 	void addSkill(skill sk, int num, string desc) {
-		boolean canUse = !get_property("_aug" + num + "Cast").to_boolean();
+		boolean canUse = !get_property('_aug' + num + 'Cast').to_boolean();
 		picker.pickerSkillOption(sk, desc, (can_interact() && num == today) ? 'free today' : '', canUse);
 	}
 
-	addSkill($skill[Aug. 1st: Mountain Climbing Day!], 1, "30 adv effect that gives bonuses in mountains.");
-	addSkill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day], 2, "Become Lucky!");
-	addSkill($skill[Aug. 3rd: Watermelon Day!], 3, "Acquire 1 watermelon (big food that gives seeds).");
-	addSkill($skill[Aug. 4th: Water Balloon Day!], 4, "Acquire 3 water balloons (usable for effect/trophy).");
-	addSkill($skill[Aug. 5th: Oyster Day!], 5, "Acquire 3 random oyster eggs.");
-	addSkill($skill[Aug. 6th: Fresh Breath Day!], 6, "30 adv effect +moxie +combat.");
-	addSkill($skill[Aug. 7th: Lighthouse Day!], 7, "30 adv effect +item +meat.");
-	addSkill($skill[Aug. 8th: Cat Day!], 8, "Free fight a random cat.");
-	addSkill($skill[Aug. 9th: Hand Holding Day!], 9, "1 use of a minor olfaction.");
-	addSkill($skill[Aug. 10th: World Lion Day!], 10, "30 adv effect that lets you banish for its duration.");
-	addSkill($skill[Aug. 11th: Presidential Joke Day!], 11, "50 x level mys substats.");
-	addSkill($skill[Aug. 12th: Elephant Day!], 12, "50 x level mus substats.");
-	addSkill($skill[Aug. 13th: Left/Off Hander's Day!], 13, "30 adv effect doubling power of off-hands.");
-	addSkill($skill[Aug. 14th: Financial Awareness \ Day!], 14, "Pay 100 x level meat for 150 x level meat.");
-	addSkill($skill[Aug. 15th: Relaxation Day!], 15, "Restore hp/mp, get booze ingredients.");
-	addSkill($skill[Aug. 16th: Roller Coaster Day!], 16, "-1 fullness, 30 adv effect of +food drops.");
-	addSkill($skill[Aug. 17th: Thriftshop Day!], 17, "Coupon for 1 item 1000 meat or less.");
-	addSkill($skill[Aug. 18th: Serendipity Day!], 18, "30 adv effect of getting random stuff.");
-	addSkill($skill[Aug. 19th: Honey Bee Awareness Day!], 19, "30 adv effect of sometimes fighting bees.");
-	addSkill($skill[Aug. 20th: Mosquito Day!], 20, "30 adv effect of hp regen.");
-	addSkill($skill[Aug. 21st: Spumoni Day!], 21, "20 x level all substats.");
-	addSkill($skill[Aug. 22nd: Tooth Fairy Day!], 22, "Free fight a tooth golem.");
-	addSkill($skill[Aug. 23rd: Ride the Wind Day!], 23, "50 x level mox substats.");
-	addSkill($skill[Aug. 24th: Waffle Day!], 24, "Acquire 3 waffles (food/monster swap combat item).");
-	addSkill($skill[Aug. 25th: Banana Split Day!], 25, "Acquire 1 banana spit (food that gives banana).");
-	addSkill($skill[Aug. 26th: Toilet Paper Day!], 26, "Acquire 1 handful of toilet paper (removes a negative effect).");
-	addSkill($skill[Aug. 27th: Just Because Day!], 27, "20 adv of 3 random good effects.");
-	addSkill($skill[Aug. 28th: Race Your Mouse Day!], 28, "Acquire melting fam equip based on current fam.");
-	addSkill($skill[Aug. 29th: More Herbs, Less Salt \ Day!], 29, "Acquire 3 bottles of Mrs. Rush (boosts substats from food).");
-	addSkill($skill[Aug. 30th: Beach Day!], 30, "Acquire 1 baywatch (melting +7adv/+2fites/-2mp cost acc).");
-	addSkill($skill[Aug. 31st: Cabernet Sauvignon \ Day!], 31, "Acquire 2 bottles of Cabernet Sauvignon (booze that helps find booze).");
+	addSkill($skill[Aug. 1st: Mountain Climbing Day!], 1, '30 adv effect that gives bonuses in mountains.');
+	addSkill($skill[Aug. 2nd: Find an Eleven-Leaf Clover Day], 2, 'Become Lucky!');
+	addSkill($skill[Aug. 3rd: Watermelon Day!], 3, 'Acquire 1 watermelon (big food that gives seeds).');
+	addSkill($skill[Aug. 4th: Water Balloon Day!], 4, 'Acquire 3 water balloons (usable for effect/trophy).');
+	addSkill($skill[Aug. 5th: Oyster Day!], 5, 'Acquire 3 random oyster eggs.');
+	addSkill($skill[Aug. 6th: Fresh Breath Day!], 6, '30 adv effect +moxie +combat.');
+	addSkill($skill[Aug. 7th: Lighthouse Day!], 7, '30 adv effect +item +meat.');
+	addSkill($skill[Aug. 8th: Cat Day!], 8, 'Free fight a random cat.');
+	addSkill($skill[Aug. 9th: Hand Holding Day!], 9, '1 use of a minor olfaction.');
+	addSkill($skill[Aug. 10th: World Lion Day!], 10, '30 adv effect that lets you banish for its duration.');
+	addSkill($skill[Aug. 11th: Presidential Joke Day!], 11, '50 x level mys substats.');
+	addSkill($skill[Aug. 12th: Elephant Day!], 12, '50 x level mus substats.');
+	addSkill($skill[Aug. 13th: Left/Off Hander's Day!], 13, '30 adv effect doubling power of off-hands.');
+	addSkill($skill[Aug. 14th: Financial Awareness \ Day!], 14, 'Pay 100 x level meat for 150 x level meat.');
+	addSkill($skill[Aug. 15th: Relaxation Day!], 15, 'Restore hp/mp, get booze ingredients.');
+	addSkill($skill[Aug. 16th: Roller Coaster Day!], 16, '-1 fullness, 30 adv effect of +food drops.');
+	addSkill($skill[Aug. 17th: Thriftshop Day!], 17, 'Coupon for 1 item 1000 meat or less.');
+	addSkill($skill[Aug. 18th: Serendipity Day!], 18, '30 adv effect of getting random stuff.');
+	addSkill($skill[Aug. 19th: Honey Bee Awareness Day!], 19, '30 adv effect of sometimes fighting bees.');
+	addSkill($skill[Aug. 20th: Mosquito Day!], 20, '30 adv effect of hp regen.');
+	addSkill($skill[Aug. 21st: Spumoni Day!], 21, '20 x level all substats.');
+	addSkill($skill[Aug. 22nd: Tooth Fairy Day!], 22, 'Free fight a tooth golem.');
+	addSkill($skill[Aug. 23rd: Ride the Wind Day!], 23, '50 x level mox substats.');
+	addSkill($skill[Aug. 24th: Waffle Day!], 24, 'Acquire 3 waffles (food/monster swap combat item).');
+	addSkill($skill[Aug. 25th: Banana Split Day!], 25, 'Acquire 1 banana spit (food that gives banana).');
+	addSkill($skill[Aug. 26th: Toilet Paper Day!], 26, 'Acquire 1 handful of toilet paper (removes a negative effect).');
+	addSkill($skill[Aug. 27th: Just Because Day!], 27, '20 adv of 3 random good effects.');
+	addSkill($skill[Aug. 28th: Race Your Mouse Day!], 28, 'Acquire melting fam equip based on current fam.');
+	addSkill($skill[Aug. 29th: More Herbs, Less Salt \ Day!], 29, 'Acquire 3 bottles of Mrs. Rush (boosts substats from food).');
+	addSkill($skill[Aug. 30th: Beach Day!], 30, 'Acquire 1 baywatch (melting +7adv/+2fites/-2mp cost acc).');
+	addSkill($skill[Aug. 31st: Cabernet Sauvignon \ Day!], 31, 'Acquire 2 bottles of Cabernet Sauvignon (booze that helps find booze).');
 
-	picker.pickerFinish("Celebrating a holiday...");
+	picker.pickerFinish('Celebrating a holiday...');
 }
 
 /*****************************************************
@@ -1120,15 +1188,6 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		case $item[Sneaky Pete's leather jacket (collar popped)]:
 			info.addExtra(extraInfoFoldable('<b>Unpop</b> Collar'));
 			break;
-			/* relevant foldable code
-			item other = fold_from(in_slot);
-			start_option(other, true);
-			picker.append('<td colspan="2"><a class="change" href="');
-			picker.append(sideCommand("fold " + other));
-			picker.append('">');
-			picker.append(cmd);
-			picker.append('</a></td></tr>');
-			*/
 		case $item[over-the-shoulder Folder Holder]:
 		case $item[replica over-the-shoulder Folder Holder]:
 			info.addExtra(extraInfoLink('<b>Manage</b> your folders.', attrmap {
@@ -1197,7 +1256,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			break;
 		case $item[protonic accelerator pack]: {
 			int turnsToGhost = get_property('nextParanormalActivity').to_int() - total_turns_played();
-			string ghostLoc = get_property("ghostLocation");
+			string ghostLoc = get_property('ghostLocation');
 			if(ghostLoc != '') {
 				info.addToDesc('ghost at ' + ghostLoc);
 				info.incDrops(DROPS_ALL);
@@ -1294,13 +1353,45 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			// TODO: Maybe some perk tracking, once I've worked that out
 			break;
 		}
+		case $item[candy cane sword cane]: {
+			info.addDrops(drops_info {
+				new drop_info('_surprisinglySweetSlashUsed', 11, 'slash', 'slashes'),
+				new drop_info('_surprisinglySweetStabUsed', 11, 'stab', 'stabs'),
+			});
+			CCSwordZoneInfo ccscInfo = getCCSwordZoneInfo(my_location());
+			if(ccscInfo.canDo()) {
+				info.addToDesc('use here for ' + ccscInfo.desc);
+				if(ccscInfo.isImportant) {
+					info.dangerLevel = DANGER_GOOD;
+				}
+				else {
+					info.incDrops(DROPS_SOME);
+				}
+			}
+			break;
+		}
 	}
 
 	// latte reminder
 	if(relevantSlot == $slot[off-hand] && vars['chit.gear.lattereminder'].to_boolean() &&
 		my_location().latteDropAvailable() && it != $item[latte lovers member's mug] &&
-		!it.isImportantOffhand() && info.dangerLevel < DANGER_WARNING) {
-		info.dangerLevel = DANGER_WARNING;
+		!it.isImportantOffhand() && be_good($item[latte lovers member's mug])) {
+		if(info.dangerLevel < DANGER_WARNING) {
+			info.dangerLevel = DANGER_WARNING;
+		}
+		info.addToDesc('latte ingredient available');
+	}
+
+	// sword cane reminder
+	if(relevantSlot == $slot[weapon] && vars['chit.gear.ccswordcanereminder'].to_boolean()
+		&& it != $item[candy cane sword cane] && be_good($item[candy cane sword cane])) {
+		CCSwordZoneInfo ccscInfo = getCCSwordZoneInfo(my_location());
+		if(ccscInfo.isImportant && ccscInfo.canDo()) {
+			if(info.dangerLevel < DANGER_WARNING) {
+				info.dangerLevel = DANGER_WARNING;
+			}
+			info.addToDesc('sword cane useful here');
+		}
 	}
 
 	// pirate hat reminder
