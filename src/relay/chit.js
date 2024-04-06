@@ -62,10 +62,19 @@ $(document).ready(function () {
 		$(".chit_skeleton").hide();
 	});
 
-	$('[title][title!=]').each(function() {
-		var tip = new Opentip(this);
-		tip.setContent($(this).attr('title'));
-		$(this).removeAttr('title');
+	Opentip.styles.chitStyle = {
+		extends: 'standard',
+		target: true,
+		stem: true,
+		borderColor: 'black',
+		background: 'white',
+	};
+
+	Opentip.defaultStyle = 'chitStyle';
+
+	$('.chit_tooltip').each(function() {
+		var prev = $(this).prev();
+		var tip = new Opentip(prev, $(this).html());
 	});
 	
 	//Tool Launchers

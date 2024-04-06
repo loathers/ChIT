@@ -1131,3 +1131,7 @@ div.chit_left-handman {
 .cursor {
 	cursor: pointer;
 }
+
+.chit_tooltip {
+	display: none;
+}

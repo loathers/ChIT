@@ -1448,12 +1448,19 @@ void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick)
 		title += '<br />';
 	}
 	title += info.name;
+	string mods = parseMods(string_modifier(it, 'Evaluated Modifiers'));
+	if(mods != '') {
+		title += '<br />' + mods;
+	}
 	if(info.desc != '') {
 		matcher m = create_matcher(', ', info.desc);
 		title += '<br />' + m.replace_all('<br />');
 	}
-	result.addInfoIcon(info, title,
+	result.addInfoIcon(info, '',
 		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
+	result.tagStart('div', attrmap { 'class': 'chit_tooltip' });
+	result.append(title);
+	result.tagFinish('div');
 }
 
 void addItemIcon(buffer result, item it, string title) {
