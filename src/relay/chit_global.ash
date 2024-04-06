@@ -1000,6 +1000,10 @@ string parseMods(string evm, boolean span) {
 	uncap.append_tail(enew);
 	evm = enew;
 
+	// remove 0 modifiers (possible with variable effects)
+	matcher zeroMods = create_matcher("(^|, )[^,:]+: 0(?=,)", evm);
+	evm = zeroMods.replace_all('');
+
 	// Move parenthesis to the beginning of the modifier
 	enew.set_length(0);
 	matcher paren = create_matcher("(, ?|^)([^,]*?)\\((.+?)\\)", evm);
@@ -1017,7 +1021,8 @@ string parseMods(string evm, boolean span) {
 		boolean [string] original;
 		string val;
 	} [string] modsort;
-	string [int,int] modparse = group_string(evm, "(?:,|^)\\s*([^,:]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?\\d+)");
+	string [int,int] modparse = group_string(evm,
+	"(?:,|^)\\s*([^,:]*?)(Muscle|Mysticality|Moxie|Hot|Cold|Spooky|Stench|Sleaze)([^:]*):\\s*([+-]?[\\d\\.]+)");
 	string key;
 	foreach m in modparse {
 		if($strings[Muscle,Mysticality,Moxie] contains modparse[m][2])
@@ -1046,10 +1051,10 @@ string parseMods(string evm, boolean span) {
 
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
 	enew.set_length(0);
-	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
-		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
+	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?[\\d\\.]+), \\1Spell Damage: \\2"
+		+"|([HM]P Regen )Min: ([\\d\\.]+), \\3Max: ([\\d\\.]+)"
 		+"|Maximum HP( Percent|): ([^,]+), Maximum MP\\6: ([^,]+)"
-		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
+		+"|Weapon Damage( Percent|): ([+-]?[\\d\\.]+), Spell Damage\\9?: \\10"
 		+'|Avatar: "([^"]+)"'
 		+'|[^ ]* Limit: 0'	// This is mostly for Cowrruption vs Cow Puncher having no limit
 			, evm);
@@ -1092,7 +1097,7 @@ string parseMods(string evm, boolean span) {
 	// If HP and MP regen are the same, combine them
 	enew.set_length(0);
 	parse = create_matcher("^\\s*([,\\s]*)"
-		+"|(\\s*Drop|\\s*Percent([^:]*))?(?<!Limit):\\s*(([+-])?\\d+)"
+		+"|(\\s*Drop|\\s*Percent([^:]*))?(?<!Limit):\\s*(([+-])?[\\d\\.]+)"
 		+"|(HP Regen ([0-9-]+), MP Regen \\6)", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
@@ -1126,7 +1131,7 @@ string parseMods(string evm, boolean span) {
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");
 	evm = replace_string(evm,"Muscle","Mus");
-	evm = replace_string(evm,"Mysticality","Myst");
+	evm = replace_string(evm,"Mysticality","Mys");
 	evm = replace_string(evm,"Resistance","Res");
 	evm = replace_string(evm,"Familiar Experience","Fam xp");
 	evm = replace_string(evm,"Familiar","Fam");
@@ -1137,6 +1142,14 @@ string parseMods(string evm, boolean span) {
 	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
 	evm = replace_string(evm,"Adventures","Adv");
 	evm = replace_string(evm,"PvP Fights","Fites");
+	evm = replace_string(evm,"Single Equip","Single");
+	evm = replace_string(evm,"Negative Status Resist","Status Res");
+	// mods that don't really matter
+	foreach irrelevant in $strings[Softcore Only] {
+		evm = replace_string(evm,irrelevant+", ","");
+		// in case it's at the end
+		evm = replace_string(evm,irrelevant,"");
+	}
 	//highlight items, meat & ML
 	if(span) {
 		evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
