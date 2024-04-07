@@ -726,22 +726,23 @@ chit_info getFamiliarInfo(familiar f) {
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
 	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
 
-	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
 	if(reason != '') {
 		info.addToDesc('recommended for ' + reason);
 	}
 
-	string titleStr = '';
+	result.addInfoIcon(info, '', '');
+
 	if(title) {
-		titleStr = f.name + ' (the ' + f + ')';
+		string titleStr = f.name + ' (the ' + familiar_weight(f) + 'lb ' + f + ')';
 		if(info.desc != '') {
 			matcher m = create_matcher('<[^>]+>', info.desc);
 			string safeDesc = m.replace_all('');
-			titleStr += ' (' + safeDesc + ')';
+			titleStr += '<br />' + safeDesc;
 		}
+		result.tagStart('div', attrmap { 'class': 'chit_tooltip' });
+		result.append(titleStr);
+		result.tagFinish('div');
 	}
-
-	result.addInfoIcon(info, titleStr, '');
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
