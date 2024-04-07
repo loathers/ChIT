@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27735; // Asdon Martin keyfob (on ring)
+since r27888; // Apriling band helmet stuff
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
