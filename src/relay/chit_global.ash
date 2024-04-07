@@ -1001,8 +1001,12 @@ string parseMods(string evm, boolean span) {
 	evm = enew;
 
 	// remove 0 modifiers (possible with variable effects)
-	matcher zeroMods = create_matcher("(^|, )[^,:]+: 0(?=,)", evm);
+	matcher zeroMods = create_matcher("(^|, )[^,:]+: 0(?=,|$)", evm);
 	evm = zeroMods.replace_all('');
+	
+	// remove familiar effects (for pants hats)
+	matcher famEffect = create_matcher('(^|, )Familiar Effect: "[^"]+"', evm);
+	evm = famEffect.replace_all('');
 
 	// Move parenthesis to the beginning of the modifier
 	enew.set_length(0);

@@ -1453,8 +1453,7 @@ void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick)
 		title += '<br />' + mods;
 	}
 	if(info.desc != '') {
-		matcher m = create_matcher(', ', info.desc);
-		title += '<br />' + m.replace_all('<br />');
+		title += '<br />' + info.desc;
 	}
 	result.addInfoIcon(info, '',
 		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
