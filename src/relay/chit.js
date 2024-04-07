@@ -76,6 +76,7 @@ $(document).ready(function () {
 	$('.chit_tooltip').each(function() {
 		var prev = $(this).prev();
 		var tip = new Opentip(prev, $(this).html());
+		$(this).remove();
 	});
 	
 	//Tool Launchers
