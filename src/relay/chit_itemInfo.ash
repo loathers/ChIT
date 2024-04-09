@@ -1101,7 +1101,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		}
 		case $item[Cincho de Mayo]:
 		case $item[replica Cincho de Mayo]: {
-			info.addDrop(new drop_info('_cinchUsed', 100, 'cinch'));
+			info.addDrop(new drop_info('_cinchUsed', 100, 'cinch used'));
 			int restsTaken = get_property('_cinchoRests').to_int();
 			int cinchToGain = min(30, max(5, 30 - 5 * (restsTaken - 4)));
 			int freeRestsLeft = total_free_rests() - get_property('timesRested').to_int();
