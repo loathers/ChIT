@@ -3838,6 +3838,12 @@ void bakeCharacter() {
 			return "campground.php";
 		case $class[Plumber]:
 			return "place.php?whichplace=mario";
+		case $class[Pig Skinner]:
+			return "inv_use.php?pwd=" + my_hash() + "&whichitem=11163";
+		case $class[Cheese Wizard]:
+			return "inv_use.php?pwd=" + my_hash() + "&whichitem=11164";
+		case $class[Jazz Agent]:
+			return "inv_use.php?pwd=" + my_hash() + "&whichitem=11165";
 		}
 		return "town.php";
 	}
