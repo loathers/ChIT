@@ -797,7 +797,7 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 				backupMonster = 'nothing yet';
 			}
 			string toAdd = ' (' + backupMonster + ')';
-			info.addDrop(new drop_info('_backupUses', my_path() == $path[You, Robot] ? 16 : 11,
+			info.addDrop(new drop_info('_backUpUses', my_path() == $path[You, Robot] ? 16 : 11,
 				'backup' + toAdd, 'backups' + toAdd));
 			if(!get_property('backupCameraReverserEnabled').to_boolean()) {
 				info.dangerLevel = DANGER_DANGEROUS;
