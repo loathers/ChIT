@@ -296,7 +296,7 @@ buffer buildTracker() {
 			int evil = to_int(get_property("cyrpt"+place+"Evilness"));
 			report.append("<span style=\"color:");
 			if (evil==0) report.append("gray");
-				else if (evil<26) report.append("red");
+				else if (evil<=13) report.append("red");
 				else report.append("black");
 			report.append("\">");
 			report.append(place);
@@ -539,6 +539,13 @@ buffer buildTracker() {
 	
 	//L11: questL11Shen, questL11Ron
 	if (Started("questL11MacGuffin") && get_property("questL11Palindome")=="unstarted" &&  available_amount($item[Talisman o' Namsilat])==0) {
+		location[item] shenloc;
+		shenloc[$item[The Stankara Stone]] = $location[The Batrat and Ratbat Burrow];
+		shenloc[$item[The First Pizza]] = $location[Lair of the Ninja Snowmen];
+		shenloc[$item[Murphy's Rancid Black Flag]] = $location[The Castle in the Clouds in the Sky (Top Floor)];
+		shenloc[$item[The Lacrosse Stick of Lacoronado]] = $location[The Smut Orc Logging Camp];
+		shenloc[$item[The Shield of Brook]] = $location[The Unquiet Garves];
+		shenloc[$item[The Eye of the Stars]] = $location[The Hole in the Sky];
 		result.append("<tr><td>");
 		result.append("Find the "+ItemReport($item[Talisman o' Namsilat]));
 		result.append("<br>");
@@ -549,6 +556,7 @@ buffer buildTracker() {
 			if (get_property("shenQuestItem")!="") {
 				result.append(" - Find Shen's artifact: ");
 				result.append(ItemReport(to_item(get_property("shenQuestItem"))));
+				result.append(" ("+shenloc[to_item(get_property("shenQuestItem"))]+")");
 			}
 			result.append("<br>");
 		}
@@ -885,13 +893,13 @@ buffer buildTracker() {
 	
 	//L13: NS, questL13Final
 	// check for lair items, tower items, wand
-	if (Started("questL13Final")) {
+	if (Started("questL13Final") || (my_level()>=12 && get_property("questL13Final")!="finished")) {
 		result.append("<tr><td>");
 		
 		result.append("<a target=mainpane href=\"lair.php\">Naughty Sorceress</a>");
 		
 		//Gate item
-		if ( $strings[started, step1, step2, step3, step4] contains get_property("questL13Final")) {
+		if ( $strings[unstarted, started, step1, step2, step3, step4] contains get_property("questL13Final")) {
 			result.append("<br>");
 			result.append("<a target=mainpane href=\"place.php?whichplace=nstower&action=ns_01_contestbooth\">Contests</a>: ");
 			if ( get_property("telescopeUpgrades")=="0" || in_bad_moon()) {
@@ -919,7 +927,7 @@ buffer buildTracker() {
 			}
 		}
 		//Entryway items, "nsTowerDoorKeysUsed"
-		if ( $strings[started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
+		if ( $strings[unstarted, started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
 			boolean key_used(item it) {
 				return contains_text(get_property("nsTowerDoorKeysUsed"),to_string(it));
 			}
@@ -930,7 +938,7 @@ buffer buildTracker() {
 				if (!key_used(kk)) { result.append(ItemReport(kk)+", "); }
 			}
 		}
-		if ($strings[started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
+		if ($strings[unstarted, started, step1, step2, step3, step4, step5, step6, step7, step8] contains get_property("questL13Final") ) {
 			result.append("<br>Tower: ");
 			result.append(ItemReport($item[beehive]));
 			result.append(", ");
@@ -938,9 +946,28 @@ buffer buildTracker() {
 			result.append(", ");
 			result.append(ItemReport($item[electric boning knife], "boning knife"));
 		}
-		boolean NSfight = !($strings[Avatar of Boris, Bugbear Invasion, Zombie Slayer, Avatar of Jarlsberg, Heavy Rains, KOLHS, Avatar of Sneaky Pete, The Source] contains my_path().name);
-		if ( NSfight && $strings[started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
-			if ( my_path().name=="Bees Hate You" ) {
+		boolean NSfight = !($paths[
+		Avatar of Boris,
+		Bugbear Invasion,
+		Zombie Slayer,
+		Avatar of Jarlsberg,
+		Heavy Rains,
+		KOLHS,
+		Avatar of Sneaky Pete,
+		Actually Ed the Undying,
+		The Source,
+		Dark Gyffte,
+		Kingdom of Exploathing,
+		Path of the Plumber,
+		Grey Goo,
+		You\, Robot,
+		Wildfire,
+		Fall of the Dinosaurs,
+		Avatar of Shadows Over Loathing,
+		WereProfessor,
+		] contains my_path());
+		if ( NSfight && $strings[unstarted, started, step1, step2, step3, step4, step5, step6, step7, step8, step9] contains get_property("questL13Final")) {
+			if ( my_path()==$path[Bees Hate You] ) {
 				result.append("<br>GMOB: ");
 				result.append(ItemReport($item[antique hand mirror]));
 			} else  {
@@ -990,10 +1017,9 @@ buffer buildTracker() {
 	
 	//Digital Key
 	if (item_amount($item[digital key])==0 && !contains_text(get_property("nsTowerDoorKeysUsed"),to_string($item[digital key]))) {
-		int whitepix = item_amount($item[white pixel]) + creatable_amount($item[white pixel]);
 		result.append("<tr><td>");
-		result.append("<a target=mainpane href=\"woods.php\">Digital Key</a>");
-		result.append(" - Get white pixels: "+whitepix+"/30");
+		result.append("<a target=mainpane href=\"place.php?whichplace=8bit\">Digital Key</a>");
+		result.append(" - 8bit Score: "+get_property("8BitScore")+"/10k");
 		result.append("</td></tr>");
 	}
 	
@@ -1002,7 +1028,7 @@ buffer buildTracker() {
 	if (Started("questM13Escape") && can_interact()) {
 		result.append("<tr><td>");
 		result.append("<a target=mainpane href=\"cobbsknob.php?level=3\">Menagerie</a>");
-		result.append(" - Help Subject 37 escape");	
+		result.append(" - Help Subject 37 escape");
 		result.append("</td></tr>");
 	}
 	
