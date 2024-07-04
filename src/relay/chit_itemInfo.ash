@@ -1400,29 +1400,48 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 		}
 		case $item[Roman Candelabra]: {
 			drops_info rockets;
+			string[int] gradient;
 			if(have_effect($effect[Everything looks blue]) == 0) {
 				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:blue">mp</span>', '',
 					true, false, 0, true);
+				gradient[gradient.count()] = 'blue';
 			}
 			if(have_effect($effect[Everything looks red]) == 0) {
 				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:red">stats</span>', '',
 					true, false, 0, true);
+				gradient[gradient.count()] = 'red';
 			}
 			if(have_effect($effect[Everything looks yellow]) == 0) {
 				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:olive">ray</span>', '',
-					false, false, 0, true);
+					true, false, 0, true);
+				gradient[gradient.count()] = 'olive';
 			}
 			if(have_effect($effect[Everything looks green]) == 0) {
 				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:green">run</span>', '',
-					false, false, 0, true);
+					true, false, 0, true);
+				gradient[gradient.count()] = 'green';
 			}
 			if(have_effect($effect[Everything looks purple]) == 0) {
 				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:purple">copy</span>',
-					'', false, false, 0, true);
+					'', true, false, 0, true);
+				gradient[gradient.count()] = 'purple';
 			}
 			info.addDrops(rockets);
 			if(rockets.count() > 0) {
 				info.desc += ' available';
+				string gradientStr = '';
+				int angleStep = 360 / gradient.count();
+				foreach i,color in gradient {
+					gradientStr += color;
+					if(i != 0) {
+						gradientStr += ' ' + (i * angleStep) + 'deg';
+					}
+					if(i != gradient.count() - 1) {
+						gradientStr += ' ' + ((i + 1) * angleStep) + 'deg, ';
+					}
+				}
+				info.customStyle = 'border-style: solid; border-width: 2px !important; border-image: conic-gradient(' +
+					gradientStr + ') 1 !important;';
 			}
 			break;
 		}

@@ -100,6 +100,7 @@ record chit_info {
 	// for familiars
 	string weirdoTag;
 	string weirdoDivContents;
+	string customStyle;
 };
 
 boolean incDrops(chit_info info, int level) {
@@ -155,6 +156,9 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 	}
 	if(imgAttrs contains 'onclick') {
 		imgAttrs['class'] += ' cursor';
+	}
+	if(info.customStyle != '') {
+		imgAttrs['style'] = info.customStyle;
 	}
 
 	if(info.weirdoDivContents == '') {
