@@ -37,6 +37,7 @@ drop_info[familiar] bjornDrops = {
 	$familiar[Reassembled Blackbird]: new drop_info('', LIMIT_INFINITE, 'blackberries'),
 	$familiar[Reanimated Reanimator]: new drop_info('', LIMIT_INFINITE, 'hot wings or skulls'),
 	$familiar[Stocking Mimic]: new drop_info('', LIMIT_INFINITE, 'simple candy'),
+	$familiar[Mini Kiwi]: new drop_info('', LIMIT_INFINITE, 'mini kiwis'),
 };
 
 item snapperPhylumToDrop(phylum phy) {
@@ -675,6 +676,12 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}));
 				break;
 			}
+			case $familiar[Mini Kiwi]:
+				info.addExtra(extraInfoLink('kwiki mart', attrmap {
+					'target': 'mainpane',
+					'href': 'shop.php?whichshop=kiwi',
+				}));
+				break;
 		}
 
 		if(f.drops_limit > 0) {
