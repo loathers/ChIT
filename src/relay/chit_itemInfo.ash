@@ -1297,7 +1297,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			drops_info drops;
 			if(total_turns_played() >= get_property('nextAprilBandTurn').to_int()) {
 				info.addExtra(extraInfoPicker('aprilbandsong', '<b>Change</b> the marching song'));
-				drops[drops.count()] = new drop_info('', 1, 'song change');
+				drops[drops.count()] = new drop_info('', 1, 'song change', '', false, false, 0, true);
 			}
 			else {
 				info.addToDesc((get_property('nextAprilBandTurn').to_int() - total_turns_played()) + ' adv to song change');
