@@ -198,6 +198,7 @@ record drop_info {
 	boolean unimportant;
 	boolean useDropped;
 	int dropped;
+	boolean oneOrNone;
 };
 
 typedef drop_info[int] drops_info;
@@ -289,7 +290,12 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			dropped = drop.limit;
 		}
 
+		if(drop.oneOrNone && (dropped == 0 || (dropped == 1 && limit == -1))) {
+			upDrops(DROPS_SOME, drop);
+		}
+
 		if(drop.limit > LIMIT_PERIODIC) {
+			boolean space = true;
 			if(toAdd != '') {
 				toAdd += ', ';
 			}
@@ -298,7 +304,12 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 				toAdd += 'drops';
 			}
 			else if(limit == -1) {
-				toAdd += dropped;
+				if(!drop.oneOrNone || dropped != 1) {
+					toAdd += dropped;
+				}
+				else {
+					space = false;
+				}
 			}
 			else if(percentile) {
 				toAdd += (limit - dropped);
@@ -310,7 +321,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			if(drop.plural == '') {
 				drop.plural = drop.singular;
 			}
-			if((drop.limit > LIMIT_PERIODIC) && !percentile) {
+			if(space && (drop.limit > LIMIT_PERIODIC) && !percentile) {
 				toAdd += ' ';
 			}
 			toAdd += (limit == 1) ? drop.singular : drop.plural;

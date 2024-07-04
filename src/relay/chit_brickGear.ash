@@ -994,7 +994,7 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + namedesc(getItemInfo(equipped_item(s))));
+		result.addItemIcon(equipped_item(s), s + ": " + namedesc(getItemInfo(equipped_item(s), s, true)));
 		result.append('</a></span>');
 		pickerGear(s);
 	}

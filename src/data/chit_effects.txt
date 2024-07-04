@@ -132,6 +132,7 @@ Everything Looks Blue	style:"color:blue"
 Everything Looks Red	style:"color:red"
 Everything Looks Yellow	style:"color:olive"
 Everything Looks Green	style:"color:green"
+Everything Looks Purple	style:"color:purple"
 
 #Juju Mask
 Gaze of the Lightning God	style:"color:blue"

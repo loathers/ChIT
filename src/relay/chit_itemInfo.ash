@@ -728,7 +728,7 @@ void picker_august() {
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
 
-chit_info getItemInfo(item it, slot relevantSlot) {
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
@@ -1398,6 +1398,34 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 			}
 			break;
 		}
+		case $item[Roman Candelabra]: {
+			drops_info rockets;
+			if(have_effect($effect[Everything looks blue]) == 0) {
+				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:blue">mp</span>', '',
+					true, false, 0, true);
+			}
+			if(have_effect($effect[Everything looks red]) == 0) {
+				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:red">stats</span>', '',
+					true, false, 0, true);
+			}
+			if(have_effect($effect[Everything looks yellow]) == 0) {
+				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:olive">ray</span>', '',
+					false, false, 0, true);
+			}
+			if(have_effect($effect[Everything looks green]) == 0) {
+				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:green">run</span>', '',
+					false, false, 0, true);
+			}
+			if(have_effect($effect[Everything looks purple]) == 0) {
+				rockets[rockets.count()] = new drop_info('', 1, '<span style="color:purple">copy</span>',
+					'', false, false, 0, true);
+			}
+			info.addDrops(rockets);
+			if(rockets.count() > 0) {
+				info.desc += ' available';
+			}
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1439,7 +1467,16 @@ chit_info getItemInfo(item it, slot relevantSlot) {
 		info.dangerLevel = DANGER_WARNING;
 	}
 
+	if(stripHtml) {
+		matcher htmlRemover = create_matcher('<[^>]+>', info.desc);
+		info.desc = htmlRemover.replace_all('');
+	}
+
 	return info;
+}
+
+chit_info getItemInfo(item it, slot relevantSlot) {
+	return getItemInfo(it, relevantSlot, false);
 }
 
 chit_info getItemInfo(item it) {
