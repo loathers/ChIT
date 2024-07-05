@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27888; // Apriling band helmet stuff
+since r27997; // Roman Candelabra
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
