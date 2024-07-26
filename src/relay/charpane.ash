@@ -3883,7 +3883,22 @@ void bakeCharacter() {
 		case "Way of the Surprising Fist": return "Surprising Fist";
 			//myPath = "Surprising Fist: " + get_property("fistSkillsKnown");
 		case "Bugbear Invasion": return "Bugbear&nbsp;Invasion";
-		case "Avatar of Jarlsberg": return "Jarlsberg";
+		case "Avatar of Jarlsberg": {
+			int points = 2 + get_property("jarlsbergPoints").to_int() + my_level();
+			foreach sk in $skills[Boil, The Most Important Meal, Conjure Eggs, Egg Man, Conjure Dough,
+				Early Riser, Fry, Coffeesphere, Conjure Vegetables, Radish Horse, Chop, Conjure Cheese, Slice,
+				Working Lunch, Lunch Like a King, Oilsphere, Bake, Food Coma, Conjure Potato, Hippotatomous,
+				Conjure Meat Product, Never Late for Dinner, Grill, Gristlesphere, Conjure Fruit,
+				Best Served Cold, Freeze, Nightcap, Conjure Cream, Blend, Cream Puff, Chocolatesphere] {
+				if(have_skill(sk)) {
+					--points;
+				}
+			}
+			if(points > 0) {
+				return "Jarlsberg (" + points + " skill points)";
+			}
+			return "Jarlsberg";
+		}
 		case "KOLHS": return "<a target='mainpane' style='font-weight:normal;' href='place.php?whichplace=KOLHS'>KOLHS</a>";
 		case "Class Act II: A Class For Pigs": return "Class Act <span style='font-family:Times New Roman,times,serif'>II</span>"; // Shorten. Also II looks a LOT better in serif
 		case "Avatar of Sneaky Pete": return "Sneaky Pete";
