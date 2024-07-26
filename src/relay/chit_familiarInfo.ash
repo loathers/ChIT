@@ -629,6 +629,10 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					toAdd += ' to ' + target + 'lbs';
 					info.addToDesc(toAdd);
 				}
+				int drones = get_property("gooseDronesRemaining").to_int();
+				if(drones > 0) {
+					info.addToDesc(drones + " drones");
+				}
 				break;
 			}
 			case $familiar[Pair of Stomping Boots]: {
