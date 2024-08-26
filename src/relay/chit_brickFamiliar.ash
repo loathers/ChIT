@@ -1076,7 +1076,7 @@ void bakeFamiliar() {
 		// familiar_weight($familiar) returns the current experience based weight
 		// weight_adjustment() returns the current bonuses from equipment & buffs etc.
 		// fam.soup_weight tracks how much extra intrinsic weight the familiar has added from TTT soup (resets on ascension)
-		famweight = to_string(familiar_weight(myfam) + weight_adjustment() + fam.soup_weight);
+		famweight = to_string(familiar_weight(myfam) + weight_adjustment() + myfam.soup_weight);
 	}
 
 	//Get equipment info
