@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r27997; // Roman Candelabra
+since r28078; // Burly Bodyguard chats
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";

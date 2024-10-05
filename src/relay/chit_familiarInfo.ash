@@ -686,6 +686,14 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					'href': 'shop.php?whichshop=kiwi',
 				}));
 				break;
+			case $familiar[Burly Bodyguard]:
+				if(get_property('bodyguardCharge').to_int() >= 50) {
+					info.addExtra(extraInfoLink('chat', attrmap {
+						'target': 'mainpane',
+						'href': 'main.php?talktobg=1',
+					}));
+				}
+				break;
 		}
 
 		if(f.drops_limit > 0) {
