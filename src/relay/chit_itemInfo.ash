@@ -1445,6 +1445,23 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}
 			break;
 		}
+		case $item[bat wings]: {
+			info.addDrops(drops_info {
+				new drop_info('_batWingsFreeFights', 5, 'free fight', 'free fights'),
+				new drop_info('_batWingsRestUsed', 11, 'rest', 'rests'),
+				new drop_info('_batWingsCauldronUsed', 11, 'cauldron', 'cauldrons', true),
+				new drop_info('_batWingsSwoopUsed', 11, 'swoop', 'swoops'),
+			});
+			if(get_property('_batWingsRestUsed').to_int() < 11) {
+				info.addExtra(extraInfoLink('<b>Rest</b> upside down with your bat wings',
+					'restores 1000 hp/mp', attrmap {
+						'class': 'change',
+						'href': sideCommand('cast 1 Rest upside down'),
+					}
+				));
+			}
+			break;
+		}
 	}
 
 	// latte reminder
