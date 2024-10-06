@@ -687,6 +687,9 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}));
 				break;
 			case $familiar[Burly Bodyguard]:
+				info.addDrops(drops_info {
+					new drop_info('bodyguardCharge', 50, 'chat progress'),
+				});
 				if(get_property('bodyguardCharge').to_int() >= 50) {
 					info.addExtra(extraInfoLink('chat', attrmap {
 						'target': 'mainpane',
