@@ -637,11 +637,13 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 			}
 			case $familiar[Pair of Stomping Boots]: {
 				drops[drops.count()] = new drop_info('bootsCharged', LIMIT_BOOL_INVERTED, 'stomp');
-				drops[drops.count()] = new drop_info('_banderRunaways', (familiar_weight(f) + weight_adjustment()) / 5, 'free run', 'free runs');
+				drops[drops.count()] = new drop_info('_banderRunaways', (familiar_weight(f) +
+					weight_adjustment() + f.soup_weight) / 5, 'free run', 'free runs');
 				break;
 			}
 			case $familiar[frumious bandersnatch]: {
-				drops[drops.count()] = new drop_info('_banderRunaways', (familiar_weight(f) + weight_adjustment()) / 5, 'free run', 'free runs');
+				drops[drops.count()] = new drop_info('_banderRunaways', (familiar_weight(f) +
+					weight_adjustment() + f.soup_weight) / 5, 'free run', 'free runs');
 				boolean knowOde = have_skill($skill[The Ode to Booze]);
 				boolean haveOde = have_effect($effect[Ode to Booze]) > 0;
 				if(knowOde && !haveOde) {
