@@ -9,6 +9,7 @@ location lastLoc;
 boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/relayimages/chit/";
+string [string] vars;
 
 typedef string[string] attrmap;
 
@@ -161,7 +162,7 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 		imgAttrs['style'] = info.customStyle;
 	}
 
-	if(info.weirdoDivContents == '') {
+	if(info.weirdoDivContents == '' || vars['chit.familiar.iconize-weirdos'].to_boolean()) {
 		result.addImg(info.image, imgAttrs);
 	}
 	else {
@@ -424,7 +425,6 @@ string define_prop(string name, string type, string def) {
 	return value;
 }
 
-string [string] vars;
 void setvar(string name, string type, string def) {
 	vars[name] = define_prop(name, type, def);
 }
