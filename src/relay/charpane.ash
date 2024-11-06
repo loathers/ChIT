@@ -4980,6 +4980,10 @@ buffer modifyPage(buffer source) {
 	case "": // old way of indicating mode is not limited, just in case it reverts or something
 	case "0":			// Mode is not limited
 	case "edunder":		// Ed's Underworld
+	case "bird": // form of bird
+	case "cockroach": // form of cockroach
+	case "mole": // form of mole
+	case "astral": // half-astral
 		break;
 	case "spelunky":	// Needs special handling for the Spelunkin' minigame
 		return source.spelunky();
