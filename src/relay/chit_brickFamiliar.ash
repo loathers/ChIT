@@ -1071,6 +1071,31 @@ void bakeFamiliar() {
 		}
 	}
 
+	// zootomist cares a lot about familiar weight for grafting.
+	// however, once level 12, this no longer matters.
+	// also grey goose already shows similar info
+	if(my_path() == $path[Z is for Zootomist] && my_level() < 12 && myfam != $familiar[grey goose]) {
+		int goalWeight = my_level() + 2;
+		int goalExp = goalWeight * goalWeight;
+		float expToGo = goalExp - myfam.experience;
+		int expRate = 1 + numeric_modifier('Familiar Experience');
+		int combats = ceil(expToGo / expRate);
+		buffer zootInfo;
+		if(expToGo > 0) {
+			zootInfo.append('<span title="');
+			zootInfo.append(combats);
+			zootInfo.append(' combats to go at a rate of ');
+			zootInfo.append(expRate);
+			zootInfo.append(' exp per combat">');
+			zootInfo.append(ceil(expToGo));
+			zootInfo.append(' exp to graft</span>');
+		}
+		else {
+			zootInfo.append('<a target="mainpane" href="place.php?whichplace=graftinglab">can graft</a>');
+		}
+		famInfo.desc = zootInfo.to_string() + (famInfo.desc == '' ? '' : ', ') + famInfo.desc;
+	}
+
 	//Get Familiar Weight
 	if (myfam != $familiar[none]) {
 		// familiar_weight($familiar) returns the current experience based weight
