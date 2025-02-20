@@ -3908,6 +3908,7 @@ void bakeCharacter() {
 		case "Nuclear Autumn": return "<a target='mainpane' style='font-weight:normal;' href='campground.php'>Nuclear Autumn</a>";
 		case "G-Lover": return "<a target='mainpane' style='font-weight:normal;' href='shop.php?whichshop=glover'>G-Lover</a>";
 		case "Wildfire": return '<a target="mainpane" style="font-weight:normal;" href="place.php?whichplace=wildfire_camp">Wildfire</a>';
+		case "Z is for Zootomist": return '<a target="mainpane" style="font-weight:normal;" href="place.php?whichplace=graftinglab">Z is for Zootomist</a>';
 		}
 		return my_path().name;
 	}
