@@ -1246,16 +1246,24 @@ void bakeFamiliar() {
 	}
 	result.append('</tr>');
 
-	//Add Progress bar if we have one
-	matcher progMatcher = create_matcher("<table title='(.*?)' cellpadding=0", source);
-	if (find(progMatcher)) {
-		string[1] minmax = split_string(group(progMatcher, 1), " / ");
-		int current = to_int(minmax[0]);
-		int upper = to_int(minmax[1]);
-		float progress = (current * 100.0) / upper;
-		result.append('<tr><td colspan="3" class="progress" title="' + current + ' / ' + upper + '" >');
-		result.append('<div class="progressbar" style="width:' + progress + '%"></div></td></tr>');
+	if (base_weight < getFamMaxLevel(myfam)) {
+		int nextGoal = 0;
+		int prevGoal = 0;
+
+		for (int i = 2; i <= getFamMaxLevel(myfam); ++i) {
+			nextGoal = i * i;
+			if (nextGoal > myfam.experience) {
+				prevGoal = i == 2 ? 0 : (i - 1) * (i - 1);
+				break;
+			}
+		}
+
+		int current = myfam.experience - prevGoal;
+		int limit = nextGoal - prevGoal;
+
+		result.append('<tr><td colspan=3 class="progress">' + progressCustom(current, limit, "exp to level " + (familiar_weight(myfam) + 1), 0, true) + '</td></tr>');
 	}
+
 	result.append('</table>');
 	chitBricks["familiar"] = result;
 

@@ -107,6 +107,10 @@ void picker_snapper() {
 	picker.pickerFinish("Changing guidance...");
 }
 
+int getFamMaxLevel(familiar f) {
+	return f == $familiar[Stocking Mimic] ? 100 : 20;
+}
+
 chit_info getFamiliarInfo(familiar f, slot s) {
 	boolean isStandardFam = s == $slot[familiar] && my_path() != $path[Pocket Familiars];
 	item famsEquip = familiar_equipped_equipment(f);
