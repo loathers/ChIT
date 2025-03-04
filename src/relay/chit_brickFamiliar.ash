@@ -967,7 +967,7 @@ void FamVampyre() {
 		result.append('</tbody></table>');
 	}
 
-	matcher id = create_matcher('https://d2uyhvukfffg5a.cloudfront.net/(.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
+	matcher id = create_matcher('<img src=(?:.+?)/(adventureimages/.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
 	if(id.find())
 		bake(id.group(2), ensorceleeDescription(id.group(3)), "/images/"+id.group(1));
 	else
