@@ -943,7 +943,7 @@ string ensorceleeDescription(string kolProvided) {
 }
 
 # Thanks to Cannonfire40 for FamVampyre!
-# <p><font size=2><b>Ensorcelee:</b><br><img src=https://s3.amazonaws.com/images.kingdomofloathing.com/adventureimages/kg_sleepingguard.gif><br>Will Night<br><font color=blue><b>Blocks the first attack of each combat</font></b>
+# <p><font size=2><b>Ensorcelee:</b><br><img src=https://d2uyhvukfffg5a.cloudfront.net/adventureimages/olivers_gob.gif><br>Amelia Raven<br><font color=blue><b>Blocks the first attack of each combat</font>
 void FamVampyre() {
 	if(!have_skill($skill[Ensorcel]))
 		return;
@@ -967,7 +967,7 @@ void FamVampyre() {
 		result.append('</tbody></table>');
 	}
 
-	matcher id = create_matcher('https://s3.amazonaws.com/images.kingdomofloathing.com/(.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
+	matcher id = create_matcher('<img src=(?:.+?)/(adventureimages/.+?)><br>(.+?)<br><font color=blue><b>(.+?)</font>', chitSource["familiar"]);
 	if(id.find())
 		bake(id.group(2), ensorceleeDescription(id.group(3)), "/images/"+id.group(1));
 	else
