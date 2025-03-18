@@ -623,11 +623,13 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				int target = max(famweight + 1, 6);
 				if(famweight < 20) {
 					int expToGo = target**2 - f.experience;
-					int combats = ceil(expToGo / (numeric_modifier('Familiar Experience') + 1));
+					int expRate = numeric_modifier('Familiar Experience') + 1;
+					int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
 					string toAdd = expToGo + ' exp ';
 					if(combats != expToGo) {
 						toAdd += ' <span title="gaining '
-						+ floor(numeric_modifier('Familiar Experience')) + ' fam exp per combat">(' + combats
+						+ floor(numeric_modifier('Familiar Experience')) + ' fam exp per combat">('
+						+ (combats < 0 ? '&infin;' : combats)
 						+ ' fight' + (combats > 1 ? 's' : '') + ')</span>';
 					}
 					toAdd += ' to ' + target + 'lbs';

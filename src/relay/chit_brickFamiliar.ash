@@ -1079,11 +1079,11 @@ void bakeFamiliar() {
 		int goalExp = goalWeight * goalWeight;
 		float expToGo = goalExp - myfam.experience;
 		int expRate = 1 + numeric_modifier('Familiar Experience');
-		int combats = ceil(expToGo / expRate);
+		int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
 		buffer zootInfo;
 		if(expToGo > 0) {
 			zootInfo.append('<span title="');
-			zootInfo.append(combats);
+			zootInfo.append(combats < 0 ? '&infin;' : combats);
 			zootInfo.append(' combats to go at a rate of ');
 			zootInfo.append(expRate);
 			zootInfo.append(' exp per combat">');
