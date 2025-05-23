@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28078; // Burly Bodyguard chats
+since r28541; // Hat Trick
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";

@@ -509,6 +509,20 @@ void pickerGear(slot s) {
 			picker.append(weapon_hands(equipped_item($slot[weapon])));
 			picker.append("-handed weapon equipped!");
 			take_action = false;
+		} else if(s == $slot[hat] && my_path() == $path[Hat Trick]) {
+			picker.append("You have ");
+			int hat_count = 0;
+			foreach it in $items[] {
+				if(it.to_slot() == $slot[hat]) {
+					hat_count += equipped_amount(it);
+				}
+			}
+			picker.append(hat_count);
+			picker.append(" hat");
+			if(hat_count != 1) {
+				picker.append("s");
+			}
+			picker.append(" equipped, but I ain't showin' all'at, sorry.");
 		} else {
 			picker.append("You don't have ");
 			// gotta get that a/an right
