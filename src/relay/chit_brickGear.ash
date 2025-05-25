@@ -707,6 +707,7 @@ void pickerGear(slot s) {
 		item [int] toDisplay;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
+				&& (my_path() != $path[Hat Trick] || s != $slot[hat] || equipped_amount(it) == 0)
 				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
 					toDisplay[ count(toDisplay) ] = it;
 
