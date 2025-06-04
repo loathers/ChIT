@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28541; // Hat Trick
+since r28548; // Cola Wars Battlefield rename
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
