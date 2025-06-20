@@ -4336,13 +4336,8 @@ boolean parsePage(buffer original) {
 	location parseLoc(string loc) {
 		if(to_location(loc) != $location[none])
 			return to_location(loc);
-		switch(loc) {	// Some of these are really tough for KoLmafia to deal with!
-		case "(none)":
+		if(loc == "(none)") {
 			return $location[none];
-		case "The Orcish Frat House":
-			return $location[Frat House];
-		case "The Hippy Camp":
-			return $location[Hippy Camp];
 		}
 		return get_property("lastAdventure").to_location();
 	}
