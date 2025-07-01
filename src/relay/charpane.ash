@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28548; // Cola Wars Battlefield rename
+since r28569; // Cooler Yeti
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";

@@ -705,6 +705,12 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					}));
 				}
 				break;
+			case $familiar[Cooler Yeti]:
+				info.addExtra(extraInfoLink('chat', attrmap {
+					'target': 'mainpane',
+					'href': 'main.php?talktoyeti=1',
+				}));
+				break;
 		}
 
 		if(f.drops_limit > 0) {
