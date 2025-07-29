@@ -1286,6 +1286,7 @@ void bakeEffects() {
 			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
 			new noncommod("pillminder.gif", "sneakisol", "avoiding fights until something cool happens"),
 			new noncommod("tuba.gif", "apriling band tuba", "tuba playing has scared away most monsters"),
+			new noncommod("bountyrifle.gif", "allied radio sniper support", "sniper is guiding you"),
 		};
 
 		foreach i,noncom in nomcommods {
