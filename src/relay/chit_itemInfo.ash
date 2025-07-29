@@ -725,23 +725,24 @@ void picker_august() {
 
 void picker_alliedradio() {
 	int usable = 3 - max(min(get_property('_alliedRadioDropsUsed').to_int(), 3), 0);
+	boolean intelUsed = get_property("_alliedRadioMaterielIntel").to_boolean();
 
 	buffer picker;
 	picker.pickerStart('alliedradio', 'Radio for backup (' + usable + ' left)');
 
-	void addOption(string name, string desc, string icon) {
-		picker.pickerGenericOption('radio', 'for ' + name, desc, '', sideCommand('ashq allied_radio("' + name + '");'),
-			true, itemimage(icon + '.gif'));
+	void addOption(string name, string desc, string icon, boolean usable) {
+		picker.pickerGenericOption('radio for', name, desc, '', sideCommand('ashq allied_radio("' + name + '");'),
+			usable, itemimage(icon + '.gif'));
 	}
 
-	addOption('rations', 'size-1 epic food', 'skelration');
-	addOption('fuel', 'size-1 epic booze', 'skelgascan');
-	addOption('ordnance', 'combat item', 'skelgrenade');
-	addOption('materiel intel', '+100% Item Drop (10 adv, 1/day)', 'dinseybrain');
-	addOption('salary', '15 Chroner', 'chroner');
-	addOption('sniper support', 'force a noncom', 'bountyrifle');
-	addOption('radio', 'pocket wish for radio', 'radiopackradio');
-	addOption('Ellipsoidtine', 'Some hp/mp + regen thereof', 'circle');
+	addOption('rations', 'size-1 epic food', 'skelration', true);
+	addOption('fuel', 'size-1 epic booze', 'skelgascan', true);
+	addOption('ordnance', 'combat item', 'skelgrenade', true);
+	addOption('materiel intel', '+100% Item Drop (10 adv, 1/day)', 'dinseybrain', !intelUsed);
+	addOption('salary', '15 Chroner', 'chroner', true);
+	addOption('sniper support', 'force a noncom', 'bountyrifle', true);
+	addOption('radio', 'pocket wish for radio', 'radiopackradio', true);
+	addOption('Ellipsoidtine', 'Some hp/mp + regen thereof', 'circle', true);
 
 	picker.pickerGenericOption('radio', 'for something else', 'manual entry link', '',
 		'inventory.php?action=requestdrop&pwd=' + my_hash(), true, itemimage('radiopack.gif'), attrmap {}, attrmap {
@@ -1494,7 +1495,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 		case $item[Allied Radio Backpack]: {
 			info.addDrop(new drop_info('_alliedRadioDropsUsed', 3, 'radio request', 'radio requests'));
 			if(get_property('_alliedRadioDropsUsed').to_int() < 3) {
-				info.addExtra(extraInfoPicker('alliedradio', '<b>Radio</b> for backup'));
+				info.addExtra(extraInfoPicker('alliedradio', '<b>radio for</b> backup'));
 			}
 			break;
 		}
