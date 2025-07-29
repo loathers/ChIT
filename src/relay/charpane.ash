@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28569; // Cooler Yeti
+since r28592; // Allied Radio Backpack stuff
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
