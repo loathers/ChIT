@@ -1499,6 +1499,38 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}
 			break;
 		}
+		case $item[prismatic beret]: {
+			info.addDrops(drops_info {
+				new drop_info('_beretBuskingUses', 5, 'busk', 'busks'),
+				new drop_info('_beretBlastUses', 11, 'blast', 'blasts', true),
+				new drop_info('_beretBoastUses', 11, 'boast', 'boasts', true),
+			});
+			if(get_property('_beretBuskingUses').to_int() < 5) {
+				buffer buskResult;
+				buskResult.append('Currently: ');
+				foreach eff, turns in beret_busking_effects() {
+					if(eff == $effect[none]) {
+						buskResult.append(turns);
+						buskResult.append(' meat');
+					} else {
+						buskResult.append(', ');
+						buskResult.append(eff);
+						buskResult.append(' (');
+						buskResult.append(turns);
+						buskResult.append(' adv)');
+					}
+				}
+				info.addExtra(extraInfoLink('<b>Busk</b> for meat and buffs',
+					buskResult.to_string(), attrmap {
+						'class': 'visit done',
+						'target': 'mainpane',
+						'href': 'runskillz.php?action=Skillz&whichskill=7565&targetplayer=' + my_id()
+							+ '&pwd=' + my_hash() + '&quantity=1',
+					}
+				));
+			}
+			break;
+		}
 	}
 
 	// latte reminder
