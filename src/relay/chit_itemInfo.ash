@@ -1531,6 +1531,17 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}
 			break;
 		}
+		case $item[Peridot of Peril]: {
+			info.addDrop(new drop_info('_perilsForeseen', 3, 'peril', 'perils'));
+			if(get_property('_perilsForeseen').to_int() < 3) {
+				info.addExtra(extraInfoLink('<b>Foresee</b> peril', 'gives them a fruit', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'inventory.php?pwd=' + my_hash() + '&action=foresee',
+				}));
+			}
+			break;
+		}
 	}
 
 	// latte reminder
