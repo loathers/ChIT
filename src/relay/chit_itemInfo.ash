@@ -738,11 +738,12 @@ void picker_alliedradio() {
 	addOption('rations', 'size-1 epic food', 'skelration', true);
 	addOption('fuel', 'size-1 epic booze', 'skelgascan', true);
 	addOption('ordnance', 'combat item', 'skelgrenade', true);
-	addOption('materiel intel', '+100% Item Drop (10 adv, 1/day)', 'dinseybrain', !intelUsed);
+	addOption('materiel intel', parseEff($effect[Materiel Intel]) + ' (10 adv, 1/day)', 'dinseybrain', !intelUsed);
 	addOption('salary', '15 Chroner', 'chroner', true);
 	addOption('sniper support', 'force a noncom', 'bountyrifle', true);
 	addOption('radio', 'pocket wish for radio', 'radiopackradio', true);
-	addOption('Ellipsoidtine', 'Some hp/mp + regen thereof', 'circle', true);
+	addOption('ellipsoidtine', parseEff($effect[Ellipsoidtined]) + ' (30 adv)', 'circle', true);
+	addOption('wildsun boon', parseEff($effect[Wildsun Boon]) + ' (100 adv, 1/day)', 'sun', true);
 
 	picker.pickerGenericOption('radio', 'for something else', 'manual entry link', '',
 		'inventory.php?action=requestdrop&pwd=' + my_hash(), true, itemimage('radiopack.gif'), attrmap {}, attrmap {
