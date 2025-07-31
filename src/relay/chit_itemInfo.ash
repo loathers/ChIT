@@ -1564,6 +1564,30 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}
 			break;
 		}
+		case $item[McHugeLarge duffel bag]: {
+			if(available_amount($item[McHugeLarge right pole]) < 1) {
+				info.addToDesc('openable');
+				info.incDrops(DROPS_ALL);
+				info.addExtra(extraInfoLink('<b>Open</b> your duffel bag', 'collect skis and poles', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'inventory.php?action=skiduffel&pwd=' + my_hash(),
+				}));
+			}
+			break;
+		}
+		case $item[McHugeLarge left pole]: {
+			info.addDrop(new drop_info('_mcHugeLargeSlashUses', 3, 'slash', 'slashes'));
+			break;
+		}
+		case $item[McHugeLarge left ski]: {
+			info.addDrop(new drop_info('_mcHugeLargeAvalancheUses', 3, 'avalanche', 'avalanches'));
+			break;
+		}
+		case $item[McHugeLarge right ski]: {
+			info.addDrop(new drop_info('_mcHugeLargeSkiPlowUses', 11, 'ski plow', 'ski plows', true));
+			break;
+		}
 	}
 
 	// latte reminder
