@@ -1542,6 +1542,28 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}
 			break;
 		}
+		case $item[April Shower Thoughts shield]: {
+			drops_info drops = { new drop_info('_aprilShowerGlobsCollected', LIMIT_BOOL, 'shower', 'showers') };
+			if(have_skill($skill[Northern Explosion])) {
+				drops[drops.count()] = new drop_info('_aprilShowerNorthernExplosion', LIMIT_BOOL,
+					'northern explosion ray', 'northern explosion rays');
+			}
+			if(have_skill($skill[Simmer])) {
+				drops[drops.count()] = new drop_info('_aprilShowerSimmer', LIMIT_BOOL, 'free simmer', 'free simmers');
+			}
+			if(have_skill($skill[Disco Nap])) {
+				drops[drops.count()] = new drop_info('_aprilShowerDiscoNap', 5, 'mp disco nap', 'mp disco naps');
+			}
+			info.addDrops(drops);
+			if(!get_property('_aprilShowerGlobsCollected').to_boolean()) {
+				info.addExtra(extraInfoLink('<b>Shower</b> off', 'collect daily globs', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'inventory.php?action=shower&pwd=' + my_hash(),
+				}));
+			}
+			break;
+		}
 	}
 
 	// latte reminder
