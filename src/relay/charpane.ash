@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28594; // Allied Radio Backpack stuff
+since r28597; // Allied Radio Backpack stuff
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
