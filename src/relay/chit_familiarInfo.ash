@@ -111,6 +111,25 @@ int getFamMaxLevel(familiar f) {
 	return f == $familiar[Stocking Mimic] ? 100 : 20;
 }
 
+// if targetIsWeight is false, it's an exp target
+void addFamWeightTracking(chit_info info, familiar f, int target, boolean targetIsWeight) {
+	int famweight = familiar_weight(f);
+	info.addToDesc(targetIsWeight ? (famweight + (famweight > 1 ? 'lbs' : 'lb') + ' base') : (f.experience + ' exp'));
+	if(famweight < 20 || !targetIsWeight) {
+		string toAdd;
+		int expRate = numeric_modifier('Familiar Experience') + 1;
+		if(expRate != 1) {
+			info.addToDesc(expRate + ' exp/combat');
+		}
+		if(target > 0) {
+			int expToGo = (targetIsWeight ? target**2 : target) - f.experience;
+			int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
+			info.addToDesc(expToGo + ' exp to ' + target + (targetIsWeight ? 'lbs' : ' exp')
+				+ (expRate != 1 ? (' (' + (combats < 0 ? '&infin;' : combats) + ' combats)') : ''));
+		}
+	}
+}
+
 chit_info getFamiliarInfo(familiar f, slot s) {
 	boolean isStandardFam = s == $slot[familiar] && my_path() != $path[Pocket Familiars];
 	item famsEquip = familiar_equipped_equipment(f);
@@ -618,23 +637,8 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}
 				break;
 			case $familiar[grey goose]: {
-				int famweight = familiar_weight(f);
-				info.addToDesc(famweight + (famweight > 1 ? 'lbs' : 'lb'));
-				int target = max(famweight + 1, 6);
-				if(famweight < 20) {
-					int expToGo = target**2 - f.experience;
-					int expRate = numeric_modifier('Familiar Experience') + 1;
-					int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
-					string toAdd = expToGo + ' exp ';
-					if(combats != expToGo) {
-						toAdd += ' <span title="gaining '
-						+ floor(numeric_modifier('Familiar Experience')) + ' fam exp per combat">('
-						+ (combats < 0 ? '&infin;' : combats)
-						+ ' fight' + (combats > 1 ? 's' : '') + ')</span>';
-					}
-					toAdd += ' to ' + target + 'lbs';
-					info.addToDesc(toAdd);
-				}
+				int target = max(familiar_weight(f) + 1, 6);
+				info.addFamWeightTracking(f, target, true);
 				int drones = get_property("gooseDronesRemaining").to_int();
 				if(drones > 0) {
 					info.addToDesc(drones + " drones");
@@ -676,11 +680,14 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				break;
 			}
 			case $familiar[Chest Mimic]: {
-				int eggsLayable = min(11 - get_property('_mimicEggsObtained').to_int(), floor(f.experience / 50));
+				int eggsLeftToday = 11 - get_property('_mimicEggsObtained').to_int();
+				int eggsLayable = min(eggsLeftToday, floor(f.experience / 50));
 				drops[drops.count()] = new drop_info('_mimicEggsObtained', 11, 'egg laying', 'egg layings');
-				info.addToDesc(f.experience + ' exp');
 				if(eggsLayable > 0) {
 					info.addToDesc(eggsLayable + ' layable');
+				}
+				if(eggsLayable < eggsLeftToday) {
+					info.addFamWeightTracking(f, (eggsLayable + 1) * 50, false);
 				}
 				info.addExtra(extraInfoLink('DNA Bank', attrmap {
 					'target': 'mainpane',
@@ -695,9 +702,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 				}));
 				break;
 			case $familiar[Burly Bodyguard]:
-				info.addDrops(drops_info {
-					new drop_info('bodyguardCharge', 50, 'chat progress'),
-				});
+				drops[drops.count()] = new drop_info('bodyguardCharge', 50, 'chat progress');
 				if(get_property('bodyguardCharge').to_int() >= 50) {
 					info.addExtra(extraInfoLink('chat', attrmap {
 						'target': 'mainpane',
@@ -705,12 +710,33 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 					}));
 				}
 				break;
-			case $familiar[Cooler Yeti]:
+			case $familiar[Cooler Yeti]: {
+				drops[drops.count()] = new drop_info('_coolerYetiAdventures', LIMIT_BOOL, 'booze doubler');
+				info.addFamWeightTracking(f, f.experience < 400 ? 400 : -1, false);
 				info.addExtra(extraInfoLink('chat', attrmap {
 					'target': 'mainpane',
 					'href': 'main.php?talktoyeti=1',
 				}));
+				string boozeGives = '';
+				switch(get_property('coolerYetiMode')) {
+					case 'adventures': boozeGives = '2x advs'; break;
+					case 'effect': boozeGives = '+100% item/meat for 100 advs'; break;
+					case 'bar': boozeGives = 'base booze and mixer'; break;
+					case 'stats': boozeGives = 'more stats'; break;
+				}
+				if(boozeGives != '') {
+					info.addToDesc('next booze gives ' + boozeGives);
+				}
 				break;
+			}
+			case $familiar[Emberiza Aureola]: {
+				if(f.experience < 100) {
+					info.addFamWeightTracking(f, 100, false);
+				} else {
+					info.addToDesc('ready to burn');
+				}
+				break;
+			}
 		}
 
 		if(f.drops_limit > 0) {
