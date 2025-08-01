@@ -2782,6 +2782,17 @@ void addWereProfessor(buffer result) {
 	}	
 }
 
+void addParadoxicity(buffer result) {
+	matcher paradoxicity = create_matcher('<td align=right>Paradoxicity:</td><td align=left><b><font color=black><span alt="" title="">([\\d,]+)</span>', chitSource["stats"]);
+	if (paradoxicity.find()) {
+		result.append('<tr><td class="label">Paradoxicity</td><td class="info">');
+		result.append(paradoxicity.group(1));
+		if(to_boolean(vars["chit.stats.showbars"])) {
+			result.append('<td>&nbsp;</td>');
+		}
+	}
+}
+
 void addOrgan(buffer result, string organ, boolean showBars, int current, int limit, boolean eff) {
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
@@ -3348,6 +3359,9 @@ void bakeStats() {
 
 			if(equipped_amount($item[designer sweatpants]) > 0)
 				result.addSweat();
+
+			// From the Möbius ring
+			result.addParadoxicity();
 
 			// Quest updates should be shown if the tracker brick is not in use.
 			boolean tracker;
