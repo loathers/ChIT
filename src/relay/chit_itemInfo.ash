@@ -1590,6 +1590,14 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			info.addDrop(new drop_info('_mcHugeLargeSkiPlowUses', 11, 'ski plow', 'ski plows', true));
 			break;
 		}
+		case $item[M&ouml;bius ring]: {
+			matcher paradoxicity = create_matcher('<td align=right>Paradoxicity:</td><td align=left><b><font '
+				+ 'color=black><span alt="" title="">([\\d,]+)</span>', chitSource["stats"]);
+			if(paradoxicity.find()) {
+				info.addToDesc(paradoxicity.group(1) + ' paradoxicity');
+			}
+			break;
+		}
 	}
 
 	// latte reminder
