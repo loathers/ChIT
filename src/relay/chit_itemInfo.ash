@@ -1655,10 +1655,14 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
+void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick, boolean newStyle) {
 	chit_info info = getItemInfo(it);
 	result.addInfoIcon(info, title,
-		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
+		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '', newStyle);
+}
+
+void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
+	addItemIcon(result, it, title, popupDescOnClick, false);
 }
 
 void addItemIcon(buffer result, item it, string title) {

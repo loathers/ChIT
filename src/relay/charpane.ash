@@ -4236,7 +4236,9 @@ void bakeHeader() {
 
 	//Add JavaScript just before the <body> tag.
 	//Ideally this should go into the <head> tag too, but KoL adds jQuery outside of <head>, so that won't work
-	result.replace_string('<body', '\n<script type="text/javascript" src="chit.js"></script>\n<body');
+	result.replace_string('<body', '<script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>'
+		+ '<script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>'
+		+ '\n<script type="text/javascript" src="chit.js"></script>\n<body');
 
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');

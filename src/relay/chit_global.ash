@@ -124,7 +124,9 @@ void tagStart(buffer result, string type, attrmap attrs);
 void tagFinish(buffer result, string type);
 void addImg(buffer result, string imgSrc, attrmap attrs);
 
-void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
+int popoverCount = 0;
+
+void addInfoIcon(buffer result, chit_info info, string title, string onclick, boolean newStyle) {
 	string imgClass = 'chit_icon';
 
 	if(info.hasDrops == DROPS_SOME) {
@@ -148,10 +150,19 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 		imgClass += ' chit_' + info.weirdoTag;
 	}
 
+	if(newStyle) {
+		imgClass += ' chit_popoverlauncher';
+	}
+
 	attrmap imgAttrs = {
 		'class': imgClass,
-		'title': title,
 	};
+	if(newStyle) {
+		++popoverCount;
+		imgAttrs['aria-describedby'] = 'popover' + popoverCount;
+	} else {
+		imgAttrs['title'] = title;
+	}
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
 	}
@@ -170,6 +181,20 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
 		result.append(info.weirdoDivContents);
 		result.tagFinish('div');
 	}
+
+	if(newStyle) {
+		result.tagStart('div', attrmap {
+			'id': 'popover' + popoverCount,
+			'class': 'popover',
+			'role': 'tooltip',
+		});
+		result.append(title);
+		result.tagFinish('div');
+	}
+}
+
+void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
+	addInfoIcon(result, info, title, onclick, false);
 }
 
 void addToDesc(chit_info info, string toAdd) {

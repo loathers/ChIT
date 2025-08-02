@@ -62,6 +62,29 @@ $(document).ready(function () {
 		$(".chit_skeleton").hide();
 	});
 
+	// Popover Launchers
+	$(".chit_popoverlauncher").each(function() {
+		var popoverId = $(this).attr("aria-describedby");
+		var popover = $("#" + popoverId);
+
+		function showTooltip() {
+			popover.style.display = "block";
+			console.log('heck');
+		}
+		function hideTooltip() {
+			popover.style.display = '';
+		}
+
+		[
+			['mouseenter', showTooltip],
+			['mouseleave', hideTooltip],
+			['focus', showTooltip],
+			['blur', hideTooltip],
+		].forEach(([event, listener]) => {
+			console.log('heck');
+			//$(this).addEventListener(event, listener);
+		});
+	});
 	
 	//Tool Launchers
 	$(".tool_launcher").live("click", function(e) {
