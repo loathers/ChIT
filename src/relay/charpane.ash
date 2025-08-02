@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28600; // Cooler Yeti noncom support
+since r28604; // wildsun 1/day tracking
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";

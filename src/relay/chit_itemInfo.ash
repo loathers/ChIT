@@ -726,6 +726,7 @@ void picker_august() {
 void picker_alliedradio() {
 	int usable = 3 - max(min(get_property('_alliedRadioDropsUsed').to_int(), 3), 0);
 	boolean intelUsed = get_property("_alliedRadioMaterielIntel").to_boolean();
+	boolean wildsunUsed = get_property("_alliedRadioWildsunBoon").to_boolean();
 
 	buffer picker;
 	picker.pickerStart('alliedradio', 'Radio for backup (' + usable + ' left)');
@@ -743,7 +744,7 @@ void picker_alliedradio() {
 	addOption('sniper support', 'force a noncom', 'bountyrifle', true);
 	addOption('radio', 'pocket wish for radio', 'radiopackradio', true);
 	addOption('ellipsoidtine', parseEff($effect[Ellipsoidtined]) + ' (30 adv)', 'circle', true);
-	addOption('wildsun boon', parseEff($effect[Wildsun Boon]) + ' (100 adv, 1/day)', 'sun', true);
+	addOption('wildsun boon', parseEff($effect[Wildsun Boon]) + ' (100 adv, 1/day)', 'sun', !wildsunUsed);
 
 	picker.pickerGenericOption('radio', 'for something else', 'manual entry link', '',
 		'inventory.php?action=requestdrop&pwd=' + my_hash(), true, itemimage('radiopack.gif'), attrmap {}, attrmap {
