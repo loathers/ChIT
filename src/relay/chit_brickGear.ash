@@ -387,7 +387,7 @@ void pickerGear(slot s) {
 		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
 		picker.append(it.descid);
 		picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
-		picker.addItemIcon(it, "Click for item description");
+		picker.addItemIcon(it);
 		picker.append('</a></td>');
 	}
 
@@ -624,9 +624,9 @@ void pickerGear(slot s) {
 			}
 			b.append('>');
 			if(take_action)
-				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description');
+				b.addItemIcon(it, action + ' ' + action_description + ' ');
 			else
-				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Right click for description');
+				b.addItemIcon(it);
 			if(take_action)
 				b.append('</a>');
 			b.append('</span>');
@@ -638,7 +638,7 @@ void pickerGear(slot s) {
 			b.append(',0,event); return false;" onclick="descitem(');
 			b.append(it.descid);
 			b.append(',0,event)" href="#">');
-			b.addItemIcon(it,"Click for item description");
+			b.addItemIcon(it);
 			b.append('</a></td><td>');
 			if(take_action) {
 				b.append('<a class="change" href="');
@@ -676,7 +676,7 @@ void pickerGear(slot s) {
 			b.append(it.descid);
 			b.append(',0,event)" href="#">');
 
-			b.addItemIcon(it,"Click for item description");
+			b.addItemIcon(it);
 			b.append('</a></div><div style="max-width:160px;">');
 			//b.add_favorite_button(it);
 			if(take_action) {
@@ -1009,7 +1009,8 @@ void addGear(buffer result) {
 		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
 		result.append(s);
 		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + namedesc(getItemInfo(equipped_item(s), s, true)), false, true);
+		chit_info info = getItemInfo(equipped_item(s), s, true);
+		result.addItemIcon(equipped_item(s), s + ": ", false);
 		result.append('</a></span>');
 		pickerGear(s);
 	}

@@ -1136,6 +1136,7 @@ div.chit_left-handman {
 	background: white;
 	display: none;
 	width: max-content;
+	max-width: 90%;
 	position: absolute;
 	top: 0;
 	left: 0;

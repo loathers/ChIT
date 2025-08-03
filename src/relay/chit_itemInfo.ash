@@ -760,10 +760,17 @@ void picker_alliedradio() {
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
 
-chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
+
+	if(includeMods) {
+		string parsedMods = parseItem(it);
+		if(parsedMods != '') {
+			info.addToDesc(parsedMods);
+		}
+	}
 
 	switch(it) {
 		case $item[none]:
@@ -1647,6 +1654,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 	return info;
 }
 
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
+	return getItemInfo(it, relevantSlot, stripHtml, false);
+}
+
 chit_info getItemInfo(item it, slot relevantSlot) {
 	return getItemInfo(it, relevantSlot, false);
 }
@@ -1655,16 +1666,16 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick, boolean newStyle) {
-	chit_info info = getItemInfo(it);
-	result.addInfoIcon(info, title,
-		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '', newStyle);
-}
-
-void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
-	addItemIcon(result, it, title, popupDescOnClick, false);
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+	chit_info info = getItemInfo(it, to_slot(it), false, true);
+	result.addInfoIcon(info, titlePrefix + info.name, info.desc,
+		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
 }
 
 void addItemIcon(buffer result, item it, string title) {
 	addItemIcon(result, it, title, false);
+}
+
+void addItemIcon(buffer result, item it) {
+	addItemIcon(result, it, '');
 }

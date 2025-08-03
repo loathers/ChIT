@@ -76,6 +76,7 @@ $(document).ready(function () {
 				middleware: [
 					fuidom.offset(6),
 					fuidom.shift({padding: 5}),
+					fuidom.autoPlacement(),
 					fuidom.arrow({element: popoverArrow[0]}),
 				],
 			}).then(({x, y, placement, middlewareData}) => {
@@ -97,7 +98,14 @@ $(document).ready(function () {
 					right: "",
 					bottom: "",
 					[staticSide]: '-3px',
-					'border-width': '1px 0px 0px 1px',
+					'border-width':
+						staticSide === 'top'
+						? '1px 0px 0px 1px'
+						: staticSide === 'bottom'
+						? '0px 1px 1px 0px'
+						: staticSide === 'left'
+						? '0px 0px 1px 1px'
+						: '1px 1px 0px 0px',
 				});
 			});
 		}

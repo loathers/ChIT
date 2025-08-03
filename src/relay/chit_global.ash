@@ -126,7 +126,7 @@ void addImg(buffer result, string imgSrc, attrmap attrs);
 
 int popoverCount = 0;
 
-void addInfoIcon(buffer result, chit_info info, string title, string onclick, boolean newStyle) {
+void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick) {
 	string imgClass = 'chit_icon';
 
 	if(info.hasDrops == DROPS_SOME) {
@@ -150,18 +150,14 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick, bo
 		imgClass += ' chit_' + info.weirdoTag;
 	}
 
-	if(newStyle) {
-		imgClass += ' chit_popoverlauncher';
-	}
 
 	attrmap imgAttrs = {
 		'class': imgClass,
 	};
-	if(newStyle) {
+	if(title != '') {
 		++popoverCount;
+		imgAttrs['class'] += ' chit_popoverlauncher';
 		imgAttrs['aria-describedby'] = 'popover' + popoverCount;
-	} else {
-		imgAttrs['title'] = title;
 	}
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
@@ -182,13 +178,26 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick, bo
 		result.tagFinish('div');
 	}
 
-	if(newStyle) {
+	if(title != '') {
 		result.tagStart('div', attrmap {
 			'id': 'popover' + popoverCount,
 			'class': 'popover',
 			'role': 'tooltip',
 		});
+		result.tagStart('div', attrmap {
+			'class': 'popover_title',
+		});
 		result.append(title);
+		result.tagFinish('div');
+		if(desc != '') {
+			foreach i,descline in desc.split_string(', ') {
+				result.tagStart('div', attrmap {
+					'class': 'descline',
+				});
+				result.append(descline);
+				result.tagFinish('div');
+			}
+		}
 		result.tagStart('div', attrmap {
 			'id': 'arrowpopover' + popoverCount,
 			'class': 'chit_popoverarrow',
@@ -199,7 +208,7 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick, bo
 }
 
 void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
-	addInfoIcon(result, info, title, onclick, false);
+	addInfoIcon(result, info, title, '', onclick);
 }
 
 void addToDesc(chit_info info, string toAdd) {
@@ -1020,7 +1029,7 @@ void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
 void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string rightSection) {
 	buffer iconSection;
 	iconSection.tagStart('td', attrmap { 'class': 'icon' });
-	iconSection.addItemIcon(it, 'Click for item description', true);
+	iconSection.addItemIcon(it, '', true);
 	iconSection.tagFinish('td');
 
 	pickerGenericOption(picker, verb, noun, desc, parenthetical, href, usable, iconSection, attrmap {}, rightSection);
@@ -1035,7 +1044,7 @@ void pickerItemOption(buffer picker, item it, string verb, string noun, string d
 *****************************************************/
 
 //ckb: function for effect descriptions to make them short and pretty, called by chit.effects.describe
-string parseMods(string evm, boolean span) {
+string parseMods(string evm, boolean span, boolean debug) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 
 	// Standardize capitalization
@@ -1056,6 +1065,27 @@ string parseMods(string evm, boolean span) {
 	}
 	paren.append_tail(enew);
 	evm = enew;
+
+	// Get rid of things people don't need to worry about in this context
+	matcher parse = create_matcher('Last Available: "[^"]+"'
+		+ '|Familiar Effect: "[^"]+"'
+		+ '|Softcore Only:? ?\\+?\\d*'
+		+ '|Single Equip'
+		+ '|Free Pull:? ?\\+?\\d*', evm);
+	evm = parse.replace_all("");
+
+	// cleanup extra commas from removing things
+	string old = evm;
+	evm = replace_string(evm,", ,",",");
+	while(old != evm) {
+		old = evm;
+		evm = replace_string(evm,", ,",",");
+	}
+	if(evm.ends_with(', ')) {
+		evm = evm.substring(0, evm.length() - 2);
+	}
+
+	if(debug) print(evm);
 
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
@@ -1091,7 +1121,7 @@ string parseMods(string evm, boolean span) {
 
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
 	enew.set_length(0);
-	matcher parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
+	parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
 		+"|([HM]P Regen )Min: (\\d+), \\3Max: (\\d+)"
 		+"|Maximum HP( Percent|): ([^,]+), Maximum MP\\6: ([^,]+)"
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
@@ -1217,12 +1247,15 @@ string parseMods(string evm, boolean span) {
 			if(elemental.group(2) == "Prismatic")
 				evm = replace_string(evm, elemental.group(1), prismatize(elemental.group(1)));
 			else
-				evm = replace_string(evm, elemental.group(1), "<span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
+				evm = replace_string(evm, elemental.group(1), " <span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
 		}
 	}
 
+	if(debug) print(evm);
+
 	return evm;
 }
+string parseMods(string evm, boolean span) { return parseMods(evm, span, false); }
 string parseMods(string evm) { return parseMods(evm, true); }
 
 string parseEff(effect ef, boolean span) {
@@ -1240,6 +1273,9 @@ string parseEff(effect ef, boolean span) {
 }
 string parseEff(effect ef) { return parseEff(ef, true); }
 
+string parseItem(item it) {
+	return string_modifier(it, "Evaluated Modifiers").parseMods(true, false);
+}
 
 
 /*****************************************************

@@ -135,6 +135,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 	item famsEquip = familiar_equipped_equipment(f);
 
 	chit_info info;
+	info.name = f.name + ' the ' + f;
 	info.image = itemimage(f.image);
 
 	if(isStandardFam) {
@@ -793,17 +794,12 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		info.addToDesc('recommended for ' + reason);
 	}
 
-	string titleStr = '';
-	if(title) {
-		titleStr = f.name + ' (the ' + f + ')';
-		if(info.desc != '') {
-			matcher m = create_matcher('<[^>]+>', info.desc);
-			string safeDesc = m.replace_all('');
-			titleStr += ' (' + safeDesc + ')';
-		}
+	if(info.desc != '') {
+		matcher m = create_matcher('<[^>]+>', info.desc);
+		info.desc = m.replace_all('');
 	}
 
-	result.addInfoIcon(info, titleStr, '');
+	result.addInfoIcon(info, info.name, info.desc, '');
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
