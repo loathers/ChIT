@@ -1669,10 +1669,17 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick, int upDanger) {
 	chit_info info = getItemInfo(it, to_slot(it), false, true);
+	if(upDanger > info.dangerLevel) {
+		info.dangerLevel = upDanger;
+	}
 	result.addInfoIcon(info, titlePrefix + info.name, info.desc,
 		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
+}
+
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+	addItemIcon(result, it, titlePrefix, popupDescOnClick, DANGER_GOOD);
 }
 
 void addItemIcon(buffer result, item it, string title) {

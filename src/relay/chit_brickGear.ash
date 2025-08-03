@@ -609,27 +609,18 @@ void pickerGear(slot s) {
 
 		switch(vars["chit.gear.layout"]) {
 		case "minimal":
-			b.append('<span><a class="');
-			if(take_action)
-				b.append('change');
-			else
-				b.append('icon');
-			b.append('" oncontextmenu="descitem(');
-			b.append(it.descid);
-			b.append(',0,event); return false;"');
-			if(take_action) {
-				b.append(' href="');
-				b.append(command);
-				b.append('"');
-			}
-			b.append('>');
-			if(take_action)
-				b.addItemIcon(it, action + ' ' + action_description + ' ');
-			else
-				b.addItemIcon(it);
-			if(take_action)
-				b.append('</a>');
-			b.append('</span>');
+			b.tagStart('div', attrmap {
+				'class': 'chit_flexitem',
+				'style': 'order:' + danger_level + ';',
+			});
+			b.tagStart('a', attrmap {
+				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
+				'href': command,
+				'class': 'change',
+			});
+			b.addItemIcon(it, action + ' ' + action_description + ' ', false, danger_level);
+			b.tagFinish('a');
+			b.tagFinish('div');
 			break;
 
 		case "oldschool":
@@ -875,9 +866,9 @@ void pickerGear(slot s) {
 
 			boolean shield; // Make sure there is at least one shield!
 
-			// For minimal, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
-			int amount = vars["chit.gear.layout"] == "minimal"? 11
-				: any_options? 4: 11;
+			// For minimal, space isn't an issue so show ten. Otherwise If there are recommended options, show only 5 additional items
+			int amount = vars["chit.gear.layout"] == "minimal"? 9
+				: any_options? 4: 9;
 			for x from 0 to min(count(avail) - 1, amount) {
 				picker.add_gear_option(avail[x], name);
 				if(item_type(avail[x]) == "shield")
