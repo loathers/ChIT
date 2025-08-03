@@ -765,13 +765,6 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
 
-	if(includeMods) {
-		string parsedMods = parseItem(it);
-		if(parsedMods != '') {
-			info.addToDesc(parsedMods);
-		}
-	}
-
 	switch(it) {
 		case $item[none]:
 			info.image = itemimage('blank.gif');
@@ -1649,6 +1642,16 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	if(stripHtml) {
 		matcher htmlRemover = create_matcher('<[^>]+>', info.desc);
 		info.desc = htmlRemover.replace_all('');
+	}
+
+	if(includeMods) {
+		string parsedMods = parseItem(it);
+		if(parsedMods != '') {
+			if(info.desc != '') {
+				info.addToDesc('&nbsp;');
+			}
+			info.addToDesc(parsedMods);
+		}
 	}
 
 	return info;
