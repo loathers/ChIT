@@ -764,6 +764,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
+	string extraMods = '';
 
 	switch(it) {
 		case $item[none]:
@@ -1201,6 +1202,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			if(currPiece == '') {
 				currPiece = 'none';
 			}
+			extraMods = ', ' + string_modifier('Edpiece:' + currPiece, 'Evaluated Modifiers');
 			info.addExtra(extraInfoPicker('edpiece','<b>Change</b> decoration (currently ' + currPiece + ')',
 				edpieceToImage(currPiece)));
 			break;
@@ -1598,6 +1600,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
+		case $item[your cowboy boots]: {
+			foreach s in $slots[bootskin, bootspur] {
+				extraMods += ", " + string_modifier(equipped_item(s), "Evaluated Modifiers");
+			}
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1645,7 +1653,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	if(includeMods) {
-		string parsedMods = parseItem(it);
+		string parsedMods = parseItem(it, extraMods);
 		if(parsedMods != '') {
 			if(info.desc != '') {
 				info.addToDesc('&nbsp;');
