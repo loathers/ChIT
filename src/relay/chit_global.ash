@@ -1071,15 +1071,20 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|Familiar Effect: "[^"]+"'
 		+ '|Softcore Only:? ?\\+?\\d*'
 		+ '|Single Equip'
+		+ '|Equipped Conditional Skill ?: "[^"]+"'
+		+ '|Lasts Until Rollover'
+		+ '|[^,:]+: 0'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
 	// cleanup extra commas from removing things
 	string old = evm;
 	evm = replace_string(evm,", ,",",");
+	evm = replace_string(evm,",,",",");
 	while(old != evm) {
 		old = evm;
 		evm = replace_string(evm,", ,",",");
+		evm = replace_string(evm,",,",",");
 	}
 	if(evm.ends_with(', ')) {
 		evm = evm.substring(0, evm.length() - 2);
@@ -1245,7 +1250,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		matcher elemental = create_matcher("([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]*)(?:,|$)", evm);
 		while(elemental.find()) {
 			if(elemental.group(2) == "Prismatic")
-				evm = replace_string(evm, elemental.group(1), prismatize(elemental.group(1)));
+				evm = replace_string(evm, elemental.group(1), ' ' + prismatize(elemental.group(1)));
 			else
 				evm = replace_string(evm, elemental.group(1), " <span class=mod"+elemental.group(2)+">"+elemental.group(1)+"</span>");
 		}
