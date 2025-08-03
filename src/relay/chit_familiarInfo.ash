@@ -786,7 +786,7 @@ chit_info getFamiliarInfo(familiar f) {
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason, string wrappingElement, attrmap wrappingElementAttrs) {
 	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
 
 	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
@@ -799,15 +799,15 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		info.desc = m.replace_all('');
 	}
 
-	result.addInfoIcon(info, info.name, info.desc, '');
+	result.addInfoIcon(info, info.name, info.desc, '', wrappingElement, wrappingElementAttrs);
 }
 
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
-	addFamiliarIcon(result, f, isBjorn, title, "");
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason) {
+	addFamiliarIcon(result, f, isBjorn, reason, '', attrmap {});
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
-	addFamiliarIcon(result, f, isBjorn, true);
+	addFamiliarIcon(result, f, isBjorn, "");
 }
 
 void addFamiliarIcon(buffer result, familiar f) {

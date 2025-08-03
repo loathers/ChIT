@@ -498,11 +498,12 @@ void pickerFamiliar(familiar current, string cmd, string display)
 				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
 				anyIcons = true;
 			}
-			picker.append('<span><a class="change" href="');
-			picker.append(sideCommand(cmd + ' ' + f));
-			picker.append('">');
-			picker.addFamiliarIcon(f, cmd != "familiar", true, reason);
-			picker.append('</a></span>');
+			picker.append('<span>');
+			picker.addFamiliarIcon(f, cmd != "familiar", reason, 'a', attrmap {
+				'class': 'change',
+				'href': sideCommand(cmd + ' ' + f),
+			});
+			picker.append('</span>');
 			famsAdded[f] = true;
 			return true;
 		}
@@ -884,7 +885,7 @@ void FamPoke()
 		}
 		result.append('<tr');
 		result.append('><td class="icon">');
-		result.addFamiliarIcon(f, false, false);
+		result.addFamiliarIcon(f, false);
 		result.append('</td><td>');
 		result.append(f.name);
 		result.append(' (Lvl ');
@@ -1214,11 +1215,13 @@ void bakeFamiliar() {
 	if(famInfo.weirdoTag != '') result.append('weird');
 	result.append('icon" title="' + hover_famicon + '">');
 	if (protect) {
-		result.addFamiliarIcon(myfam, false, false);
+		result.addFamiliarIcon(myfam, false);
 	} else {
-		result.append('<a href="#" class="chit_launcher" rel="chit_pickerfamiliar">');
-		result.addFamiliarIcon(myfam, false, false);
-		result.append('</a>');
+		result.addFamiliarIcon(myfam, false, '', 'a', attrmap {
+			'href': '#',
+			'class': 'chit_launcher',
+			'rel': 'chit_pickerfamiliar',
+		});
 	}
 	result.append('</td>');
 	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + famInfo.desc + '</td>');
