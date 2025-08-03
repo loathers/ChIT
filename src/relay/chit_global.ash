@@ -1287,7 +1287,7 @@ string parseItem(item it) {
 			}
 			break;
 	}
-	return evm.parseMods(true, it == $item[combat lover's locket]);
+	return evm.parseMods(true);
 }
 
 
