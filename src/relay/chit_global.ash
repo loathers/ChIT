@@ -1048,7 +1048,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 
 	// Standardize capitalization
-	matcher uncap = create_matcher("\\b[a-z]", evm);
+	matcher uncap = create_matcher("(?:^|[^'])\\b[a-z]", evm);
 	while(uncap.find())
 		uncap.append_replacement(enew, to_upper_case(uncap.group(0)));
 	uncap.append_tail(enew);
