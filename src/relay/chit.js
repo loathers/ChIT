@@ -96,7 +96,8 @@ $(document).ready(function () {
 					top: arrowY != null ? `${arrowY}px` : "",
 					right: "",
 					bottom: "",
-					[staticSide]: '-4px',
+					[staticSide]: '-3px',
+					'border-width': '1px 0px 0px 1px',
 				});
 			});
 		}

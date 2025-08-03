@@ -1149,8 +1149,8 @@ div.chit_left-handman {
 .chit_popoverarrow {
 	position: absolute;
 	background: white;
-	width: 8px;
-	height: 8px;
+	width: 4px;
+	height: 4px;
 	transform: rotate(45deg);
 	border-color: black;
 	border-width: 1px;
