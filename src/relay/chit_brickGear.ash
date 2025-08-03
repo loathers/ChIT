@@ -613,13 +613,11 @@ void pickerGear(slot s) {
 				'class': 'chit_flexitem',
 				'style': 'order:' + danger_level + ';',
 			});
-			b.tagStart('a', attrmap {
+			b.addItemIcon(it, action + ' ' + action_description + ' ', false, danger_level, 'a', attrmap {
 				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
 				'href': command,
 				'class': 'change',
 			});
-			b.addItemIcon(it, action + ' ' + action_description + ' ', false, danger_level);
-			b.tagFinish('a');
 			b.tagFinish('div');
 			break;
 
@@ -711,7 +709,7 @@ void pickerGear(slot s) {
 			case "minimal":
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				temp.append(name);
-				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			default:
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
@@ -738,7 +736,7 @@ void pickerGear(slot s) {
 			case "oldschool":
 				break;
 			case "minimal":
-				temp.append('</td></tr>');
+				temp.append('</div></td></tr>');
 				break;
 			default:
 				temp.append('</div></td></tr>');

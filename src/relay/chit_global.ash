@@ -126,7 +126,7 @@ void addImg(buffer result, string imgSrc, attrmap attrs);
 
 int popoverCount = 0;
 
-void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick) {
+void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick, string wrappingElement, attrmap wrappingElementAttrs) {
 	string imgClass = 'chit_icon';
 
 	if(info.hasDrops == DROPS_SOME) {
@@ -169,6 +169,10 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		imgAttrs['style'] = info.customStyle;
 	}
 
+	if(wrappingElement != '') {
+		result.tagStart(wrappingElement, wrappingElementAttrs);
+	}
+
 	if(info.weirdoDivContents == '' || vars['chit.familiar.iconize-weirdos'].to_boolean()) {
 		result.addImg(info.image, imgAttrs);
 	}
@@ -176,6 +180,10 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		result.tagStart('div', imgAttrs);
 		result.append(info.weirdoDivContents);
 		result.tagFinish('div');
+	}
+
+	if(wrappingElement != '') {
+		result.tagFinish(wrappingElement);
 	}
 
 	if(title != '') {
@@ -205,6 +213,10 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		result.tagFinish('div');
 		result.tagFinish('div');
 	}
+}
+
+void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick) {
+	addInfoIcon(result, info, title, desc, onclick, '', attrmap {});
 }
 
 void addInfoIcon(buffer result, chit_info info, string title, string onclick) {
