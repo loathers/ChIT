@@ -1279,7 +1279,15 @@ string parseEff(effect ef, boolean span) {
 string parseEff(effect ef) { return parseEff(ef, true); }
 
 string parseItem(item it) {
-	return string_modifier(it, "Evaluated Modifiers").parseMods(true, false);
+	string evm = string_modifier(it, "Evaluated Modifiers");
+	switch(it) {
+		case $item[your cowboy boots]:
+			foreach s in $slots[bootskin, bootspur] {
+				evm += ", " + string_modifier(equipped_item(s), "Evaluated Modifiers");
+			}
+			break;
+	}
+	return evm.parseMods(true, it == $item[combat lover's locket]);
 }
 
 
