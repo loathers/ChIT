@@ -4,6 +4,8 @@ var floorOffset = 4;
 
 var activePicker = null;
 
+var fuidom = window.FloatingUIDOM;
+
 $(document).ready(function () {
 
 	//Picker Launchers
@@ -63,16 +65,43 @@ $(document).ready(function () {
 	});
 
 	// Popover Launchers
-	$(".chit_popoverlauncher").each(function() {
+	$(".chit_popoverlauncher").each(function(e) {
 		var popoverId = $(this).attr("aria-describedby");
 		var popover = $("#" + popoverId);
+		var popoverArrow = $("#arrow" + popoverId);
 
 		function showTooltip() {
-			popover.style.display = "block";
-			console.log('heck');
+			popover.css("display", "block");
+			fuidom.computePosition($(this)[0], popover[0], {
+				middleware: [
+					fuidom.offset(6),
+					fuidom.shift({padding: 5}),
+					fuidom.arrow({element: popoverArrow[0]}),
+				],
+			}).then(({x, y, placement, middlewareData}) => {
+				Object.assign(popover[0].style, {
+					left: `${x}px`,
+					top: `${y}px`,
+				});
+
+				const {x: arrowX, y: arrowY} = middlewareData.arrow;
+				const staticSide = {
+					top: 'bottom',
+					right: 'left',
+					bottom: 'top',
+					left: 'right',
+				}[placement.split("-")[0]];
+				Object.assign(popoverArrow[0].style, {
+					left: arrowX != null ? `${arrowX}px` : "",
+					top: arrowY != null ? `${arrowY}px` : "",
+					right: "",
+					bottom: "",
+					[staticSide]: '-4px',
+				});
+			});
 		}
 		function hideTooltip() {
-			popover.style.display = '';
+			popover.css("display", "");
 		}
 
 		[
@@ -81,8 +110,7 @@ $(document).ready(function () {
 			['focus', showTooltip],
 			['blur', hideTooltip],
 		].forEach(([event, listener]) => {
-			console.log('heck');
-			//$(this).addEventListener(event, listener);
+			$(this).bind(event, listener);
 		});
 	});
 	

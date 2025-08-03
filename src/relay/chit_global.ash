@@ -189,6 +189,11 @@ void addInfoIcon(buffer result, chit_info info, string title, string onclick, bo
 			'role': 'tooltip',
 		});
 		result.append(title);
+		result.tagStart('div', attrmap {
+			'id': 'arrowpopover' + popoverCount,
+			'class': 'chit_popoverarrow',
+		});
+		result.tagFinish('div');
 		result.tagFinish('div');
 	}
 }
