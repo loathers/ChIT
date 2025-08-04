@@ -1663,7 +1663,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		info.desc = htmlRemover.replace_all('');
 	}
 
-	if(includeMods) {
+	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
 		string parsedMods = parseItem(it, extraMods);
 		if(parsedMods != '') {
 			if(info.desc != '') {

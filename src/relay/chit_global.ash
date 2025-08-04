@@ -155,9 +155,16 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		'class': imgClass,
 	};
 	if(title != '') {
-		++popoverCount;
-		imgAttrs['class'] += ' chit_popoverlauncher';
-		imgAttrs['aria-describedby'] = 'popover' + popoverCount;
+		if(vars['chit.display.popovers'].to_boolean()) {
+			++popoverCount;
+			imgAttrs['class'] += ' chit_popoverlauncher';
+			imgAttrs['aria-describedby'] = 'popover' + popoverCount;
+		} else {
+			imgAttrs['title'] = title;
+			if(desc != '') {
+				imgAttrs['title'] += ' (' + desc + ')';
+			}
+		}
 	}
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
@@ -186,7 +193,7 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		result.tagFinish(wrappingElement);
 	}
 
-	if(title != '') {
+	if(title != '' && vars['chit.display.popovers'].to_boolean()) {
 		result.tagStart('div', attrmap {
 			'id': 'popover' + popoverCount,
 			'class': 'popover',

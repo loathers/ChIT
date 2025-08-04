@@ -371,7 +371,13 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - Default: false
 
 - chit.autoscroll: Remembers the scroll of your walls when the charpane refreshes (true/false)
+
   - Default: true
+
+- chit.display.popovers: If true, show popovers with a little extra detail instead of using html
+  title text for some things. Will eventually default to true.
+
+  - Default: false
 
 # Credits
 

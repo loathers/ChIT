@@ -769,7 +769,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 			info.addDrop(bjornDrops[f]);
 		}
 
-		if(info.desc != '') {
+		if(info.desc != '' && vars['chit.display.popovers'].to_boolean()) {
 			info.addToDesc('&nbsp;');
 		}
 		info.addToDesc(parseMods(string_modifier('Throne:' + f, 'Evaluated Modifiers')));
