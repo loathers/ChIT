@@ -1234,13 +1234,28 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}));
 			break;
 		case $item[fish hatchet]:
-			string floundryText = '<b>Get</b> Wood';
-			// intentional fallthrough
 		case $item[codpiece]:
-			if(floundryText == '') floundryText = '<b>Wring</b> Out';
-			// intentional fallthrough one more time
 		case $item[bass clarinet]:
-			if(floundryText == '') floundryText = '<b>Drain</b> Spit';
+			string floundryText = '';
+			string dropName = '';
+			switch(it) {
+				case $item[fish hatchet]:
+					floundryText = '<b>Get</b> Wood';
+					dropName = 'bridge wood';
+					break;
+				case $item[codpiece]:
+					floundryText = '<b>Wring</b> Out';
+					dropName = "bubblin' crude";
+					break;
+				case $item[bass clarinet]:
+					floundryText = '<b>Drain</b> Spit';
+					dropName = 'white pixels';
+					break;
+				default:
+					print('wtf happened, ' + it + ' is not a floundry item', 'red');
+					break;
+			}
+			info.addDrop(new drop_info('_floundryItemUsed', LIMIT_BOOL, dropName));
 			if(!get_property('_floundryItemUsed').to_boolean()) {
 				info.addExtra(extraInfoLink(floundryText, attrmap {
 					'class': 'change',
