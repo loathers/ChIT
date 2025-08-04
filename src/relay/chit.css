@@ -1145,6 +1145,7 @@ div.chit_left-handman {
 	border-color: black;
 	border-width: 1px;
 	border-style: solid;
+	z-index: 1;
 }
 
 .chit_popoverarrow {
