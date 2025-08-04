@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28604; // wildsun 1/day tracking
+since r28609; // my_paradoxicity
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
