@@ -2787,8 +2787,14 @@ void addOrgan(buffer result, string organ, boolean showBars, int current, int li
 	int sev = severity(organ, current, limit);
 	result.append('<tr><td class="label">'+organ+'</td>');
 	result.append('<td class="info">' + current + ' / ' + limit + '</td>');
-	if(showBars) result.append('<td class="progress">' + progressCustom(current, limit, message(organ, sev), sev, eff) + '</td></tr>');
+	if(showBars) {
+		result.tagStart('td', attrmap { 'class': 'progress' });
+		result.progressCustom(current, limit, message(organ, sev), sev, eff);
+		result.tagFinish('td');
+	}
+	result.append('</tr>');
 }
+
 
 void addStomach(buffer result, boolean showBars) {
 	if(can_eat() && fullness_limit() > 0)
@@ -2916,7 +2922,9 @@ void addMCD(buffer result, boolean bake) {
 		mcdpage = "heydeze.php";
 		mcdchange = "";
 		mcdSettable = false;
-		progress = progressCustom(current_mcd(), mcdmax, mcdtitle, 5, false);
+		buffer temp;
+		temp.progressCustom(current_mcd(), mcdmax, mcdtitle, 5, false);
+		progress = temp;
 
 	// Unknown?
 	} else {
@@ -2930,9 +2938,11 @@ void addMCD(buffer result, boolean bake) {
 		progress = '<span title="You don\'t have access to a MCD">N/A</span>';
 	}
 
-	if(mcdSettable)
-		progress = progressCustom(current_mcd(), mcdmax, mcdtitle, 5, false);
-	else if(bake)
+	if(mcdSettable) {
+		buffer temp;
+		temp.progressCustom(current_mcd(), mcdmax, mcdtitle, 5, false);
+		progress = temp;
+	} else if(bake)
 		return;
 
 	if(bake) {
@@ -3086,7 +3096,7 @@ void bakeStats() {
 		}
 	}
 
-	string progressTub(string s, int val) {
+	void progressTub(buffer result, string s, int val) {
 		int begin;
 		switch(s) {
 		case "Crew":
@@ -3105,7 +3115,7 @@ void bakeStats() {
 			if(val < begin/2) return 3;
 			return 2;
 		}
-		return progressCustom(to_int(val), begin, sev(), false);
+		result.progressCustom(to_int(val), begin, sev(), false);
 	}
 
 	void addBathtub() {
@@ -3115,8 +3125,11 @@ void bakeStats() {
 				result.append('<tr>');
 				result.append('<td class="label">'+tub.group(1)+'</td>');
 				result.append('<td class="info">' + tub.group(2) + '</td>');
-				if(to_boolean(vars["chit.stats.showbars"]))
-					result.append('<td class="progress">' + progressTub(tub.group(1), tub.group(2).to_int()) + '</td>');
+				if(to_boolean(vars["chit.stats.showbars"])) {
+					result.tagStart('td', attrmap { 'class': 'progress' });
+					result.progressTub(tub.group(1), tub.group(2).to_int());
+					result.tagFinish('td');
+				}
 				result.append('</tr>');
 			}
 		}
@@ -3155,13 +3168,18 @@ void bakeStats() {
 			result.append('<td class="info">' + my_hp() + '&nbsp;/&nbsp;' + my_maxhp() + '</td>');
 		}
 		if(showBars) {
+			result.tagStart('td', attrmap { 'class': 'progress' });
 			if(health.contains_text("restore+HP")) {
-				result.append('<td class="progress"><a href="' + sideCommand("restore hp") + '">'
-					+ progressCustom(my_hp(), my_maxhp(), "Restore your HP", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</a></td>');
+				result.progressCustom(my_hp(), my_maxhp(), "Restore your HP",
+					severity_hpmp(my_hp(), my_maxhp(),
+					to_float(get_property("hpAutoRecovery"))), false,
+					'a', attrmap { 'href': sideCommand('restore hp') });
 			} else {
-				result.append('<td class="progress">'
-					+ progressCustom(my_hp(), my_maxhp(), "auto", severity_hpmp(my_hp(), my_maxhp(), to_float(get_property("hpAutoRecovery"))), false) + '</td>');
+				result.progressCustom(my_hp(), my_maxhp(), "auto",
+					severity_hpmp(my_hp(), my_maxhp(),
+					to_float(get_property("hpAutoRecovery"))), false);
 			}
+			result.tagFinish('td');
 		}
 		result.append('</tr>');
 	}
@@ -3179,7 +3197,9 @@ void bakeStats() {
 				result.append("MP: " + my_mp() + " / " + my_maxmp());
 				result.append('">PP</td><td class="info">' + ppcurr + '&nbsp;/&nbsp;' + ppmax + '</td>');
 				if(showBars) {
-					result.append('<td class="progress">' + progressCustom(ppcurr, ppmax, "auto", severity_hpmp(ppcurr, ppmax, 0), false) + '</td>');
+					result.tagStart('td', attrmap { 'class': 'progress' });
+					result.progressCustom(ppcurr, ppmax, "auto", severity_hpmp(ppcurr, ppmax, 0), false);
+					result.tagFinish('td');
 				}
 				result.append('</tr>');
 			}
@@ -3214,13 +3234,18 @@ void bakeStats() {
 		}
 
 		if(showBars) {
+			result.tagStart('td', attrmap { 'class': 'progress' });
 			if(health.contains_text("restore+MP")) {
-				result.append('<td class="progress"><a href="' + sideCommand("restore mp") + '">'
-					+ progressCustom(my_mp(), my_maxmp(), "Restore your MP", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</a></td>');
+				result.progressCustom(my_mp(), my_maxmp(), "Restore your MP",
+					severity_hpmp(my_mp(), my_maxmp(),
+					to_float(get_property("mpAutoRecovery"))), false,
+					'a', attrmap { 'href': sideCommand('restore mp') });
 			} else {
-				result.append('<td class="progress">'
-					+ progressCustom(my_mp(), my_maxmp(), "auto", severity_hpmp(my_mp(), my_maxmp(), to_float(get_property("mpAutoRecovery"))), false) + '</td>');
+				result.progressCustom(my_mp(), my_maxmp(), "auto",
+					severity_hpmp(my_mp(), my_maxmp(),
+					to_float(get_property("mpAutoRecovery"))), false);
 			}
+			result.tagFinish('td');
 		}
 		result.append('</tr>');
 	}
@@ -3234,7 +3259,12 @@ void bakeStats() {
 				result.append('<tr>');
 				result.append('<td class="label">Axel</td>');
 				result.append('<td class="info">' + courage + ' / 50</td>');
-				if (showBars) result.append('<td class="progress">' + progressCustom(courage, 50, "Axel Courage", severity(courage, 40, 10), false) + '</td>');
+				if (showBars) {
+					result.tagStart('td', attrmap { 'class': 'progress' });
+					result.progressCustom(courage, 50, "Axel Courage",
+						severity(courage, 40, 10), false);
+					result.tagFinish('td');
+				}
 				result.append('</tr>');
 			}
 		}
@@ -4468,7 +4498,6 @@ void bakeValhalla() {
 	result.append('</table>');
 
 
-	string progress = "";
 	result.append('<table id="chit_stats" class="chit_brick nospace">');
 
 	//Heading
@@ -4478,7 +4507,8 @@ void bakeValhalla() {
 	result.append('</tr>');
 	result.append('</thead>');
 
-	progress = progressCustom(0, 10000, "&infin; / &infin;", -1, false);
+	buffer progress;
+	progress.progressCustom(0, 10000, "&infin; / &infin;", -1, false);
 
 	//Muscle
 	result.append('<tr>');

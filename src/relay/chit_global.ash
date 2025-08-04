@@ -731,11 +731,12 @@ void progressSubStats(buffer result, stat s) {
 		'td', attrmap { 'class': 'progress' });
 }
 
-string progressCustom(int current, int limit, string hover, int severity, boolean active) {
+void progressCustom(buffer result, int current, int limit, string hover,
+	int severity, boolean active, string wrappingEle, attrmap wrappingEleAttrs) {
 
 	string color = "";
 	string title = "";
-	string border = "";
+	string desc = "";
 
 	switch (severity) {
 		case -1	: color = "#D0D0D0"; 	break;		//disabled
@@ -751,21 +752,26 @@ string progressCustom(int current, int limit, string hover, int severity, boolea
 	string title() { return current + ' / ' + limit; }
 	switch (hover) {
 		case "" : title = ""; break;
-		case "auto": title = ' title="' + title() + '"'; break;
-		default: title = ' title="' + hover +' ('+ title() +')"';
+		case "auto": title = title(); break;
+		default: title = hover; desc = title(); break;
 	}
-	if (active) border = ' style="border-color:#707070"';
+	attrmap divAttrs = { 'class': 'progressbox' };
+	if (active) divAttrs['style'] = 'border-color:#707070';
 	if (limit == 0) limit = 1;
-
 	float progress = (min(current, limit) * 100.0) / limit;
-	buffer result;
-	result.append('<div class="progressbox"' + title + border + '>');
-	result.append('<div class="progressbar" style="width:' + progress + '%;background-color:' + color + '"></div>');
-	result.append('</div>');
-	return result.to_string();
+
+	result.addElementWithPopover('div',
+		'<div class="progressbar" style="width:' + progress + '%;background-color:' + color + '"></div>',
+		divAttrs, title, desc, wrappingEle, wrappingEleAttrs);
 }
-string progressCustom(int current, int limit, int severity, boolean active) {
-	return progressCustom(current, limit, current + ' / ' + limit, severity, active);
+
+void progressCustom(buffer result, int current, int limit, string hover,
+	int severity, boolean active) {
+	result.progressCustom(current, limit, hover, severity, active, '', attrmap {});
+}
+
+void progressCustom(buffer result, int current, int limit, int severity, boolean active) {
+	result.progressCustom(current, limit, current + ' / ' + limit, severity, active);
 }
 
 /*****************************************************
