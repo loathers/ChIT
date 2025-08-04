@@ -491,7 +491,7 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	boolean [familiar] famsAdded;
 
 	boolean tryAddFamiliar(familiar f, string reason) {
-		if(f == current)
+		if(f == current || (correspondingSlot != $slot[familiar] && string_modifier('Throne:' + f, 'Evaluated Modifiers') == 'none'))
 			return true;
 		if(have_familiar(f) && be_good(f) && !famsAdded[f]) {
 			if(!anyIcons) {
