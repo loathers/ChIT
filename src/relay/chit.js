@@ -4,6 +4,8 @@ var floorOffset = 4;
 
 var activePicker = null;
 
+var fuidom = window.FloatingUIDOM;
+
 $(document).ready(function () {
 
 	//Picker Launchers
@@ -62,6 +64,64 @@ $(document).ready(function () {
 		$(".chit_skeleton").hide();
 	});
 
+	// Popover Launchers
+	$(".chit_popoverlauncher").each(function(e) {
+		var popoverId = $(this).attr("aria-describedby");
+		var popover = $("#" + popoverId);
+		var popoverArrow = $("#arrow" + popoverId);
+
+		function showTooltip() {
+			popover.css("display", "block");
+			fuidom.computePosition($(this)[0], popover[0], {
+				middleware: [
+					fuidom.offset(6),
+					fuidom.shift({padding: 5}),
+					fuidom.autoPlacement(),
+					fuidom.arrow({element: popoverArrow[0]}),
+				],
+			}).then(({x, y, placement, middlewareData}) => {
+				Object.assign(popover[0].style, {
+					left: `${x}px`,
+					top: `${y}px`,
+				});
+
+				const {x: arrowX, y: arrowY} = middlewareData.arrow;
+				const staticSide = {
+					top: 'bottom',
+					right: 'left',
+					bottom: 'top',
+					left: 'right',
+				}[placement.split("-")[0]];
+				Object.assign(popoverArrow[0].style, {
+					left: arrowX != null ? `${arrowX}px` : "",
+					top: arrowY != null ? `${arrowY}px` : "",
+					right: "",
+					bottom: "",
+					[staticSide]: '-3px',
+					'border-width':
+						staticSide === 'top'
+						? '1px 0px 0px 1px'
+						: staticSide === 'bottom'
+						? '0px 1px 1px 0px'
+						: staticSide === 'left'
+						? '0px 0px 1px 1px'
+						: '1px 1px 0px 0px',
+				});
+			});
+		}
+		function hideTooltip() {
+			popover.css("display", "");
+		}
+
+		[
+			['mouseenter', showTooltip],
+			['mouseleave', hideTooltip],
+			['focus', showTooltip],
+			['blur', hideTooltip],
+		].forEach(([event, listener]) => {
+			$(this).bind(event, listener);
+		});
+	});
 	
 	//Tool Launchers
 	$(".tool_launcher").live("click", function(e) {

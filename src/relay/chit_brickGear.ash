@@ -384,11 +384,14 @@ void pickerGear(slot s) {
 	// for use with custom context suggestions
 	void start_option(item it) {
 		# any_options = true;
-		picker.append('<tr class="pickitem"><td class="icon"><a class="done" href="#" oncontextmenu="descitem(');
-		picker.append(it.descid);
-		picker.append(',0,event); return false;" onclick="descitem(' + it.descid + ',0,event)">');
-		picker.addItemIcon(it, "Click for item description");
-		picker.append('</a></td>');
+		picker.append('<tr class="pickitem"><td class="icon">');
+		picker.addItemIcon(it, '', false, DANGER_GOOD, 'a', attrmap {
+			'class': 'done',
+			'href': '#',
+			'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
+			'onclick': 'descitem(' + it.descid + '0,event); return false;',
+		});
+		picker.append('</td>');
 	}
 
 	foreach i, extra in info.extra {
@@ -609,37 +612,26 @@ void pickerGear(slot s) {
 
 		switch(vars["chit.gear.layout"]) {
 		case "minimal":
-			b.append('<span><a class="');
-			if(take_action)
-				b.append('change');
-			else
-				b.append('icon');
-			b.append('" oncontextmenu="descitem(');
-			b.append(it.descid);
-			b.append(',0,event); return false;"');
-			if(take_action) {
-				b.append(' href="');
-				b.append(command);
-				b.append('"');
-			}
-			b.append('>');
-			if(take_action)
-				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Left click to ' + action + ' ' + action_description + '&#013;Right click for description');
-			else
-				b.addItemIcon(it, namedesc(optionInfo) + '&#013;Right click for description');
-			if(take_action)
-				b.append('</a>');
-			b.append('</span>');
+			b.tagStart('div', attrmap {
+				'class': 'chit_flexitem',
+				'style': 'order:' + danger_level + ';',
+			});
+			b.addItemIcon(it, action + ' ' + action_description + ' ', false, danger_level, 'a', attrmap {
+				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
+				'href': command,
+				'class': 'change',
+			});
+			b.tagFinish('div');
 			break;
 
 		case "oldschool":
-			b.append('<tr class="pickitem"><td class="icon"><a oncontextmenu="descitem(');
-			b.append(it.descid);
-			b.append(',0,event); return false;" onclick="descitem(');
-			b.append(it.descid);
-			b.append(',0,event)" href="#">');
-			b.addItemIcon(it,"Click for item description");
-			b.append('</a></td><td>');
+			b.append('<tr class="pickitem"><td class="icon">');
+			b.addItemIcon(it, '', false, DANGER_GOOD, 'a', attrmap {
+				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
+				'onclick': 'descitem(' + it.descid + ',0,event); return false;',
+				'href': '#',
+			});
+			b.append('</td><td>');
 			if(take_action) {
 				b.append('<a class="change" href="');
 				b.append(command);
@@ -670,14 +662,14 @@ void pickerGear(slot s) {
 		default:
 			b.append('<div class="chit_flexitem" style="order:');
 			b.append(danger_level);
-			b.append(';"><div><a oncontextmenu="descitem(');
-			b.append(it.descid);
-			b.append(',0,event); return false;" onclick="descitem(');
-			b.append(it.descid);
-			b.append(',0,event)" href="#">');
+			b.append(';"><div>');
 
-			b.addItemIcon(it,"Click for item description");
-			b.append('</a></div><div style="max-width:160px;">');
+			b.addItemIcon(it, '', false, DANGER_GOOD, 'a', attrmap {
+				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
+				'onclick': 'descitem(' + it.descid + ',0,event); return false',
+				'href': '#',
+			});
+			b.append('</div><div style="max-width:160px;">');
 			//b.add_favorite_button(it);
 			if(take_action) {
 				b.append('<a class="change" href="');
@@ -720,7 +712,7 @@ void pickerGear(slot s) {
 			case "minimal":
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
 				temp.append(name);
-				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3">');
+				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			default:
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
@@ -747,7 +739,7 @@ void pickerGear(slot s) {
 			case "oldschool":
 				break;
 			case "minimal":
-				temp.append('</td></tr>');
+				temp.append('</div></td></tr>');
 				break;
 			default:
 				temp.append('</div></td></tr>');
@@ -875,9 +867,9 @@ void pickerGear(slot s) {
 
 			boolean shield; // Make sure there is at least one shield!
 
-			// For minimal, space isn't an issue so show a dozen. Otherwise If there are recommended options, show only 5 additional items
-			int amount = vars["chit.gear.layout"] == "minimal"? 11
-				: any_options? 4: 11;
+			// For minimal, space isn't an issue so show ten. Otherwise If there are recommended options, show only 5 additional items
+			int amount = vars["chit.gear.layout"] == "minimal"? 9
+				: any_options? 4: 9;
 			for x from 0 to min(count(avail) - 1, amount) {
 				picker.add_gear_option(avail[x], name);
 				if(item_type(avail[x]) == "shield")
@@ -1006,11 +998,13 @@ void addGear(buffer result) {
 			}
 			break;
 		}
-		result.append('<span><a class="chit_launcher" rel="chit_pickergear');
-		result.append(s);
-		result.append('" href="#">');
-		result.addItemIcon(equipped_item(s), s + ": " + namedesc(getItemInfo(equipped_item(s), s, true)));
-		result.append('</a></span>');
+		result.append('<span>');
+		result.addItemIcon(equipped_item(s), s + ": ", false, DANGER_GOOD, 'a', attrmap {
+			'class': 'chit_launcher',
+			'rel': 'chit_pickergear' + s,
+			'href': '#',
+		});
+		result.append('</span>');
 		pickerGear(s);
 	}
 

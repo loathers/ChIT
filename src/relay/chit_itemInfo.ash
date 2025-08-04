@@ -760,10 +760,11 @@ void picker_alliedradio() {
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
 
-chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
+	string extraMods = '';
 
 	switch(it) {
 		case $item[none]:
@@ -1201,6 +1202,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			if(currPiece == '') {
 				currPiece = 'none';
 			}
+			extraMods = ', ' + string_modifier('Edpiece:' + currPiece, 'Evaluated Modifiers');
 			info.addExtra(extraInfoPicker('edpiece','<b>Change</b> decoration (currently ' + currPiece + ')',
 				edpieceToImage(currPiece)));
 			break;
@@ -1232,13 +1234,28 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			}));
 			break;
 		case $item[fish hatchet]:
-			string floundryText = '<b>Get</b> Wood';
-			// intentional fallthrough
 		case $item[codpiece]:
-			if(floundryText == '') floundryText = '<b>Wring</b> Out';
-			// intentional fallthrough one more time
 		case $item[bass clarinet]:
-			if(floundryText == '') floundryText = '<b>Drain</b> Spit';
+			string floundryText = '';
+			string dropName = '';
+			switch(it) {
+				case $item[fish hatchet]:
+					floundryText = '<b>Get</b> Wood';
+					dropName = 'bridge wood';
+					break;
+				case $item[codpiece]:
+					floundryText = '<b>Wring</b> Out';
+					dropName = "bubblin' crude";
+					break;
+				case $item[bass clarinet]:
+					floundryText = '<b>Drain</b> Spit';
+					dropName = 'white pixels';
+					break;
+				default:
+					print('wtf happened, ' + it + ' is not a floundry item', 'red');
+					break;
+			}
+			info.addDrop(new drop_info('_floundryItemUsed', LIMIT_BOOL, dropName));
 			if(!get_property('_floundryItemUsed').to_boolean()) {
 				info.addExtra(extraInfoLink(floundryText, attrmap {
 					'class': 'change',
@@ -1594,6 +1611,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			info.addToDesc(my_paradoxicity() + ' paradoxicity');
 			break;
 		}
+		case $item[your cowboy boots]: {
+			foreach s in $slots[bootskin, bootspur] {
+				extraMods += ", " + string_modifier(equipped_item(s), "Evaluated Modifiers");
+			}
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1640,7 +1663,21 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 		info.desc = htmlRemover.replace_all('');
 	}
 
+	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
+		string parsedMods = parseItem(it, extraMods);
+		if(parsedMods != '') {
+			if(info.desc != '') {
+				info.addToDesc('&nbsp;');
+			}
+			info.addToDesc(parsedMods);
+		}
+	}
+
 	return info;
+}
+
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
+	return getItemInfo(it, relevantSlot, stripHtml, false);
 }
 
 chit_info getItemInfo(item it, slot relevantSlot) {
@@ -1651,12 +1688,24 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string title, boolean popupDescOnClick) {
-	chit_info info = getItemInfo(it);
-	result.addInfoIcon(info, title,
-		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '');
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick, int upDanger, string wrappingElement, attrmap wrappingElementAttrs) {
+	chit_info info = getItemInfo(it, to_slot(it), false, true);
+	if(upDanger > info.dangerLevel) {
+		info.dangerLevel = upDanger;
+	}
+	result.addInfoIcon(info, titlePrefix + info.name, info.desc,
+		popupDescOnClick ? ('descitem(' + it.descid + ',0,event); return false;') : '',
+		wrappingElement, wrappingElementAttrs);
+}
+
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+	addItemIcon(result, it, titlePrefix, popupDescOnClick, DANGER_GOOD, '', attrmap {});
 }
 
 void addItemIcon(buffer result, item it, string title) {
 	addItemIcon(result, it, title, false);
+}
+
+void addItemIcon(buffer result, item it) {
+	addItemIcon(result, it, '');
 }

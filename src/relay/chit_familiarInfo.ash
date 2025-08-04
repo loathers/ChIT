@@ -135,6 +135,7 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 	item famsEquip = familiar_equipped_equipment(f);
 
 	chit_info info;
+	info.name = f.name + ' the ' + f;
 	info.image = itemimage(f.image);
 
 	if(isStandardFam) {
@@ -763,9 +764,15 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 		}
 
 		info.addDrops(drops);
-	}
-	else if($slots[buddy-bjorn, crown-of-thrones] contains s && bjornDrops contains f) {
-		info.addDrop(bjornDrops[f]);
+	} else if($slots[buddy-bjorn, crown-of-thrones] contains s) {
+		if(bjornDrops contains f) {
+			info.addDrop(bjornDrops[f]);
+		}
+
+		if(info.desc != '' && vars['chit.display.popovers'].to_boolean()) {
+			info.addToDesc('&nbsp;');
+		}
+		info.addToDesc(parseMods(string_modifier('Throne:' + f, 'Evaluated Modifiers')));
 	}
 
 	if(info.weirdoDivContents != '') {
@@ -785,7 +792,7 @@ chit_info getFamiliarInfo(familiar f) {
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, string reason) {
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason, string wrappingElement, attrmap wrappingElementAttrs) {
 	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
 
 	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
@@ -793,25 +800,20 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title, 
 		info.addToDesc('recommended for ' + reason);
 	}
 
-	string titleStr = '';
-	if(title) {
-		titleStr = f.name + ' (the ' + f + ')';
-		if(info.desc != '') {
-			matcher m = create_matcher('<[^>]+>', info.desc);
-			string safeDesc = m.replace_all('');
-			titleStr += ' (' + safeDesc + ')';
-		}
+	if(info.desc != '') {
+		matcher m = create_matcher('<[^>]+>', info.desc);
+		info.desc = m.replace_all('');
 	}
 
-	result.addInfoIcon(info, titleStr, '');
+	result.addInfoIcon(info, info.name, info.desc, '', wrappingElement, wrappingElementAttrs);
 }
 
-void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, boolean title) {
-	addFamiliarIcon(result, f, isBjorn, title, "");
+void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason) {
+	addFamiliarIcon(result, f, isBjorn, reason, '', attrmap {});
 }
 
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn) {
-	addFamiliarIcon(result, f, isBjorn, true);
+	addFamiliarIcon(result, f, isBjorn, "");
 }
 
 void addFamiliarIcon(buffer result, familiar f) {

@@ -491,18 +491,19 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	boolean [familiar] famsAdded;
 
 	boolean tryAddFamiliar(familiar f, string reason) {
-		if(f == current)
+		if(f == current || (correspondingSlot != $slot[familiar] && string_modifier('Throne:' + f, 'Evaluated Modifiers') == 'none'))
 			return true;
 		if(have_familiar(f) && be_good(f) && !famsAdded[f]) {
 			if(!anyIcons) {
 				picker.append('<tr class="pickitem chit_pickerblock"><td colspan="3">');
 				anyIcons = true;
 			}
-			picker.append('<span><a class="change" href="');
-			picker.append(sideCommand(cmd + ' ' + f));
-			picker.append('">');
-			picker.addFamiliarIcon(f, cmd != "familiar", true, reason);
-			picker.append('</a></span>');
+			picker.append('<span>');
+			picker.addFamiliarIcon(f, cmd != "familiar", reason, 'a', attrmap {
+				'class': 'change',
+				'href': sideCommand(cmd + ' ' + f),
+			});
+			picker.append('</span>');
 			famsAdded[f] = true;
 			return true;
 		}
@@ -525,9 +526,13 @@ void pickerFamiliar(familiar current, string cmd, string display)
 	int danger_level = 0;
 	if(is100 != $familiar[none])
 		danger_level = (is100 == current) ? 2 : -1;
-	picker.append('<tr class="pickitem"><td class="icon"><a target=mainpane class="visit done" href="familiar.php">');
-	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your terrarium");
-	picker.append('</a></td>');
+	picker.append('<tr class="pickitem"><td class="icon">');
+	picker.addItemIcon($item[Familiar-Gro&trade; Terrarium], "Visit your ", false, DANGER_GOOD, 'a', attrmap {
+		'target': 'mainpane',
+		'class': 'visit done',
+		'href': 'familiar.php',
+	});
+	picker.append('</td>');
 
 	picker.append('<td class="icon"><a target=charpane class="change" href="'+sideCommand("familiar none")+'">');
 	picker.append('<img src='+getFamiliarInfo($familiar[none]).image+' title="Use no familiar" />');
@@ -880,7 +885,7 @@ void FamPoke()
 		}
 		result.append('<tr');
 		result.append('><td class="icon">');
-		result.addFamiliarIcon(f, false, false);
+		result.addFamiliarIcon(f, false);
 		result.append('</td><td>');
 		result.append(f.name);
 		result.append(' (Lvl ');
@@ -1210,11 +1215,13 @@ void bakeFamiliar() {
 	if(famInfo.weirdoTag != '') result.append('weird');
 	result.append('icon" title="' + hover_famicon + '">');
 	if (protect) {
-		result.addFamiliarIcon(myfam, false, false);
+		result.addFamiliarIcon(myfam, false);
 	} else {
-		result.append('<a href="#" class="chit_launcher" rel="chit_pickerfamiliar">');
-		result.addFamiliarIcon(myfam, false, false);
-		result.append('</a>');
+		result.addFamiliarIcon(myfam, false, '', 'a', attrmap {
+			'href': '#',
+			'class': 'chit_launcher',
+			'rel': 'chit_pickerfamiliar',
+		});
 	}
 	result.append('</td>');
 	result.append('<td class="info" style="' + famstyle + '"><a title="Familiar Haiku" class="hand" onclick="fam(' + to_int(myfam) + ')" origin-level="third-party"/>' + famname + '</a>' + famInfo.desc + '</td>');

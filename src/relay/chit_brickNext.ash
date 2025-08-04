@@ -15,7 +15,7 @@ void bakeNext() {
 	res.append('trail.png" />Next Location</th></tr><tr><td>');
 	res.append('<form action="/KoLmafia/sideCommand"><input type="hidden" name="pwd" value="');
 	res.append(my_hash());
-	res.append('" /><label for="cmd">Next Location:</label><select name="cmd" id="next">');
+	res.append('" /><select name="cmd" id="next">');
 
 	string prevzone = "";
 	foreach zone, i, loc in locs {
