@@ -764,9 +764,15 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 		}
 
 		info.addDrops(drops);
-	}
-	else if($slots[buddy-bjorn, crown-of-thrones] contains s && bjornDrops contains f) {
-		info.addDrop(bjornDrops[f]);
+	} else if($slots[buddy-bjorn, crown-of-thrones] contains s) {
+		if(bjornDrops contains f) {
+			info.addDrop(bjornDrops[f]);
+		}
+
+		if(info.desc != '') {
+			info.addToDesc('&nbsp;');
+		}
+		info.addToDesc(parseMods(string_modifier('Throne:' + f, 'Evaluated Modifiers')));
 	}
 
 	if(info.weirdoDivContents != '') {
