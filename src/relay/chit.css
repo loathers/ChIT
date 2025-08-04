@@ -45,6 +45,13 @@ a.blue-link:hover {
 
 .descline {
 	color: #707070;
+	font-size: 12px;
+	text-align: center;
+}
+
+.popover_title {
+	font-size: 12px;
+	text-align: center;
 }
 
 /* brick alignment flex containers */

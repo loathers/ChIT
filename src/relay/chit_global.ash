@@ -122,9 +122,75 @@ string namedesc(chit_info info) {
 
 void tagStart(buffer result, string type, attrmap attrs);
 void tagFinish(buffer result, string type);
+void tagSelfClosing(buffer result, string type, attrmap attrs);
 void addImg(buffer result, string imgSrc, attrmap attrs);
 
 int popoverCount = 0;
+
+void addElementWithPopover(buffer result, string ele, string eleContent, attrmap eleAttrs,
+	string popoverTitle, string popoverDesc, string wrappingEle, attrmap wrappingEleAttrs) {
+	if(popoverTitle != '') {
+		if(vars['chit.display.popovers'].to_boolean()) {
+			++popoverCount;
+			eleAttrs['class'] += ' chit_popoverlauncher';
+			eleAttrs['aria-describedby'] = 'popover' + popoverCount;
+		} else {
+			eleAttrs['title'] = popoverTitle;
+			if(popoverDesc != '') {
+				eleAttrs['title'] += ' (' + popoverDesc + ')';
+			}
+		}
+	}
+
+	if(wrappingEle != '') {
+		result.tagStart(wrappingEle, wrappingEleAttrs);
+	}
+
+	if(eleContent != '') {
+		result.tagStart(ele, eleAttrs);
+		result.append(eleContent);
+		result.tagFinish(ele);
+	} else {
+		result.tagSelfClosing(ele, eleAttrs);
+	}
+
+	if(wrappingEle != '') {
+		result.tagFinish(wrappingEle);
+	}
+
+	if(popoverTitle != '' && vars['chit.display.popovers'].to_boolean()) {
+		result.tagStart('div', attrmap {
+			'id': 'popover' + popoverCount,
+			'class': 'popover',
+			'role': 'tooltip',
+		});
+		result.tagStart('div', attrmap {
+			'class': 'popover_title',
+		});
+		result.append(popoverTitle);
+		result.tagFinish('div');
+		if(popoverDesc != '') {
+			foreach i,descline in popoverDesc.split_string(', ') {
+				result.tagStart('div', attrmap {
+					'class': 'descline',
+				});
+				result.append(descline);
+				result.tagFinish('div');
+			}
+		}
+		result.tagStart('div', attrmap {
+			'id': 'arrowpopover' + popoverCount,
+			'class': 'chit_popoverarrow',
+		});
+		result.tagFinish('div');
+		result.tagFinish('div');
+	}
+}
+
+void addElementWithPopover(buffer result, string ele, string eleContent, attrmap eleAttrs,
+	string popoverTitle, string popoverDesc) {
+	addElementWithPopover(result, ele, eleContent, eleAttrs, popoverTitle, popoverDesc, '', attrmap {});
+}
 
 void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick, string wrappingElement, attrmap wrappingElementAttrs) {
 	string imgClass = 'chit_icon';
@@ -154,18 +220,6 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 	attrmap imgAttrs = {
 		'class': imgClass,
 	};
-	if(title != '') {
-		if(vars['chit.display.popovers'].to_boolean()) {
-			++popoverCount;
-			imgAttrs['class'] += ' chit_popoverlauncher';
-			imgAttrs['aria-describedby'] = 'popover' + popoverCount;
-		} else {
-			imgAttrs['title'] = title;
-			if(desc != '') {
-				imgAttrs['title'] += ' (' + desc + ')';
-			}
-		}
-	}
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
 	}
@@ -176,49 +230,14 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		imgAttrs['style'] = info.customStyle;
 	}
 
-	if(wrappingElement != '') {
-		result.tagStart(wrappingElement, wrappingElementAttrs);
-	}
-
 	if(info.weirdoDivContents == '' || vars['chit.familiar.iconize-weirdos'].to_boolean()) {
-		result.addImg(info.image, imgAttrs);
+		imgAttrs['src'] = info.image;
+		result.addElementWithPopover('img', '', imgAttrs, title, desc,
+			wrappingElement, wrappingElementAttrs);
 	}
 	else {
-		result.tagStart('div', imgAttrs);
-		result.append(info.weirdoDivContents);
-		result.tagFinish('div');
-	}
-
-	if(wrappingElement != '') {
-		result.tagFinish(wrappingElement);
-	}
-
-	if(title != '' && vars['chit.display.popovers'].to_boolean()) {
-		result.tagStart('div', attrmap {
-			'id': 'popover' + popoverCount,
-			'class': 'popover',
-			'role': 'tooltip',
-		});
-		result.tagStart('div', attrmap {
-			'class': 'popover_title',
-		});
-		result.append(title);
-		result.tagFinish('div');
-		if(desc != '') {
-			foreach i,descline in desc.split_string(', ') {
-				result.tagStart('div', attrmap {
-					'class': 'descline',
-				});
-				result.append(descline);
-				result.tagFinish('div');
-			}
-		}
-		result.tagStart('div', attrmap {
-			'id': 'arrowpopover' + popoverCount,
-			'class': 'chit_popoverarrow',
-		});
-		result.tagFinish('div');
-		result.tagFinish('div');
+		result.addElementWithPopover('div', info.weirdoDivContents, imgAttrs,
+			title, desc, wrappingElement, wrappingElementAttrs);
 	}
 }
 
@@ -696,7 +715,7 @@ stat findSub(stat s) {
 	return $stat[submoxie];
 }
 
-string progressSubStats(stat s) {
+void progressSubStats(buffer result, stat s) {
 	int statval = my_basestat(s);
 
 	int lower = statval**2;
@@ -704,7 +723,12 @@ string progressSubStats(stat s) {
 	int current = my_basestat(findSub(s)) - lower;
 	int needed = range - current;
 	float progress = (current * 100.0) / range;
-	return '<div class="progressbox" title="' + current + ' / ' + range + ' (' + needed + ' needed)"><div class="progressbar" style="width:' + progress + '%"></div></div>';
+	// this is kinda gross but oh well
+	result.addElementWithPopover('div',
+		'<div class="progressbar" style="width:' + progress + '%"></div>',
+		attrmap { 'class': 'progressbox' }, s + ' substats',
+		current + ' / ' + range + ', ' + needed + ' needed',
+		'td', attrmap { 'class': 'progress' });
 }
 
 string progressCustom(int current, int limit, string hover, int severity, boolean active) {

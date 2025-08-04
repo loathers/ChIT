@@ -2164,7 +2164,7 @@ void addStat(buffer result, stat s) {
 	result.append('<td class="info">' + formatStats(s) + '</td>');
 	if(to_boolean(vars["chit.stats.showbars"])) {
 		if(usesSubstats())
-			result.append('<td class="progress">' + progressSubStats(s) + '</td>');
+			result.progressSubStats(s);
 		else
 			result.append('<td></td>');
 	}
