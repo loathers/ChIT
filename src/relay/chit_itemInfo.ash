@@ -1591,11 +1591,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
 			break;
 		}
 		case $item[M&ouml;bius ring]: {
-			matcher paradoxicity = create_matcher('<td align=right>Paradoxicity:</td><td align=left><b><font '
-				+ 'color=black><span alt="" title="">([\\d,]+)</span>', chitSource["stats"]);
-			if(paradoxicity.find()) {
-				info.addToDesc(paradoxicity.group(1) + ' paradoxicity');
-			}
+			info.addToDesc(my_paradoxicity() + ' paradoxicity');
 			break;
 		}
 	}
