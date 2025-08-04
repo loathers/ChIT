@@ -1207,6 +1207,9 @@ string parseMods(string evm, boolean span, boolean debug) {
 	parse.append_tail(enew);
 	evm = enew;
 
+	parse = create_matcher('Class: "([^"]+)"', evm);
+	evm = parse.replace_all("$1 Only");
+
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
@@ -1229,6 +1232,12 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = replace_string(evm,"Pickpocket Chance","Pickpocket");
 	evm = replace_string(evm,"Adventures","Adv");
 	evm = replace_string(evm,"PvP Fights","Fites");
+	evm = replace_string(evm,"Seal Clubber","SC");
+	evm = replace_string(evm,"Turtle Tamer","TT");
+	evm = replace_string(evm,"Pastamancer","PM");
+	evm = replace_string(evm,"Sauceror","S");
+	evm = replace_string(evm,"Disco Bandit","DB");
+	evm = replace_string(evm,"Accordion Thief","AT");
 	//highlight items, meat & ML
 	if(span) {
 		evm = replace_string(evm,"Item","<span class=moditem>Item</span>");
