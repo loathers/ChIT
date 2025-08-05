@@ -1117,8 +1117,13 @@ string parseMods(string evm, boolean span, boolean debug) {
 	paren.append_tail(enew);
 	evm = enew;
 
+	// Reword Lanterns
+	matcher parse = create_matcher('Lantern Element: "([^"]+)"', evm);
+	evm = parse.replace_all("$1 Lantern");
+	evm = evm.replace_string("None Lantern","Phys Lantern");
+
 	// Get rid of things people don't need to worry about in this context
-	matcher parse = create_matcher('Last Available: "[^"]+"'
+	parse = create_matcher('Last Available: "[^"]+"'
 		+ '|Familiar Effect: "[^"]+"'
 		+ '|Softcore Only:? ?\\+?\\d*'
 		+ '|Single Equip'
