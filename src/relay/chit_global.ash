@@ -1125,6 +1125,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'
 		+ '|Lasts Until Rollover'
 		+ '|: True'
+		+ '|None'
 		+ '|[^,:]+: 0'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
