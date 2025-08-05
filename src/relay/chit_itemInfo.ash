@@ -1232,6 +1232,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				'target': 'mainpane',
 				'href': 'inventory.php?action=useholder',
 			}));
+			foreach s in $slots[folder1, folder2, folder3, folder4, folder5] {
+				string evm = string_modifier(equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
+			}
 			break;
 		case $item[fish hatchet]:
 		case $item[codpiece]:
@@ -1613,7 +1619,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[your cowboy boots]: {
 			foreach s in $slots[bootskin, bootspur] {
-				extraMods += ", " + string_modifier(equipped_item(s), "Evaluated Modifiers");
+				string evm = string_modifier(equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
 			}
 			break;
 		}
