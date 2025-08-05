@@ -130,12 +130,16 @@ void addFamWeightTracking(chit_info info, familiar f, int target, boolean target
 	}
 }
 
-chit_info getFamiliarInfo(familiar f, slot s) {
+chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 	boolean isStandardFam = s == $slot[familiar] && my_path() != $path[Pocket Familiars];
 	item famsEquip = familiar_equipped_equipment(f);
 
 	chit_info info;
-	info.name = f.name + ' the ' + f;
+	info.name = f.name;
+	if(forPopover) {
+		info.addToDesc(f + ' (' + familiar_weight(f) +
+			(familiar_weight(f) == 1 ? 'lb' : 'lbs') + ')');
+	}
 	info.image = itemimage(f.image);
 
 	if(isStandardFam) {
@@ -787,13 +791,17 @@ chit_info getFamiliarInfo(familiar f, slot s) {
 	return info;
 }
 
+chit_info getFamiliarInfo(familiar f, slot s) {
+	return getFamiliarInfo(f, s, false);
+}
+
 chit_info getFamiliarInfo(familiar f) {
 	return getFamiliarInfo(f, $slot[familiar]);
 }
 
 // isBjorn also applies for the crown, just for the sake of a shorter name
 void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason, string wrappingElement, attrmap wrappingElementAttrs) {
-	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar]);
+	chit_info info = getFamiliarInfo(f, isBjorn ? $slot[buddy-bjorn] : $slot[familiar], true);
 
 	// TODO: Move this (and the reasoning logic) to getFamiliarInfo
 	if(reason != '') {
