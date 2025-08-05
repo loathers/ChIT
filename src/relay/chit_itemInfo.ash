@@ -1626,6 +1626,13 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
+		case $item[card sleeve]: {
+			string evm = string_modifier(equipped_item($slot[card-sleeve]), "Evaluated Modifiers");
+			if(evm != '') {
+				extraMods += ", " + evm;
+			}
+			break;
+		}
 	}
 
 	// latte reminder
