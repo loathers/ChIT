@@ -1232,6 +1232,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				'target': 'mainpane',
 				'href': 'inventory.php?action=useholder',
 			}));
+			foreach s in $slots[folder1, folder2, folder3, folder4, folder5] {
+				string evm = string_modifier(equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
+			}
 			break;
 		case $item[fish hatchet]:
 		case $item[codpiece]:
@@ -1613,8 +1619,60 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[your cowboy boots]: {
 			foreach s in $slots[bootskin, bootspur] {
-				extraMods += ", " + string_modifier(equipped_item(s), "Evaluated Modifiers");
+				string evm = string_modifier(equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
 			}
+			break;
+		}
+		case $item[card sleeve]: {
+			string evm = string_modifier(equipped_item($slot[card-sleeve]), "Evaluated Modifiers");
+			if(evm != '') {
+				extraMods += ", " + evm;
+			}
+			break;
+		}
+		case $item[scratch 'n' sniff sword]:
+		case $item[scratch 'n' sniff crossbow]: {
+			info.addExtra(extraInfoLink('<b>Bedazzle</b> your weapon', 'swap stickers', attrmap {
+				'class': 'visit done',
+				'target': 'mainpane',
+				'href': 'bedazzle.php',
+			}));
+			string other = it == $item[scratch 'n' sniff sword] ? 'crossbow' : 'sword';
+			item otherIt = it == $item[scratch 'n' sniff sword]
+				? $item[scratch 'n' sniff crossbow]
+				: $item[scratch 'n' sniff sword];
+			info.addExtra(extraInfoLink('<b>Swap</b> to a ' + other, 'change damage type', attrmap {
+				'class': 'change',
+				'href': sideCommand('fold ' + otherIt + '; equip ' + relevantSlot + ' ' + otherIt),
+			}));
+			void applySticker(item sticker, int value, boolean [modifier] mods) {
+				int count = 0;
+				foreach st in $slots[sticker1, sticker2, sticker3] {
+					if(equipped_item(st) == sticker) {
+						++count;
+					}
+				}
+				if(count > 0) {
+					foreach mod in mods {
+						extraMods += ', ' + mod + ': +' + (count * value);
+					}
+				}
+			}
+			applySticker($item[scratch 'n' sniff unicorn sticker], 25,
+				$modifiers[Item Drop]);
+			applySticker($item[scratch 'n' sniff apple sticker], 2,
+				$modifiers[Experience]);
+			applySticker($item[scratch 'n' sniff UPC sticker], 25,
+				$modifiers[Meat Drop]);
+			applySticker($item[scratch 'n' sniff wrestler sticker], 10,
+				$modifiers[Muscle Percent, Mysticality Percent, Moxie Percent]);
+			applySticker($item[scratch 'n' sniff dragon sticker], 3,
+				$modifiers[Hot Damage, Cold Damage, Stench Damage, Spooky Damage, Sleaze Damage]);
+			applySticker($item[scratch 'n' sniff rock band sticker], 20,
+				$modifiers[Weapon Damage, Spell Damage]);
 			break;
 		}
 	}

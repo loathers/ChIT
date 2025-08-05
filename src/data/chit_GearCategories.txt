@@ -50,7 +50,7 @@ hp regen	HP Regen Min, HP Regen Max
 mp regen	MP Regen Min, MP Regen Max
 initiative	Initiative
 smithsness	Smithsness
-today	1	IsTrue: Lasts Until Tomorrow
+today	1	IsTrue: Lasts Until Rollover
 rollover	Adventures	PvP: false, Drunk: true
 rollover	Adventures, PVP Fights	PvP: true, Drunk: true
 

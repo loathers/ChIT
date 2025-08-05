@@ -122,9 +122,75 @@ string namedesc(chit_info info) {
 
 void tagStart(buffer result, string type, attrmap attrs);
 void tagFinish(buffer result, string type);
+void tagSelfClosing(buffer result, string type, attrmap attrs);
 void addImg(buffer result, string imgSrc, attrmap attrs);
 
 int popoverCount = 0;
+
+void addElementWithPopover(buffer result, string ele, string eleContent, attrmap eleAttrs,
+	string popoverTitle, string popoverDesc, string wrappingEle, attrmap wrappingEleAttrs) {
+	if(popoverTitle != '') {
+		if(vars['chit.display.popovers'].to_boolean()) {
+			++popoverCount;
+			eleAttrs['class'] += ' chit_popoverlauncher';
+			eleAttrs['aria-describedby'] = 'popover' + popoverCount;
+		} else {
+			eleAttrs['title'] = popoverTitle;
+			if(popoverDesc != '') {
+				eleAttrs['title'] += ' (' + popoverDesc + ')';
+			}
+		}
+	}
+
+	if(wrappingEle != '') {
+		result.tagStart(wrappingEle, wrappingEleAttrs);
+	}
+
+	if(eleContent != '') {
+		result.tagStart(ele, eleAttrs);
+		result.append(eleContent);
+		result.tagFinish(ele);
+	} else {
+		result.tagSelfClosing(ele, eleAttrs);
+	}
+
+	if(wrappingEle != '') {
+		result.tagFinish(wrappingEle);
+	}
+
+	if(popoverTitle != '' && vars['chit.display.popovers'].to_boolean()) {
+		result.tagStart('div', attrmap {
+			'id': 'popover' + popoverCount,
+			'class': 'popover',
+			'role': 'tooltip',
+		});
+		result.tagStart('div', attrmap {
+			'class': 'popover_title',
+		});
+		result.append(popoverTitle);
+		result.tagFinish('div');
+		if(popoverDesc != '') {
+			foreach i,descline in popoverDesc.split_string(', ') {
+				result.tagStart('div', attrmap {
+					'class': 'descline',
+				});
+				result.append(descline);
+				result.tagFinish('div');
+			}
+		}
+		result.tagStart('div', attrmap {
+			'id': 'arrowpopover' + popoverCount,
+			'class': 'chit_popoverarrow',
+		});
+		result.tagFinish('div');
+		result.tagFinish('div');
+	}
+}
+
+void addElementWithPopover(buffer result, string ele, string eleContent, attrmap eleAttrs,
+	string popoverTitle, string popoverDesc) {
+	addElementWithPopover(result, ele, eleContent, eleAttrs, popoverTitle, popoverDesc, '', attrmap {});
+}
 
 void addInfoIcon(buffer result, chit_info info, string title, string desc, string onclick, string wrappingElement, attrmap wrappingElementAttrs) {
 	string imgClass = 'chit_icon';
@@ -154,18 +220,6 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 	attrmap imgAttrs = {
 		'class': imgClass,
 	};
-	if(title != '') {
-		if(vars['chit.display.popovers'].to_boolean()) {
-			++popoverCount;
-			imgAttrs['class'] += ' chit_popoverlauncher';
-			imgAttrs['aria-describedby'] = 'popover' + popoverCount;
-		} else {
-			imgAttrs['title'] = title;
-			if(desc != '') {
-				imgAttrs['title'] += ' (' + desc + ')';
-			}
-		}
-	}
 	if(onclick != '') {
 		imgAttrs['onclick'] = onclick;
 	}
@@ -176,49 +230,14 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		imgAttrs['style'] = info.customStyle;
 	}
 
-	if(wrappingElement != '') {
-		result.tagStart(wrappingElement, wrappingElementAttrs);
-	}
-
 	if(info.weirdoDivContents == '' || vars['chit.familiar.iconize-weirdos'].to_boolean()) {
-		result.addImg(info.image, imgAttrs);
+		imgAttrs['src'] = info.image;
+		result.addElementWithPopover('img', '', imgAttrs, title, desc,
+			wrappingElement, wrappingElementAttrs);
 	}
 	else {
-		result.tagStart('div', imgAttrs);
-		result.append(info.weirdoDivContents);
-		result.tagFinish('div');
-	}
-
-	if(wrappingElement != '') {
-		result.tagFinish(wrappingElement);
-	}
-
-	if(title != '' && vars['chit.display.popovers'].to_boolean()) {
-		result.tagStart('div', attrmap {
-			'id': 'popover' + popoverCount,
-			'class': 'popover',
-			'role': 'tooltip',
-		});
-		result.tagStart('div', attrmap {
-			'class': 'popover_title',
-		});
-		result.append(title);
-		result.tagFinish('div');
-		if(desc != '') {
-			foreach i,descline in desc.split_string(', ') {
-				result.tagStart('div', attrmap {
-					'class': 'descline',
-				});
-				result.append(descline);
-				result.tagFinish('div');
-			}
-		}
-		result.tagStart('div', attrmap {
-			'id': 'arrowpopover' + popoverCount,
-			'class': 'chit_popoverarrow',
-		});
-		result.tagFinish('div');
-		result.tagFinish('div');
+		result.addElementWithPopover('div', info.weirdoDivContents, imgAttrs,
+			title, desc, wrappingElement, wrappingElementAttrs);
 	}
 }
 
@@ -696,7 +715,7 @@ stat findSub(stat s) {
 	return $stat[submoxie];
 }
 
-string progressSubStats(stat s) {
+void progressSubStats(buffer result, stat s) {
 	int statval = my_basestat(s);
 
 	int lower = statval**2;
@@ -704,14 +723,20 @@ string progressSubStats(stat s) {
 	int current = my_basestat(findSub(s)) - lower;
 	int needed = range - current;
 	float progress = (current * 100.0) / range;
-	return '<div class="progressbox" title="' + current + ' / ' + range + ' (' + needed + ' needed)"><div class="progressbar" style="width:' + progress + '%"></div></div>';
+	// this is kinda gross but oh well
+	result.addElementWithPopover('div',
+		'<div class="progressbar" style="width:' + progress + '%"></div>',
+		attrmap { 'class': 'progressbox' }, s + ' substats',
+		current + ' / ' + range + ', ' + needed + ' needed',
+		'td', attrmap { 'class': 'progress' });
 }
 
-string progressCustom(int current, int limit, string hover, int severity, boolean active) {
+void progressCustom(buffer result, int current, int limit, string hover,
+	int severity, boolean active, string wrappingEle, attrmap wrappingEleAttrs) {
 
 	string color = "";
 	string title = "";
-	string border = "";
+	string desc = "";
 
 	switch (severity) {
 		case -1	: color = "#D0D0D0"; 	break;		//disabled
@@ -727,21 +752,26 @@ string progressCustom(int current, int limit, string hover, int severity, boolea
 	string title() { return current + ' / ' + limit; }
 	switch (hover) {
 		case "" : title = ""; break;
-		case "auto": title = ' title="' + title() + '"'; break;
-		default: title = ' title="' + hover +' ('+ title() +')"';
+		case "auto": title = title(); break;
+		default: title = hover; desc = title(); break;
 	}
-	if (active) border = ' style="border-color:#707070"';
+	attrmap divAttrs = { 'class': 'progressbox' };
+	if (active) divAttrs['style'] = 'border-color:#707070';
 	if (limit == 0) limit = 1;
-
 	float progress = (min(current, limit) * 100.0) / limit;
-	buffer result;
-	result.append('<div class="progressbox"' + title + border + '>');
-	result.append('<div class="progressbar" style="width:' + progress + '%;background-color:' + color + '"></div>');
-	result.append('</div>');
-	return result.to_string();
+
+	result.addElementWithPopover('div',
+		'<div class="progressbar" style="width:' + progress + '%;background-color:' + color + '"></div>',
+		divAttrs, title, desc, wrappingEle, wrappingEleAttrs);
 }
-string progressCustom(int current, int limit, int severity, boolean active) {
-	return progressCustom(current, limit, current + ' / ' + limit, severity, active);
+
+void progressCustom(buffer result, int current, int limit, string hover,
+	int severity, boolean active) {
+	result.progressCustom(current, limit, hover, severity, active, '', attrmap {});
+}
+
+void progressCustom(buffer result, int current, int limit, int severity, boolean active) {
+	result.progressCustom(current, limit, current + ' / ' + limit, severity, active);
 }
 
 /*****************************************************
@@ -1066,6 +1096,8 @@ void pickerItemOption(buffer picker, item it, string verb, string noun, string d
 string parseMods(string evm, boolean span, boolean debug) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 
+	if(debug) print(evm);
+
 	// Standardize capitalization
 	matcher uncap = create_matcher("(?:^|[^'])\\b[a-z]", evm);
 	while(uncap.find())
@@ -1092,6 +1124,8 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|Single Equip'
 		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'
 		+ '|Lasts Until Rollover'
+		+ '|: True'
+		+ '|None'
 		+ '|[^,:]+: 0'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");

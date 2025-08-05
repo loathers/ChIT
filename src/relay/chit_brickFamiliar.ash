@@ -1268,7 +1268,12 @@ void bakeFamiliar() {
 		int current = myfam.experience - prevGoal;
 		int limit = nextGoal - prevGoal;
 
-		result.append('<tr><td colspan=3 class="progress">' + progressCustom(current, limit, "exp to level " + (familiar_weight(myfam) + 1), 0, true) + '</td></tr>');
+		result.tagStart('tr');
+		result.tagStart('td', attrmap { 'class': 'progress', 'colspan': '3' });
+		result.progressCustom(current, limit, 'exp to level '
+			+ (familiar_weight(myfam) + 1), 0, true);
+		result.tagFinish('td');
+		result.tagFinish('tr');
 	}
 
 	result.append('</table>');
