@@ -1096,6 +1096,8 @@ void pickerItemOption(buffer picker, item it, string verb, string noun, string d
 string parseMods(string evm, boolean span, boolean debug) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 
+	if(debug) print(evm);
+
 	// Standardize capitalization
 	matcher uncap = create_matcher("(?:^|[^'])\\b[a-z]", evm);
 	while(uncap.find())
@@ -1122,6 +1124,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|Single Equip'
 		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'
 		+ '|Lasts Until Rollover'
+		+ '|: True'
 		+ '|[^,:]+: 0'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
