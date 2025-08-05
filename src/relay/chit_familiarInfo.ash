@@ -154,25 +154,28 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 			// we already show that separately, so turn them back
 			case $familiar[Fancypants Scarecrow]:
 				info.image = itemimage('pantscrow2.gif');
+				info.addExtra(extraInfoEquipFam($slot[pants].to_string()));
 				// intentional fallthrough
 			case $familiar[Mad Hatrack]: {
 				if(info.image != itemimage('pantscrow2.gif')) {
 					info.image = itemimage('hatrack.gif');
+					info.addExtra(extraInfoEquipFam($slot[hat].to_string()));
 				}
 				if(famsEquip == $item[none]) {
 					break;
 				}
 				matcher m = create_matcher('^(.*?), cap (.*?)$', string_modifier(famsEquip, 'Familiar Effect'));
 				if(find(m)) {
-					info.addExtra(extraInfoEquipFam(m.group(1).replace_string('x', ' x '), m.group(2)));
+					info.addToDesc(m.group(1) + ', limit ' + m.group(2) + 'lbs');
 				}
 				else {
-					info.addExtra(extraInfoEquipFam('Unknown Effect', '?'));
+					info.addToDesc('Unknown Effect');
 				}
 				break;
 			}
 			case $familiar[Disembodied Hand]:
 				info.image = itemimage('dishand.gif');
+				info.addExtra(extraInfoEquipFam($slot[weapon].to_string()));
 				break;
 			case $familiar[Crimbo Shrub]:
 				if(to_boolean(vars['chit.familiar.anti-gollywog'])) {
@@ -310,6 +313,11 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			case $familiar[Stocking Mimic]:
 				drops[drops.count()] = new drop_info('_bagOfCandy', LIMIT_BOOL, 'candy bag');
+				info.addExtra(extraInfoLink('candy', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'familiarbinger.php',
+				}));
 				break;
 			case $familiar[Gelatinous Cubeling]: {
 				int progress = get_property('cubelingProgress').to_int();
@@ -342,6 +350,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			}
 			case $familiar[Left-Hand Man]: {
+				info.addExtra(extraInfoEquipFam($slot[off-hand].to_string()));
 				matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
 				if(leftyMatcher.find()) {
 					info.weirdoDivContents = leftyMatcher.group(1);
@@ -377,6 +386,11 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 						info.incDrops(DROPS_ALL);
 					}
 				}
+				info.addExtra(extraInfoLink('feed', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'familiarbinger.php',
+				}));
 				break;
 			}
 			case $familiar[Rockin' Robin]:
@@ -742,6 +756,19 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				}
 				break;
 			}
+			case $familiar[Spirit Hobo]:
+				info.addExtra(extraInfoLink('chug', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'familiarbinger.php',
+				}));
+				break;
+			case $familiar[Gluttonous Green Ghost]:
+				info.addExtra(extraInfoLink('feed', attrmap {
+					'class': 'visit done',
+					'target': 'mainpane',
+					'href': 'familiarbinger.php',
+				}));
 		}
 
 		if(f.drops_limit > 0) {

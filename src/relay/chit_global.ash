@@ -42,9 +42,8 @@ int EXTRA_FOLD = 1;
 // str2 is optional for descline
 // attrs is for the link itself
 int EXTRA_LINK = 2;
-// for mad hatrack and fancypants scarecrow, and who knows, maybe something else in the future
-// str1 is the familiar modifiers
-// str2 is the limit
+// for familiars that equip non-familiar items
+// str1 is the slot to_string'd
 int EXTRA_EQUIPFAM = 3;
 
 record extra_info {
@@ -87,8 +86,8 @@ extra_info extraInfoLink(string text, attrmap attrs) {
 	return extraInfoLink(text, attrs, '');
 }
 
-extra_info extraInfoEquipFam(string famEffect, string cap) {
-	return new extra_info(EXTRA_EQUIPFAM, '', famEffect, cap, attrmap {});
+extra_info extraInfoEquipFam(string slotStr) {
+	return new extra_info(EXTRA_EQUIPFAM, '', slotStr, '', attrmap {});
 }
 
 record chit_info {

@@ -339,16 +339,6 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 
 	picker.pickerStart("famgear", "Equip Thy Familiar Well");
 
-	//Feeding time
-	string [familiar] feedme;
-	feedme[$familiar[Slimeling]] = "Mass Slime";
-	feedme[$familiar[Stocking Mimic]] = "Give lots of candy";
-	feedme[$familiar[Spirit Hobo]] = "Encourage Chugging";
-	feedme[$familiar[Gluttonous Green Ghost]] = "Force Feed";
-	if (feedme contains myfam) {
-		picker.append('<tr class="pickitem"><td class="action" colspan="2"><a class="done" target="mainpane" href="familiarbinger.php">' + feedme[myfam] + '</a></tr>');
-	}
-
 	// Use link for Moveable Feast
 	if (myfam != $familiar[Comma Chameleon]) {
 		item feast = $item[moveable feast];
@@ -1036,7 +1026,7 @@ void bakeFamiliar() {
 				followbuffer.tagFinish('a');
 				break;
 			case EXTRA_EQUIPFAM:
-			// todo
+				// I was originally planning to do this here, but that's dumb
 				break;
 			default:
 				abort('not there yet');
