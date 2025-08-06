@@ -77,6 +77,13 @@ int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
 	else if(hagnk && pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
 		available += min(pulls_remaining(), storage_amount(it));
 	available += equipped_amount(it);
+	if(it.to_slot() == $slot[familiar]) {
+		foreach fam in $familiars[] {
+			if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
+				++available;
+			}
+		}
+	}
 
 	if(foldcheck)
 		available += foldable_amount(it, reason, hagnk);

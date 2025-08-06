@@ -1167,8 +1167,12 @@ void bakeFamiliar() {
 		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && vars["chit.familiar.showlock"].to_boolean();
 		if(lockable)
 			result.append('<div id="fam_equip">');
-		result.append('<a class="chit_launcher" rel="chit_pickergearfamiliar" href="#">');
-		result.append('<img title="' + equiptype + '" src="/images/itemimages/' + equipimage + '">');
+		result.addItemIcon(famitem, 'familiar gear: ', false, DANGER_GOOD,
+			'a', attrmap {
+				'class': 'chit_launcher',
+				'rel': 'chit_pickergearfamiliar',
+				'href': '#',
+			}, myfam == $familiar[Mad Hatrack] || myfam == $familiar[Fancypants Scarecrow]);
 		if(lockable) {
 			result.append('<a href="' + sideCommand("ashq lock_familiar_equipment("+ (!is_familiar_equipment_locked()) +")")  +'"><img title="Equipment ');
 			if(is_familiar_equipment_locked())
@@ -1176,7 +1180,6 @@ void bakeFamiliar() {
 			else
 				result.append('Unlocked" id="fam_lock" src="/images/itemimages/openpadlock.gif"></a>');
 		}
-		result.append('</a>');
 		if(lockable)
 			result.append('</div>');
 		result.append('</td>');
