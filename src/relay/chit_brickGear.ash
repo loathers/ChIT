@@ -360,9 +360,11 @@ void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
 	chit_info info = getItemInfo(in_slot);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
+	boolean famMode = false;
 	boolean weirdFamMode = false;
 	slot famSlot = $slot[none];
 	if(s == $slot[familiar]) {
+		famMode = true;
 		chit_info famInfo = getFamiliarInfo(my_familiar());
 		foreach i,extra in famInfo.extra {
 			if(extra.extraType == EXTRA_EQUIPFAM) {
@@ -374,7 +376,7 @@ void pickerGear(slot s) {
 	}
 
 	buffer picker;
-	picker.pickerStart("gear" + s, "Change " + s + (s == $slot[familiar] ? " gear" : ""));
+	picker.pickerStart("gear" + s, "Change " + s + (famMode ? " gear" : ""));
 
 	boolean good_slot(slot checked_slot, item it) {
 		if(to_slot(it) == checked_slot) return true;
@@ -765,6 +767,23 @@ void pickerGear(slot s) {
 
 			if(shown > 0)
 				picker.append(temp.to_string());
+		}
+		if(name == 'favorites' && famMode) {
+			float[item] famSpecificGear;
+			int pseudoScore = 100;
+			item mainGear = familiar_equipment(my_familiar());
+			if(mainGear != $item[none]) {
+				famSpecificGear[mainGear] = pseudoScore;
+				--pseudoScore;
+			}
+			foreach it in $items[] {
+				if(string_modifier(it, "Evaluated Modifiers")
+					.contains_text('Equips On: "' + my_familiar() + '"')) {
+					famSpecificGear[it] = pseudoScore;
+					--pseudoScore;
+				}
+			}
+			add_gear_section('familiar specific', famSpecificGear);
 		}
 	}
 

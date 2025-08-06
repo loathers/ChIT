@@ -1126,9 +1126,23 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = parse.replace_all("$1 Lantern");
 	evm = evm.replace_string("None Lantern","Phys Lantern");
 
+	// Reword Sporadic Damage Aura
+	parse = create_matcher('Sporadic Damage Aura: 0\\.(\\d+)', evm);
+	if(parse.find()) {
+		string numStr = parse.group(1);
+		if(numStr.length() == 1) {
+			numStr += '0';
+		} else if(numStr.length() > 2) {
+			numStr = numStr.substring(0,2) + '.' + numStr.substring(2);
+		}
+		numStr += '%';
+		evm = evm.replace_string(parse.group(0), 'Damage Aura +' + numStr);
+	}
+
 	// Get rid of things people don't need to worry about in this context
 	parse = create_matcher('Last Available: "[^"]+"'
 		+ '|Familiar Effect: "[^"]+"'
+		+ '|Equips On: "[^"]+"'
 		+ '|Softcore Only:? ?\\+?\\d*'
 		+ '|Single Equip'
 		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'

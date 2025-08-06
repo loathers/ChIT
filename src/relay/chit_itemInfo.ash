@@ -1705,6 +1705,31 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addExtra(extraInfoPicker('ledcandle', '<b>Adjust</b> LED candle'));
 			break;
 		}
+		case $item[bag of many confections]: {
+			info.addDrop(new drop_info('', LIMIT_INFINITE, 'candy', 'candies', true));
+			break;
+		}
+		case $item[tiny costume wardrobe]: {
+			if(my_familiar() == $familiar[doppelshifter]) {
+				extraMods = ', Fam Weight +25';
+			} else {
+				info.addToDesc('random transformations');
+			}
+			break;
+		}
+		case $item[school spirit socket set]: {
+			info.addToDesc('keeps more steam in');
+			break;
+		}
+		case $item[flask of embalming fluid]: {
+			info.addToDesc('helps collect body parts');
+			break;
+		}
+		case $item[orange boxing gloves]:
+		case $item[blue pumps]: {
+			info.addToDesc('find more yellow pixels');
+			break;
+		}
 	}
 
 	// latte reminder
