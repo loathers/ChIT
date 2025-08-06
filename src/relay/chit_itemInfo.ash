@@ -781,6 +781,30 @@ void picker_ledcandle() {
 	picker.pickerFinish("Fiddling with your light...");
 }
 
+void picker_snowsuit() {
+	buffer picker;
+	picker.pickerStart("snowsuit", "Tailor the Snow Suit");
+
+	string current = get_property("snowsuit");
+
+	void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
+		string imgClass = 'chit_icon';
+		if(drops) {
+			imgClass += ' hasdrops';
+		}
+		picker.pickerSelectionOption(desc1, desc2, 'snowsuit ' + face, itemimage(icon + '.gif'),
+			face == current, true, attrmap { 'class': imgClass });
+	}
+
+	picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
+	picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2", false);
+	picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3", to_int(get_property("_carrotNoseDrops")) < 3);
+	picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
+	picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
+
+	picker.pickerFinish("Rearranging your familiar's face!");
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
@@ -1728,6 +1752,18 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[orange boxing gloves]:
 		case $item[blue pumps]: {
 			info.addToDesc('find more yellow pixels');
+			break;
+		}
+		case $item[Snow Suit]: {
+			info.addDrop(new drop_info('_carrotNoseDrops', 3, 'carrot', 'carrots'));
+			info.addExtra(extraInfoPicker('snowsuit', '<b>Decorate</b> Snow Suit'));
+			switch(get_property('snowsuit')) {
+				case 'eyebrows': info.image = itemimage('snowface1.gif'); break;
+				case 'smirk': info.image = itemimage('snowface2.gif'); break;
+				case 'nose': info.image = itemimage('snowface3.gif'); break;
+				case 'goatee': info.image = itemimage('snowface4.gif'); break;
+				case 'hat': info.image = itemimage('snowface5.gif'); break;
+			}
 			break;
 		}
 	}

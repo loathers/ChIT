@@ -777,7 +777,8 @@ void pickerGear(slot s) {
 				--pseudoScore;
 			}
 			foreach it in $items[] {
-				if(string_modifier(it, "Evaluated Modifiers")
+				if(it.item_type() == 'familiar equipment'
+					&& string_modifier(it, "Modifiers")
 					.contains_text('Equips On: "' + my_familiar() + '"')) {
 					famSpecificGear[it] = pseudoScore;
 					--pseudoScore;

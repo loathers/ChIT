@@ -165,35 +165,10 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		return "You don't have any " + it + " for your " + fam + ".<br><br>Poor " + famname + ".";
 	}
 
-	void pickerSnowsuit() {
-		buffer picker;
-		picker.pickerStart("snowsuit", "Tailor the Snow Suit");
-
-		string current = get_property("snowsuit");
-
-		void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
-			string imgClass = 'chit_icon';
-			if(drops) {
-				imgClass += ' hasdrops';
-			}
-			picker.pickerSelectionOption(desc1, desc2, 'snowsuit ' + face, itemimage(icon + '.gif'),
-				face == current, true, attrmap { 'class': imgClass });
-		}
-
-		picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
-		picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2", false);
-		picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3", to_int(get_property("_carrotNoseDrops")) < 3);
-		picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
-		picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
-
-		picker.pickerFinish("Rearranging your familiar's face!");
-	}
-
 	void pickEquipment() {
 
 		// First add a decorate link if you are using a Snow Suit
 		if(equipped_item($slot[familiar]) == $item[Snow Suit]) {
-			pickerSnowsuit();
 			string suiturl = '<a class="chit_launcher done" rel="chit_pickersnowsuit" href="#" title="Decorate your Snow Suit\'s face">';
 			picker.append('<tr class="pickitem"><td class="fold">');
 			picker.append(suiturl);
@@ -309,7 +284,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 		}
 	}
 
-	picker.pickerStart("famgear", "Equip Thy Familiar Well");
+	picker.pickerStart("gearfamiliar", "Equip Thy Familiar Well");
 
 	// Use link for Moveable Feast
 	if (myfam != $familiar[Comma Chameleon]) {
@@ -1235,7 +1210,9 @@ void bakeFamiliar() {
 	chitBricks["familiar"] = result;
 
 	//Add Equipment Picker
-	if (myfam != $familiar[none]) {
+	if (myfam == $familiar[Comma Chameleon]) {
+		pickerFamiliarGear(myfam, $item[none], false);
+	} else if (myfam != $familiar[none]) {
 		pickerGear($slot[familiar]);
 	}
 
