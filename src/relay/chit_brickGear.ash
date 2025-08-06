@@ -356,13 +356,27 @@ void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
 	chit_info info = getItemInfo(in_slot);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
+	boolean weirdFamMode = false;
 
 	buffer picker;
-	picker.pickerStart("gear" + s, "Change " + s);
+	picker.pickerStart("gear" + s, "Change " + s + (s == $slot[familiar] ? " gear" : ""));
 
-	boolean good_slot(slot s, item it) {
-		if(to_slot(it) == s) return true;
-		switch(s) {
+	boolean good_slot(slot checked_slot, item it) {
+		if(to_slot(it) == checked_slot) return true;
+		if(s == $slot[familiar]) {
+			chit_info famInfo = getFamiliarInfo(my_familiar());
+			slot specialSlot = $slot[none];
+			foreach i,extra in famInfo.extra {
+				if(extra.extraType == EXTRA_EQUIPFAM) {
+					specialSlot = to_slot(extra.str1);
+					if(extra.str2.to_boolean())
+						weirdFamMode = true;
+				}
+			}
+			if(specialSlot != $slot[none] && specialSlot == to_slot(it))
+				return true;
+		}
+		switch(checked_slot) {
 		case $slot[off-hand]:
 			switch(weapon_type(it)) {
 			case $stat[Muscle]: case $stat[Mysticality]:
@@ -390,7 +404,7 @@ void pickerGear(slot s) {
 			'href': '#',
 			'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
 			'onclick': 'descitem(' + it.descid + '0,event); return false;',
-		});
+		}, weirdFamMode);
 		picker.append('</td>');
 	}
 
@@ -620,7 +634,7 @@ void pickerGear(slot s) {
 				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
 				'href': command,
 				'class': 'change',
-			});
+			}, weirdFamMode);
 			b.tagFinish('div');
 			break;
 
@@ -630,7 +644,7 @@ void pickerGear(slot s) {
 				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
 				'onclick': 'descitem(' + it.descid + ',0,event); return false;',
 				'href': '#',
-			});
+			}, weirdFamMode);
 			b.append('</td><td>');
 			if(take_action) {
 				b.append('<a class="change" href="');
@@ -668,7 +682,7 @@ void pickerGear(slot s) {
 				'oncontextmenu': 'descitem(' + it.descid + ',0,event); return false;',
 				'onclick': 'descitem(' + it.descid + ',0,event); return false',
 				'href': '#',
-			});
+			}, weirdFamMode);
 			b.append('</div><div style="max-width:160px;">');
 			//b.add_favorite_button(it);
 			if(take_action) {
@@ -696,6 +710,8 @@ void pickerGear(slot s) {
 	}
 
 	void add_gear_section(string name, float [item] list) {
+		if(weirdFamMode && name != 'favorites')
+			return;
 		item [int] toDisplay;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it

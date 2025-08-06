@@ -154,28 +154,22 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 			// we already show that separately, so turn them back
 			case $familiar[Fancypants Scarecrow]:
 				info.image = itemimage('pantscrow2.gif');
-				info.addExtra(extraInfoEquipFam($slot[pants].to_string()));
+				info.addExtra(extraInfoEquipFam($slot[pants], true));
 				// intentional fallthrough
 			case $familiar[Mad Hatrack]: {
 				if(info.image != itemimage('pantscrow2.gif')) {
 					info.image = itemimage('hatrack.gif');
-					info.addExtra(extraInfoEquipFam($slot[hat].to_string()));
+					info.addExtra(extraInfoEquipFam($slot[hat], true));
 				}
 				if(famsEquip == $item[none]) {
 					break;
 				}
-				matcher m = create_matcher('^(.*?), cap (.*?)$', string_modifier(famsEquip, 'Familiar Effect'));
-				if(find(m)) {
-					info.addToDesc(m.group(1) + ', limit ' + m.group(2) + 'lbs');
-				}
-				else {
-					info.addToDesc('Unknown Effect');
-				}
+				info.addToDesc(parseItem(famsEquip, '', true));
 				break;
 			}
 			case $familiar[Disembodied Hand]:
 				info.image = itemimage('dishand.gif');
-				info.addExtra(extraInfoEquipFam($slot[weapon].to_string()));
+				info.addExtra(extraInfoEquipFam($slot[weapon]));
 				break;
 			case $familiar[Crimbo Shrub]:
 				if(to_boolean(vars['chit.familiar.anti-gollywog'])) {
@@ -350,7 +344,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			}
 			case $familiar[Left-Hand Man]: {
-				info.addExtra(extraInfoEquipFam($slot[off-hand].to_string()));
+				info.addExtra(extraInfoEquipFam($slot[off-hand]));
 				matcher leftyMatcher = create_matcher('<div style="position: relative; height: 50px; width: 30px" >(.+?)</div>', chitSource["familiar"]);
 				if(leftyMatcher.find()) {
 					info.weirdoDivContents = leftyMatcher.group(1);

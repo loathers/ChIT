@@ -755,12 +755,38 @@ void picker_alliedradio() {
 	picker.pickerFinish('Radioing for whatever...');
 }
 
+void picker_ledcandle() {
+	buffer picker;
+	picker.pickerStart("ledcandle", "Change lights");
+
+	void addOption(string name, string desc, string value, string img) {
+		boolean isActive = get_property("ledCandleMode") == value;
+
+		picker.append('<tr class="pickitem');
+		if(isActive) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		picker.append('<img class="chit_icon" src="/images/itemimages/' + img + '" />');
+		picker.append('</td><td colspan="2">');
+		if(!isActive) picker.append('<a class="change" href="' + sideCommand("jillcandle " + value) + '">');
+		picker.append('<b>Select</b> the ' + name + ' Light<br /><span class="descline">' + desc + '</span>');
+		if(!isActive) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addOption("Disco Ball", "1.5x Fairy (item)", "disco", "discoball.gif");
+	addOption("Ultraviolet", "1.5x Leprechaun (meat)", "ultraviolet", "goldenlight.gif");
+	addOption("Reading", "1.5x Sombreroball (stats)", "reading", "borgonette.gif");
+	addOption("Red", "50% combat action rate (normally 25%)", "red light", "crystal.gif");
+
+	picker.pickerFinish("Fiddling with your light...");
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
 
-chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods, boolean weirdFamMode) {
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
@@ -1675,6 +1701,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				$modifiers[Weapon Damage, Spell Damage]);
 			break;
 		}
+		case $item[LED candle]: {
+			info.addExtra(extraInfoPicker('ledcandle', '<b>Adjust</b> LED candle'));
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1722,7 +1752,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
-		string parsedMods = parseItem(it, extraMods);
+		string parsedMods = parseItem(it, extraMods, weirdFamMode);
 		if(parsedMods != '') {
 			if(info.desc != '') {
 				info.addToDesc('&nbsp;');
@@ -1732,6 +1762,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	return info;
+}
+
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
+	return getItemInfo(it, relevantSlot, stripHtml, includeMods, false);
 }
 
 chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
@@ -1746,8 +1780,10 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick, int upDanger, string wrappingElement, attrmap wrappingElementAttrs) {
-	chit_info info = getItemInfo(it, to_slot(it), false, true);
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
+	int upDanger, string wrappingElement, attrmap wrappingElementAttrs,
+	boolean weirdFamMode) {
+	chit_info info = getItemInfo(it, to_slot(it), false, true, weirdFamMode);
 	if(upDanger > info.dangerLevel) {
 		info.dangerLevel = upDanger;
 	}
@@ -1756,7 +1792,14 @@ void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOn
 		wrappingElement, wrappingElementAttrs);
 }
 
-void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
+	int upDanger, string wrappingElement, attrmap wrappingElementAttrs) {
+	addItemIcon(result, it, titlePrefix, popupDescOnClick, upDanger,
+		wrappingElement, wrappingElementAttrs, false);
+}
+
+void addItemIcon(buffer result, item it, string titlePrefix,
+	boolean popupDescOnClick) {
 	addItemIcon(result, it, titlePrefix, popupDescOnClick, DANGER_GOOD, '', attrmap {});
 }
 
