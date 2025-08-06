@@ -29,10 +29,6 @@ setvar("chit.familiar.anti-gollywog", true);
 setvar("chit.familiar.hiddengear", "");
 setvar("chit.familiar.protect", false);
 setvar("chit.familiar.showlock", false);
-setvar("chit.familiar.hats", "item", "spangly sombrero|sugar chapeau|chef's hat|party hat");
-setvar("chit.familiar.pants", "item", "spangly mariachi pants|double-ice britches|BRICKO pants|pin-stripe slacks|studded leather boxer shorts|monster pants|sugar shorts");
-setvar("chit.familiar.weapons", "item", "time sword|batblade|Hodgman's whackin' stick|astral mace|Maxwell's Silver Hammer|goatskin umbrella|grassy cutlass|dreadful glove|Stick-Knife of Loathing|Work is a Four Letter Sword");
-setvar("chit.familiar.off-hands", "item", "Kramco Sausage-o-Matic&trade;|latte lovers member's mug|A Light that Never Goes Out|Half a Purse");
 setvar("chit.familiar.iconize-weirdos", false);
 setvar("chit.effects.classicons", "none");
 setvar("chit.effects.describe", true);
@@ -45,6 +41,7 @@ setvar("chit.gear.display.aftercore", "favorites:amount=all, quest:amount=all, c
 setvar("chit.gear.display.aftercore.defaults", "create=true, pull=true, amount=1");
 setvar("chit.gear.layout", "default");
 setvar("chit.gear.favorites", "item", "");
+setvar("chit.gear.favorites.weirdFam", "item", "");
 setvar("chit.gear.ignoreG-Lover", false);
 setvar("chit.gear.lattereminder", true);
 setvar("chit.gear.ccswordcanereminder", true);

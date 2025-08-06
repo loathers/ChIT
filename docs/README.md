@@ -179,14 +179,6 @@ The following preferences further refine the content and appearance of individua
 
   - Default: false (standard KoL behaviour)
 
-- chit.familiar.hats: Vertical bar (|) separated list of hats to include with a Hatrack as your current familiar
-  - Default: spangly sombrero|sugar chapeau
-- chit.familiar.weapons: Vertical bar (|) separated list of weapons to include with a Disembodied Hand as your current familiar
-  - Default: time sword|batblade|Hodgman's whackin' stick|astral mace|Maxwell's Silver Hammer|goatskin umbrella
-- chit.familiar.pants: Vertical bar (|) separated list of pants to include with a Fancypants Scarecrow as your current familiar
-  - Default: spangly mariachi pants|double-ice britches|BRICKO pants|pin-stripe slacks|Studded leather boxer shorts|Monster pants|Sugar shorts
-- chit.familiar.off-hands: Vertical bar (|) separated list of off-hands to include with a Left-Hand Man as your current familiar
-  - Default: Kramco Sausage-o-Matic&trade;|latte lovers member's mug|A Light that Never Goes Out|Half a Purse
 - chit.familiar.protect: Removes all familiar-switching links from the charpane when you're on a 100% run
   - (You have to go to your campsite->terraium to change familiars, or use chat commands)
   - Default: false
@@ -200,6 +192,9 @@ The following preferences further refine the content and appearance of individua
 
 - chit.gear.favorites: Vertical bar (|) separated list of equipment that you have set as a personal favorite.
   - You can change this all you should need to via the gear picker, so you shouldn't edit this one manually.
+  - Empty by default
+- chit.gear.favorites.weirdFam: The same as chit.gear.favorites, but for mad hatrack and fancypants scarecrow specifically.
+  - You can likewise change this all you should need to via the gear picker.
   - Empty by default
 - chit.gear.layout: The layout to use for the gear picker.
   - Options include:

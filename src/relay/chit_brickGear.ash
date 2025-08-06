@@ -1,6 +1,7 @@
 // The original version of the Gear Brick (including pickerGear and bakeGear) was written by soolar
 
 boolean [item] favGear;
+boolean [item] favGearWeirdFam;
 float [string, item] recommendedGear;
 boolean [string] forceSections;
 boolean aftercore = qprop("questL13Final");
@@ -343,10 +344,13 @@ void addFavGear() {
 	}
 
 	// manual favorites
-	foreach i,fav in split_string(vars["chit.gear.favorites"], "\\s*(?<!\\\\)[,|]\\s*") {
-		item it = to_item(fav.replace_string("\\,", ","));
-		favGear[it] = true;
-		addGear(it, "favorites");
+	foreach favType in $strings[favorites, favorites.weirdFam] {
+		string favVarName = "chit.gear." + favType;
+		foreach i,fav in split_string(vars[favVarName], "\\s*(?<!\\\\)[,|]\\s*") {
+			item it = to_item(fav.replace_string("\\,", ","));
+			(favType == 'favorites.weirdFam' ? favGearWeirdFam : favGear)[it] = true;
+			addGear(it, favType);
+		}
 	}
 }
 
@@ -357,6 +361,17 @@ void pickerGear(slot s) {
 	chit_info info = getItemInfo(in_slot);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
 	boolean weirdFamMode = false;
+	slot famSlot = $slot[none];
+	if(s == $slot[familiar]) {
+		chit_info famInfo = getFamiliarInfo(my_familiar());
+		foreach i,extra in famInfo.extra {
+			if(extra.extraType == EXTRA_EQUIPFAM) {
+				famSlot = to_slot(extra.str1);
+				if(extra.str2.to_boolean())
+					weirdFamMode = true;
+			}
+		}
+	}
 
 	buffer picker;
 	picker.pickerStart("gear" + s, "Change " + s + (s == $slot[familiar] ? " gear" : ""));
@@ -364,16 +379,7 @@ void pickerGear(slot s) {
 	boolean good_slot(slot checked_slot, item it) {
 		if(to_slot(it) == checked_slot) return true;
 		if(s == $slot[familiar]) {
-			chit_info famInfo = getFamiliarInfo(my_familiar());
-			slot specialSlot = $slot[none];
-			foreach i,extra in famInfo.extra {
-				if(extra.extraType == EXTRA_EQUIPFAM) {
-					specialSlot = to_slot(extra.str1);
-					if(extra.str2.to_boolean())
-						weirdFamMode = true;
-				}
-			}
-			if(specialSlot != $slot[none] && specialSlot == to_slot(it))
+			if(famSlot != $slot[none] && famSlot == to_slot(it))
 				return true;
 		}
 		switch(checked_slot) {
@@ -500,13 +506,15 @@ void pickerGear(slot s) {
 
 	void add_favorite_button(buffer result, item it) {
 		result.append('<a class="change chit_favbutton" href="');
-		if(favGear contains it) {
-			result.append(sideCommand("chit_changeFav.ash (remove, " + it + ")"));
+		if((weirdFamMode ? favGearWeirdFam : favGear) contains it) {
+			result.append(sideCommand("chit_changeFav.ash (remove, " + it + ", "
+				+ (weirdFamMode ? "weirdFam" : "") + ")"));
 			result.append('" rel="delfav"><img src="');
 			result.append(imagePath);
 			result.append('control_remove_red.png"></a>');
 		} else {
-			result.append(sideCommand("chit_changeFav.ash (add, " + it + ")"));
+			result.append(sideCommand("chit_changeFav.ash (add, " + it + ", "
+				+ (weirdFamMode ? "weirdFam" : "") + ")"));
 			result.append('" rel="addfav"><img src="');
 			result.append(imagePath);
 			result.append('control_add_blue.png"></a>');
@@ -661,7 +669,7 @@ void pickerGear(slot s) {
 			b.append(action_description);
 			b.append('</span> ');
 			b.append(namedesc(optionInfo));
-			if(reason != "favorites") {
+			if(!reason.starts_with("favorites")) {
 				b.append(' [');
 				b.append(reason);
 				b.append(']');
@@ -710,8 +718,9 @@ void pickerGear(slot s) {
 	}
 
 	void add_gear_section(string name, float [item] list) {
-		if(weirdFamMode && name != 'favorites')
+		if(weirdFamMode && name != 'favorites.weirdFam')
 			return;
+		string dispName = name.split_string('\\.')[0];
 		item [int] toDisplay;
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
@@ -725,14 +734,9 @@ void pickerGear(slot s) {
 			switch(vars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
-			case "minimal":
-				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-				temp.append(name);
-				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
-				break;
 			default:
 				temp.append('<tr class="pickitem" style="background-color:blue;color:white;font-weight:bold;"><td colspan="3">');
-				temp.append(name);
+				temp.append(dispName);
 				temp.append('</td></tr><tr class="pickitem chit_pickerblock"><td colspan="3"><div class="chit_flexcontainer">');
 				break;
 			}
@@ -754,9 +758,6 @@ void pickerGear(slot s) {
 			switch(vars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
-			case "minimal":
-				temp.append('</div></td></tr>');
-				break;
 			default:
 				temp.append('</div></td></tr>');
 				break;
@@ -771,6 +772,9 @@ void pickerGear(slot s) {
 	foreach i,section in split_string(disp_str,", *") {
 		string [int] spl = split_string(section,":");
 		string sectionname = spl[0];
+		if(sectionname == 'favorites' && weirdFamMode) {
+			sectionname += '.weirdFam';
+		}
 		string [string] options;
 		if(spl.count() > 1) {
 			for i from 1 to (spl.count() - 1) {
@@ -911,7 +915,8 @@ void pickerGear(slot s) {
 		}
 	}
 
-	add_inventory_section(); // Last chance to find something in inventory to display
+	if(!weirdFamMode)
+		add_inventory_section(); // Last chance to find something in inventory to display
 	if(!any_options)
 		picker.addSadFace("You have nothing " + (equipped_item(s) == $item[none]? "": "else ") + "available. Poor you :(");
 
