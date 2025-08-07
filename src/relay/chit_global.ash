@@ -1150,7 +1150,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|: True'
 		+ '|None'
 		+ '|Generic'
-		+ '|[^,:]+: 0'
+		+ '|[^,:]+: 0(?:, |$)'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
