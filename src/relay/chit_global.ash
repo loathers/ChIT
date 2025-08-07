@@ -1145,7 +1145,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|Equips On: "[^"]+"'
 		+ '|Softcore Only:? ?\\+?\\d*'
 		+ '|Single Equip'
-		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'
+		+ '|(?:Equipped|Inventory) Conditional Skill ?: (?:"[^"]+"|\\+\\d+)'
 		+ '|Lasts Until Rollover'
 		+ '|: True'
 		+ '|None'
