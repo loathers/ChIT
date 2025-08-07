@@ -809,6 +809,7 @@ void picker_snowsuit() {
 	The bulky function itself
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
+int chit_available(item it);
 
 chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods, boolean weirdFamMode) {
 	chit_info info;
@@ -1805,6 +1806,31 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		&& !($items[PirateRealm eyepatch, Red Roger's red left foot, Red Roger's red right foot] contains it)
 		&& info.dangerLevel < DANGER_WARNING) {
 		info.dangerLevel = DANGER_WARNING;
+	}
+
+	// add some global links for the fam gear picker,
+	// like in the old familiar gear picker
+	if(relevantSlot == $slot[familiar]) {
+		if(my_familiar() != $familiar[Comma Chameleon]
+			&& chit_available($item[moveable feast]) > 0
+			&& get_property("_feastUsed").to_int() < 5
+			&& !get_property("_feastedFamiliars").contains_text(my_familiar())) {
+			info.addExtra(extraInfoLink('<b>Feed</b> your familiar a feast',
+				'+10lbs for 20 adv', attrmap {
+					'class': 'change',
+					'href': sideCommand(equipped_amount($item[moveable feast]) > 0
+						? 'remove familiar;use moveable feast;equip familiar moveable feast'
+						: 'use moveable feast'),
+				}, itemimage($item[moveable feast].image)));
+		}
+
+		if(chit_available($item[tiny stillsuit]) > 0) {
+			info.addExtra(extraInfoLink('<b>Check</b> tiny stillsuit', '', attrmap {
+				'class': 'done',
+				'target': 'mainpane',
+				'href': 'inventory.php?action=distill&pwd=' + my_hash(),
+			}, itemimage($item[tiny stillsuit].image)));
+		}
 	}
 
 	if(stripHtml) {

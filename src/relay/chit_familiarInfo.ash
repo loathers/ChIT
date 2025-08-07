@@ -763,6 +763,18 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 					'target': 'mainpane',
 					'href': 'familiarbinger.php',
 				}));
+				break;
+			case $familiar[Baby Bugged Bugbear]:
+				if((chit_available($item[bugged beanie])
+					+ chit_available($item[bugged balaclava])
+					+ chit_available($item[bugged b&Atilde;&para;n&plusmn;&Atilde;&copy;t])) == 0) {
+					info.addExtra(extraInfoLink('get equip', attrmap {
+						'class': 'done',
+						'target': 'mainpane',
+						'href': 'arena.php',
+					}));
+				}
+				break;
 		}
 
 		if(f.drops_limit > 0) {
