@@ -634,6 +634,15 @@ void pickerGear(slot s) {
 		} else if(it == $item[pantogram pants] && available_amount(it) == 0 && item_amount($item[portable pantogram]) > 0) {
 			action = "conjure";
 			cmd_override = '/inv_use.php?pwd=' + my_hash() + '&which=3&whichitem=9573" target="mainpane';
+		} else if(it.to_slot() == $slot[familiar]) {
+			foreach fam in $familiars[] {
+				if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
+					action = "yoink";
+					action_description = "(from " + fam + ")";
+					cmd = "equip ";
+					break;
+				}
+			}
 		} else // no options were found, give up
 			return false;
 
