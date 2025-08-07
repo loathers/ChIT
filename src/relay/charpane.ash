@@ -24,7 +24,7 @@ setvar("chit.character.title", true);
 setvar("chit.clan.display", "away"); // Valid values are on,off,away. Away will only display clan if chit.clan.home is not blank.
 setvar("chit.clan.home", "");
 setvar("chit.disable", false);
-setvar("chit.display.popovers", false);
+setvar("chit.display.popovers", true);
 setvar("chit.familiar.anti-gollywog", true);
 setvar("chit.familiar.hiddengear", "");
 setvar("chit.familiar.protect", false);

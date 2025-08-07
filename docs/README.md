@@ -370,9 +370,9 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - Default: true
 
 - chit.display.popovers: If true, show popovers with a little extra detail instead of using html
-  title text for some things. Will eventually default to true.
+  title text for some things. Might switch back to defaulting to false if issues are found.
 
-  - Default: false
+  - Default: true
 
 # Credits
 
