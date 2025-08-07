@@ -1816,7 +1816,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			&& get_property("_feastUsed").to_int() < 5
 			&& !get_property("_feastedFamiliars").contains_text(my_familiar())) {
 			info.addExtra(extraInfoLink('<b>Feed</b> your familiar a feast',
-				'+10lbs for 20 adv', attrmap {
+				'+10lbs for 20 adv (' + (5 - get_property("_feastUsed").to_int()) + ' left)', attrmap {
 					'class': 'change',
 					'href': sideCommand(equipped_amount($item[moveable feast]) > 0
 						? 'remove familiar;use moveable feast;equip familiar moveable feast'
