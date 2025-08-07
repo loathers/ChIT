@@ -1870,7 +1870,7 @@ chit_info getItemInfo(item it) {
 void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
 	int upDanger, string wrappingElement, attrmap wrappingElementAttrs,
 	boolean weirdFamMode) {
-	chit_info info = getItemInfo(it, to_slot(it), false, true, weirdFamMode);
+	chit_info info = getItemInfo(it, to_slot(it), !vars['chit.display.popovers'].to_boolean(), true, weirdFamMode);
 	if(upDanger > info.dangerLevel) {
 		info.dangerLevel = upDanger;
 	}
