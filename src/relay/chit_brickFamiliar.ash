@@ -1167,7 +1167,7 @@ void bakeFamiliar() {
 		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && vars["chit.familiar.showlock"].to_boolean();
 		if(lockable)
 			result.append('<div id="fam_equip">');
-		result.addItemIcon(famitem, 'familiar gear: ', false, DANGER_GOOD,
+		result.addItemIcon(famitem, 'fam equip: ', false, DANGER_GOOD,
 			'a', attrmap {
 				'class': 'chit_launcher',
 				'rel': 'chit_pickergearfamiliar',

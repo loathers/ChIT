@@ -383,7 +383,7 @@ void pickerGear(slot s) {
 	}
 
 	buffer picker;
-	picker.pickerStart("gear" + s, "Change " + s + (famMode ? " gear" : ""));
+	picker.pickerStart("gear" + s, "Change " + (famMode ? "fam equip" : s));
 
 	boolean good_slot(slot checked_slot, item it) {
 		if(to_slot(it) == checked_slot) return true;
@@ -563,6 +563,9 @@ void pickerGear(slot s) {
 			switch(s) {
 			case $slot[back]:  // back doesn't sound like gear
 				picker.append("a cloak");
+				break;
+			case $slot[familiar]: // this also sounds super wrong
+				picker.append("a fam equip");
 				break;
 			default:
 				picker.append("a");
