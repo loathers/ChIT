@@ -1433,8 +1433,8 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[Apriling band tuba]:
 		case $item[Apriling band staff]:
 		case $item[Apriling band piccolo]: {
-			boolean hasPlays = info.addDrop(new drop_info(aprilingBandSectionInstrumentProps[it], 3, 'play', 'plays'));
-			if(hasPlays) {
+			info.addDrop(new drop_info(aprilingBandSectionInstrumentProps[it], 3, 'play', 'plays'));
+			if(get_property(aprilingBandSectionInstrumentProps[it]).to_int() < 3) {
 				info.addExtra(extraInfoLink('<b>Play</b> ' + it, aprilingBandSectionInstrumentAbilities[it], attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
