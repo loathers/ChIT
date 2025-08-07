@@ -44,6 +44,7 @@ int EXTRA_FOLD = 1;
 int EXTRA_LINK = 2;
 // for familiars that equip non-familiar items
 // str1 is the slot to_string'd
+// str2 is "true" if it's a weirdo like fancypants or hatrack
 int EXTRA_EQUIPFAM = 3;
 
 record extra_info {
@@ -86,8 +87,12 @@ extra_info extraInfoLink(string text, attrmap attrs) {
 	return extraInfoLink(text, attrs, '');
 }
 
-extra_info extraInfoEquipFam(string slotStr) {
-	return new extra_info(EXTRA_EQUIPFAM, '', slotStr, '', attrmap {});
+extra_info extraInfoEquipFam(slot s, boolean weird) {
+	return new extra_info(EXTRA_EQUIPFAM, '', s, weird, attrmap {});
+}
+
+extra_info extraInfoEquipFam(slot s) {
+	return extraInfoEquipFam(s, false);
 }
 
 record chit_info {
@@ -1121,16 +1126,31 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = parse.replace_all("$1 Lantern");
 	evm = evm.replace_string("None Lantern","Phys Lantern");
 
+	// Reword Sporadic Damage Aura
+	parse = create_matcher('Sporadic Damage Aura: 0\\.(\\d+)', evm);
+	if(parse.find()) {
+		string numStr = parse.group(1);
+		if(numStr.length() == 1) {
+			numStr += '0';
+		} else if(numStr.length() > 2) {
+			numStr = numStr.substring(0,2) + '.' + numStr.substring(2);
+		}
+		numStr += '%';
+		evm = evm.replace_string(parse.group(0), 'Damage Aura +' + numStr);
+	}
+
 	// Get rid of things people don't need to worry about in this context
 	parse = create_matcher('Last Available: "[^"]+"'
 		+ '|Familiar Effect: "[^"]+"'
+		+ '|Equips On: "[^"]+"'
 		+ '|Softcore Only:? ?\\+?\\d*'
 		+ '|Single Equip'
-		+ '|(?:Equipped|Inventory) Conditional Skill ?: "[^"]+"'
+		+ '|(?:Equipped|Inventory) Conditional Skill ?: (?:"[^"]+"|\\+\\d+)'
 		+ '|Lasts Until Rollover'
 		+ '|: True'
 		+ '|None'
-		+ '|[^,:]+: 0'
+		+ '|Generic'
+		+ '|[^,:]+: 0(?:, |$)'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
@@ -1344,13 +1364,26 @@ string parseEff(effect ef, boolean span) {
 }
 string parseEff(effect ef) { return parseEff(ef, true); }
 
-string parseItem(item it, string evmAddon) {
+string parseItem(item it, string evmAddon, boolean weirdFamMode) {
+	if(weirdFamMode) {
+		matcher m = create_matcher('^(.*?), cap (.*?)$', string_modifier(it, 'Familiar Effect'));
+		if(find(m)) {
+			return m.group(1) + ', limit ' + m.group(2) + 'lbs';
+		} else {
+			return 'Unknown Effect';
+		}
+	}
+
 	string evm = string_modifier(it, "Evaluated Modifiers") + evmAddon;
 	return evm.parseMods(true);
 }
 
+string parseItem(item it, string evmAddon) {
+	return parseItem(it, evmAddon, false);
+}
+
 string parseItem(item it) {
-	return parseItem(it, "");
+	return parseItem(it, "", false);
 }
 
 

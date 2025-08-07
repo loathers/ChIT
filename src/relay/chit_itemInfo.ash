@@ -755,12 +755,63 @@ void picker_alliedradio() {
 	picker.pickerFinish('Radioing for whatever...');
 }
 
+void picker_ledcandle() {
+	buffer picker;
+	picker.pickerStart("ledcandle", "Change lights");
+
+	void addOption(string name, string desc, string value, string img) {
+		boolean isActive = get_property("ledCandleMode") == value;
+
+		picker.append('<tr class="pickitem');
+		if(isActive) picker.append(' currentitem');
+		picker.append('"><td class="icon">');
+		picker.append('<img class="chit_icon" src="/images/itemimages/' + img + '" />');
+		picker.append('</td><td colspan="2">');
+		if(!isActive) picker.append('<a class="change" href="' + sideCommand("jillcandle " + value) + '">');
+		picker.append('<b>Select</b> the ' + name + ' Light<br /><span class="descline">' + desc + '</span>');
+		if(!isActive) picker.append('</a>');
+		picker.append('</td></tr>');
+	}
+
+	addOption("Disco Ball", "1.5x Fairy (item)", "disco", "discoball.gif");
+	addOption("Ultraviolet", "1.5x Leprechaun (meat)", "ultraviolet", "goldenlight.gif");
+	addOption("Reading", "1.5x Sombreroball (stats)", "reading", "borgonette.gif");
+	addOption("Red", "50% combat action rate (normally 25%)", "red light", "crystal.gif");
+
+	picker.pickerFinish("Fiddling with your light...");
+}
+
+void picker_snowsuit() {
+	buffer picker;
+	picker.pickerStart("snowsuit", "Tailor the Snow Suit");
+
+	string current = get_property("snowsuit");
+
+	void addFace(buffer buf, string face, string desc1, string desc2, string icon, boolean drops) {
+		string imgClass = 'chit_icon';
+		if(drops) {
+			imgClass += ' hasdrops';
+		}
+		picker.pickerSelectionOption(desc1, desc2, 'snowsuit ' + face, itemimage(icon + '.gif'),
+			face == current, true, attrmap { 'class': imgClass });
+	}
+
+	picker.addFace("eyebrows", "Angry Eyebrows", "(Familiar does physical damage)", "snowface1", false);
+	picker.addFace("smirk", "an Ice-Cold Smirk", "(Familiar does cold damage)", "snowface2", false);
+	picker.addFace("nose", "a Sensitive Carrot Nose", "(+10% item drops, can drop carrot nose)", "snowface3", to_int(get_property("_carrotNoseDrops")) < 3);
+	picker.addFace("goatee", "an Entertaining Goatee", "(Heals 1-20 HP after combat)", "snowface4", false);
+	picker.addFace("hat", "a Magical Hat", "(Restores 1-10 MP after combat)", "snowface5", false);
+
+	picker.pickerFinish("Rearranging your familiar's face!");
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
+int chit_available(item it);
 
-chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods, boolean weirdFamMode) {
 	chit_info info;
 	info.name = it.to_string();
 	info.image = itemimage(it.image);
@@ -1382,8 +1433,8 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[Apriling band tuba]:
 		case $item[Apriling band staff]:
 		case $item[Apriling band piccolo]: {
-			boolean hasPlays = info.addDrop(new drop_info(aprilingBandSectionInstrumentProps[it], 3, 'play', 'plays'));
-			if(hasPlays) {
+			info.addDrop(new drop_info(aprilingBandSectionInstrumentProps[it], 3, 'play', 'plays'));
+			if(get_property(aprilingBandSectionInstrumentProps[it]).to_int() < 3) {
 				info.addExtra(extraInfoLink('<b>Play</b> ' + it, aprilingBandSectionInstrumentAbilities[it], attrmap {
 					'class': 'visit done',
 					'target': 'mainpane',
@@ -1675,6 +1726,47 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				$modifiers[Weapon Damage, Spell Damage]);
 			break;
 		}
+		case $item[LED candle]: {
+			info.addExtra(extraInfoPicker('ledcandle', '<b>Adjust</b> LED candle'));
+			break;
+		}
+		case $item[bag of many confections]: {
+			info.addDrop(new drop_info('', LIMIT_INFINITE, 'candy', 'candies', true));
+			break;
+		}
+		case $item[tiny costume wardrobe]: {
+			if(my_familiar() == $familiar[doppelshifter]) {
+				extraMods = ', Fam Weight +25';
+			} else {
+				info.addToDesc('random transformations');
+			}
+			break;
+		}
+		case $item[school spirit socket set]: {
+			info.addToDesc('keeps more steam in');
+			break;
+		}
+		case $item[flask of embalming fluid]: {
+			info.addToDesc('helps collect body parts');
+			break;
+		}
+		case $item[orange boxing gloves]:
+		case $item[blue pumps]: {
+			info.addToDesc('find more yellow pixels');
+			break;
+		}
+		case $item[Snow Suit]: {
+			info.addDrop(new drop_info('_carrotNoseDrops', 3, 'carrot', 'carrots'));
+			info.addExtra(extraInfoPicker('snowsuit', '<b>Decorate</b> Snow Suit'));
+			switch(get_property('snowsuit')) {
+				case 'eyebrows': info.image = itemimage('snowface1.gif'); break;
+				case 'smirk': info.image = itemimage('snowface2.gif'); break;
+				case 'nose': info.image = itemimage('snowface3.gif'); break;
+				case 'goatee': info.image = itemimage('snowface4.gif'); break;
+				case 'hat': info.image = itemimage('snowface5.gif'); break;
+			}
+			break;
+		}
 	}
 
 	// latte reminder
@@ -1716,13 +1808,38 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		info.dangerLevel = DANGER_WARNING;
 	}
 
+	// add some global links for the fam gear picker,
+	// like in the old familiar gear picker
+	if(relevantSlot == $slot[familiar]) {
+		if(my_familiar() != $familiar[Comma Chameleon]
+			&& chit_available($item[moveable feast]) > 0
+			&& get_property("_feastUsed").to_int() < 5
+			&& !get_property("_feastedFamiliars").contains_text(my_familiar())) {
+			info.addExtra(extraInfoLink('<b>Feed</b> your familiar a feast',
+				'+10lbs for 20 adv (' + (5 - get_property("_feastUsed").to_int()) + ' left)', attrmap {
+					'class': 'change',
+					'href': sideCommand(equipped_amount($item[moveable feast]) > 0
+						? 'remove familiar;use moveable feast;equip familiar moveable feast'
+						: 'use moveable feast'),
+				}, itemimage($item[moveable feast].image)));
+		}
+
+		if(chit_available($item[tiny stillsuit]) > 0) {
+			info.addExtra(extraInfoLink('<b>Check</b> tiny stillsuit', '', attrmap {
+				'class': 'done',
+				'target': 'mainpane',
+				'href': 'inventory.php?action=distill&pwd=' + my_hash(),
+			}, itemimage($item[tiny stillsuit].image)));
+		}
+	}
+
 	if(stripHtml) {
 		matcher htmlRemover = create_matcher('<[^>]+>', info.desc);
 		info.desc = htmlRemover.replace_all('');
 	}
 
 	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
-		string parsedMods = parseItem(it, extraMods);
+		string parsedMods = parseItem(it, extraMods, weirdFamMode);
 		if(parsedMods != '') {
 			if(info.desc != '') {
 				info.addToDesc('&nbsp;');
@@ -1732,6 +1849,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	return info;
+}
+
+chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods) {
+	return getItemInfo(it, relevantSlot, stripHtml, includeMods, false);
 }
 
 chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml) {
@@ -1746,8 +1867,10 @@ chit_info getItemInfo(item it) {
 	return getItemInfo(it, to_slot(it));
 }
 
-void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick, int upDanger, string wrappingElement, attrmap wrappingElementAttrs) {
-	chit_info info = getItemInfo(it, to_slot(it), !vars['chit.display.popovers'].to_boolean(), true);
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
+	int upDanger, string wrappingElement, attrmap wrappingElementAttrs,
+	boolean weirdFamMode) {
+	chit_info info = getItemInfo(it, to_slot(it), !vars['chit.display.popovers'].to_boolean(), true, weirdFamMode);
 	if(upDanger > info.dangerLevel) {
 		info.dangerLevel = upDanger;
 	}
@@ -1756,7 +1879,14 @@ void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOn
 		wrappingElement, wrappingElementAttrs);
 }
 
-void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick) {
+void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
+	int upDanger, string wrappingElement, attrmap wrappingElementAttrs) {
+	addItemIcon(result, it, titlePrefix, popupDescOnClick, upDanger,
+		wrappingElement, wrappingElementAttrs, false);
+}
+
+void addItemIcon(buffer result, item it, string titlePrefix,
+	boolean popupDescOnClick) {
 	addItemIcon(result, it, titlePrefix, popupDescOnClick, DANGER_GOOD, '', attrmap {});
 }
 
