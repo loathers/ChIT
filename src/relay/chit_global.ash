@@ -1286,7 +1286,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = replace_string(evm,"Monster Level","ML");
 	evm = replace_string(evm,"Moxie","Mox");
 	evm = replace_string(evm,"Muscle","Mus");
-	evm = replace_string(evm,"Mysticality","Myst");
+	evm = replace_string(evm,"Mysticality","Mys");
 	evm = replace_string(evm,"Resistance","Res");
 	evm = replace_string(evm,"Familiar Experience","Fam xp");
 	evm = replace_string(evm,"Familiar","Fam");
