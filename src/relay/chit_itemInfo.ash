@@ -1768,15 +1768,24 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		}
 		case $item[toy Cupid bow]: {
+			item famEquip = my_familiar().familiar_equipment();
+			if(famEquip == $item[none]) {
+				break;
+			}
 			matcher famFinder = create_matcher("(?:^|;)" + my_familiar().to_int() + "(?:;|$)",
 				get_property('_cupidBowFamiliars'));
 			if(!famFinder.find()) {
 				int fights = 0;
 				if(get_property('cupidBowLastFamiliar') == my_familiar().to_int().to_string()) {
 					fights = get_property('cupidBowFights').to_int();
+				} else if(get_property('cupidBowFights').to_int() < 5) {
+					info.addToDesc(get_property('cupidBowFights') + '/5 to equip for '
+						+ get_property('cupidBowLastFamiliar').to_int().to_familiar());
+					info.dangerLevel = DANGER_WARNING;
 				}
-				info.addToDesc(fights + '/5 to fam equip');
-				info.incDrops(DROPS_ALL);
+				boolean owned = chit_available(famEquip) > 0;
+				info.addToDesc(fights + '/5 to fam equip' + (owned ? ' (owned)' : ''));
+				info.incDrops(owned ? DROPS_SOME : DROPS_ALL);
 			}
 			break;
 		}
