@@ -1767,6 +1767,19 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
+		case $item[toy Cupid bow]: {
+			matcher famFinder = create_matcher("(?:^|;)" + my_familiar().to_int() + "(?:;|$)",
+				get_property('_cupidBowFamiliars'));
+			if(!famFinder.find()) {
+				int fights = 0;
+				if(get_property('cupidBowLastFamiliar') == my_familiar().to_int().to_string()) {
+					fights = get_property('cupidBowFights').to_int();
+				}
+				info.addToDesc(fights + '/5 to fam equip');
+				info.incDrops(DROPS_ALL);
+			}
+			break;
+		}
 	}
 
 	// latte reminder
