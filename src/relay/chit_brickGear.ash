@@ -638,7 +638,9 @@ void pickerGear(slot s) {
 			foreach fam in $familiars[] {
 				if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
 					action = "yoink";
-					action_description = "(from " + fam + ")";
+					if(vars['chit.gear.layout'] == 'minimal') {
+						action_description = "(from " + fam + ")";
+					}
 					cmd = "equip ";
 					break;
 				}
