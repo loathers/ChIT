@@ -841,7 +841,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason, 
 		info.addToDesc('recommended for ' + reason);
 	}
 
-	if(info.desc != '') {
+	if(info.desc != '' && !vars['chit.display.popovers'].to_boolean()) {
 		matcher m = create_matcher('<[^>]+>', info.desc);
 		info.desc = m.replace_all('');
 	}
