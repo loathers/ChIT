@@ -910,8 +910,20 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[pantsgiving]:
 			info.addDrops(drops_info {
 				new drop_info('_pantsgivingCrumbs', 10, 'crumb', 'crumbs'),
-				new drop_info('_pantsgivingBanish', 5, 'banish', 'banishes'),
+				new drop_info('_pantsgivingBanish', 5, 'banish', 'banishes', true),
 			});
+			int nextFullness = 5;
+			int fullnessQualified = -get_property('_pantsgivingFullness').to_int();
+			while(nextFullness <= get_property('_pantsgivingCount').to_int()) {
+				nextFullness *= 10;
+				++fullnessQualified;
+			}
+			int toFullness = nextFullness - get_property('_pantsgivingCount').to_int();
+			info.addToDesc(toFullness + ' to fullness');
+			if(fullnessQualified > 0) {
+				info.addToDesc(fullnessQualified + ' ready');
+				info.incDrops(DROPS_ALL);
+			}
 			break;
 		case $item[amulet of extreme plot significance]:
 			info.name = 'amulet of plot significance';
