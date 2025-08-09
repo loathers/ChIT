@@ -365,7 +365,7 @@ int dangerLevel(item it, slot s);
 
 void pickerGear(slot s) {
 	item in_slot = equipped_item(s);
-	chit_info info = getItemInfo(in_slot);
+	chit_info info = getItemInfo(in_slot, s);
 	boolean take_action = true; // This is un-set if there's a reason to do nothing (such as not enough hands)
 	boolean famMode = false;
 	boolean weirdFamMode = false;
