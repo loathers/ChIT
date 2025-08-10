@@ -1265,7 +1265,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			if(currPiece == '') {
 				currPiece = 'none';
 			}
-			extraMods = ', ' + string_modifier('Edpiece:' + currPiece, 'Evaluated Modifiers');
+			extraMods = string_modifier('Edpiece:' + currPiece, 'Evaluated Modifiers');
 			info.addExtra(extraInfoPicker('edpiece','<b>Change</b> decoration (currently ' + currPiece + ')',
 				edpieceToImage(currPiece)));
 			break;
@@ -1748,7 +1748,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[tiny costume wardrobe]: {
 			if(my_familiar() == $familiar[doppelshifter]) {
-				extraMods = ', Fam Weight +25';
+				extraMods = 'Fam Weight +25';
 			} else {
 				info.addToDesc('random transformations');
 			}
@@ -1801,6 +1801,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
+		case $item[aviator goggles]:
+			extraMods = 'More Kiwis';
+			break;
+		case $item[blue plate]:
+			extraMods = 'Improves Cooking';
+			break;
 	}
 
 	// latte reminder
@@ -1873,6 +1879,9 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
+		if(extraMods != '' && !extraMods.starts_with(', ')) {
+			extraMods = ', ' + extraMods;
+		}
 		string parsedMods = parseItem(it, extraMods, weirdFamMode);
 		if(parsedMods != '') {
 			if(info.desc != '') {
