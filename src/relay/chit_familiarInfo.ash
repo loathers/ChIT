@@ -695,12 +695,16 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 			case $familiar[Chest Mimic]: {
 				int eggsLeftToday = 11 - get_property('_mimicEggsObtained').to_int();
 				int eggsLayable = min(eggsLeftToday, floor(f.experience / 50));
+				int bankEggsLayable = min(eggsLeftToday, floor(f.experience / 100));
 				drops[drops.count()] = new drop_info('_mimicEggsObtained', 11, 'egg laying', 'egg layings');
 				if(eggsLayable > 0) {
 					info.addToDesc(eggsLayable + ' layable');
 				}
-				if(eggsLayable < eggsLeftToday) {
-					info.addFamWeightTracking(f, (eggsLayable + 1) * 50, false);
+				if(bankEggsLayable > 0) {
+					info.addToDesc(bankEggsLayable + ' from bank');
+				}
+				if(bankEggsLayable < eggsLeftToday) {
+					info.addFamWeightTracking(f, (bankEggsLayable + 1) * 100, false);
 				}
 				info.addExtra(extraInfoLink('DNA Bank', attrmap {
 					'target': 'mainpane',
