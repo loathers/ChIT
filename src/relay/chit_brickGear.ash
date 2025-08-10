@@ -793,14 +793,15 @@ void pickerGear(slot s) {
 			float[item] famSpecificGear;
 			int pseudoScore = 100;
 			item mainGear = familiar_equipment(my_familiar());
-			if(mainGear != $item[none]) {
+			if(mainGear != $item[none] && chit_available(mainGear) > 0) {
 				famSpecificGear[mainGear] = pseudoScore;
 				--pseudoScore;
 			}
 			foreach it in $items[] {
 				if(it.item_type() == 'familiar equipment'
 					&& string_modifier(it, "Modifiers")
-					.contains_text('Equips On: "' + my_familiar() + '"')) {
+					.contains_text('Equips On: "' + my_familiar() + '"')
+					&& chit_available(it) > 0) {
 					famSpecificGear[it] = pseudoScore;
 					--pseudoScore;
 				}
