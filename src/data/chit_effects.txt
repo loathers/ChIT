@@ -128,12 +128,13 @@ Spooky VHS Tape Monster	style:"background-color:#D7D7FF;color:#007C29;font-style
 
 #He-Boulder Major Rays
 #Among many other things
-Everything Looks Blue	style:"color:blue"
-Everything Looks Red	style:"color:red"
-Everything Looks Yellow	style:"color:olive"
-Everything Looks Green	style:"color:green"
-Everything Looks Purple	style:"color:purple"
-Everything looks Beige	style:"color:burlywood"
+Everything Looks Blue	type:"elx", style:"color:blue"
+Everything Looks Red	type:"elx", style:"color:red"
+Everything Looks Yellow	type:"elx", style:"color:olive"
+Everything Looks Green	type:"elx", style:"color:green"
+Everything Looks Purple	type:"elx", style:"color:purple"
+Everything looks Beige	type:"elx", style:"color:burlywood"
+Everything looks Red, White and Blue	type:"elx"
 
 #Juju Mask
 Gaze of the Lightning God	style:"color:blue"
