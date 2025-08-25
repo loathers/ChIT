@@ -25,9 +25,11 @@ Then install ChIT as normal.
 ## Uninstallation
 
 Run this command in the graphical CLI:
+
 ```
 git delete ChIT
 ```
+
 note that the above command is case sensitive. `chit` will not work it has to be `ChIT`
 
 ## What if I already have the sourceforge version installed?
@@ -129,12 +131,14 @@ Simply place your bricks in the area you want, in the order you want them.
   - Default: trail,quests,modifiers,elements,organs
 
 The roof, walls and floor of your house can use some special syntax to lay bricks out in rows and columns.
+
 - | separator places bricks or groups of bricks horizontally adjacent each other in a row
 - , separator starts a new row of bricks after the previous row
 - ( ) parens vertically group bricks
 - { } curly braces horizontally group bricks
 
 Overriding the width of a brick or group of bricks can be accomplished by adding the following suffix immediately after it:
+
 - :X% sets its width to X%.
 - :Xpx sets its width equal to X pixels.
 - :X\* sets its width to be X times wider than the default width of bricks in that row.
@@ -142,6 +146,7 @@ Overriding the width of a brick or group of bricks can be accomplished by adding
 If no width override is supplied, ChIT tries to make all bricks in the same row the same width, content allowing.
 
 examples:
+
 - character|gear:112px,stats:3\*|(familiar,trail):2\*
 - effects:2\*|(trail,gear,familiar,boombox)
 
@@ -332,6 +337,7 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - buffs - regular effects
   - intrinsics - intrinsic effects
   - songs - only if present, this will cause all active AT songs to be displayed separately. (And other limited quantity buffs like Boris and Jarlsberg)
+  - elx - only if present, this will cause all active "Everything looks \[color\]" cooldowns to be displayed separately.
   - advmods - Adventure Modifiers (currently just non-combat forcers)
   - Example:
     - intrinsics,limited,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs

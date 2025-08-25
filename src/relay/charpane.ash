@@ -1112,6 +1112,7 @@ void bakeEffects() {
 	buffer uniques;
 	buffer buffs;
 	buffer intrinsics;
+	buffer elx;
 	buffer helpers;
 	buffer advmods;
 	int total = 0;
@@ -1121,6 +1122,7 @@ void bakeEffects() {
 	string layout = vars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
 	if (layout == "") layout = "buffs";
 	boolean showSongs = contains_text(layout,"songs");
+	boolean showELX = contains_text(layout,"elx");
 	if(!contains_text(layout, "advmods")) {
 		layout = "advmods," + layout;
 	}
@@ -1151,6 +1153,8 @@ void bakeEffects() {
 			uniques.append('<tbody class="buffs">');
 			uniques.append(currentBuff.effectHTML);
 			uniques.append('</tbody>');
+		} else if (showELX && currentBuff.effectType == "elx") {
+			elx.append(currentBuff.effectHTML);
 		} else {
 			buffs.append(currentBuff.effectHTML);
 		}
@@ -1331,6 +1335,7 @@ void bakeEffects() {
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
 				case "advmods": result.append(advmods); break;
+				case "elx": result.append(elx); break;
 				default: //ignore all other values
 			}
 		}
