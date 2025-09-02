@@ -405,7 +405,7 @@ string helperLucky() {
 		rewards[$location[Ye Olde Medievale Villagee]] = "leather.gif|3 each: Straw, Leather and Clay|0";
 	if(get_property("kingLiberated") == "true") {
 		rewards[$location[An Octopus's Garden]] = "bigpearl.gif|Fight a moister oyster|148";
-		rewards[$location[The Brinier Deepers]] = "fish.gif|50 turns of fishy|0";
+		rewards[$location[The Brinier Deepers]] = "fish.gif|20 turns of fishy|0";
 		if(get_property("poolSharkCount").to_int() < 25)
 			rewards[$location[The Haunted Billiards Room]] = "poolcue.gif|Rack 'em up for permanent pool skill|0";
 		rewards[$location[Cobb's Knob Treasury]] = "adventureimages/kg_embezzler.gif|Fight an embezzler|20";
