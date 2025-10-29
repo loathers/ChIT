@@ -712,7 +712,7 @@ void picker_august() {
 	addSkill($skill[Aug. 22nd: Tooth Fairy Day!], 22, 'Free fight a tooth golem.');
 	addSkill($skill[Aug. 23rd: Ride the Wind Day!], 23, '50 x level mox substats.');
 	addSkill($skill[Aug. 24th: Waffle Day!], 24, 'Acquire 3 waffles (food/monster swap combat item).');
-	addSkill($skill[Aug. 25th: Banana Split Day!], 25, 'Acquire 1 banana spit (food that gives banana).');
+	addSkill($skill[Aug. 25th: Banana Split Day!], 25, 'Acquire 1 banana split (food that gives banana).');
 	addSkill($skill[Aug. 26th: Toilet Paper Day!], 26, 'Acquire 1 handful of toilet paper (removes a negative effect).');
 	addSkill($skill[Aug. 27th: Just Because Day!], 27, '20 adv of 3 random good effects.');
 	addSkill($skill[Aug. 28th: Race Your Mouse Day!], 28, 'Acquire melting fam equip based on current fam.');
