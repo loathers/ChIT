@@ -1020,7 +1020,7 @@ void pickerPickerOption(buffer picker, string noun, string desc, string parenthe
 }
 
 void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
-	if(sk.combat) {
+	if(sk.combat && usable) {
 		usable = false;
 		if(desc != "") {
 			desc += '<br />';

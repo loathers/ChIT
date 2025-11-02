@@ -805,6 +805,38 @@ void picker_snowsuit() {
 	picker.pickerFinish("Rearranging your familiar's face!");
 }
 
+void picker_bcz() {
+	buffer picker;
+	picker.pickerStart('bcz', 'Spend some... blood...');
+
+	void addSkill(skill sk, string desc, string pref, stat toPay) {
+		int uses = get_property(pref).to_int();
+		int [int] costStarts = { 11, 23, 37 };
+		int cost = costStarts[uses % costStarts.count()] * (10 ** (uses / 3));
+		string prettyPayName;
+		switch(toPay) {
+			case $stat[submuscle]: prettyPayName = 'mus substats'; break;
+			case $stat[submysticality]: prettyPayName = 'mys substats'; break;
+			case $stat[submoxie]: prettyPayName = 'mox substats'; break;
+			default: prettyPayName = 'unknown substats lol oops'; break;
+		}
+		picker.pickerSkillOption(sk, desc, 'costs ' + formatInt(cost) + ' of your ' +
+			formatInt(my_basestat(toPay)) + ' ' + prettyPayName, my_basestat(toPay) > cost);
+	}
+
+	addSkill($skill[BCZ: Blood Geyser], '30-round stun', '_bczBloodGeyserCasts', $stat[submuscle]);
+	addSkill($skill[BCZ: Refracted Gaze], 'replace monster drops with drops from all other monsters in zone', '_bczRefractedGazeCasts', $stat[submysticality]);
+	addSkill($skill[BCZ: Sweat Bullets], 'free kill', '_bczSweatBulletsCasts', $stat[submoxie]);
+	addSkill($skill[BCZ: Blood Bath], parseEff($effect[Bloodbathed]) + ' (30 adv)', '_bczBloodBathCasts', $stat[submuscle]);
+	addSkill($skill[BCZ: Craft a Pheromone Cocktail], '1 potency awesome booze that gives a charge of a full day banish', '_bczPheromoneCocktailCasts', $stat[submuscle]);
+	addSkill($skill[BCZ: Create Blood Thinner], '1 toxicity spleen item that gives +100 HP and +1000% HP for 50 adv', '_bczBloodThinnerCasts', $stat[submuscle]);
+	addSkill($skill[BCZ: Dial it up to 11], '+111% Spell Damage, +111% Mys, All Spells Stagger (30 adv)', '_bczDialitupCasts', $stat[submysticality]);
+	addSkill($skill[BCZ: Prepare Spinal Tapas], '1 fullness awesome food that gives +300% Mys for 30 adv', '_bczSpinalTapasCasts', $stat[submysticality]);
+	addSkill($skill[BCZ: Sweat Equity], '+40% Meat (30 adv)', '_bczSweatEquityCasts', $stat[submoxie]);
+
+	picker.pickerFinish('Spending some blood...');
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
@@ -1828,6 +1860,9 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
+		case $item[blood cubic zirconia]:
+			info.addExtra(extraInfoPicker('bcz', '<b>Spend</b> your own blood'));
+			break;
 	}
 
 	// latte reminder
