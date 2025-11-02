@@ -1807,6 +1807,27 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[blue plate]:
 			extraMods = 'Improves Cooking';
 			break;
+		case $item[Monodent of the Sea]: {
+			string[int] dentPrefixes = { 'Mono', 'Bi', 'Tri', 'Qua', 'Penta', 'Hexa', 'Hepta', 'Octo', 'Nona', 'Deca' };
+			int constructs = get_property('seadentConstructKills').to_int();
+			int level = clamp(get_property('seadentLevel').to_int(), 1, 10);
+			string prefix = dentPrefixes[level - 1];
+			info.name = prefix + 'dent of the Sea';
+			info.image = itemimage('dent' + level + '.gif');
+			if(level < 10) {
+				int nextLevel = level + 1;
+				int nextReq = nextLevel * nextLevel;
+				info.addToDesc(constructs + '/' + nextReq + ' constructs to ' + dentPrefixes[nextLevel - 1] + 'dent');
+			}
+			info.addDrops(drops_info {
+				new drop_info('_seadentLightningUsed', 11, 'lightning banishkill', 'lightning banishkills'),
+				new drop_info('_seadentWaveUsed', LIMIT_BOOL, 'wave'),
+			});
+			if(get_property('_seadentWaveUsed').to_boolean()) {
+				info.addToDesc(get_property('_seadentWaveZone') + ' submerged');
+			}
+			break;
+		}
 	}
 
 	// latte reminder

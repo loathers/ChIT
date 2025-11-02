@@ -1465,3 +1465,13 @@ boolean isImportantOffhand(item it) {
 boolean usesSubstats() {
 	return my_class() != $class[Grey Goo];
 }
+
+// Why did ChIT not have a helper function for this already...
+
+int clamp(int toClamp, int min, int max) {
+	return min(max(toClamp, min), max);
+}
+
+float clamp(float toClamp, float min, float max) {
+	return min(max(toClamp, min), max);
+}
