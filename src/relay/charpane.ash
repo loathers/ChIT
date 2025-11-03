@@ -11,6 +11,7 @@ import "chit_brickHorsery.ash";
 import "chit_brickBoombox.ash";
 import "chit_brickRobo.ash";
 import "chit_brickNext.ash";
+import "chit_brickShrunkenHead.ash";
 
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
@@ -56,7 +57,7 @@ setvar("chit.floor.layout", "update,familiar");
 setvar("chit.roof.layout", "character,stats,gear");
 setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox");
+setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox,shrunkenhead");
 setvar("chit.quests.hide", false);
 setvar("chit.stats.showbars", true);
 setvar("chit.thrall.showname", false);
@@ -4429,7 +4430,7 @@ boolean parsePage(buffer original) {
 	}
 
 	// Refresh Link: <center><font size=1>[<a href="charpane.php">refresh</a>]</font>
-	if(find(parse = create_matcher("(<center><font.+?refresh.+?</font>)", source))) {
+	if(find(parse = create_matcher("(<center><font size=1>\\[.+?refresh.+?\\]</font>)", source))) {
 		chitSource["refresh"] = parse.group(1);
 		source = parse.replace_first("");
 	} else return vprint("CHIT: Error Parsing Refresh", "red", -1);
@@ -4615,6 +4616,7 @@ void bakeBricks() {
 						case "boombox":		bakeBoombox();		break;
 						case "robo":		bakeRobo();			break;
 						case "next": bakeNext(); break;
+						case "shrunkenhead": bakeShrunkenHead(); break;
 
 						// Reserved words
 						case "helpers": case "update": break;
