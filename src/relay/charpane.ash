@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28609; // my_paradoxicity
+since r28744; // shrunken head stuff
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
