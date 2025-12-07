@@ -779,6 +779,12 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 					}));
 				}
 				break;
+			case $familiar[Skeleton of Crimbo Past]:
+				info.addExtra(extraInfoLink('chat', attrmap {
+					'target': 'mainpane',
+					'href': 'main.php?talktosocp=1',
+				}));
+				break;
 		}
 
 		if(f.drops_limit > 0) {
