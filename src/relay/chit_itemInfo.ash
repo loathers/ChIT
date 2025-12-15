@@ -1289,7 +1289,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[carnivorous potted plant]: {
 			int kills = get_property('_carnivorousPottedPlantWins').to_int();
-			info.addToDesc(kills + ' free kills [' + (1.0 / (20.0 + kills) * 100) + '% swallow chance]');
+			info.addToDesc(kills + ' free kills [' + (round(1.0 / (20.0 + kills) * 10000) / 100.0) + '% swallow chance]');
 			break;
 		}
 		case $item[The Crown of Ed the Undying]: {
