@@ -1100,7 +1100,7 @@ void pickerItemOption(buffer picker, item it, string verb, string noun, string d
 string parseMods(string evm, boolean span, boolean debug) {
 	buffer enew;  // This is used for rebuilding evm with append_replacement()
 
-	if(debug) print(evm);
+	if(debug) print("1: " + evm);
 
 	// Standardize capitalization
 	matcher uncap = create_matcher("(?:^|[^'])\\b[a-z]", evm);
@@ -1155,19 +1155,12 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = parse.replace_all("");
 
 	// cleanup extra commas from removing things
-	string old = evm;
-	evm = replace_string(evm,", ,",",");
-	evm = replace_string(evm,",,",",");
-	while(old != evm) {
-		old = evm;
-		evm = replace_string(evm,", ,",",");
-		evm = replace_string(evm,",,",",");
-	}
-	if(evm.ends_with(', ')) {
-		evm = evm.substring(0, evm.length() - 2);
-	}
+	parse = create_matcher(",+\\s*,+", evm);
+	evm = parse.replace_all(",");
+	parse = create_matcher(",+\\s*$", evm);
+	evm = parse.replace_all("");
 
-	if(debug) print(evm);
+	if(debug) print("2: " + evm);
 
 	// Anything that applies the same modifier to all stats or all elements can be combined
 	record {
@@ -1275,6 +1268,12 @@ string parseMods(string evm, boolean span, boolean debug) {
 	parse = create_matcher('Class: "([^"]+)"', evm);
 	evm = parse.replace_all("$1 Only");
 
+	parse = create_matcher('Rollover Effect: "([^"]+)", Rollover Effect Duration \\+(\\d+)', evm);
+	evm = parse.replace_all('$2 Rollover Turns $1');
+
+	parse = create_matcher('Effect: "([^"]+)", Effect Duration \\+(\\d+)', evm);
+	evm = parse.replace_all('$2 Turns $1');
+
 	//shorten various text
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
@@ -1342,7 +1341,22 @@ string parseMods(string evm, boolean span, boolean debug) {
 		}
 	}
 
-	if(debug) print(evm);
+	if(debug) print("3: " + evm);
+
+	parse = create_matcher('(\\d+(?: Rollover)? Turns )([^,]+)(,|$)', evm);
+	while(parse.find()) {
+		effect eff = to_effect(parse.group(2));
+		if(eff != $effect[none]) {
+			string parsedEff = parseEff(eff);
+			if(parsedEff != '') {
+				parsedEff = '[' + parsedEff.replace_string(', ', '], [') + ']';
+				evm = evm.replace_string(parse.group(0), parse.group(1) + eff.name + ', ' + parsedEff
+					+ parse.group(3));
+			}
+		}
+	}
+
+	if(debug) print("4: " + evm);
 
 	return evm;
 }
