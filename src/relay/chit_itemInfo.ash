@@ -945,13 +945,15 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				new drop_info('_pantsgivingBanish', 5, 'banish', 'banishes', true),
 			});
 			int nextFullness = 5;
+			int nextFullnessNum = 1;
 			int fullnessQualified = -get_property('_pantsgivingFullness').to_int();
 			while(nextFullness <= get_property('_pantsgivingCount').to_int()) {
 				nextFullness *= 10;
+				++nextFullnessNum;
 				++fullnessQualified;
 			}
 			int toFullness = nextFullness - get_property('_pantsgivingCount').to_int();
-			info.addToDesc(toFullness + ' to fullness');
+			info.addToDesc(toFullness + ' to fullness #' + nextFullnessNum);
 			if(fullnessQualified > 0) {
 				info.addToDesc(fullnessQualified + ' ready');
 				info.incDrops(DROPS_ALL);
