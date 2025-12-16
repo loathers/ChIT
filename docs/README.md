@@ -248,20 +248,20 @@ The following preferences further refine the content and appearance of individua
   - You can also create your own custom categories, by editting data/chit_GearCategories.txt
   - Explanation of how to do so is provided via comments in data/chit_GearCategories.txt
   - Certain special categories that are too niche to include will always be displayed (ex. bounty is basically just the fledges or the talisman o' namsilat when needed for bounty hunting)
-  - You can include some options with a category by appending a : and then \[option]=\[value]
+  - You can include some options with a category by appending a : and then \[option]_\[value]
   - Valid options are:
-    - amount=(any numeric value, or "all"): how many items to display in this category (from best to worst, when applicable). "all" "0" or any negative number will just display everything.
-    - pull=(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
-    - create=(true/false): whether to display items when you could make them but don't have any made
+    - amount_(any numeric value, or "all"): how many items to display in this category (from best to worst, when applicable). "all" "0" or any negative number will just display everything.
+    - pull_(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
+    - create_(true/false): whether to display items when you could make them but don't have any made
   - When these options are not explicitly provided for a category, the defaults are decided by chit.gear.display.in-run.defaults
-  - Default: favorites:amount=all:pull=true:create=true, astral:amount=all, item, -combat, +combat, quest:amount=all:pull=true:create=true, today:amount=all:create=false, ML, path:amount=all, prismatic, res, resistance:amount=2, charter:amount=all, rollover, DRUNK:amount=all, Wow:amount=all, exp
+  - Default: favorites:amount_all:pull_true:create_true, astral:amount_all, item, -combat, +combat, quest:amount_all:pull_true:create_true, today:amount_all:create_false, ML, path:amount_all, prismatic, res, resistance:amount_2, charter:amount_all, rollover, DRUNK:amount_all, Wow:amount_all, exp
 - chit.gear.display.in-run.defaults: The default values for the options in chit.gear.display.in-run when not provided
   - Follows the same rules as the valid options section listed above in chit.gear.display.in-run
-  - Default: create=false, pull=false, amount=all
+  - Default: create_false, pull_false, amount_all
 - chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in aftercore instead of in-run
-  - Default: favorites:amount=all, quest:amount=all, charter:amount=all, today:amount=all:create=false, rollover, DRUNK:amount=all
+  - Default: favorites:amount_all, quest:amount_all, charter:amount_all, today:amount_all:create_false, rollover, DRUNK:amount_all
 - chit.gear.display.aftercore.defaults: Same as chit.gear.display.in-run.defaults, but for aftercore
-  - Default: create=true, pull=true, amount=1
+  - Default: create_true, pull_true, amount_1
 - chit.gear.ignoreG-Lover: Whether or not to avoid hiding G-less gear in G-Lover
   - With this set to false, only quest items without G's will be recommended
   - Default: false

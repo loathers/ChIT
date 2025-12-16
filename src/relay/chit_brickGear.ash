@@ -36,7 +36,7 @@ void gear_display_options() {
 		string [int] spl = split_string(s,":");
 		if(spl.count() > 1) {
 			for i from 1 to spl.count() - 1 {
-				string [int] opt = split_string(spl[i], " ?= ?");
+				string [int] opt = split_string(spl[i], " ?[=_] ?");
 				if(opt.count() == 2)
 					options[opt[0]] = opt[1];
 			}
@@ -53,7 +53,7 @@ string get_option(string reason, string option) {
 
 	if(!defaults_initialized) {
 		foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
-			string [int] spl = split_string(s, "=");
+			string [int] spl = split_string(s, "[=_]");
 			defaults[spl[0]] = spl[1];
 		}
 		defaults_initialized = true;
@@ -820,7 +820,7 @@ void pickerGear(slot s) {
 		string [string] options;
 		if(spl.count() > 1) {
 			for i from 1 to (spl.count() - 1) {
-				string [int] optspl = split_string(spl[i]," ?= ?");
+				string [int] optspl = split_string(spl[i]," ?[=_] ?");
 				if(optspl.count() == 2)
 					options[optspl[0]] = optspl[1];
 			}
