@@ -1865,6 +1865,11 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[blood cubic zirconia]:
 			info.addExtra(extraInfoPicker('bcz', '<b>Spend</b> your own blood'));
 			break;
+		case $item[lucky gold ring]:
+			info.addDrops(drops_info {
+				new drop_info('_luckyGoldRingVolcoino', LIMIT_BOOL, 'volcoino'),
+			});
+			break;
 	}
 
 	// latte reminder
