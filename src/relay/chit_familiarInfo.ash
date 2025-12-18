@@ -107,6 +107,36 @@ void picker_snapper() {
 	picker.pickerFinish("Changing guidance...");
 }
 
+void picker_socpshop() {
+	int bones = item_amount($item[knucklebone]);
+
+	buffer picker;
+	picker.pickerStart('socpshop', 'Spend them bones (' + bones + ' on hand)');
+
+	void addItem(item it, string desc, string pref) {
+		coinmaster socp = $coinmaster[Skeleton of Crimbo Past];
+		boolean available = !get_property(pref).to_boolean();
+		int cost = socp.sell_price(it);
+		picker.pickerItemOption(it, 'buy', it.name, desc, available ? (cost + ' knucklebones') : 'sold out',
+			sideCommand('create 1 ' + it.name), available && bones >= cost);
+	}
+
+	addItem($item[Smoking Pope], 'size 2 epic booze, +50% Item (50 adv)', '_crimboPastSmokingPope');
+	addItem($item[prize turkey], 'size 2 epic food, +50% Init, +100% Meat (50 adv)', '_crimboPastPrizeTurkey');
+	addItem($item[medicinal gruel], 'size 1 spleen, +5lbs, tons of hp/regen (100adv)', '_crimboPastMedicalGruel');
+
+	item dailySpecial = get_property("_crimboPastDailySpecialItem").to_int().to_item();
+	if(dailySpecial != $item[none]) {
+		addItem(dailySpecial, 'daily special item from a crimbo past', '_crimboPastDailySpecial');
+	}
+
+	picker.pickerGenericOption('visit', 'the store', 'fallback in case of issues', '',
+		'main.php?talktosocp=1', true, itemimage($familiar[Skeleton of Crimbo Past].image), attrmap {},
+		attrmap { 'target': 'mainpane', 'class': 'visit done' });
+
+	picker.pickerFinish('Spending them bones...');
+}
+
 int getFamMaxLevel(familiar f) {
 	return f == $familiar[Stocking Mimic] ? 100 : 20;
 }
@@ -780,10 +810,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				}
 				break;
 			case $familiar[Skeleton of Crimbo Past]:
-				info.addExtra(extraInfoLink('chat', attrmap {
-					'target': 'mainpane',
-					'href': 'main.php?talktosocp=1',
-				}));
+				info.addExtra(extraInfoPicker('socpshop', 'shop'));
 				break;
 		}
 
