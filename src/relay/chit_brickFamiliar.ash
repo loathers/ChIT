@@ -907,6 +907,99 @@ void FamVampyre() {
 
 void pickerGear(slot s);
 
+void picker_mummery() {
+	buffer picker;
+	picker.pickerStart('mummery', "Pick a Mummer's Costume");
+
+	record conditional_ability {
+		string attr;
+		string whatDo;
+		// -1 for unknown number
+		int withAttr;
+		int withoutAttr;
+	};
+
+	typedef conditional_ability[int] conditional_abilities;
+
+	record mummery_info {
+		string name;
+		string cmd;
+		conditional_abilities abilities;
+	};
+
+	mummery_info[int] allCostumes = {
+		new mummery_info('The Captain', 'meat', conditional_abilities {
+			new conditional_ability('hashands', 'Meat Drop', 30, 15),
+			new conditional_ability('undead', '25% Delevel', -1, 0),
+		}),
+		new mummery_info('Beelzebub', 'mp', conditional_abilities {
+			new conditional_ability('haswings', 'MP Regen Min', 6, 4),
+			new conditional_ability('haswings', 'MP Regen Max', 10, 5),
+			new conditional_ability('hot', 'Deals Hot Damage', -1, 0),
+		}),
+		new mummery_info('Saint Patrick', 'muscle', conditional_abilities {
+			new conditional_ability('animal', 'Muscle Experience', 4, 3),
+			new conditional_ability('bite', 'Stagger', 1, 0),
+		}),
+		new mummery_info('Prince George', 'item', conditional_abilities {
+			new conditional_ability('wearsclothes', 'Item Drop', 25, 15),
+			new conditional_ability('fast', 'Bleeds Enemy', -1, 0),
+		}),
+		new mummery_info('Oliver Cromwell', 'myst', conditional_abilities {
+			new conditional_ability('haseyes', 'Mysticality Experience', 4, 3),
+			new conditional_ability('flies', 'Helps Get The Jump', -1, 0),
+		}),
+		new mummery_info('The Doctor', 'hp', conditional_abilities {
+			new conditional_ability('technological', 'HP Regen Min', 18, 8),
+			new conditional_ability('technological', 'HP Regen Max', 20, 10),
+			new conditional_ability('evil', 'Phys Damage and Delevel', -1, 0),
+		}),
+		new mummery_info('Miss Funny', 'moxie', conditional_abilities {
+			new conditional_ability('sleaze', 'Moxie Experience', 4, 2),
+			new conditional_ability('insect', 'Deals Sleaze Damage', -1, 0),
+		}),
+	};
+
+	foreach i, info in allCostumes {
+		int mummingNum = i + 1;
+		boolean usable = !get_property('_mummeryUses').contains_text(mummingNum.to_string());
+		string desc = '';
+		foreach j, ability in info.abilities {
+			boolean hasAttribute = false;
+			foreach k, attr in my_familiar().attributes.split_string('; ') {
+				if(ability.attr == attr) {
+					hasAttribute = true;
+					break;
+				}
+			}
+			int amount = hasAttribute ? ability.withAttr : ability.withoutAttr;
+			if(amount != 0) {
+				if(desc != '') {
+					desc += ', ';
+				}
+				desc += ability.whatDo;
+				if(amount > 0) {
+					desc += ': ' + amount;
+				}
+			}
+		}
+		string parenthetical = '';
+		if(!usable) {
+			string primaryModifier = info.abilities[0].whatDo;
+			matcher whoWearing = create_matcher(primaryModifier + ': \\[\\d+\\*fam\\(([^)]+)\\)\\]',
+				get_property('_mummeryMods'));
+			familiar wearing = whoWearing.find() ? whoWearing.group(1).to_familiar() : $familiar[none];
+			parenthetical = wearing == my_familiar() ? 'on me' :
+				wearing != $familiar[none] ? 'on ' + wearing : 'used and discarded';
+		}
+		picker.pickerGenericOption('Dress up as', info.name, parseMods(desc), parenthetical,
+			sideCommand('mummery ' + info.cmd), usable, itemimage('mummericon' + mummingNum + '.gif'),
+			attrmap{}, attrmap{});
+	}
+
+	picker.pickerFinish('Changing costumes...');
+}
+
 void bakeFamiliar() {
 
 	// Special Challenge Path Familiar-ish things
@@ -983,9 +1076,21 @@ void bakeFamiliar() {
 		if(myfam == $familiar[Fancypants Scarecrow])
 			famtype = "Fancy Scarecrow"; // Name is too long when there's info added
 		// Put the mumming trunk icon before the familiar type name
-		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592.*?</a>', source); #"
-		if(find(mummingmatcher))
-			mummingicon = group(mummingmatcher);
+		matcher mummingmatcher = create_matcher('<a target="mainpane" href="/inv_use\\.php\\?whichitem=9592[^>]+><img src="([^"]+)"[^>]+></a>', source);
+		if(find(mummingmatcher)) {
+			buffer mummingiconbuffer;
+			picker_mummery();
+			mummingiconbuffer.tagStart('a', attrmap {
+				'class': 'chit_launcher',
+				'rel': 'chit_pickermummery',
+				'href': '#',
+			});
+			mummingiconbuffer.addImg(mummingmatcher.group(1), attrmap {
+				'title': "Pick a Mummer's Costume",
+			});
+			mummingiconbuffer.tagFinish('a');
+			mummingicon = mummingiconbuffer.to_string();
+		}
 	}
 
 	//Get Familiar Name
