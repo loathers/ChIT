@@ -123,7 +123,7 @@ void addFamWeightTracking(chit_info info, familiar f, int target, boolean target
 		}
 		if(target > 0) {
 			int expToGo = (targetIsWeight ? target**2 : target) - f.experience;
-			int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
+			int combats = expRate == 0 ? -1 : ceil(expToGo.to_float() / expRate);
 			info.addToDesc(expToGo + ' exp to ' + target + (targetIsWeight ? 'lbs' : ' exp')
 				+ (expRate != 1 ? (' (' + (combats < 0 ? '&infin;' : combats) + ' combats)') : ''));
 		}

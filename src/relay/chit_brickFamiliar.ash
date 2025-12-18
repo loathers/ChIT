@@ -1008,9 +1008,9 @@ void bakeFamiliar() {
 	if(my_path() == $path[Z is for Zootomist] && my_level() < 12 && myfam != $familiar[grey goose]) {
 		int goalWeight = my_level() + 2;
 		int goalExp = goalWeight * goalWeight;
-		float expToGo = goalExp - myfam.experience;
+		int expToGo = goalExp - myfam.experience;
 		int expRate = 1 + numeric_modifier('Familiar Experience');
-		int combats = expRate == 0 ? -1 : ceil(expToGo / expRate);
+		int combats = expRate == 0 ? -1 : ceil(expToGo.to_float() / expRate);
 		buffer zootInfo;
 		if(expToGo > 0) {
 			zootInfo.append('<span title="');
@@ -1018,7 +1018,7 @@ void bakeFamiliar() {
 			zootInfo.append(' combats to go at a rate of ');
 			zootInfo.append(expRate);
 			zootInfo.append(' exp per combat">');
-			zootInfo.append(ceil(expToGo));
+			zootInfo.append(expToGo);
 			zootInfo.append(' exp to graft</span>');
 		}
 		else {
