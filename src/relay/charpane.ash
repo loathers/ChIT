@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28783; // Skeleton of Crimbo Past coinmaster
+since r28767; // Skeleton of Crimbo Past
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
