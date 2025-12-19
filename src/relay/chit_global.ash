@@ -1151,6 +1151,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|None'
 		+ '|Generic'
 		+ '|[^,:]+: 0(?:, |$)'
+		+ '|Wiki Name: "[^"]+"'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
