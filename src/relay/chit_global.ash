@@ -1053,6 +1053,13 @@ void pickerSelectionOption(buffer picker, string name, string desc, string cmd, 
 
 string parseEff(effect eff);
 
+void addEffectIcon(buffer result, effect eff, string titlePrefix, boolean popupDescOnClick, string wrappingElement, attrmap wrappingElementAttrs) {
+	chit_info info = new chit_info(eff.name, parseEff(eff), DROPS_NONE, DANGER_NONE, itemimage(eff.image));
+
+	result.addInfoIcon(info, info.name, info.desc, popupDescOnClick ? ("eff('" + eff.descid +
+		"'); return false;") : '', wrappingElement, wrappingElementAttrs);
+}
+
 void pickerEffectOption(buffer picker, string verb, string name, effect eff, string desc, int duration, string href, boolean usable) {
 	if(name == '') {
 		name = eff;
@@ -1060,21 +1067,18 @@ void pickerEffectOption(buffer picker, string verb, string name, effect eff, str
 	if(desc == '') {
 		desc = parseEff(eff);
 	}
-	if(duration > 0) {
-		desc += ' (' + duration + ' turns)';
-	}
-	else if(duration < 0) {
-		desc += ' (intrinsic)';
-	}
 
-	picker.pickerGenericOption(verb, name, desc, "", href, usable, itemimage(eff.image), attrmap {
-		'onclick': "javascript:eff('" + eff.descid + "');",
-		'title': 'Pop out effect description',
-	});
+	buffer iconSection;
+	iconSection.tagStart('td', attrmap { 'class': 'icon' });
+	iconSection.addEffectIcon(eff, '', true, '', attrmap {});
+	iconSection.tagFinish('td');
+
+	picker.pickerGenericOption(verb, name, desc, duration > 0 ? (duration + ' turns') : duration < 0 ?
+		'intrinsic' : '', href, usable, iconSection, attrmap {}, '');
 }
 
 void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
-	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
+	pickerEffectOption(picker, verb, eff, desc, duration, href, usable);
 }
 
 void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
