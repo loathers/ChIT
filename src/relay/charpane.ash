@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28767; // Skeleton of Crimbo Past
+since r28818; // shanties
 import "chit_global.ash";
 import "chit_itemInfo.ash";
 import "chit_familiarInfo.ash";
@@ -778,25 +778,8 @@ void pickerExpression() {
 		boolean current = have_effect(expression) > 0;
 		string expressLink = '<a class="change" href="' + sideCommand(expression.default) + '">';
 
-		picker.append('<tr class="pickitem');
-		if(current) picker.append(' currentitem');
-		picker.append('"><td class="icon">');
-		if(!current) picker.append(expressLink);
-		picker.append('<img class="chit_icon" src="/images/itemimages/');
-		picker.append(expression.image);
-		picker.append('" title="');
-		picker.append(expression.to_string());
-		picker.append('" />');
-		if(!current) picker.append('</a>');
-		picker.append('</td><td colspan="2">');
-		if(current) picker.append('<b>Current</b>: ');
-		else picker.append(expressLink);
-		picker.append(expression.to_string());
-		picker.append('<br /><span class="descline">');
-		picker.append(parseEff(expression));
-		picker.append('</span>');
-		if(!current) picker.append('</a>');
-		picker.append('</td></tr>');
+		picker.pickerEffectOption("express", expression.name, expression, '', 10,
+			sideCommand(expression.default), !current);
 	}
 
 	foreach i, expression in availableExpressions() {
@@ -804,6 +787,43 @@ void pickerExpression() {
 	}
 
 	picker.pickerFinish("Expressing Yourself...");
+}
+
+effect [int] availableShanties() {
+	static effect [int] shanties;
+	static boolean done = false;
+
+	if(!done) {
+		foreach sk in $skills[] {
+			if(have_skill(sk) && be_good(sk) && sk.shanty) {
+				shanties[shanties.count()] = to_effect(sk);
+			}
+		}
+		done = true;
+	}
+
+	return shanties;
+}
+
+void pickerShanty() {
+	if(chitPickers contains "shanty") {
+		return;
+	}
+
+	buffer picker;
+	picker.pickerStart("shanty", "Sing a Shanty");
+
+	void addShanty(effect shanty) {
+		boolean current = have_effect(shanty) > 0;
+		picker.pickerEffectOption('sing', shanty.name, shanty, '', 10,
+			sideCommand(shanty.default), !current);
+	}
+
+	foreach i, shanty in availableShanties() {
+		addShanty(shanty);
+	}
+
+	picker.pickerFinish("Singing a Shanty...");
 }
 
 buff parseBuff(string source) {
@@ -1051,6 +1071,11 @@ buff parseBuff(string source) {
 		result.append('<a class="chit_launcher done" rel="chit_pickerexpression" href="#">');
 		linkStarted = true;
 	}
+	else if(myBuff.eff.to_skill().shanty) {
+		pickerShanty();
+		result.append('<a class="chit_launcher done" rel="chit_pickershanty" href="#">');
+		linkStarted = true;
+	}
 	result.append(effectAlias);
 
 	//ckb: Add modification details for buffs and effects
@@ -1148,8 +1173,7 @@ void bakeEffects() {
 			intrinsics.append(currentBuff.effectHTML);
 		} else if (showSongs && $strings[at, aob, aoj] contains currentBuff.effectType) {
 			songs.append(currentBuff.effectHTML);
-		} else if(showSongs && (to_skill(currentBuff.effectName).expression || $strings[awol, asdon,
-		holorecord] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
+		} else if(showSongs && (to_skill(currentBuff.effectName).expression || to_skill(currentBuff.effectName).shanty || $strings[awol, asdon, holorecord] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
 			uniqueTypesShown[currentBuff.effectType] = true;
 			uniques.append('<tbody class="buffs">');
 			uniques.append(currentBuff.effectHTML);
