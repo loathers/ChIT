@@ -1078,7 +1078,7 @@ void pickerEffectOption(buffer picker, string verb, string name, effect eff, str
 }
 
 void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int duration, string href, boolean usable) {
-	pickerEffectOption(picker, verb, eff, desc, duration, href, usable);
+	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
 }
 
 void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
