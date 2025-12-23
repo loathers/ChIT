@@ -1,0 +1,51 @@
+name: Notify Ascension Speed Society Discord
+
+on:
+  push:
+    branches: [main]
+
+job:
+  message:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Generate message content
+      id: content
+      uses: actions/github-script@v6.3.1
+      env:
+        COMMITS: ${{ toJSON(github.event.commits) }}
+      with:
+        result-encoding: string
+        script: |
+          const commits = JSON.parse(process.env.COMMITS);
+          var lines = "[ChIT:main] " + commits.length + " new commit" + (commits.length !== 1 ? "s" : "") + "\n";
+          for (const commit of commits) {
+            lines += "- " + commit.message + " [" + commit.id + "](" + commit.url + ") @" + commit.author.username + "\n"
+          }
+          return lines
+    - name: Generate message author
+      id: author
+      uses: actions/github-script@v6.3.1
+      env:
+        COMMITS: ${{ toJSON(github.event.commits) }}
+      with:
+        result-encoding: string
+        script: |
+          const commits = JSON.parse(process.env.COMMITS);
+          return commits[0].author.username
+    - name: Generate message avatar
+      id: avatar
+      uses: actions/github-script@v6.3.1
+      env:
+        COMMITS: ${{ toJSON(github.event.commits) }}
+      with:
+        result-encoding: string
+        script: |
+          const commits = JSON.parse(process.env.COMMITS);
+          return commits[0].author.avatarUrl
+    - name: Discord Webhook Action
+      uses: tsickert/discord-webhook@v7.0.0
+      with:
+        webhook-url: ${{ secrets.DISCORDWEBHOOK }}
+        content: '${{ steps.content.outputs.result }}'
+        username: '${{ steps.author.content.result }}'
+        avatar-url: '${{ steps.avatar.content.result }}'
