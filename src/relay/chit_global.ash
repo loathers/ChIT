@@ -1316,10 +1316,10 @@ string parseMods(string evm, boolean span, boolean debug) {
 
 	if(span) {
 		matcher elemental =
-		create_matcher("(((?:^|,)[^,]*)(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)([^,]+))", evm);
+		create_matcher("(((?:^|,)\\s*)([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]+))", evm);
 		while(elemental.find()) {
 			evm = replace_string(evm, elemental.group(1), elemental.group(2) + "<span class=mod" +
-				elemental.group(3) + ">" + elemental.group(3) + elemental.group(4) + "</span>");
+				elemental.group(4) + ">" + elemental.group(3) + "</span>");
 		}
 	}
 
