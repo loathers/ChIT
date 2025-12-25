@@ -5,7 +5,7 @@ void main(string choice, item it, string favType) {
 	if(favType != "")
 		name += "." + favType;
 
-	boolean [item] list = to_list(vars[name]);
+	boolean [item] list = to_list(cvars[name]);
 
 	if(choice == "add")
 		list[it] = true;

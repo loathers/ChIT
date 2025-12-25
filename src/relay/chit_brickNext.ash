@@ -30,7 +30,7 @@ void bakeNext() {
 		}
 		string locShort = loc.to_string();
 		boolean wasShortened = false;
-		int maxLength = vars["chit.next.maxlen"].to_int();
+		int maxLength = cvars["chit.next.maxlen"].to_int();
 		if(maxLength > 0 && locShort.length() > maxLength) {
 			locShort = locShort.substring(0, maxLength - 3) + "...";
 			wasShortened = true;

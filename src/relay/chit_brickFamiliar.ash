@@ -101,7 +101,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	}
 
 	boolean [item] hiddengear;
-	foreach i,famequip in split_string(vars["chit.familiar.hiddengear"], "\\s*(?<!\\\\),\\s*")
+	foreach i,famequip in split_string(cvars["chit.familiar.hiddengear"], "\\s*(?<!\\\\),\\s*")
 		hiddengear[to_item(famequip)] = true;
 
 	void addEquipment(item it, string cmd) {
@@ -245,7 +245,7 @@ void pickerFamiliarGear(familiar myfam, item famitem, boolean isFed) {
 	}
 
 	void pickSlot(string slottype) {
-		string pref = vars["chit.familiar."+slottype];
+		string pref = cvars["chit.familiar."+slottype];
 		if (pref != "") {
 			string [int] equipmap = split_string(pref, "\\|");
 			item equip;
@@ -1197,7 +1197,7 @@ void bakeFamiliar() {
 	if (is100 != $familiar[none]) {
 		if (myfam == is100) {
 			famstyle = famstyle + "color:green;";
-			if (vars["chit.familiar.protect"] == "true") {
+			if (cvars["chit.familiar.protect"] == "true") {
 				hover = "Don't ruin your 100% run!";
 				hover_famicon = hover;
 				protect = true;
@@ -1265,7 +1265,7 @@ void bakeFamiliar() {
 		} else {
 			result.append('<td class="icon">');
 		}
-		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && vars["chit.familiar.showlock"].to_boolean();
+		boolean lockable = string_modifier(famitem, "Modifiers").contains_text("Generic") && cvars["chit.familiar.showlock"].to_boolean();
 		if(lockable)
 			result.append('<div id="fam_equip">');
 		result.addItemIcon(famitem, 'fam equip: ', false, DANGER_GOOD,

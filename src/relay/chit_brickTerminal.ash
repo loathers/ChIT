@@ -173,7 +173,7 @@ void addTerminal(buffer result) {
 		result.append('<tr><td class="label"><a class="visit" target="mainpane" href="');
 		result.term_link();
 		result.append('">Terminal</a></td><td ');
-		if(to_boolean(vars["chit.stats.showbars"])) result.append('colspan="2">');
+		if(to_boolean(cvars["chit.stats.showbars"])) result.append('colspan="2">');
 		else result.append('class="info">');
 		
 		result.addSourceSkillDisplay(get_property("sourceTerminalEducate1"), 1, false);

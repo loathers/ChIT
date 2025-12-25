@@ -9,7 +9,7 @@ location lastLoc;
 boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/relayimages/chit/";
-string [string] vars;
+string [string] cvars;
 
 typedef string[string] attrmap;
 
@@ -134,7 +134,7 @@ int popoverCount = 0;
 void addElementWithPopover(buffer result, string ele, string eleContent, attrmap eleAttrs,
 	string popoverTitle, string popoverDesc, string wrappingEle, attrmap wrappingEleAttrs) {
 	if(popoverTitle != '') {
-		if(vars['chit.display.popovers'].to_boolean()) {
+		if(cvars['chit.display.popovers'].to_boolean()) {
 			++popoverCount;
 			eleAttrs['class'] += ' chit_popoverlauncher';
 			eleAttrs['aria-describedby'] = 'popover' + popoverCount;
@@ -162,7 +162,7 @@ void addElementWithPopover(buffer result, string ele, string eleContent, attrmap
 		result.tagFinish(wrappingEle);
 	}
 
-	if(popoverTitle != '' && vars['chit.display.popovers'].to_boolean()) {
+	if(popoverTitle != '' && cvars['chit.display.popovers'].to_boolean()) {
 		result.tagStart('div', attrmap {
 			'id': 'popover' + popoverCount,
 			'class': 'popover',
@@ -234,7 +234,7 @@ void addInfoIcon(buffer result, chit_info info, string title, string desc, strin
 		imgAttrs['style'] = info.customStyle;
 	}
 
-	if(info.weirdoDivContents == '' || vars['chit.familiar.iconize-weirdos'].to_boolean()) {
+	if(info.weirdoDivContents == '' || cvars['chit.familiar.iconize-weirdos'].to_boolean()) {
 		imgAttrs['src'] = info.image;
 		result.addElementWithPopover('img', '', imgAttrs, title, desc,
 			wrappingElement, wrappingElementAttrs);
@@ -506,137 +506,12 @@ string define_prop(string name, string type, string def) {
 	return value;
 }
 
-void setvar(string name, string type, string def) {
-	vars[name] = define_prop(name, type, def);
+void chit_setvar(string name, string type, string def) {
+	cvars[name] = define_prop(name, type, def);
 }
-void setvar(string name, boolean def) { setvar(name, "boolean", def); }
-void setvar(string name, string def) { setvar(name, "string", def); }
-
-/*****************************************************
-	zLib functions
-	Copied from zarqon's original
-	Huh. This is more functions than I expected. My co-authors must love this stuff.
-*****************************************************/
-
-// returns the string between start and end in source
-// passing an empty string for start or end means the end of the string
-string excise(string source, string start, string end) {
-   if (start != "") {
-      if (!source.contains_text(start)) return "";
-      source = substring(source,index_of(source,start)+length(start));
-   }
-   if (end == "") return source;
-   if (!source.contains_text(end)) return "";
-   return substring(source,0,index_of(source,end));
-}
-
-float abs(float n) { return n < 0 ? -n : n; }
-
-boolean vprint(string message, string color, int level) {
-   if (level == 0) abort(message);
-   if (to_int(vars["verbosity"]) >= abs(level)) print(message,color);
-   return (level > 0);
-}
-boolean vprint(string message, int level) { if (level > 0) return vprint(message,"black",level); return vprint(message,"red",level); }
-
-// check a quest property, e.g. qprop("questL11MacGuffin >= step3")
-boolean qprop(string test) {
-   if (!test.contains_text(" ")) return get_property(test) == "finished";
-   int numerize(string progress) {
-      if (is_integer(progress)) return progress.to_int();
-      switch (progress) {
-         case "unstarted": return -1;
-         case "started": return 0;
-         case "finished": return 999;
-      }
-      return excise(progress,"step","").to_int();
-   }
-   string[int] tbits = split_string(test," ");
-   if (count(tbits) != 3) return vprint("'"+test+"' not valid parameter for qprop().  Syntax is '<property> <relational operator> <value>'",-3);
-   if (get_property(tbits[0]) == "") return vprint("'"+tbits[0]+"' is not a valid quest property.",-3);
-   switch (tbits[1]) {
-      case "==": case "=": return numerize(get_property(tbits[0])) == numerize(tbits[2]);
-      case "!=": case "<>": return numerize(get_property(tbits[0])) != numerize(tbits[2]);
-      case ">": return numerize(get_property(tbits[0])) > numerize(tbits[2]);
-      case "=>": case ">=": return numerize(get_property(tbits[0])) >= numerize(tbits[2]);
-      case "<": return numerize(get_property(tbits[0])) < numerize(tbits[2]);
-      case "=<": case "<=": return numerize(get_property(tbits[0])) <= numerize(tbits[2]);
-   } return vprint("'"+tbits[1]+"' is not a valid relational operator.", -3);
-}
-
-// determine if something is path-safe
-boolean be_good(string johnny) {
-   switch (my_path().name) {
-      case "Bees Hate You": if (johnny.to_lower_case().index_of("b") > -1) return false; break;
-      case "Trendy": if (!is_trendy(johnny)) return false; break;
-      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
-   }
-   return is_unrestricted(johnny);
-}
-boolean be_good(item johnny) {
-   switch (my_path().name) {
-      case "Bees Hate You": if (johnny.to_lower_case().index_of("b") > -1) return false; break;
-      case "Trendy": if (!is_trendy(johnny)) return false; break;
-      case "Avatar of Boris": if (johnny == $item[trusty]) return true;
-      case "Way of the Surprising Fist": if ($slots[weapon,off-hand] contains johnny.to_slot()) return false; break;
-      case "KOLHS": if (johnny.inebriety > 0 && !contains_text(johnny.notes, "KOLHS")) return false; break;
-      case "Zombie Slayer": if (johnny.fullness > 0 && !contains_text(johnny.notes, "Zombie Slayer")) return false; break;
-      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return $items[source terminal] contains johnny; break;
-   }
-   if (class_modifier(johnny,"Class") != $class[none] && class_modifier(johnny,"Class") != my_class()) return false;
-   return is_unrestricted(johnny);
-}
-boolean be_good(familiar johnny) {
-   switch (my_path().name) {
-      case "Trendy": if (!is_trendy(johnny)) return false; break;
-      case "Avatar of Boris":
-      case "Avatar of Jarlsberg":
-      case "Avatar of Sneaky Pete":
-      case "Actually Ed the Undying": return false;
-      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
-   }
-   return is_unrestricted(johnny);
-}
-boolean be_good(skill johnny) {
-   switch (my_path().name) {
-      case "Trendy": if (!is_trendy(johnny)) return false; break;
-      case "G-Lover": if (johnny.to_lower_case().index_of("g") == -1) return false; break;
-   }
-   return is_unrestricted(johnny);
-}
-
-// the opposite of split_string(); useful for working with comma-delimited lists
-string join(string[int] pieces, string glue) {
-   buffer res;
-   boolean middle;
-   foreach index in pieces {
-      if (middle) res.append(glue);
-      middle = true;
-      res.append(pieces[index]);
-   }
-   return res;
-}
-// returns true if a glue-delimited list contains needle (case-insensitive)
-boolean list_contains(string list, string needle, string glue) {
-   return create_matcher("(^|"+glue+")\\Q"+to_lower_case(needle)+"\\E($|"+glue+")",to_lower_case(list)).find();
-}
-boolean list_contains(string list, string needle) { return list_contains(list, needle, ", "); }
-// adds a unique entry to a glue-delimited list (and so won't add if already exists), returns modified list
-string list_add(string list, string add, string glue, string gluepat) {
-   if (length(list) == 0) return add;
-   if (list_contains(list,add,gluepat)) return list;
-   return list+glue+add;
-}
-string list_add(string list, string add, string glue) { return list_add(list, add, glue, glue); }
-string list_add(string list, string add) { return list_add(list, add, ", "); }
-// removes any matching entries from a glue-delimited list, returns modified list
-string list_remove(string list, string del, string glue, string gluepat) {
-   string[int] bits;
-   foreach i,b in split_string(list, gluepat) if (b != del) bits[i] = b;
-   return join(bits,glue);
-}
-string list_remove(string list, string del, string glue) { return list_remove(list, del, glue, glue); }
-string list_remove(string list, string del) { return list_remove(list, del, ", "); }
+void chit_setvar(string name, boolean def) { chit_setvar(name, "boolean", def); }
+void chit_setvar(string name, string def) { chit_setvar(name, "string", def); }
+void chit_setvar(string name, int def) { chit_setvar(name, "int", def); }
 
 /*****************************************************
 	Script functions

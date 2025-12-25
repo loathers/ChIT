@@ -172,7 +172,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				info.addExtra(extraInfoEquipFam($slot[weapon]));
 				break;
 			case $familiar[Crimbo Shrub]:
-				if(to_boolean(vars['chit.familiar.anti-gollywog'])) {
+				if(to_boolean(cvars['chit.familiar.anti-gollywog'])) {
 					info.image = imagePath + 'crimboshrub_fxx_ckb.gif';
 				}
 				foreach part in $strings[shrubTopper, shrubLights, shrubGarland, shrubGifts] {
@@ -816,7 +816,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 			info.addDrop(bjornDrops[f]);
 		}
 
-		if(info.desc != '' && vars['chit.display.popovers'].to_boolean()) {
+		if(info.desc != '' && cvars['chit.display.popovers'].to_boolean()) {
 			info.addToDesc('&nbsp;');
 		}
 		info.addToDesc(parseMods(string_modifier('Throne:' + f, 'Evaluated Modifiers')));
@@ -851,7 +851,7 @@ void addFamiliarIcon(buffer result, familiar f, boolean isBjorn, string reason, 
 		info.addToDesc('recommended for ' + reason);
 	}
 
-	if(info.desc != '' && !vars['chit.display.popovers'].to_boolean()) {
+	if(info.desc != '' && !cvars['chit.display.popovers'].to_boolean()) {
 		matcher m = create_matcher('<[^>]+>', info.desc);
 		info.desc = m.replace_all('');
 	}

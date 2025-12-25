@@ -1873,7 +1873,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	// latte reminder
-	if(relevantSlot == $slot[off-hand] && vars['chit.gear.lattereminder'].to_boolean() &&
+	if(relevantSlot == $slot[off-hand] && cvars['chit.gear.lattereminder'].to_boolean() &&
 		my_location().latteDropAvailable() && it != $item[latte lovers member's mug] &&
 		!it.isImportantOffhand() && be_good($item[latte lovers member's mug])) {
 		if(info.dangerLevel < DANGER_WARNING) {
@@ -1883,7 +1883,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	}
 
 	// sword cane reminder
-	if(relevantSlot == $slot[weapon] && vars['chit.gear.ccswordcanereminder'].to_boolean()
+	if(relevantSlot == $slot[weapon] && cvars['chit.gear.ccswordcanereminder'].to_boolean()
 		&& it != $item[candy cane sword cane] && be_good($item[candy cane sword cane])) {
 		CCSwordZoneInfo ccscInfo = getCCSwordZoneInfo(my_location());
 		if(ccscInfo.isImportant && ccscInfo.canDo()) {
@@ -1941,7 +1941,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		info.desc = htmlRemover.replace_all('');
 	}
 
-	if(vars['chit.display.popovers'].to_boolean() && includeMods) {
+	if(cvars['chit.display.popovers'].to_boolean() && includeMods) {
 		if(extraMods != '' && !extraMods.starts_with(', ')) {
 			extraMods = ', ' + extraMods;
 		}
@@ -1976,7 +1976,7 @@ chit_info getItemInfo(item it) {
 void addItemIcon(buffer result, item it, string titlePrefix, boolean popupDescOnClick,
 	int upDanger, string wrappingElement, attrmap wrappingElementAttrs,
 	boolean weirdFamMode) {
-	chit_info info = getItemInfo(it, to_slot(it), !vars['chit.display.popovers'].to_boolean(), true, weirdFamMode);
+	chit_info info = getItemInfo(it, to_slot(it), !cvars['chit.display.popovers'].to_boolean(), true, weirdFamMode);
 	if(upDanger > info.dangerLevel) {
 		info.dangerLevel = upDanger;
 	}

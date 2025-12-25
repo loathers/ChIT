@@ -31,7 +31,7 @@ boolean defaults_initialized = false;
 string [string,string] reason_options;
 
 void gear_display_options() {
-	foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
+	foreach i,s in split_string(cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
 		string [string] options;
 		string [int] spl = split_string(s,":");
 		if(spl.count() > 1) {
@@ -52,7 +52,7 @@ string get_option(string reason, string option) {
 		return reason_options[reason,option];
 
 	if(!defaults_initialized) {
-		foreach i,s in split_string(vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
+		foreach i,s in split_string(cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
 			string [int] spl = split_string(s, "[=_]");
 			defaults[spl[0]] = spl[1];
 		}
@@ -119,7 +119,7 @@ void addGear(item it, string reason, float score)
 {
 	class gear_class = class_modifier(it,"Class");
 
-	if(vars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path().name == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
+	if(cvars["chit.gear.ignoreG-Lover"].to_boolean() == false && my_path().name == "G-Lover" && reason != "quest" && index_of(it.to_lower_case(), "g") < 0)
 		return;
 
 	if(is_unrestricted(it) && can_equip(it) && chit_available(it, reason) > 0
@@ -353,7 +353,7 @@ void addFavGear() {
 	// manual favorites
 	foreach favType in $strings[favorites, favorites.weirdFam] {
 		string favVarName = "chit.gear." + favType;
-		foreach i,fav in split_string(vars[favVarName], "\\s*(?<!\\\\)[,|]\\s*") {
+		foreach i,fav in split_string(cvars[favVarName], "\\s*(?<!\\\\)[,|]\\s*") {
 			item it = to_item(fav.replace_string("\\,", ","));
 			(favType == 'favorites.weirdFam' ? favGearWeirdFam : favGear)[it] = true;
 			addGear(it, favType);
@@ -638,7 +638,7 @@ void pickerGear(slot s) {
 			foreach fam in $familiars[] {
 				if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
 					action = "yoink";
-					if(vars['chit.gear.layout'] == 'minimal') {
+					if(cvars['chit.gear.layout'] == 'minimal') {
 						action_description = "(from " + fam + ")";
 					}
 					cmd = "equip ";
@@ -655,7 +655,7 @@ void pickerGear(slot s) {
 		if(cmd_override != "")
 			command = cmd_override;
 
-		switch(vars["chit.gear.layout"]) {
+		switch(cvars["chit.gear.layout"]) {
 		case "minimal":
 			b.tagStart('div', attrmap {
 				'class': 'chit_flexitem',
@@ -748,13 +748,13 @@ void pickerGear(slot s) {
 		foreach it in list
 			if(it != $item[none] && good_slot(s, it) && in_slot != it
 				&& (my_path() != $path[Hat Trick] || s != $slot[hat] || equipped_amount(it) == 0)
-				&& !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
+				&& !(cvars["chit.gear.layout"] == "default" && displayedItems contains it))
 					toDisplay[ count(toDisplay) ] = it;
 
 		if(count(toDisplay) > 0) {
 			buffer temp;
 
-			switch(vars["chit.gear.layout"]) {
+			switch(cvars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
 			default:
@@ -778,7 +778,7 @@ void pickerGear(slot s) {
 				}
 			}
 
-			switch(vars["chit.gear.layout"]) {
+			switch(cvars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
 			default:
@@ -810,7 +810,7 @@ void pickerGear(slot s) {
 		}
 	}
 
-	string disp_str = vars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")];
+	string disp_str = cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")];
 	foreach i,section in split_string(disp_str,", *") {
 		string [int] spl = split_string(section,":");
 		string sectionname = spl[0];
@@ -906,13 +906,13 @@ void pickerGear(slot s) {
 	void add_inventory_section() {
 		item [int] avail;
 		foreach it in get_inventory()
-			if(be_good(it) && can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(vars["chit.gear.layout"] == "default" && displayedItems contains it))
+			if(be_good(it) && can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(cvars["chit.gear.layout"] == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
 
 		if(count(avail) > 0) {
 			sort avail by -gear_weight(value);
 
-			switch(vars["chit.gear.layout"]) {
+			switch(cvars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
 			case "minimal":
@@ -930,7 +930,7 @@ void pickerGear(slot s) {
 			boolean shield; // Make sure there is at least one shield!
 
 			// For minimal, space isn't an issue so show ten. Otherwise If there are recommended options, show only 5 additional items
-			int amount = vars["chit.gear.layout"] == "minimal"? 9
+			int amount = cvars["chit.gear.layout"] == "minimal"? 9
 				: any_options? 4: 9;
 			for x from 0 to min(count(avail) - 1, amount) {
 				picker.add_gear_option(avail[x], name);
@@ -944,7 +944,7 @@ void pickerGear(slot s) {
 						break;
 					}
 
-			switch(vars["chit.gear.layout"]) {
+			switch(cvars["chit.gear.layout"]) {
 			case "oldschool":
 				break;
 			case "minimal":
@@ -995,7 +995,7 @@ int dangerLevel(item it, slot s) {
 			break;
 	}
 	// latte reminder
-	if(s == $slot[off-hand] && vars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
+	if(s == $slot[off-hand] && cvars["chit.gear.lattereminder"].to_boolean() && my_location().latteDropAvailable()) {
 		if(it != $item[latte lovers member's mug] && !it.isImportantOffhand())
 			return 1;
 	}
