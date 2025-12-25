@@ -1870,6 +1870,11 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				new drop_info('_luckyGoldRingVolcoino', LIMIT_BOOL, 'volcoino'),
 			});
 			break;
+		case $item[pro skateboard]:
+			info.addDrops(drops_info {
+				new drop_info('_epicMcTwistUsed', LIMIT_BOOL, 'epic McTwist'),
+			});
+			break;
 	}
 
 	// latte reminder
