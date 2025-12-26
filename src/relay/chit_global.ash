@@ -33,7 +33,7 @@ int DROPS_NONE = 0;
 int DROPS_SOME = 1;
 int DROPS_ALL = 2;
 
-// str1 is picker name
+// str1 is picker name. Prefix with MANUAL: to specify not to envoke the picker func automatically.
 // str2 is picker launcher text
 int EXTRA_PICKER = 0;
 // str1 is fold text
@@ -46,6 +46,9 @@ int EXTRA_LINK = 2;
 // str1 is the slot to_string'd
 // str2 is "true" if it's a weirdo like fancypants or hatrack
 int EXTRA_EQUIPFAM = 3;
+// basically a shorthand for EXTRA_LINK with sideCommand
+// str1 is the cmd to execute
+int EXTRA_CMD = 4;
 
 record extra_info {
 	int extraType;
@@ -95,6 +98,10 @@ extra_info extraInfoEquipFam(slot s) {
 	return extraInfoEquipFam(s, false);
 }
 
+extra_info extraInfoCmd(string cmd) {
+	return new extra_info(EXTRA_CMD, '', cmd);
+}
+
 record chit_info {
 	string name;
 	string desc;
@@ -106,6 +113,11 @@ record chit_info {
 	string weirdoTag;
 	string weirdoDivContents;
 	string customStyle;
+	// for effects
+	string type;
+	// for effect turns, but keeping the term more generic in case
+	// I come up with a use for it on other types in the future
+	int count;
 };
 
 boolean incDrops(chit_info info, int level) {
@@ -666,6 +678,10 @@ void tagStart(buffer buf, string type, attrmap attrs, boolean selfClosing) {
 	buf.append('<');
 	buf.append(type);
 	foreach attr, value in attrs {
+		// for simpler conditional attrs
+		if(value == "") {
+			continue;
+		}
 		buf.append(' ');
 		buf.append(attr);
 		buf.append('="');
@@ -928,19 +944,18 @@ void pickerSelectionOption(buffer picker, string name, string desc, string cmd, 
 
 string parseEff(effect eff);
 
-void addEffectIcon(buffer result, effect eff, string titlePrefix, boolean popupDescOnClick, string wrappingElement, attrmap wrappingElementAttrs) {
-	chit_info info = new chit_info(eff.name, parseEff(eff), DROPS_NONE, DANGER_NONE, itemimage(eff.image));
+void addEffectIcon(buffer result, effect eff, string titlePrefix, boolean popupDescOnClick,
+	string wrappingElement, attrmap wrappingElementAttrs);
+chit_info getEffectInfo(effect eff, boolean avoidRecursion);
 
-	result.addInfoIcon(info, info.name, info.desc, popupDescOnClick ? ("eff('" + eff.descid +
-		"'); return false;") : '', wrappingElement, wrappingElementAttrs);
-}
 
 void pickerEffectOption(buffer picker, string verb, string name, effect eff, string desc, int duration, string href, boolean usable) {
+	chit_info info = getEffectInfo(eff, true);
 	if(name == '') {
-		name = eff;
+		name = info.name;
 	}
 	if(desc == '') {
-		desc = parseEff(eff);
+		desc = info.desc;
 	}
 
 	buffer iconSection;
@@ -1220,18 +1235,11 @@ string parseMods(string evm, boolean span, boolean debug) {
 string parseMods(string evm, boolean span) { return parseMods(evm, span, false); }
 string parseMods(string evm) { return parseMods(evm, true); }
 
-string parseEff(effect ef, boolean span) {
-	# if(ef == $effect[Polka of Plenty]) ef = $effect[Video... Games?];
-	switch(ef) {
-	case $effect[Knob Goblin Perfume]: return "";
-	case $effect[Bored With Explosions]:
-		matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
-		if(wafe.find()) return wafe.group(1);
-		return "You're just over them";
-	}
+chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span);
 
-	# return string_modifier("Effect:" + ef,"Evaluated Modifiers").parseMods();
-	return string_modifier(ef,"Evaluated Modifiers").parseMods(span);
+string parseEff(effect ef, boolean span) {
+	chit_info info = getEffectInfo(ef, true, span);
+	return info.desc;
 }
 string parseEff(effect ef) { return parseEff(ef, true); }
 
