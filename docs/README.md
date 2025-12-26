@@ -59,6 +59,10 @@ Here's what my personal (heavily customized) charpane looks like at the moment (
 
 ![Soolar's Charpane](soolarpanel.png)
 
+Here's one provided by user reksAeterna!
+
+![reksAeterna Charpane](reksAeternapanel.png)
+
 If you've customized your charpane, please by all means send me a screenshot to include here!
 
 # Settings
