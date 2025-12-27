@@ -254,7 +254,12 @@ effect [int] availableSongs() {
 
 	if(!done) {
 		foreach eff in $effects[] {
-			if(eff.song && have_skill(to_skill(eff)) && be_good(to_skill(eff))) {
+			skill sk = to_skill(eff);
+			if(eff.song && have_skill(sk) && be_good(sk)) {
+				chit_info info = getEffectInfo(eff, true, true);
+				if(info.type == "hobop" && (get_property(sk.dailylimitpref).to_int() >= sk.dailylimit || my_level() < 15)) {
+					continue;
+				}
 				songs[songs.count()] = eff;
 			}
 		}
@@ -303,7 +308,10 @@ void picker_atsong(effect toShrug) {
 
 	foreach i, song in availableSongs() {
 		boolean active = have_effect(song) > 0;
-		picker.pickerEffectOption('play', song.name, song, '', turns_per_cast(to_skill(song)),
+		skill sk = to_skill(song);
+		string name = song.name + (sk.dailylimitpref != "" ?
+			(" " + get_property(sk.dailylimitpref) + "/" + sk.dailylimit) : "");
+		picker.pickerEffectOption('play', name, song, '', turns_per_cast(to_skill(song)),
 			sideCommand(shrugPart + song.default), !active);
 	}
 
@@ -425,20 +433,9 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 			info.name = "Urkel's";
 			info.type = "at";
 			break;
-		case $effect[The Ballad of Richie Thingfinder]:
-			info.name = "Thingfinder";
-			info.type = "at";
-			break;
-		case $effect[Benetton's Medley of Diversity]:
-			info.name = "Benetton's";
-			info.type = "at";
-			break;
-		case $effect[Elron's Explosive Etude]:
-			info.name = "Elron's";
-			info.type = "at";
-			break;
 		case $effect[Inigo's Incantation of Inspiration]:
 			info.name = "Inigo's";
+			info.desc = "One Free Craft/Five Turns";
 			info.type = "at";
 			break;
 		case $effect[Rolando's Rondo of Resisto]:
@@ -450,16 +447,31 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 			info.type = "at";
 			break;
 		case $effect[Dirge of Dreadfulness]:
-		case $effect[Chorale of Companionship]:
 		case $effect[Polka of Plenty]:
 		case $effect[Cringle's Curative Carol]:
-		case $effect[Prelude of Precision]:
 		case $effect[Donho's Bubbly Ballad]:
 			info.type = "at";
 			break;
 		case $effect[Ode to Booze]:
 			info.type = "at";
 			info.desc = "+1 Adv/Inebriety From Booze";
+			break;
+		// hobopolis at songs
+		case $effect[The Ballad of Richie Thingfinder]:
+			info.name = "Thingfinder";
+			info.type = "hobop";
+			break;
+		case $effect[Benetton's Medley of Diversity]:
+			info.name = "Benetton's";
+			info.type = "hobop";
+			break;
+		case $effect[Elron's Explosive Etude]:
+			info.name = "Elron's";
+			info.type = "hobop";
+			break;
+		case $effect[Chorale of Companionship]:
+		case $effect[Prelude of Precision]:
+			info.type = "hobop";
 			break;
 		// TT Buffs
 		case $effect[Jingle Jangle Jingle]:
@@ -774,7 +786,7 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 	}
 
 	// could do this above but it'd be SO MUCH REPEAT CODE
-	if(eff.song && !avoidRecursion) {
+	if(eff.song && info.count > 0 && !avoidRecursion) {
 		picker_atsong(eff);
 		info.addExtra(extraInfoPicker("MANUAL:atsong" + eff.to_int(), ''));
 	}

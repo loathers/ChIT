@@ -869,7 +869,7 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentBuff.effectHTML);
-		} else if (showSongs && $strings[at, aob, aoj] contains currentBuff.effectType) {
+		} else if (showSongs && $strings[at, aob, aoj, hobop] contains currentBuff.effectType) {
 			songs.append(currentBuff.effectHTML);
 		} else if(showSongs && (to_skill(currentBuff.effectName).expression || to_skill(currentBuff.effectName).shanty || $strings[awol, asdon, holorecord] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
 			uniqueTypesShown[currentBuff.effectType] = true;
@@ -898,8 +898,8 @@ void bakeEffects() {
 	}
 
 	foreach i, info in lackedEffects() {
-		buffer b = info.type == "at" ? songs : info.count < 0 ? intrinsics : uniques;
-		if(info.count >= 0 && info.type != "at") {
+		buffer b = (info.type == "at" || info.type == "hobop") ? songs : info.count < 0 ? intrinsics : uniques;
+		if(info.count >= 0 && info.type != "at" && info.type != "hobop") {
 			b.tagStart("tbody", attrmap { "class": "buffs" });
 		}
 
@@ -940,7 +940,7 @@ void bakeEffects() {
 		b.tagFinish("td");
 		b.tagFinish("tr");
 
-		if(info.count >= 0 && info.type != "at") {
+		if(info.count >= 0 && info.type != "at" && info.type != "hobop") {
 			b.tagFinish("tbody");
 		}
 
