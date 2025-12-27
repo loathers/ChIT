@@ -836,44 +836,24 @@ void bakeEffects() {
 	buffer buffs;
 	buffer intrinsics;
 	// buffer [string] doesn't seem to work and it is a nightmare
-	buffer dread, expression, shanty, asdon, aob, aoj, awol, holorecord, elx;
+	buffer [string] specials;
 	buffer helpers;
 	buffer advmods;
 	int total = 0;
 
 	void appendTo(string bufferType, string content) {
-		buffer badBuffer;
-		buffer b = bufferType == "dread" ? dread : bufferType == "expression" ? expression :
-			bufferType == "shanty" ? shanty : bufferType == "asdon" ? asdon :
-			bufferType == "aob" ? aob : bufferType == "aoj" ? aoj :
-			bufferType == "awol" ? holorecord : bufferType == "elx" ? elx : badBuffer;
-		if(b.length() == 0) {
-			b.append('<tbody class="buff">');
+		if(specials[bufferType].length() == 0) {
+			specials[bufferType] = to_buffer('<tbody class="buff">');
 		}
-		b.append(content);
-		if(badBuffer.length() > 0) {
-			print("Bad buffer type '" + bufferType + "' in bakeEffects", "red");
-			foreach i, stack in get_stack_trace() {
-				print(stack.file + "(" + stack.line + "): " + stack.name);
-			}
-		}
+		specials[bufferType].append(content);
 	}
 
 	void closeBuffers() {
-		void closeBuffer(buffer b, string bufferName) {
+		foreach name, b in specials {
 			if(b.length() > 0) {
-				appendTo(bufferName, '</tbody>');
+				b.append('</tbody>');
 			}
 		}
-		closeBuffer(dread, "dread");
-		closeBuffer(expression, "expression");
-		closeBuffer(shanty, "shanty");
-		closeBuffer(asdon, "asdon");
-		closeBuffer(aob, "aob");
-		closeBuffer(aoj, "aoj");
-		closeBuffer(awol, "awol");
-		closeBuffer(holorecord, "holorecord");
-		closeBuffer(elx, "elx");
 	}
 
 	//Get layout preferences
@@ -905,7 +885,7 @@ void bakeEffects() {
 			intrinsics.append(currentBuff.effectHTML);
 		} else if (showSongs && $strings[at, hobop] contains currentBuff.effectType) {
 			songs.append(currentBuff.effectHTML);
-		} else if(currentBuff.effectType != "" && !($strings[at,db,sa,pm,tt,sc,hobop] contains currentBuff.effectType) && contains_text(layout, currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
+		} else if(currentBuff.effectType != "" && !($strings[at,db,sa,pm,tt,sc,hobop] contains currentBuff.effectType) && contains_text(layout, currentBuff.effectType)) {
 			appendTo(currentBuff.effectType, currentBuff.effectHTML);
 		} else {
 			buffs.append(currentBuff.effectHTML);
@@ -1069,17 +1049,8 @@ void bakeEffects() {
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
 				case "advmods": result.append(advmods); break;
-				case "dread": result.append(dread); break;
-				case "expression": result.append(expression); break;
-				case "shanty": result.append(shanty); break;
-				case "asdon": result.append(asdon); break;
-				case "aob": result.append(aob); break;
-				case "aoj": result.append(aoj); break;
-				case "awol": result.append(awol); break;
-				case "holorecord": result.append(holorecord); break;
-				case "elx": result.append(elx); break;
 				default:
-					print("Unhandled drawer type " + drawers[i] + " in bakeEffects", "red");
+					result.append(specials[drawers[i]]);
 					break;
 			}
 		}
