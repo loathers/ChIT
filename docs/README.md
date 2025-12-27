@@ -338,15 +338,25 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - false - don't show them
 - chit.effects.modicons: Allows icons for effects to be modified. This is mostly used to differential timers.
   - Default: true
-- chit.effects.layout: Comma-separated list
+- chit.effects.layout: Comma-separated list. If specific sections are present, effects in that
+  category will show up in their own section, in that order in the list. If they aren't present,
+  they'll fall back to showing up in effects.
   - buffs - regular effects
   - intrinsics - intrinsic effects
-  - songs - only if present, this will cause all active AT songs to be displayed separately. (And other limited quantity buffs like Boris and Jarlsberg)
-  - elx - only if present, this will cause all active "Everything looks \[color\]" cooldowns to be displayed separately.
+  - songs - AT Songs
+  - elx - Everything Looks Color effects
   - advmods - Adventure Modifiers (currently just non-combat forcers)
+  - dread - Dreadsylvania Songs
+  - expression - Facial Expression
+  - shanty - Crimbo 2025 Shanties
+  - asdon - Asdonmartin driving styles
+  - aob - Avatar of Boris songs
+  - aoj - Avatar of Jarlsberg spheres
+  - awol - Avatar of West of Loathing walks
+  - holorecord - Nuclear Autumn holorecords
   - Example:
     - intrinsics,limited,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs
-  - Default: advmods,songs,buffs,intrinsics
+  - Default: advmods,songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics
 - chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
   - true: uses chit_effects\_\[yourname].txt
   - false: uses chit_effects.txt (default)

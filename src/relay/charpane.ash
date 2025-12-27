@@ -54,7 +54,7 @@ chit_setvar("chit.helpers.spookyraven", true);
 chit_setvar("chit.helpers.wormwood", "stats,spleen");
 chit_setvar("chit.helpers.xiblaxian", true);
 chit_setvar("chit.kol.coolimages", true);
-chit_setvar("chit.effects.layout", "advmods,songs,buffs,intrinsics");
+chit_setvar("chit.effects.layout", "advmods,songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics");
 chit_setvar("chit.floor.layout", "update,familiar");
 chit_setvar("chit.roof.layout", "character,stats,gear");
 chit_setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
@@ -833,20 +833,54 @@ void bakeEffects() {
 
 	buffer result;
 	buffer songs;
-	buffer uniques;
 	buffer buffs;
 	buffer intrinsics;
-	buffer elx;
+	// buffer [string] doesn't seem to work and it is a nightmare
+	buffer dread, expression, shanty, asdon, aob, aoj, awol, holorecord, elx;
 	buffer helpers;
 	buffer advmods;
 	int total = 0;
-	boolean [string] uniqueTypesShown;
+
+	void appendTo(string bufferType, string content) {
+		buffer badBuffer;
+		buffer b = bufferType == "dread" ? dread : bufferType == "expression" ? expression :
+			bufferType == "shanty" ? shanty : bufferType == "asdon" ? asdon :
+			bufferType == "aob" ? aob : bufferType == "aoj" ? aoj :
+			bufferType == "awol" ? holorecord : bufferType == "elx" ? elx : badBuffer;
+		if(b.length() == 0) {
+			b.append('<tbody class="buff">');
+		}
+		b.append(content);
+		if(badBuffer.length() > 0) {
+			print("Bad buffer type '" + bufferType + "' in bakeEffects", "red");
+			foreach i, stack in get_stack_trace() {
+				print(stack.file + "(" + stack.line + "): " + stack.name);
+			}
+		}
+	}
+
+	void closeBuffers() {
+		void closeBuffer(buffer b, string bufferName) {
+			if(b.length() > 0) {
+				appendTo(bufferName, '</tbody>');
+			}
+		}
+		closeBuffer(dread, "dread");
+		closeBuffer(expression, "expression");
+		closeBuffer(shanty, "shanty");
+		closeBuffer(asdon, "asdon");
+		closeBuffer(aob, "aob");
+		closeBuffer(aoj, "aoj");
+		closeBuffer(awol, "awol");
+		closeBuffer(holorecord, "holorecord");
+		closeBuffer(elx, "elx");
+	}
 
 	//Get layout preferences
 	string layout = cvars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
 	if (layout == "") layout = "buffs";
 	boolean showSongs = contains_text(layout,"songs");
-	boolean showELX = contains_text(layout,"elx");
+	// you absolutely want to see advmods, so put them first if they're not in the layout
 	if(!contains_text(layout, "advmods")) {
 		layout = "advmods," + layout;
 	}
@@ -869,15 +903,10 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentBuff.effectHTML);
-		} else if (showSongs && $strings[at, aob, aoj, hobop] contains currentBuff.effectType) {
+		} else if (showSongs && $strings[at, hobop] contains currentBuff.effectType) {
 			songs.append(currentBuff.effectHTML);
-		} else if(showSongs && (to_skill(currentBuff.effectName).expression || to_skill(currentBuff.effectName).shanty || $strings[awol, asdon, holorecord] contains currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
-			uniqueTypesShown[currentBuff.effectType] = true;
-			uniques.append('<tbody class="buffs">');
-			uniques.append(currentBuff.effectHTML);
-			uniques.append('</tbody>');
-		} else if (showELX && currentBuff.effectType == "elx") {
-			elx.append(currentBuff.effectHTML);
+		} else if(currentBuff.effectType != "" && !($strings[at,db,sa,pm,tt,sc,hobop] contains currentBuff.effectType) && contains_text(layout, currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
+			appendTo(currentBuff.effectType, currentBuff.effectHTML);
 		} else {
 			buffs.append(currentBuff.effectHTML);
 		}
@@ -898,7 +927,7 @@ void bakeEffects() {
 	}
 
 	foreach i, info in lackedEffects() {
-		buffer b = (info.type == "at" || info.type == "hobop") ? songs : info.count < 0 ? intrinsics : uniques;
+		buffer b;
 		if(info.count >= 0 && info.type != "at" && info.type != "hobop") {
 			b.tagStart("tbody", attrmap { "class": "buffs" });
 		}
@@ -942,6 +971,14 @@ void bakeEffects() {
 
 		if(info.count >= 0 && info.type != "at" && info.type != "hobop") {
 			b.tagFinish("tbody");
+		}
+
+		if(info.type == "at" || info.type == "hobop") {
+			songs.append(b);
+		} else if(info.count < 0) {
+			intrinsics.append(b);
+		} else {
+			appendTo(info.type, b);
 		}
 
 		total += 1;
@@ -1018,6 +1055,7 @@ void bakeEffects() {
 		advmods.insert(0, '<tbody class="advmods">');
 		advmods.append('</tbody>');
 	}
+	closeBuffers();
 
 	if (total > 0) {
 		result.append('<table id="chit_effects" class="chit_brick nospace">');
@@ -1027,15 +1065,22 @@ void bakeEffects() {
 		string [int] drawers = split_string(layout, ",");
 		for i from 0 to (drawers.count() - 1) {
 			switch (drawers[i]) {
-				case "buffs":
-					result.append(uniques);
-					result.append(buffs);
-					break;
+				case "buffs": result.append(buffs); break;
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
 				case "advmods": result.append(advmods); break;
+				case "dread": result.append(dread); break;
+				case "expression": result.append(expression); break;
+				case "shanty": result.append(shanty); break;
+				case "asdon": result.append(asdon); break;
+				case "aob": result.append(aob); break;
+				case "aoj": result.append(aoj); break;
+				case "awol": result.append(awol); break;
+				case "holorecord": result.append(holorecord); break;
 				case "elx": result.append(elx); break;
-				default: //ignore all other values
+				default:
+					print("Unhandled drawer type " + drawers[i] + " in bakeEffects", "red");
+					break;
 			}
 		}
 		result.append('</table>');

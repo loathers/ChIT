@@ -218,6 +218,7 @@ boolean lacksExpression() {
 	foreach i, eff in availableExpressions() {
 		hasAny = true;
 		if(have_effect(eff) > 0) {
+			print(eff);
 			return false;
 		}
 	}
@@ -320,6 +321,45 @@ void picker_atsong(effect toShrug) {
 
 void picker_atsong() {
 	picker_atsong($effect[none]);
+}
+
+effect [int] availableDreadSongs() {
+	effect [int] res;
+
+	foreach eff in $effects[Song of the North, Song of Slowness, Song of Starch, Song of Sauce, Song of Bravado] {
+		skill sk = to_skill(eff);
+		if(have_skill(sk) && be_good(sk)) {
+			res[res.count()] = eff;
+		}
+	}
+
+	return res;
+}
+
+boolean lacksDreadSong() {
+	foreach eff in $effects[Song of the North, Song of Slowness, Song of Starch, Song of Sauce, Song of Bravado] {
+		if(have_effect(eff) > 0) {
+			return false;
+		}
+	}
+
+	return availableDreadSongs().count() > 0;
+}
+
+void picker_dreadsong() {
+	if(chitPickers contains "dreadsong") {
+		return;
+	}
+
+	buffer picker;
+	picker.pickerStart("dreadsong", "Sing a Dreadful Song");
+
+	foreach i, dsong in availableDreadSongs() {
+		boolean current = have_effect(dsong) > 0;
+		picker.pickerEffectOption('sing', dsong.name, dsong, '', 10, sideCommand(dsong.default), !current);
+	}
+
+	picker.pickerFinish("Singing a Dreadful Song...");
 }
 
 effect [int] availableShanties() {
@@ -591,6 +631,15 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 		case $effect[Smooth Movements]:
 			info.type = "db";
 			break;
+		// Dread songs
+		case $effect[Song of the North]:
+		case $effect[Song of Slowness]:
+		case $effect[Song of Starch]:
+		case $effect[Song of Sauce]:
+		case $effect[Song of Bravado]:
+			info.type = "dread";
+			info.addExtra(extraInfoPicker("dreadsong", ""));
+			break;
 		// AoB Songs
 		case $effect[Song of Accompaniment]:
 			info.type = "aob";
@@ -853,6 +902,10 @@ chit_info [int] lackedEffects() {
 	if(fillableSongSlots > 0) {
 		addLackWithPicker(fillableSongSlots + " song slot" + (fillableSongSlots > 1 ? "s" : ""),
 			"at", "atsong", itemimage("notes.gif"));
+	}
+
+	if(lacksDreadSong()) {
+		addLackWithPicker("Dreadful Silence", "dread", "dreadsong", itemimage("notes.gif"));
 	}
 
 	if(lacksExpression()) {
