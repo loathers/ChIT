@@ -218,7 +218,6 @@ boolean lacksExpression() {
 	foreach i, eff in availableExpressions() {
 		hasAny = true;
 		if(have_effect(eff) > 0) {
-			print(eff);
 			return false;
 		}
 	}
