@@ -534,7 +534,14 @@ void pickerGear(slot s) {
 	if(in_slot != $item[none]) {
 		buffer favButton;
 		favButton.add_favorite_button(in_slot);
-		picker.pickerItemOption(in_slot, 'unequip', info.name, info.desc, '',
+		string shortDesc = info.desc;
+		if(info.type == "bjorncrown") {
+			int idx = shortDesc.index_of(', &nbsp;');
+			if(idx >= 0) {
+				shortDesc = shortDesc.substring(0, idx);
+			}
+		}
+		picker.pickerItemOption(in_slot, 'unequip', info.name, shortDesc, '',
 			sideCommand('unequip ' + s), true, favButton);
 	} else {
 		picker.append('<tr class="pickitem"><td colspan="3">');

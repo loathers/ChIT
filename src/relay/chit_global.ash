@@ -116,7 +116,6 @@ record chit_info {
 	string weirdoTag;
 	string weirdoDivContents;
 	string customStyle;
-	// for effects
 	string type;
 	// for effect turns, but keeping the term more generic in case
 	// I come up with a use for it on other types in the future

@@ -863,6 +863,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				info.incDrops(bjornInfo.hasDrops);
 			}
 			info.addExtra(extraInfoPicker('bjornify', '<b>Pick</b> a buddy to bjornify!'));
+			info.type = "bjorncrown";
 			break;
 		}
 		case $item[Crown of Thrones]: {
@@ -875,6 +876,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				info.incDrops(crownInfo.hasDrops);
 			}
 			info.addExtra(extraInfoPicker('enthrone', '<b>Pick</b> a buddy to enthrone!'));
+			info.type = "bjorncrown";
 			break;
 		}
 		case $item[Mega Gem]:
