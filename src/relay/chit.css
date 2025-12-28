@@ -1168,3 +1168,15 @@ div.chit_left-handman {
 	border-width: 1px;
 	border-style: solid;
 }
+
+.thrall_yes {
+	color: blue;
+}
+
+.thrall_yes.thrall_active {
+	font-weight: bold;
+}
+
+.thrall_no {
+	color: #707070;
+}

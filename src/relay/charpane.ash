@@ -1281,27 +1281,27 @@ static { string [thrall] [int] pasta;
 	pasta[$thrall[Vampieroghi]][1] = "Attacks and heals";
 	pasta[$thrall[Vampieroghi]][5] = "Dispels bad effects";
 	pasta[$thrall[Vampieroghi]][10] = "+60 max HP";
-	pasta[$thrall[Vermincelli]][1] = "Restores MP after combat";
-	pasta[$thrall[Vermincelli]][5] = "Attacks and poisons enemy";
+	pasta[$thrall[Vermincelli]][1] = "MP after combat";
+	pasta[$thrall[Vermincelli]][5] = "Poisons enemy";
 	pasta[$thrall[Vermincelli]][10] = "+30 max MP";
-	pasta[$thrall[Angel Hair Wisp]][1] = "Combat Initiative";
+	pasta[$thrall[Angel Hair Wisp]][1] = "Bonus Init";
 	pasta[$thrall[Angel Hair Wisp]][5] = "Prevents enemy crits";
 	pasta[$thrall[Angel Hair Wisp]][10] = "Blocks enemy attacks";
 	pasta[$thrall[Elbow Macaroni]][1] = "Muscle matches Myst";
-	pasta[$thrall[Elbow Macaroni]][5] = "+ Weapon damage";
-	pasta[$thrall[Elbow Macaroni]][10] = "+10% Critical hits";
+	pasta[$thrall[Elbow Macaroni]][5] = "Weapon damage";
+	pasta[$thrall[Elbow Macaroni]][10] = "+10% Weapon Crits";
 	pasta[$thrall[Penne Dreadful]][1] = "Moxie matches Myst";
 	pasta[$thrall[Penne Dreadful]][5] = "Delevels enemy";
-	pasta[$thrall[Penne Dreadful]][10] = "Damage Reduction: 10";
+	pasta[$thrall[Penne Dreadful]][10] = "10 DR";
 	pasta[$thrall[Spaghetti Elemental]][1] = "Increases exp";
 	pasta[$thrall[Spaghetti Elemental]][5] = "Blocks first attack";
 	pasta[$thrall[Spaghetti Elemental]][10] = "Spell damage +5";
-	pasta[$thrall[Lasagmbie]][1] = "Increase meat drops";
-	pasta[$thrall[Lasagmbie]][5] = "Attacks with Spooky";
+	pasta[$thrall[Lasagmbie]][1] = "Bonus meat drops";
+	pasta[$thrall[Lasagmbie]][5] = "Spooky attacks";
 	pasta[$thrall[Lasagmbie]][10] = "Spooky spells +10";
-	pasta[$thrall[Spice Ghost]][1] = "Increases item drops";
+	pasta[$thrall[Spice Ghost]][1] = "Bonus item drops";
 	pasta[$thrall[Spice Ghost]][5] = "Drops spices";
-	pasta[$thrall[Spice Ghost]][10] = "Better Entangling";
+	pasta[$thrall[Spice Ghost]][10] = "Better entangling";
 }
 
 void pickerThrall() {
@@ -1348,9 +1348,20 @@ void pickerThrall() {
 		result.append(t);
 		result.append('</b> <span style="float:right;color:#707070">');
 		result.append(mp_cost(s));
-		result.append('mp</span><br /><span style="color:blue">');
-		result.append(pasta[t][1]);
-		result.append('</span></a></td><td class="icon">');
+		result.append('mp</span><br />');
+		foreach i,s in pasta[t] {
+			if(i > 1)
+				result.append(', ');
+			result.append('<span class="thrall_');
+			if(t.level >= i)
+				result.append('yes');
+			else
+				result.append('no');
+			result.append('">');
+			result.append(s);
+			result.append('</span>');
+		}
+		result.append('</a></td><td class="icon">');
 		result.append(url);
 		result.append('<img src="/images/itemimages/');
 		result.append(t.tinyimage);
@@ -1426,13 +1437,20 @@ void bakeThrall() {
 		result.append(img);
 		result.append('></a></td>');
 		if(lvl != "") {
-			result.append('<td class="info"><a title="Click for Thrall description" class="hand" onClick=\'javascript:window.open("desc_guardian.php","","height=200,width=300")\'><span style="color:blue;font-weight:bold">');
-			foreach i,s in pasta[my_thrall()]
-				if(my_thrall().level >= i) {
-					result.append(s);
-					result.append('<br>');
-				}
-			result.append('</span></a></td>');
+			result.append('<td class="info"><a title="Click for Thrall description" class="hand" onClick=\'javascript:window.open("desc_guardian.php","","height=200,width=300")\'>');
+			foreach i,s in pasta[my_thrall()] {
+				if(i > 1)
+					result.append('<br />');
+				result.append('<span class="thrall_active thrall_');
+				if(my_thrall().level >= i)
+					result.append('yes');
+				else
+					result.append('no');
+				result.append('">');
+				result.append(s);
+				result.append('</span>');
+			}
+			result.append('</a></td>');
 		} else {
 			result.append('<td class="info"><a class="chit_launcher" rel="chit_pickerthrall" href="#"><span style="color:blue;font-weight:bold">(Click to Summon a Thrall)</span></a></td>');
 		}
