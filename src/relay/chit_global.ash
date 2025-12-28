@@ -46,9 +46,6 @@ int EXTRA_LINK = 2;
 // str1 is the slot to_string'd
 // str2 is "true" if it's a weirdo like fancypants or hatrack
 int EXTRA_EQUIPFAM = 3;
-// basically a shorthand for EXTRA_LINK with sideCommand
-// str1 is the cmd to execute
-int EXTRA_CMD = 4;
 
 record extra_info {
 	int extraType;
@@ -98,8 +95,14 @@ extra_info extraInfoEquipFam(slot s) {
 	return extraInfoEquipFam(s, false);
 }
 
+string sideCommand(string cmd);
+
+// Just a shorthand for a link that executes a sideCommand
 extra_info extraInfoCmd(string cmd) {
-	return new extra_info(EXTRA_CMD, '', cmd);
+	return extraInfoLink('', attrmap {
+		'href': sideCommand(cmd),
+		'title': cmd,
+	});
 }
 
 record chit_info {

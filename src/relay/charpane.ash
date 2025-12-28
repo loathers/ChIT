@@ -730,10 +730,6 @@ buff parseBuff(string source) {
 				effectAlias = link;
 				break;
 			}
-			case EXTRA_CMD:
-				effectAlias = '<a href="' + sideCommand(extra.str1) + '" title="' + extra.str1 +
-					'">' + effectAlias + '</a>';
-				break;
 		}
 	}
 
@@ -915,9 +911,8 @@ void bakeEffects() {
 		void addLink() {
 			// all of these have exactly one extra info
 			extra_info extra = info.extra[0];
-			if(extra.extraType == EXTRA_CMD) {
-				b.tagStart("a", attrmap { "href": sideCommand(extra.str1),
-					"title": extra.str1 });
+			if(extra.extraType == EXTRA_LINK) {
+				b.tagStart("a", extra.attrs);
 			} else if(extra.extraType == EXTRA_PICKER) {
 				string pickerName = extra.str1;
 				if(pickerName.starts_with("MANUAL:")) {
