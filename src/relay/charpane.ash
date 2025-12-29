@@ -879,9 +879,9 @@ void bakeEffects() {
 
 		if (currentBuff.isIntrinsic) {
 			intrinsics.append(currentBuff.effectHTML);
-		} else if (showSongs && $strings[at, hobop] contains currentBuff.effectType) {
+		} else if (showSongs && $strings[at, hobop] contains currentBuff.effectType && have_effect(currentBuff.eff) > 0) {
 			songs.append(currentBuff.effectHTML);
-		} else if(currentBuff.effectType != "" && !($strings[at,db,sa,pm,tt,sc,hobop] contains currentBuff.effectType) && contains_text(layout, currentBuff.effectType)) {
+		} else if(currentBuff.effectType != "" && !($strings[at,db,sa,pm,tt,sc,hobop] contains currentBuff.effectType) && contains_text(layout, currentBuff.effectType) && have_effect(currentBuff.eff) > 0) {
 			appendTo(currentBuff.effectType, currentBuff.effectHTML);
 		} else {
 			buffs.append(currentBuff.effectHTML);
