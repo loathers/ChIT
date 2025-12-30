@@ -1052,8 +1052,8 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = parse.replace_all("");
 
 	// cleanup extra commas from removing things
-	parse = create_matcher(",+\\s*,+", evm);
-	evm = parse.replace_all(",");
+	parse = create_matcher(",+\\s*,+[\\s,]*", evm);
+	evm = parse.replace_all(", ");
 	parse = create_matcher(",+\\s*$", evm);
 	evm = parse.replace_all("");
 

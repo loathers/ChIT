@@ -831,6 +831,45 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 		case $effect[Citizen of a Zone]:
 			info.name = "Citizen of " + get_property("_citizenZone");
 			break;
+		case $effect[Offhand Remarkable]: {
+			string mods = "";
+			if(equipped_item($slot[off-hand]).to_slot() == $slot[off-hand]) {
+				mods += string_modifier(equipped_item($slot[off-hand]), "Evaluated Modifiers");
+			}
+			if(my_familiar() == $familiar[Left-Hand Man] && equipped_item($slot[familiar]).to_slot() == $slot[off-hand]) {
+				string famMods = string_modifier(equipped_item($slot[familiar]), "Evaluated Modifiers");
+				if(mods != "" && famMods != "") {
+					string modsFinal = mods;
+					foreach i, mod in famMods.split_string(", ") {
+						matcher modParse = create_matcher('([^,:]+): ([+-]?\\d+|"[^"]+")', mod);
+						if(modParse.find()) {
+							string modName = modParse.group(1);
+							string modVal = modParse.group(2);
+							matcher origParse = create_matcher(modName + ': ([+-]?\\d+|"[^"]+")', mods);
+							if(origParse.find()) {
+								if(modVal.starts_with('"')) {
+									if(origParse.group(1) != modVal) {
+										modsFinal += ', ' + modName + ': ' + origParse.group(1);
+									}
+								} else {
+									int sumVal = modVal.to_int() + origParse.group(1).to_int();
+									modsFinal = modsFinal.replace_string(origParse.group(0), modName + ': ' + sumVal);
+								}
+							} else {
+								modsFinal += ', ' + modParse.group(0);
+							}
+						} else {
+							modsFinal += ', ' + mod;
+						}
+					}
+					mods = modsFinal;
+				} else {
+					mods = famMods;
+				}
+			}
+			info.desc = parseMods(mods, span);
+			break;
+		}
 	}
 
 	// could do this above but it'd be SO MUCH REPEAT CODE
