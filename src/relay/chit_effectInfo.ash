@@ -867,7 +867,8 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 					mods = famMods;
 				}
 			}
-			info.desc = parseMods(mods, span);
+			info.desc = '<span title="This might not be entirely accurate when nonstandard mods are involved">'
+				+ parseMods(mods, span) + '</span>';
 			break;
 		}
 	}
