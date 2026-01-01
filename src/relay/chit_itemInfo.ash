@@ -1877,6 +1877,17 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				new drop_info('_epicMcTwistUsed', LIMIT_BOOL, 'epic McTwist'),
 			});
 			break;
+		case $item[adobe ayam]:
+		case $item[adobe abaya]:
+		case $item[adobe adze]:
+		case $item[adobe abacus]:
+		case $item[adobe arsecover]:
+		case $item[adobe ascot]:
+			info.addExtra(extraInfoLink('<b>purchase</b> subscription', 'double enchants for 100 adv (500 meat)', attrmap {
+				'href': '/inventory.php?pwd=' + my_hash() + '&itemid=' + it.to_int() + '&action=adobesubscribe',
+				'target': 'mainpane',
+			}));
+			break;
 	}
 
 	// latte reminder
