@@ -973,6 +973,62 @@ void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int
 	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
 }
 
+void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable) {
+	chit_info info = getEffectInfo(eff, true);
+
+	buffer iconSection;
+	iconSection.tagStart('td', attrmap { 'class': 'icon' });
+	iconSection.addEffectIcon(eff, '', true, '', attrmap {});
+	iconSection.tagFinish('td');
+
+	int price;
+	string priceType;
+
+	boolean checkPrice(string method, string kind) {
+		int amount = call int method(sk);
+		if(amount > 0) {
+			price = amount;
+			priceType = kind;
+			return true;
+		}
+		return false;
+	}
+
+	boolean havePrice = checkPrice('mp_cost', 'mp')
+		|| checkPrice('hp_cost', 'hp')
+		|| checkPrice('soulsauce_cost', 'sauce')
+		|| checkPrice('adv_cost', 'adv')
+		|| checkPrice('fuel_cost', 'fuel')
+		|| checkPrice('lightning_cost', 'lightning')
+		|| checkPrice('thunder_cost', 'thunder')
+		|| checkPrice('rain_cost', 'rain');
+
+	int duration = turns_per_cast(sk);
+	string parenthetical = duration > 0 ? (duration + ' turns') : duration < 0 ? 'intrinsic' : '';
+	if(havePrice) {
+		if(parenthetical != '') {
+			parenthetical += ', ';
+		}
+		parenthetical += price + ' ' + priceType;
+	}
+	if(sk.dailylimitpref != '') {
+		if(parenthetical != '') {
+			parenthetical += ', ';
+		}
+		parenthetical += get_property(sk.dailylimitpref) + '/' + sk.dailylimit;
+		if(get_property(sk.dailylimitpref) >= sk.dailylimit) {
+			usable = false;
+		}
+	}
+
+	picker.pickerGenericOption(verb, info.name, info.desc, parenthetical, sideCommand('cast 1 ' + sk),
+		usable, iconSection, attrmap { 'title': 'cast 1 ' + sk }, '');
+}
+
+void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, boolean usable) {
+	pickerEffectFromSkillOption(picker, verb, eff, to_skill(eff), usable);
+}
+
 void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);
 
 void pickerItemOption(buffer picker, item it, string verb, string noun, string desc, string parenthetical, string href, boolean usable, string rightSection) {

@@ -237,8 +237,7 @@ void picker_expression() {
 		boolean current = have_effect(expression) > 0;
 		string expressLink = '<a class="change" href="' + sideCommand(expression.default) + '">';
 
-		picker.pickerEffectOption("express", expression.name, expression, '', 10,
-			sideCommand(expression.default), !current);
+		picker.pickerEffectFromSkillOption("express", expression, !current);
 	}
 
 	foreach i, expression in availableExpressions() {
@@ -308,11 +307,7 @@ void picker_atsong(effect toShrug) {
 
 	foreach i, song in availableSongs() {
 		boolean active = have_effect(song) > 0;
-		skill sk = to_skill(song);
-		string name = song.name + (sk.dailylimitpref != "" ?
-			(" " + get_property(sk.dailylimitpref) + "/" + sk.dailylimit) : "");
-		picker.pickerEffectOption('play', name, song, '', turns_per_cast(to_skill(song)),
-			sideCommand(shrugPart + song.default), !active);
+		picker.pickerEffectFromSkillOption('play', song, !active);
 	}
 
 	picker.pickerFinish("Getting a song caught in your head");
@@ -355,7 +350,7 @@ void picker_dreadsong() {
 
 	foreach i, dsong in availableDreadSongs() {
 		boolean current = have_effect(dsong) > 0;
-		picker.pickerEffectOption('sing', dsong.name, dsong, '', 10, sideCommand(dsong.default), !current);
+		picker.pickerEffectFromSkillOption('sing', dsong, !current);
 	}
 
 	picker.pickerFinish("Singing a Dreadful Song...");
@@ -401,8 +396,7 @@ void picker_shanty() {
 
 	void addShanty(effect shanty) {
 		boolean current = have_effect(shanty) > 0;
-		picker.pickerEffectOption('sing', shanty.name, shanty, '', 10,
-			sideCommand(shanty.default), !current);
+		picker.pickerEffectFromSkillOption('sing', shanty, !current);
 	}
 
 	foreach i, shanty in availableShanties() {
