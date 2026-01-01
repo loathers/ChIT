@@ -235,8 +235,6 @@ void picker_expression() {
 
 	void addExpression(effect expression) {
 		boolean current = have_effect(expression) > 0;
-		string expressLink = '<a class="change" href="' + sideCommand(expression.default) + '">';
-
 		picker.pickerEffectFromSkillOption("express", expression, !current);
 	}
 
