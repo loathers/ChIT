@@ -1180,3 +1180,9 @@ div.chit_left-handman {
 .thrall_no {
 	color: #707070;
 }
+
+.legendary {
+	padding: 1px;
+	color: #ff8000;
+	background-color: black;
+}

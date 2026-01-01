@@ -1888,6 +1888,9 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				'target': 'mainpane',
 			}));
 			break;
+		case $item[legendary seal-clubbing club]:
+			info.name = '<span class="legendary">' + info.name + '</span>';
+			break;
 	}
 
 	// latte reminder
