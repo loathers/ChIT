@@ -1890,6 +1890,11 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		case $item[legendary seal-clubbing club]:
 			info.name = '<span class="legendary">' + info.name + '</span>';
+			info.addDrops(drops_info {
+				new drop_info('_clubEmBattlefieldUsed', 5, 'Across the Battlefield'),
+				new drop_info('_clubEmNextWeekUsed', 5, 'Into Next Week'),
+				new drop_info('_clubEmTimeUsed', 5, 'Back in Time'),
+			});
 			break;
 	}
 
