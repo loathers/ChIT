@@ -808,9 +808,6 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 			info.addExtra(extraInfoCmd("cast Flock of Bats Form"));
 			break;
 		// Other random junk
-		case $effect[Knob Goblin Perfume]:
-			info.desc = "!";
-			break;
 		case $effect[Bored With Explosions]: {
 			matcher wafe = create_matcher(":([^:]+):walk away from explosion:", get_property("banishedMonsters"));
 			if(wafe.find()) {
@@ -913,8 +910,6 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 
 	if(info.desc == "") {
 		info.desc = parseMods(string_modifier(eff, "Evaluated Modifiers"), span);
-	} else if(info.desc == "!") {
-		info.desc = "";
 	}
 
 	return info;
