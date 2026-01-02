@@ -863,6 +863,18 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 				+ parseMods(mods, span) + '</span>';
 			break;
 		}
+		case $effect[Apriling Band Patrol Beat]:
+		case $effect[Apriling Band Battle Cadence]:
+		case $effect[Apriling Band Celebration Bop]: {
+			int turnsTilChange = get_property('nextAprilBandTurn').to_int() - total_turns_played();
+			if(turnsTilChange > 0) {
+				info.name += " (" + turnsTilChange + " to change)";
+			} else {
+				info.name += " (can change)";
+				info.addExtra(extraInfoPicker("aprilbandsong", ""));
+			}
+			break;
+		}
 	}
 
 	// could do this above but it'd be SO MUCH REPEAT CODE

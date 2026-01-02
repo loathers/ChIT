@@ -326,11 +326,11 @@ void picker_retrosupercapeall() {
 /*****************************************************
 	apriling band helmet support
 *****************************************************/
-boolean [effect] aprilingBandSongs = $effects[
-	Apriling Band Patrol Beat,
-	Apriling Band Battle Cadence,
-	Apriling Band Celebration Bop,
-];
+string [effect] aprilingBandSongs = {
+	$effect[Apriling Band Patrol Beat]: 'nc',
+	$effect[Apriling Band Battle Cadence]: 'c',
+	$effect[Apriling Band Celebration Bop]: 'drop',
+};
 
 boolean [item] aprilingBandSectionInstruments = $items[
 	Apriling band saxophone,
@@ -361,14 +361,17 @@ int aprilingBandSectionsEnrolled() {
 }
 
 void picker_aprilbandsong() {
+	if(chitPickers contains 'aprilbandsong') {
+		return;
+	}
+
 	buffer picker;
 	picker.pickerStart('aprilbandsong', 'Conduct the Band');
 
 	int choiceNum = 1;
-	foreach eff in aprilingBandSongs {
-		string cmd = 'ashq visit_url("inventory.php?pwd=' + my_hash() + '&action=apriling"); '
-			+ 'visit_url("choice.php?pwd=' + my_hash() + '&whichchoice=1526&option=' + choiceNum + '");';
-		picker.pickerEffectOption('Conduct', 'the ' + eff, eff, '', -1, sideCommand(cmd), have_effect(eff) == 0);
+	foreach eff, cmdArg in aprilingBandSongs {
+		string cmd = 'aprilband effect ' + cmdArg;
+		picker.pickerEffectOption('<b>Conduct</b> the', eff, eff, '', -1, sideCommand(cmd), have_effect(eff) == 0);
 		++choiceNum;
 	}
 
@@ -380,9 +383,8 @@ void picker_aprilbandsection() {
 	picker.pickerStart('aprilbandsection', 'Join a Section (' + (2 - aprilingBandSectionsEnrolled())
 		+ ' left)');
 
-	void sectionOption(item it, string section, int choiceNum) {
-		string cmd = 'ashq visit_url("inventory.php?pwd=' + my_hash() + '&action=apriling"); '
-			+ 'visit_url("choice.php?pwd=' + my_hash() + '&whichchoice=1526&option=' + choiceNum + '");';
+	void sectionOption(item it, string section) {
+		string cmd = 'aprilband item ' + it;
 		string desc = parseMods(string_modifier(it, 'Evaluated Modifiers')) + '<br />'
 			+ aprilingBandSectionInstrumentAbilities[it] + ' 3x per day';
 		boolean have = available_amount(it) > 0;
@@ -393,11 +395,11 @@ void picker_aprilbandsection() {
 		picker.pickerItemOption(it, 'Join', name, desc, '', sideCommand(cmd), !have);
 	}
 
-	sectionOption($item[Apriling band saxophone], 'sax section', 4);
-	sectionOption($item[Apriling band quad tom], 'percussion section', 5);
-	sectionOption($item[Apriling band tuba], 'tuba section', 6);
-	sectionOption($item[Apriling band staff], 'drum majors', 7);
-	sectionOption($item[Apriling band piccolo], 'piccolo section', 8);
+	sectionOption($item[Apriling band saxophone], 'sax section');
+	sectionOption($item[Apriling band quad tom], 'percussion section');
+	sectionOption($item[Apriling band tuba], 'tuba section');
+	sectionOption($item[Apriling band staff], 'drum majors');
+	sectionOption($item[Apriling band piccolo], 'piccolo section');
 
 	picker.pickerFinish('Joining a Section...');
 }
