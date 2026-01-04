@@ -645,7 +645,7 @@ buff parseBuff(string source) {
 	// temp(?) fix for %birdname%
 	columnArrow = columnArrow.replace_string("%birdname%", "bird");
 	// Add MP or item cost to increase effect
-	matcher howUp = create_matcher("cmd\\=((cast 1 )?(.+?))&pwd", url_decode(columnArrow));
+	matcher howUp = create_matcher("cmd\\=((cast 1 )?([^^]+?)(?:\\^ .+?)?)&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
 		string upCost = howUp.group(1);
 		if(howUp.group(2) != "") {
