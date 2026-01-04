@@ -383,8 +383,8 @@ void picker_aprilbandsection() {
 	picker.pickerStart('aprilbandsection', 'Join a Section (' + (2 - aprilingBandSectionsEnrolled())
 		+ ' left)');
 
-	void sectionOption(item it, string section) {
-		string cmd = 'aprilband item ' + it;
+	void sectionOption(item it, string section, string cmd) {
+		cmd = 'aprilband item ' + cmd;
 		string desc = parseMods(string_modifier(it, 'Evaluated Modifiers')) + '<br />'
 			+ aprilingBandSectionInstrumentAbilities[it] + ' 3x per day';
 		boolean have = available_amount(it) > 0;
@@ -395,11 +395,11 @@ void picker_aprilbandsection() {
 		picker.pickerItemOption(it, 'Join', name, desc, '', sideCommand(cmd), !have);
 	}
 
-	sectionOption($item[Apriling band saxophone], 'sax section');
-	sectionOption($item[Apriling band quad tom], 'percussion section');
-	sectionOption($item[Apriling band tuba], 'tuba section');
-	sectionOption($item[Apriling band staff], 'drum majors');
-	sectionOption($item[Apriling band piccolo], 'piccolo section');
+	sectionOption($item[Apriling band saxophone], 'sax section', 'saxophone');
+	sectionOption($item[Apriling band quad tom], 'percussion section', 'quad tom');
+	sectionOption($item[Apriling band tuba], 'tuba section', 'tuba');
+	sectionOption($item[Apriling band staff], 'drum majors', 'staff');
+	sectionOption($item[Apriling band piccolo], 'piccolo section', 'piccolo');
 
 	picker.pickerFinish('Joining a Section...');
 }
