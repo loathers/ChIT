@@ -233,6 +233,11 @@ table.chit_brick tr td.icon img {
 	width: 30px;
 	height: 30px;
 }
+table.chit_brick tr td.smallicon img {
+	border: 0px;
+	width: 20px;
+	height: 20px;
+}
 table.chit_brick tr td.weirdicon {
 	background-color: white;
 	border: 0px;

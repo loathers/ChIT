@@ -118,6 +118,7 @@ Inside each area you can place any of the following "bricks":
 - update: Notifies you when new versions of CHIT are available
 - next: Provides a dropdown to tell ChIT where you're going next to get recommendations beforehand
 - shrunkenhead: Provides some info on your reanimated monster, or a reminder to reanimate something if you have an unused shrunken head
+- maximizer: Provides an interface to the mafia maximizer. Not recommended outside of the toolbar. Work in progress.
 
 ### Layout Variables
 

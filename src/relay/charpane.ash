@@ -14,6 +14,7 @@ import "chit_brickBoombox.ash";
 import "chit_brickRobo.ash";
 import "chit_brickNext.ash";
 import "chit_brickShrunkenHead.ash";
+import "chit_brickMaximizer.ash";
 
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
@@ -1654,6 +1655,8 @@ void bakeToolbar() {
 					result.append('<li><a class="tool_launcher" title="');
 					result.append(toolprops[0]);
 					result.append('" href="#" rel="');
+					result.append(brick);
+					result.append('" id="');
 					result.append(brick);
 					result.append('"><img src="');
 					result.append(imagePath);
@@ -4001,6 +4004,21 @@ void bakeHeader() {
 		+ '<script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>'
 		+ '\n<script type="text/javascript" src="chit.js"></script>\n<body');
 
+	string[string] fields = form_fields();
+	if(fields contains "autoopen") {
+		buffer autoOpen;
+		autoOpen.append('<script type="text/javascript">');
+		autoOpen.append('$(window).load(function() {\n');
+		autoOpen.append('var toOpen = $("#chit_tool');
+		autoOpen.append(fields["autoopen"]);
+		autoOpen.append('");\n');
+		autoOpen.append('var bottom = $("#chit_toolbar").outerHeight() + floorOffset - 1;\n');
+		autoOpen.append('toOpen.css({ "position": "absolute", "left": "4px", "right": "4px", "bottom": bottom + "px"});');
+		autoOpen.append('\ntoOpen.show();');
+		autoOpen.append('\n});</script>\n<body');
+		result.replace_string('<body', autoOpen.to_string());
+	}
+
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
 
@@ -4344,6 +4362,7 @@ void bakeBricks() {
 						case "robo":		bakeRobo();			break;
 						case "next": bakeNext(); break;
 						case "shrunkenhead": bakeShrunkenHead(); break;
+						case "maximizer": bakeMaximizer(); break;
 
 						// Reserved words
 						case "helpers": case "update": break;
@@ -4665,6 +4684,7 @@ buffer buildCloset() {
 			case "tracker":
 			case "update":
 			case "gear":
+			case "maximizer":
 				if ((chitBricks contains brick) && (chitBricks[brick] != "")) {
 					result.append('<div id="chit_tool' + brick + '" class="chit_skeleton" style="display:none">');
 					result.append(chitBricks[brick]);
@@ -4783,6 +4803,7 @@ buffer modifyPage(buffer source) {
 	chitTools["tracker"] = "No trackers available|questsnone.png";
 	chitTools["moods"] = "Change Moods|select_mood.png";
 	chitTools["update"] = "New version available|update.png";
+	chitTools["maximizer"] = "Use the maximizer|stats.png"; // TODO: icon
 
 	// Bake all the bricks we're gonna need
 	bakeBricks();
@@ -4803,6 +4824,10 @@ void main() {
 	if(!property_exists("chit.notifyShenanigans.done")) {
 		cli_execute("chit_notify.ash");
 		set_property("chit.notifyShenanigans.done", "true");
+	}
+	string[string] fields = form_fields();
+	if(fields contains "action" && fields["action"] == "cliexec" && fields contains "cmd") {
+		cli_execute(fields["cmd"]);
 	}
 	visit_url().modifyPage().write();
 

@@ -1002,18 +1002,7 @@ void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int
 	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
 }
 
-void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable, string cmd) {
-	if(sk == $skill[none]) {
-		sk = to_skill(eff);
-	}
-
-	chit_info info = getEffectInfo(eff, true);
-
-	buffer iconSection;
-	iconSection.tagStart('td', attrmap { 'class': 'icon' });
-	iconSection.addEffectIcon(eff, '', true, '', attrmap {});
-	iconSection.tagFinish('td');
-
+string skillCost(skill sk) {
 	int price;
 	string priceType;
 
@@ -1036,13 +1025,30 @@ void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill s
 		|| checkPrice('thunder_cost', 'thunder')
 		|| checkPrice('rain_cost', 'rain');
 
+	return havePrice ? (price + " " + priceType) : "";
+}
+
+void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable, string cmd) {
+	if(sk == $skill[none]) {
+		sk = to_skill(eff);
+	}
+
+	chit_info info = getEffectInfo(eff, true);
+
+	buffer iconSection;
+	iconSection.tagStart('td', attrmap { 'class': 'icon' });
+	iconSection.addEffectIcon(eff, '', true, '', attrmap {});
+	iconSection.tagFinish('td');
+
+	string cost = skillCost(sk);
+
 	int duration = turns_per_cast(sk);
 	string parenthetical = duration > 0 ? (duration + ' turns') : duration < 0 ? 'intrinsic' : '';
-	if(havePrice) {
+	if(cost != "") {
 		if(parenthetical != '') {
 			parenthetical += ', ';
 		}
-		parenthetical += price + ' ' + priceType;
+		parenthetical += cost;
 	}
 	if(sk.dailylimitpref != '') {
 		if(parenthetical != '') {
