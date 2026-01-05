@@ -973,7 +973,11 @@ void pickerEffectOption(buffer picker, string verb, effect eff, string desc, int
 	pickerEffectOption(picker, verb, '', eff, desc, duration, href, usable);
 }
 
-void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable) {
+void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable, string cmd) {
+	if(sk == $skill[none]) {
+		sk = to_skill(eff);
+	}
+
 	chit_info info = getEffectInfo(eff, true);
 
 	buffer iconSection;
@@ -1021,12 +1025,20 @@ void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill s
 		}
 	}
 
-	picker.pickerGenericOption(verb, info.name, info.desc, parenthetical, sideCommand('cast 1 ' + sk),
+	if(cmd == '') {
+		cmd = 'cast 1 ' + sk;
+	}
+
+	picker.pickerGenericOption(verb, info.name, info.desc, parenthetical, sideCommand(cmd),
 		usable, iconSection, attrmap { 'title': 'cast 1 ' + sk }, '');
 }
 
+void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, skill sk, boolean usable) {
+	pickerEffectFromSkillOption(picker, verb, eff, sk, usable, '');
+}
+
 void pickerEffectFromSkillOption(buffer picker, string verb, effect eff, boolean usable) {
-	pickerEffectFromSkillOption(picker, verb, eff, to_skill(eff), usable);
+	pickerEffectFromSkillOption(picker, verb, eff, $skill[none], usable);
 }
 
 void addItemIcon(buffer buf, item it, string title, boolean popupDescOnClick);

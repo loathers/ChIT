@@ -305,7 +305,7 @@ void picker_atsong(effect toShrug) {
 
 	foreach i, song in availableSongs() {
 		boolean active = have_effect(song) > 0;
-		picker.pickerEffectFromSkillOption('play', song, !active);
+		picker.pickerEffectFromSkillOption('play', song, $skill[none], !active, shrugPart + "cast 1 " + to_skill(song));
 	}
 
 	picker.pickerFinish("Getting a song caught in your head");
