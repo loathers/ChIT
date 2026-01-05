@@ -52,6 +52,8 @@ void bakeMaximizer() {
 				result.append(turns_per_cast(plan.skill).formatInt());
 				result.append(' adv duration');
 			} else if(plan.item != $item[none] && plan.effect != $effect[none]) {
+				result.append(chit_available(plan.item).formatInt());
+				result.append(' available, ');
 				result.append(numeric_modifier(plan.item, 'Effect Duration').formatInt());
 				result.append(' adv duration');
 			} else if(plan.display.starts_with('uneffect')) {
