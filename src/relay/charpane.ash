@@ -1547,22 +1547,22 @@ void pickMood() {
 		picker.append('">');
 		picker.append(m);
 		picker.append('</a></td><td>');
-		boolean isActive = list_contains(moodname,m);
+		boolean isActive = simple_list_contains(moodname,m,", ");
 		if(moodname != "???" && m != "apathetic" && moodname != m) {
 			if(!isActive) {
 				string mlist = moodname;
 				if(m == "combat")
-					mlist = list_remove(mlist, "noncom");
+					mlist = simple_list_remove(mlist, "noncom", ", ");
 				else if(m == "noncom")
-					mlist = list_remove(mlist, "combat");
+					mlist = simple_list_remove(mlist, "combat", ", ");
 				picker.append('<a title="ADD ' + m + ' to current mood" href="');
-				picker.append(sideCommand("mood " + list_add(mlist,m)));
+				picker.append(sideCommand("mood " + simple_list_add(mlist,m,", ")));
 				picker.append('"><img src="');
 				picker.append(imagePath);
 				picker.append('control_add_blue.png"></a>');
 			} else {
 				picker.append('<a title="REMOVE ' + m + ' from current mood" href="');
-				picker.append(sideCommand("mood " + list_remove(moodname,m)));
+				picker.append(sideCommand("mood " + simple_list_remove(moodname,m,", ")));
 				picker.append('"><img src="');
 				picker.append(imagePath);
 				picker.append('control_remove_red.png"></a>');
@@ -3323,17 +3323,17 @@ void allCurrency(buffer result) {
 	boolean [string] currencies; // This is to ensure no duplication of currencies, perhaps due to ambiguous names being rectified by to_item().
 	foreach x,curtag in split_string("meat|"+cvars["chit.currencies"]+"|"+cvars["chit.currencies.special"], "\\s*(?<!\\\\)[,|]\\s*") {
 		chit_currency curr = getCurrency(curtag);
-		if((curr.amount > 0 || list_contains(chitCurrency,curr.tag,"\\|")) && !(currencies contains curr.tag)) {
+		if((curr.amount > 0 || simple_list_contains(chitCurrency,curr.tag,"|")) && !(currencies contains curr.tag)) {
 			currencies[curr.tag] = true;
 			result.append('<li');
 			if(displayedCurrencies[curr.tag]) result.append(' class="current"');
 			result.append('><a href="/KoLmafia/sideCommand?cmd=');
 			if(showMany) {
 				result.append(url_encode("set chit.currencies.showmany.choices = "));
-				if(list_contains(chitCurrency,curr.tag,"\\s*(?<!\\\\)[,|]\\s*"))
-					result.append(list_remove(chitCurrency,curr.tag,"|"));
+				if(simple_list_contains(chitCurrency,curr.tag,"|"))
+					result.append(simple_list_remove(chitCurrency,curr.tag,"|"));
 				else
-					result.append(list_add(chitCurrency,curr.tag,"|"));
+					result.append(simple_list_add(chitCurrency,curr.tag,"|"));
 			} else {
 				result.append(url_encode("set _chit.currency = "));
 				result.append(curr.tag);

@@ -460,6 +460,35 @@ boolean [item] to_list(string list) {
 	return retval;
 }
 
+boolean simple_list_contains(string list, string check, string glue) {
+	foreach i,str in list.split_string(glue == "|" ? "\\|" : glue) {
+		if(str == check) {
+			return true;
+		}
+	}
+	return false;
+}
+
+string simple_list_add(string list, string add, string glue) {
+	if(list == "") {
+		return add;
+	} else if(simple_list_contains(list, add, glue)) {
+		return list;
+	} else {
+		return list + glue + add;
+	}
+}
+
+string simple_list_remove(string list, string rem, string glue) {
+	string [int] toJoin;
+	foreach i,str in list.split_string(glue == "|" ? "\\|" : glue) {
+		if(str != rem) {
+			toJoin[toJoin.count()] = str;
+		}
+	}
+	return toJoin.join(glue);
+}
+
 // Put the property back together. (Duplicates were removed.) Normalize delimiter to |
 string cat_list(boolean [item] list) {
 	buffer buf;
