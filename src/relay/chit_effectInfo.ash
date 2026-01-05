@@ -872,6 +872,9 @@ chit_info getEffectInfo(effect eff, boolean avoidRecursion, boolean span) {
 			}
 			break;
 		}
+		case $effect[Favored by the Don]:
+			info.desc = "Meat After Combat";
+			break;
 	}
 
 	// could do this above but it'd be SO MUCH REPEAT CODE
