@@ -19,7 +19,7 @@ void bakeShrunkenHead() {
 		result.append(shrunkenMatcher.group(2));
 	} else if(chit_available($item[shrunken head]) > 0) {
 		result.append('nothing, go find a foe to reanimate!');
-		if(last_monster() != $monster[none]) {
+		if(last_monster() != $monster[none] && current_round() != 0) {
 			result.append('<br />');
 			result.append(last_monster());
 			result.append(' gives ');
