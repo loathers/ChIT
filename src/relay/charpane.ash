@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28854; // legendary club skill tracking
+since r28859; // shrunken_head_zombie
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

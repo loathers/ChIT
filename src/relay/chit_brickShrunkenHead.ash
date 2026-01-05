@@ -18,7 +18,13 @@ void bakeShrunkenHead() {
 		result.append('<br />Abilities: ');
 		result.append(shrunkenMatcher.group(2));
 	} else if(chit_available($item[shrunken head]) > 0) {
-		result.append('nothing<br />Go find a foe to reanimate!');
+		result.append('nothing, go find a foe to reanimate!');
+		if(last_monster() != $monster[none]) {
+			result.append('<br />');
+			result.append(last_monster());
+			result.append(' gives ');
+			result.append(shrunken_head_zombie(last_monster()).join(', '));
+		}
 	}
 
 	result.append('</td></tr></tbody></table>');
