@@ -1845,10 +1845,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		}
 		case $item[aviator goggles]:
-			extraMods = 'More Kiwis';
+			info.desc = 'More Kiwis';
 			break;
 		case $item[blue plate]:
-			extraMods = 'Improves Cooking';
+			info.desc = 'Improves Cooking';
 			break;
 		case $item[Monodent of the Sea]: {
 			string[int] dentPrefixes = { 'Mono', 'Bi', 'Tri', 'Qua', 'Penta', 'Hexa', 'Hepta', 'Octo', 'Nona', 'Deca' };
