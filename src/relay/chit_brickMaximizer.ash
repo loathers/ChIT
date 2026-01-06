@@ -58,6 +58,8 @@ void bakeMaximizer() {
 		}
 		result.append(' name="max');
 		result.append(filter);
+		result.append('" id="max');
+		result.append(filter);
 		result.append('" value="true" />');
 		result.append('<label for="max');
 		result.append(filter);
