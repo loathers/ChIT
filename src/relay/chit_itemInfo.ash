@@ -1523,10 +1523,15 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			if(skillLevel < 1) {
 				info.addToDesc('unskilled');
 			}
-			else {
-				info.addToDesc(skillLevel + ' skill');
+			else if(skillLevel == 20) {
+				info.addToDesc('mastered');
 			}
-			info.addToDesc(toNextLevel + ' to improve');
+			else {
+				info.addToDesc(skillLevel + '/20 skill');
+			}
+			if(skillLevel < 20) {
+				info.addToDesc(toNextLevel + ' to improve');
+			}
 			if(skillLevel > 0) {
 				// darts left is 0 until you've gone in to combat with them, so just don't show yet
 				info.addToDesc(dartsLeft + '/' + capacity + ' darts');
