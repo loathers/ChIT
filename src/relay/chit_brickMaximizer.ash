@@ -23,7 +23,7 @@ void bakeMaximizer() {
 			}
 		}
 		set_property('_chitLastFilters', maxFilters);
-		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, true, maxFilters);
+		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, maxFilters);
 	} else {
 		maxFilters = get_property('_chitLastFilters');
 	}
