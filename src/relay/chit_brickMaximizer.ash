@@ -8,44 +8,22 @@ record maximizer_result {
 	string afterdisplay;
 };
 
-record maximizer_filters {
-	boolean equip;
-	boolean cast;
-	boolean wish;
-	boolean other;
-	boolean usable;
-	boolean booze;
-	boolean food;
-	boolean spleen;
-};
-
 void bakeMaximizer() {
 	buffer result;
 
 	string[string] fields = form_fields();
 	boolean[string] allFilters = $strings[equip,cast,wish,other,usable,booze,food,spleen];
-	maximizer_filters filters;
 	maximizer_result[int] maximizeOut;
 	string maxFilters = "";
 	if(fields contains "tomax") {
 		set_property('_chitLastMax', fields["tomax"]);
-		filters = new maximizer_filters(
-			fields["maxequip"].to_boolean(),
-			fields["maxcast"].to_boolean(),
-			fields["maxwish"].to_boolean(),
-			fields["maxother"].to_boolean(),
-			fields["maxusable"].to_boolean(),
-			fields["maxbooze"].to_boolean(),
-			fields["maxfood"].to_boolean(),
-			fields["maxspleen"].to_boolean(),
-		);
 		foreach filter in allFilters {
 			if(fields["max" + filter].to_boolean()) {
 				maxFilters = maxFilters.simple_list_add(filter, ',');
 			}
 		}
 		set_property('_chitLastFilters', maxFilters);
-		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, true, filters);
+		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, true, maxFilters);
 	} else {
 		maxFilters = get_property('_chitLastFilters');
 	}
