@@ -137,7 +137,9 @@ $(document).ready(function () {
 					'position': 'absolute',
 					'left': '4px',
 					'right': '4px',
-					'bottom': bottom+'px'
+					'bottom': bottom+'px',
+					'max-height': '98%',
+					'overflow-y': 'auto'
 				});
 				tool.slideDown('fast');
 			} else {

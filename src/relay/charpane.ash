@@ -4013,7 +4013,7 @@ void bakeHeader() {
 		autoOpen.append(fields["autoopen"]);
 		autoOpen.append('");\n');
 		autoOpen.append('var bottom = $("#chit_toolbar").outerHeight() + floorOffset - 1;\n');
-		autoOpen.append('toOpen.css({ "position": "absolute", "left": "4px", "right": "4px", "bottom": bottom + "px"});');
+		autoOpen.append('toOpen.css({ "position": "absolute", "left": "4px", "right": "4px", "bottom": bottom + "px", "max-height": "98%", "overflow-y": "auto"});');
 		autoOpen.append('\ntoOpen.show();');
 		autoOpen.append('\n});</script>\n<body');
 		result.replace_string('<body', autoOpen.to_string());
