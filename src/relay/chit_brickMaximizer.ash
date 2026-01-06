@@ -1,12 +1,65 @@
+record maximizer_result {
+	string display;
+	string command;
+	float score;
+	effect effect;
+	item item;
+	skill skill;
+	string afterdisplay;
+};
+
+record maximizer_filters {
+	boolean equip;
+	boolean cast;
+	boolean wish;
+	boolean other;
+	boolean usable;
+	boolean booze;
+	boolean food;
+	boolean spleen;
+};
+
 void bakeMaximizer() {
 	buffer result;
 
 	string[string] fields = form_fields();
+	boolean[string] allFilters = $strings[equip,cast,wish,other,usable,booze,food,spleen];
+	maximizer_filters filters;
+	maximizer_result[int] maximizeOut;
+	string maxFilters = "";
+	if(fields contains "tomax") {
+		set_property('_chitLastMax', fields["tomax"]);
+		filters = new maximizer_filters(
+			fields["maxequip"].to_boolean(),
+			fields["maxcast"].to_boolean(),
+			fields["maxwish"].to_boolean(),
+			fields["maxother"].to_boolean(),
+			fields["maxusable"].to_boolean(),
+			fields["maxbooze"].to_boolean(),
+			fields["maxfood"].to_boolean(),
+			fields["maxspleen"].to_boolean(),
+		);
+		foreach filter in allFilters {
+			if(fields["max" + filter].to_boolean()) {
+				maxFilters = maxFilters.simple_list_add(filter, ',');
+			}
+		}
+		set_property('_chitLastFilters', maxFilters);
+		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, true, filters);
+	} else {
+		maxFilters = get_property('_chitLastFilters');
+	}
 
 	result.append('<table id="chit_maximizer" class="chit_brick nospace"><tbody>');
-	result.append('<tr><th class="label" colspan="5">Maximizer</th></tr><tr>');
-	result.append('<td class="info" colspan="5">');
+	result.append('<tr><th class="label" colspan="5">Maximizer');
+	if(fields contains "tomax") {
+		result.append(' (Current score: ');
+		result.append(last_maximizer_score().to_string('%,.2f'));
+		result.append(')');
+	}
+	result.append('</th></tr>');
 	result.append('<form action="./charpane.php">');
+	result.append('<tr><td class="info" colspan="4">');
 	result.append('<input type="hidden" name="autoopen" value="maximizer" />');
 	result.append('<input type="text" name="tomax" value="');
 	if(fields contains "tomax") {
@@ -15,14 +68,36 @@ void bakeMaximizer() {
 		result.append(get_property('_chitLastMax'));
 	}
 	result.append('" />');
-	result.append('<button type="submit" name="action" value="maximize">Maximize</button>');
-	result.append('</form>');
+	result.append('</td><td>');
+	result.append('<button type="submit" name="action" value="maximize">Max</button>');
 	result.append('</td></tr>');
+	result.append('<tr><td>');
+	int count = 0;
+	foreach filter in allFilters {
+		result.append('<input type="checkbox"');
+		if(maxFilters.simple_list_contains(filter, ',')) {
+			result.append(' checked');
+		}
+		result.append(' name="max');
+		result.append(filter);
+		result.append('" value="true" />');
+		result.append('<label for="max');
+		result.append(filter);
+		result.append('">');
+		result.append(filter);
+		result.append('</label>');
+		result.append('</td><td>');
+		count += 1;
+		if(count == 4) {
+			result.append('</td></tr><tr><td>');
+		}
+	}
+	result.append('</td></tr>');
+	result.append('</form>');
 
 	if(fields contains "tomax") {
-		set_property('_chitLastMax', fields["tomax"]);
 		result.append('<tr class="darkrow"><td>Icon</td><td>Commmand</td><td>Score</td><td>Info</td><td>Go!</td></tr>');
-		foreach i,plan in maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, true) {
+		foreach i,plan in maximizeOut {
 			result.append('<tr');
 			if(i % 2 == 1) {
 				result.append(' class="darkrow"');
@@ -43,23 +118,16 @@ void bakeMaximizer() {
 			result.append('</td><td>');
 			result.append(plan.score.to_string(plan.score % 1 == 0 ? '%.0f' :'%.2f'));
 			result.append('</td><td>');
-			if(plan.skill != $skill[none]) {
-				string cost = skillCost(plan.skill);
-				if(cost != '') {
-					result.append(cost);
-					result.append(', ');
-				}
-				result.append(turns_per_cast(plan.skill).formatInt());
-				result.append(' adv duration');
-			} else if(plan.item != $item[none] && plan.effect != $effect[none]) {
-				result.append(chit_available(plan.item).formatInt());
-				result.append(' available, ');
-				result.append(numeric_modifier(plan.item, 'Effect Duration').formatInt());
-				result.append(' adv duration');
-			} else if(plan.display.starts_with('uneffect')) {
-				result.append(chit_available($item[soft green echo eyedrop antidote]).formatInt());
-				result.append(' SGEEAs on hand');
+			string after = plan.afterdisplay;
+			matcher afterMatcher = create_matcher('\\(\\+?\\d+\\)\\s*', after);
+			if(afterMatcher.find()) {
+				after = after.replace_string(afterMatcher.group(0), '');
 			}
+			afterMatcher = create_matcher(', \\+?\\d+\\)', after);
+			if(afterMatcher.find()) {
+				after = after.replace_string(afterMatcher.group(0), ')');
+			}
+			result.append(after);
 			result.append('</td><td>');
 			if(plan.command != '') {
 				result.append('<form action="./charpane.php">');
@@ -75,7 +143,8 @@ void bakeMaximizer() {
 					result.append('disabled ');
 				}
 				result.append('type="submit" name="action" value="cliexec">');
-				result.append(plan.display.split_string(' ')[0]);
+				string[int] splitDisplay = plan.display.split_string(' ');
+				result.append(splitDisplay[0] == '...or' ? splitDisplay[1] : splitDisplay[0]);
 				result.append('</button></form>');
 			}
 			result.append('</td></tr>');
