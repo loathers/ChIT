@@ -32,7 +32,7 @@ void bakeMaximizer() {
 	result.append('<tr><th class="label" colspan="5">Maximizer');
 	if(fields contains "tomax") {
 		result.append(' (Current score: ');
-		result.append(last_maximizer_score().to_string('%,.2f'));
+		result.append(current_score(fields["tomax"]).to_string('%,.2f'));
 		result.append(')');
 	}
 	result.append('</th></tr>');
