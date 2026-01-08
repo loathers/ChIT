@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28854; // legendary club skill tracking
+since r28871; // eternity codpiece equip command
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

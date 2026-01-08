@@ -841,7 +841,7 @@ void picker_bcz() {
 
 void picker_eterncod_slot(int i) {
 	buffer picker;
-	item inSlot = $item[none];
+	item inSlot = equipped_item(to_slot("codpiece" + i));
 	picker.pickerStart('eterncod' + i, inSlot == $item[none] ? ('Fill slot ' + i) : ('Replace ' + inSlot + ' in slot ' + i));
 
 	void addGem(item gem, string mod, string smuggle) {
@@ -865,7 +865,7 @@ void picker_eterncod_slot(int i) {
 		if(smuggle != '') {
 			desc += '<br />Smuggled: ' + smuggle;
 		}
-		picker.pickerGenericOption('mount', gem, desc, available, 'TODO:href', !current, itemimage(gem.image));
+		picker.pickerGenericOption('mount', gem, desc, available, sideCommand('equip codpiece' + i + ' ' + gem), !current, itemimage(gem.image));
 	}
 
 	void addGem(item gem, string mod) {
@@ -952,7 +952,9 @@ void picker_eterncod() {
 
 	for(int i = 1; i <= 5; ++i) {
 		picker_eterncod_slot(i);
-		picker.pickerPickerOption('gem #' + i, 'what in slot item does', 'in slot item name here', 'eterncod' + i,
+		item inSlot = equipped_item(to_slot("codpiece" + i));
+		picker.pickerPickerOption('gem #' + i, string_modifier('EternityCodpiece:' + inSlot,
+			"Evaluated Modifiers").parseMods(true), inSlot, 'eterncod' + i,
 			itemimage($item[The Eternity Codpiece].image));
 	}
 
@@ -2024,6 +2026,12 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			});
 			break;
 		case $item[The Eternity Codpiece]:
+			foreach s in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5] {
+				string evm = string_modifier("EternityCodpiece:" + equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
+			}
 			info.addExtra(extraInfoPicker('eterncod', '<b>decorate</b> your codpiece'));
 			break;
 	}
