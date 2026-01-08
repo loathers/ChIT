@@ -839,11 +839,137 @@ void picker_bcz() {
 	picker.pickerFinish('Spending some blood...');
 }
 
+void picker_eterncod_slot(int i) {
+	buffer picker;
+	item inSlot = equipped_item(to_slot("codpiece" + i));
+	picker.pickerStart('eterncod' + i, inSlot == $item[none] ? ('Fill slot ' + i) : ('Replace ' + inSlot + ' in slot ' + i));
+
+	void addGem(item gem, string mod, string smuggle) {
+		int available = chit_available(gem);
+		if(available == 0) {
+			return;
+		}
+		boolean current = false;
+		string desc = parseMods(mod);
+		string lastAvail = string_modifier(gem, 'Last Available');
+		if(lastAvail != '') {
+			int lastAvailYear = lastAvail.substring(0, 4).to_int();
+			int currYear = today_to_string().substring(0, 4).to_int();
+			if(currYear > lastAvailYear + 2) {
+				if(smuggle != '') {
+					smuggle += ', ';
+				}
+				smuggle += 'nonstandard';
+			}
+		}
+		if(smuggle != '') {
+			desc += '<br />Smuggled: ' + smuggle;
+		}
+		picker.pickerGenericOption('mount', gem, desc, available, sideCommand('equip codpiece' + i + ' ' + gem), !current, itemimage(gem.image));
+	}
+
+	void addGem(item gem, string mod) {
+		string smuggle = '';
+		if(gem.to_slot() != $slot[none]) {
+			smuggle = (gem.to_slot() == $slot[acc1] ? 'acc' : gem.to_slot()) + ' with ' + parseItem(gem); 
+		} else if(gem.autosell_price() > 2500) {
+			smuggle = gem.autosell_price() + ' meat autosell';
+		}
+		addGem(gem, mod, smuggle);
+	}
+
+	addGem($item[Alien gemstone], 'Muscle Experience: +1');
+	addGem($item[angry agate], 'PvP Fights: +1');
+	addGem($item[autumn years wisdom], 'Mysticality Experience: +1');
+	addGem($item[azurite], 'Sleaze Damage: +10</span>');
+	addGem($item[baconstone], 'Mysticality Percent: +11');
+	addGem($item[bananagate], 'Stench Spell Damage: +10');
+	addGem($item[barrel beryl], 'Booze Drop: +20');
+	addGem($item[beach ball marble], 'Combat Initiative: +9');
+	addGem($item[beige clambroth marble], 'Combat Initiative: +7');
+	addGem($item[big bumboozer marble], 'Combat Initiative: +11');
+	addGem($item[black catseye marble], 'Combat Initiative: +10');
+	addGem($item[blood cubic zirconia], 'Spooky Resistance: +5, Spooky Damage: +5', 'Comes automatically...');
+	addGem($item[BRICKO pearl], 'Candy Drops: +20');
+	addGem($item[brown crock marble], 'Combat Initiative: +2');
+	addGem($item[bumblebee marble], 'Combat Initiative: +5');
+	addGem($item[control crystal], 'Mysticality: +5');
+	addGem($item[crystalline seal eye], 'Damage vs. Seals: +25');
+	addGem($item[crystallized memory], 'Muscle: +5');
+	addGem($item[crystallized pumpkin spice], 'Food Drop: +20');
+	addGem($item[cubic zirconia], 'Maximum MP Percent: +10');
+	addGem($item[effluvious emerald], 'Stench Resistance: +2');
+	addGem($item[Eye Agate], 'Damage vs. Zombies: +25');
+	addGem($item[eye of the tiger-lily], 'Spell Damage Percent: +10');
+	addGem($item[giant pearl], 'Pool Skill: +1');
+	addGem($item[glacial sapphire], 'Cold Resistance: +2');
+	addGem($item[glimmering golden crystal], 'Familiar Experience: +1');
+	addGem($item[glowing new age crystal], 'MP Regen Min: 5, MP Regen Max: 10');
+	addGem($item[green peawee marble], 'Combat Initiative: +1');
+	addGem($item[hamethyst], 'Muscle Percent: +11');
+	addGem($item[incredibly dense meat gem], 'Meat Drop: +30');
+	addGem($item[jet bennie marble], 'Combat Initiative: +6');
+	addGem($item[kumquartz], 'Cold Spell Damage: +10');
+	addGem($item[Lapis Lazuli], 'Stench Damage: +10');
+	addGem($item[lemonade marble], 'Combat Initiative: +4');
+	addGem($item[lump of diamond], 'Damage Reduction: +5');
+	addGem($item[lunar isotope], 'Pickpocket Chance: +10');
+	addGem($item[marine aquamarine], 'Fishing Skill: +5');
+	addGem($item[massive gemstone], 'Item Drop: +10');
+	addGem($item[moon-amber], 'Damage vs. Ghosts: +25');
+	addGem($item[New Age healing crystal], 'HP Regen Min: 10, HP Regen Max: 20');
+	addGem($item[New Age hurting crystal], 'Familiar Damage: +10');
+	addGem($item[pearidot], 'Sleaze Spell Damage: +10');
+	addGem($item[Peridot of Peril], 'Maximum HP: +20, Maximum MP: +20', 'Comes automatically...');
+	addGem($item[polished moon-amber], 'Damage vs. Werewolves: +25');
+	addGem($item[porquoise], 'Moxie Percent: +11');
+	addGem($item[priceless diamond], 'Damage Absorption: +10', "Marginal Shen's utility");
+	addGem($item[rainbow pearl], 'Cold Damage: +5, Hot Damage: +5, Sleaze Damage: +5, Spooky Damage: +5, Stench Damage: +5', 'swag');
+	addGem($item[red China marble], 'Combat Initiative: +3');
+	addGem($item[rhinestone], 'Moxie Experience: +1');
+	addGem($item[Rubee&trade;], 'Hot Damage: +10');
+	addGem($item[shadow glass], 'Spooky Damage: +10');
+	addGem($item[shard of double-ice], 'Cold Damage: +10');
+	addGem($item[solid gold jewel], 'Maximum HP Percent: +20');
+	addGem($item[steamy ruby], 'Hot Resistance: +2');
+	addGem($item[steely marble], 'Combat Initiative: +8');
+	addGem($item[stone of eXtreme power], 'Muscle: +3, Mysticality: +3, Moxie: +3');
+	addGem($item[strawberyl], 'Hot Spell Damage: +10');
+	addGem($item[tawdry amethyst], 'Sleaze Resistance: +2');
+	addGem($item[tourmalime], 'Spooky Spell Damage: +10');
+	addGem($item[Tuesday's ruby], 'Monster Level: +5');
+	addGem($item[unblemished pearl], 'Adventures: +1');
+	addGem($item[unearthly onyx], 'Spooky Resistance: +2');
+	addGem($item[vampire pearl], 'Damage vs. Vampires: +25');
+	addGem($item[Xiblaxian crystal], 'Damage vs. Bugbears: +25');
+
+	picker.pickerFinish('Mounting gemstone...');
+}
+
+void picker_eterncod() {
+	buffer picker;
+	picker.pickerStart('eterncod', 'Decorate your junk');
+
+	for(int i = 1; i <= 5; ++i) {
+		picker_eterncod_slot(i);
+		item inSlot = equipped_item(to_slot("codpiece" + i));
+		picker.pickerPickerOption('gem #' + i, string_modifier('EternityCodpiece:' + inSlot,
+			"Evaluated Modifiers").parseMods(true), inSlot, 'eterncod' + i,
+			itemimage($item[The Eternity Codpiece].image));
+	}
+
+	picker.pickerGenericOption('decorate', 'manually', 'just in case', '',
+		'/inventory.php?action=docodpiece&pwd=' + my_hash(), true,
+		itemimage($item[The Eternity Codpiece].image), attrmap {}, attrmap { 'target': 'mainpane',
+		'class': 'done' });
+
+	picker.pickerFinish('');
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
 chit_info getFamiliarInfo(familiar f, slot s);
-int chit_available(item it);
 
 chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods, boolean weirdFamMode) {
 	chit_info info;
@@ -1831,9 +1957,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				get_property('_cupidBowFamiliars'));
 			if(!famFinder.find()) {
 				int fights = 0;
-				if(get_property('cupidBowLastFamiliar') == my_familiar().to_int().to_string()) {
+				familiar bowFam = get_property('cupidBowLastFamiliar').to_int().to_familiar();
+				if(bowFam == my_familiar()) {
 					fights = get_property('cupidBowFights').to_int();
-				} else if(get_property('cupidBowFights').to_int() < 5) {
+				} else if(get_property('cupidBowFights').to_int() < 5 && bowFam != $familiar[none]) {
 					info.addToDesc(get_property('cupidBowFights') + '/5 to equip for '
 						+ get_property('cupidBowLastFamiliar').to_int().to_familiar());
 					info.dangerLevel = DANGER_WARNING;
@@ -1902,6 +2029,15 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				new drop_info('_clubEmNextWeekUsed', 5, 'Into Next Week'),
 				new drop_info('_clubEmTimeUsed', 5, 'Back in Time'),
 			});
+			break;
+		case $item[The Eternity Codpiece]:
+			foreach s in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5] {
+				string evm = string_modifier("EternityCodpiece:" + equipped_item(s), "Evaluated Modifiers");
+				if(evm != '') {
+					extraMods += ", " + evm;
+				}
+			}
+			info.addExtra(extraInfoPicker('eterncod', '<b>decorate</b> your codpiece'));
 			break;
 	}
 

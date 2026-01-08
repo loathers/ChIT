@@ -10,6 +10,11 @@ boolean isCompact = false;
 boolean inValhalla = false;
 string imagePath = "/images/relayimages/chit/";
 string [string] cvars;
+boolean [string] forceSections;
+string [string,string] reason_options;
+string [string] defaults;
+boolean defaults_initialized = false;
+boolean aftercore = qprop("questL13Final");
 
 typedef string[string] attrmap;
 
@@ -1458,4 +1463,74 @@ int clamp(int toClamp, int min, int max) {
 
 float clamp(float toClamp, float min, float max) {
 	return min(max(toClamp, min), max);
+}
+
+string get_option(string reason, string option) {
+	if(forceSections[reason] && option == "amount")
+		return "all";
+	if(reason != "" && reason_options[reason,option] != "")
+		return reason_options[reason,option];
+
+	if(!defaults_initialized) {
+		foreach i,s in split_string(cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
+			string [int] spl = split_string(s, "[=_]");
+			defaults[spl[0]] = spl[1];
+		}
+		defaults_initialized = true;
+	}
+
+	return defaults[option];
+}
+
+int foldable_amount(item it, string reason, boolean hagnk);
+
+int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
+{
+	int available = item_amount(it) + closet_amount(it);
+	if(to_boolean(reason.get_option("create")))
+		available += creatable_amount(it);
+	if(available == 0 && boolean_modifier(it, "Free Pull"))
+		available += available_amount(it);
+
+	if(pulls_remaining() == -1)
+		available += storage_amount(it);
+	else if(hagnk && pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
+		available += min(pulls_remaining(), storage_amount(it));
+	available += equipped_amount(it);
+	if(it.to_slot() == $slot[familiar]) {
+		foreach fam in $familiars[] {
+			if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
+				++available;
+			}
+		}
+	}
+
+	if(foldcheck)
+		available += foldable_amount(it, reason, hagnk);
+	if(it == $item[pantogram pants] && available == 0 && item_amount($item[portable pantogram]) > 0)
+		available = 1;
+
+	return available;
+}
+
+int chit_available(item it, string reason, boolean hagnk) {
+	return chit_available(it, reason, hagnk, true);
+}
+int chit_available(item it, string reason)
+{
+	return chit_available(it, reason, true);
+}
+
+int chit_available(item it)
+{
+	return chit_available(it, "");
+}
+
+int foldable_amount(item it, string reason, boolean hagnk) {
+	int amount = 0;
+	foreach foldable, i in get_related(it, "fold")
+		if(foldable != it)
+			amount += chit_available(foldable, reason, hagnk, false);
+
+	return amount;
 }

@@ -3,8 +3,6 @@
 boolean [item] favGear;
 boolean [item] favGearWeirdFam;
 float [string, item] recommendedGear;
-boolean [string] forceSections;
-boolean aftercore = qprop("questL13Final");
 
 float equip_modifier(item it, string mod) {
 	if(my_path().name == "Gelatinous Noob") return 0;
@@ -25,11 +23,6 @@ float equip_modifier(item it, string mod, int weight) {
 	return equip_modifier(it, mod) * weight;
 }
 
-string [string] defaults;
-boolean defaults_initialized = false;
-
-string [string,string] reason_options;
-
 void gear_display_options() {
 	foreach i,s in split_string(cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run")], ", ?") {
 		string [string] options;
@@ -43,76 +36,6 @@ void gear_display_options() {
 		}
 		reason_options[spl[0]] = options;
 	}
-}
-
-string get_option(string reason, string option) {
-	if(forceSections[reason] && option == "amount")
-		return "all";
-	if(reason != "" && reason_options[reason,option] != "")
-		return reason_options[reason,option];
-
-	if(!defaults_initialized) {
-		foreach i,s in split_string(cvars["chit.gear.display." + (aftercore ? "aftercore" : "in-run") + ".defaults"], ", ?") {
-			string [int] spl = split_string(s, "[=_]");
-			defaults[spl[0]] = spl[1];
-		}
-		defaults_initialized = true;
-	}
-
-	return defaults[option];
-}
-
-int foldable_amount(item it, string reason, boolean hagnk);
-
-int chit_available(item it, string reason, boolean hagnk, boolean foldcheck)
-{
-	int available = item_amount(it) + closet_amount(it);
-	if(to_boolean(reason.get_option("create")))
-		available += creatable_amount(it);
-	if(available == 0 && boolean_modifier(it, "Free Pull"))
-		available += available_amount(it);
-
-	if(pulls_remaining() == -1)
-		available += storage_amount(it);
-	else if(hagnk && pulls_remaining() > 0 && to_boolean(reason.get_option("pull")))
-		available += min(pulls_remaining(), storage_amount(it));
-	available += equipped_amount(it);
-	if(it.to_slot() == $slot[familiar]) {
-		foreach fam in $familiars[] {
-			if(my_familiar() != fam && have_familiar(fam) && familiar_equipped_equipment(fam) == it) {
-				++available;
-			}
-		}
-	}
-
-	if(foldcheck)
-		available += foldable_amount(it, reason, hagnk);
-	if(it == $item[pantogram pants] && available == 0 && item_amount($item[portable pantogram]) > 0)
-		available = 1;
-
-	return available;
-}
-
-int chit_available(item it, string reason, boolean hagnk) {
-	return chit_available(it, reason, hagnk, true);
-}
-int chit_available(item it, string reason)
-{
-	return chit_available(it, reason, true);
-}
-
-int chit_available(item it)
-{
-	return chit_available(it, "");
-}
-
-int foldable_amount(item it, string reason, boolean hagnk) {
-	int amount = 0;
-	foreach foldable, i in get_related(it, "fold")
-		if(foldable != it)
-			amount += chit_available(foldable, reason, hagnk, false);
-
-	return amount;
 }
 
 void addGear(item it, string reason, float score)
@@ -174,7 +97,6 @@ void addFavGear() {
 
 	if(get_property("questL13Final") == "step6" && available_amount($item[beehive]) < 1)
 		forceAddGear($items[hot plate, smirking shrunken head, bottle opener belt buckle, Groll doll, hippy protest button], "towerkilling");
-
 
 	// Charter zone quest equipment
 	if((get_property("hotAirportAlways") == "true" || get_property("_hotAirportToday") == "true") && get_property("_infernoDiscoVisited") == "false")
@@ -973,7 +895,6 @@ void pickerGear(slot s) {
 	picker.addLoader("Removing from favorites...", "delfav");
 	picker.pickerFinish("Changing " + s + "...");
 }
-
 
 // slot needed for weapons being used in off-hand
 int dangerLevel(item it, slot s) {

@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28859; // shrunken_head_zombie
+since r28871; // eternity codpiece equip command
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";
