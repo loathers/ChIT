@@ -1909,6 +1909,8 @@ string message(string organ, int severity) {
 	case "Stomach":
 		if(severity == 4)
 			return "You're too full to even eat a wafer-thin mint";
+		else if(severity == 5)
+			return "You're in a food coma";
 		return "Hmmm... pies";
 	case "Liver":
 		switch(severity) {
@@ -1923,6 +1925,7 @@ string message(string organ, int severity) {
 	case "Spleen":
 		switch(severity) {
 		case -1: return "You're too young to be taking drugs";
+		case 5: return "You are jaundiced";
 		case 4: return "Your spleen can't take any more abuse today";
 		case 3:
 		case 2: return "Your spleen has taken quite a bit of damage";
@@ -1938,6 +1941,8 @@ int severity(string organ, int cur, int lim) {
 	case "Stomach":
 		if(cur == lim)
 			return 4;
+		else if(cur > lim)
+			return 5;
 		return 1;
 	case "Liver":
 		if(cur > lim + 6)
@@ -1954,8 +1959,8 @@ int severity(string organ, int cur, int lim) {
 			return 1;
 		return 0;
 	case "Spleen":
-		if(my_level() < 4 && available_amount($item[groose grease]) < 1)
-			return -1;
+		if(cur > lim)
+			return 5;
 		else if(cur == lim)
 			return 4;
 		else if(cur > lim * .65)
