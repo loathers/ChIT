@@ -1207,6 +1207,8 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
 		+'|Avatar: "([^"]+)"'
 		+'|[^ ]* Limit: 0'	// This is mostly for Cowrruption vs Cow Puncher having no limit
+		+'|Adventures: \\+?(\\d+), PvP Fights: \\+?\\12'
+		+'|PvP Fights: \\+?(\\d+), Adventures: \\+?\\13'
 			, evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
@@ -1236,6 +1238,9 @@ string parseMods(string evm, boolean span, boolean debug) {
 			if(parse.group(9) == " Percent") enew.append("%");
 		} else if(parse.group(11) != "") {
 			enew.append(parse.group(11));
+		} else if(parse.group(12) != "" || parse.group(13) != "") {
+			enew.append("Adventures/PvP Fights: +");
+			enew.append(parse.group(12) != "" ? parse.group(12) : parse.group(13));
 		}
 	}
 	parse.append_tail(enew);
