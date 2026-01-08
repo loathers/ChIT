@@ -1253,7 +1253,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 	enew.set_length(0);
 	parse = create_matcher("^\\s*([,\\s]*)"
 		+"|(\\s*Drop|\\s*Percent([^:]*))?(?<!Limit):\\s*(([+-])?\\d+)"
-		+"|(HP Regen ([0-9-]+), MP Regen \\6)", evm);
+		+"|(HP Regen ([0-9-]+), MP Regen \\7)", evm);
 	while(parse.find()) {
 		parse.append_replacement(enew, "");
 		if(parse.group(1).contains_text(",")) {	// group would contain extra comma at beginning
@@ -1267,8 +1267,8 @@ string parseMods(string evm, boolean span, boolean debug) {
 			if(parse.group(2) != "")		// group is Drop or Percent
 				enew.append("%");
 
-		} else if(parse.group(6) != "") {	// group is the HP&MP combined Regen
-			enew.append("All Regen ");
+		} else if(parse.group(7) != "") {	// group is the HP&MP combined Regen
+			enew.append("HP/MP Regen ");
 			enew.append(parse.group(7));
 		}
 	}
