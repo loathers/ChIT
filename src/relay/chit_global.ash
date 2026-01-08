@@ -515,8 +515,8 @@ string normalize_prop(string value, string type) {
 	return value;
 }
 
-string define_prop(string name, string type, string def) {
-	if(!property_exists(name)) {
+string define_prop(string name, string type, string def, boolean useDEFAULT) {
+	if(!property_exists(name) && useDEFAULT) {
 		set_property(name, "DEFAULT:" + def);
 	}
 
@@ -535,7 +535,7 @@ string define_prop(string name, string type, string def) {
 
 	string value = normalize_prop(raw_value, type);
 
-	if(value == normalize_prop(def, type) && !nondefault)
+	if(value == normalize_prop(def, type) && !nondefault && useDEFAULT)
 		set_property(name, "DEFAULT:" + def);
 	else if(raw_value != value) {
 		if(nondefault) {
@@ -549,9 +549,10 @@ string define_prop(string name, string type, string def) {
 	return value;
 }
 
-void chit_setvar(string name, string type, string def) {
-	cvars[name] = define_prop(name, type, def);
+void chit_setvar(string name, string type, string def, boolean useDEFAULT) {
+	cvars[name] = define_prop(name, type, def, useDEFAULT);
 }
+void chit_setvar(string name, string type, string def) { chit_setvar(name, type, def, true); }
 void chit_setvar(string name, boolean def) { chit_setvar(name, "boolean", def); }
 void chit_setvar(string name, string def) { chit_setvar(name, "string", def); }
 void chit_setvar(string name, int def) { chit_setvar(name, "int", def); }

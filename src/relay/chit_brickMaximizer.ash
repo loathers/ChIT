@@ -8,24 +8,74 @@ record maximizer_result {
 	string afterdisplay;
 };
 
+string[int] recommendedMaximizerStrings() {
+	string[int] res;
+
+	void recommendIf(boolean condition, string recommendation) {
+		if(condition) {
+			res[res.count()] = recommendation;
+		}
+	}
+
+	// probably not exhaustive
+	boolean wantMeat = get_property('questL13Final') == 'step7' ||
+		(get_property('sidequestNunsCompleted') == 'none' &&
+			get_property('questL12War') == 'step1' &&
+			get_property('fratboysDefeated').to_int() >= 192);
+	boolean wantMl = get_property('questL03Rat') == 'step1' ||
+		get_property('cyrptCrannyEvilness').to_int() > 13 ||
+		($strings[step1, step2] contains get_property('questL09Topping') &&
+			get_property('oilPeakProgress').to_float() > 0) ||
+		chit_available($item[unstable fulminate]) > 0;
+	boolean wantInit = get_property('cyrptAlcoveEvilness').to_int() > 13 ||
+		($strings[step1, step2] contains get_property('questL09Topping') &&
+			(get_property('twinPeakProgress').to_int() & 7) == 7 &&
+			initiative_modifier() < 40) ||
+		(get_property('questL13Final') != 'unstarted' &&
+			get_property('nsContestants1').to_int() < 0);
+	boolean kitchenTime = get_property('questM20Necklace') == 'started';
+	boolean peakTime = $strings[step3, step4] contains get_property('questL08Trapper');
+	boolean wantPassiveDamage = get_property('questL13Final') == 'step6';
+	boolean wantSpellDamage = get_property('questL13Final') == 'step8';
+
+	recommendIf(wantMeat, 'meat');
+	recommendIf(wantML, 'ML');
+	recommendIf(wantInit, 'init');
+	recommendIf(kitchenTime, 'hot res 9 max, stench res 9 max');
+	recommendIf(peakTime, 'cold res 5 max');
+	recommendIf(wantPassiveDamage, 'damage aura, thorns');
+	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst');
+
+	return res;
+}
+
 void bakeMaximizer() {
 	buffer result;
 
+	string[int] recommendations = recommendedMaximizerStrings();
 	string[string] fields = form_fields();
+	string equipWhere = fields["maxequipwhere"];
+	int equipScope = equipWhere == "pullbuy" ? 2 : equipWhere == "create" ? 1 : equipWhere == "onhand"
+		? 0 : cvars["chit.maximizer.lastScope"].to_int();
 	boolean[string] allFilters = $strings[equip,cast,wish,other,usable,booze,food,spleen];
 	maximizer_result[int] maximizeOut;
 	string maxFilters = "";
 	if(fields contains "tomax") {
-		set_property('_chitLastMax', fields["tomax"]);
+		set_property('chit.maximizer.max', fields["tomax"]);
+		set_property('chit.maximizer.scope', equipScope);
 		foreach filter in allFilters {
 			if(fields["max" + filter].to_boolean()) {
 				maxFilters = maxFilters.simple_list_add(filter, ',');
 			}
 		}
-		set_property('_chitLastFilters', maxFilters);
-		maximizeOut = maximize(fields["tomax"], get_property("autoBuyPriceLimit").to_int(), 2, true, maxFilters);
+		set_property('chit.maximizer.filters', maxFilters);
+		string actualMax = fields["tomax"];
+		if(cvars["chit.maximizer.noTies"].to_boolean() && !actualMax.contains_text('-tie')) {
+			actualMax += ",-tie";
+		}
+		maximizeOut = maximize(actualMax, get_property("autoBuyPriceLimit").to_int(), 2, equipScope, maxFilters);
 	} else {
-		maxFilters = get_property('_chitLastFilters');
+		maxFilters = cvars["chit.maximizer.filters"];
 	}
 
 	result.append('<table id="chit_maximizer" class="chit_brick nospace"><tbody>');
@@ -37,17 +87,37 @@ void bakeMaximizer() {
 	}
 	result.append('</th></tr>');
 	result.append('<form action="./charpane.php">');
-	result.append('<tr><td class="info" colspan="4">');
+	result.append('<tr><td class="info" colspan="3">');
 	result.append('<input type="hidden" name="autoopen" value="maximizer" />');
 	result.append('<input type="text" name="tomax" value="');
 	if(fields contains "tomax") {
 		result.append(fields["tomax"]);
 	} else {
-		result.append(get_property('_chitLastMax'));
+		result.append(cvars["chit.maximizer.max"]);
 	}
-	result.append('" />');
+	result.append('"');
+	if(recommendations.count() > 0) {
+		result.append(' list="maxsuggestions"');
+	}
+	result.append(' />');
+	if(recommendations.count() > 0) {
+		result.append('<datalist id="maxsuggestions">');
+		foreach i,str in recommendations {
+			result.append('<option value="');
+			result.append(str);
+			result.append('" />');
+		}
+		result.append('</datalist>');
+	}
 	result.append('</td><td>');
 	result.append('<button type="submit" name="action" value="maximize">Max</button>');
+	result.append('</td><td>');
+	result.append('<input type="radio" id="maxonhand" name="maxequipwhere" value="onhand"');
+	if(equipScope == 0) {
+		result.append(' checked');
+	}
+	result.append(' />');
+	result.append('<label for="maxonhand">On hand</label>');
 	result.append('</td></tr>');
 	result.append('<tr><td>');
 	int count = 0;
@@ -69,9 +139,21 @@ void bakeMaximizer() {
 		result.append('</td><td>');
 		count += 1;
 		if(count == 4) {
+			result.append('<input type="radio" id="maxcreatable" name="maxequipwhere" value="create"');
+			if(equipScope == 1) {
+				result.append(' checked');
+			}
+			result.append(' />');
+			result.append('<label for="maxcreatable">Create</label>');
 			result.append('</td></tr><tr><td>');
 		}
 	}
+	result.append('<input type="radio" id="maxpullbuy" name="maxequipwhere" value="pullbuy"');
+	if(equipScope == 2) {
+		result.append(' checked');
+	}
+	result.append(' />');
+	result.append('<label for="maxpullbuy">Pull/Buy</label>');
 	result.append('</td></tr>');
 	result.append('</form>');
 
@@ -84,7 +166,7 @@ void bakeMaximizer() {
 			}
 			result.append('><td class="smallicon">');
 			chit_info effInfo = getEffectInfo(plan.effect);
-			if(plan.item != $item[none] && (plan.display.contains_text('>keep ') || plan.display.contains_text('equip '))) {
+			if(plan.item != $item[none] && plan.effect == $effect[none]) {
 				result.addItemIcon(plan.item, '', true);
 			} else if(plan.skill != $skill[none]) {
 				chit_info skillInfo = new chit_info(plan.skill, effInfo.desc, DROPS_NONE, DANGER_NONE,

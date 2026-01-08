@@ -66,6 +66,10 @@ chit_setvar("chit.stats.showbars", true);
 chit_setvar("chit.thrall.showname", false);
 chit_setvar("chit.next.maxlen", 30);
 chit_setvar("chit.toolbar.moods", "true"); // do not change to boolean, "bonus" is also valid
+chit_setvar("chit.maximizer.noTies", true);
+chit_setvar("chit.maximizer.filters", "string", "", false);
+chit_setvar("chit.maximizer.max", "string", "", false);
+chit_setvar("chit.maximizer.scope", "int", 0, false);
 
 /************************************************************************************
 CHaracter Info Toolbox
