@@ -830,7 +830,7 @@ void picker_bcz() {
 	addSkill($skill[BCZ: Refracted Gaze], 'replace monster drops with drops from all other monsters in zone', '_bczRefractedGazeCasts', $stat[submysticality]);
 	addSkill($skill[BCZ: Sweat Bullets], 'free kill', '_bczSweatBulletsCasts', $stat[submoxie]);
 	addSkill($skill[BCZ: Blood Bath], parseEff($effect[Bloodbathed]) + ' (30 adv)', '_bczBloodBathCasts', $stat[submuscle]);
-	addSkill($skill[BCZ: Craft a Pheromone Cocktail], '1 potency awesome booze that gives a charge of a full day banish', '_bczPheromoneCocktailCasts', $stat[submuscle]);
+	addSkill($skill[BCZ: Craft a Pheromone Cocktail], '1 potency awesome booze that gives a charge of a full day banish', '_bczPheromoneCocktailCasts', $stat[submoxie]);
 	addSkill($skill[BCZ: Create Blood Thinner], '1 toxicity spleen item that gives +100 HP and +1000% HP for 50 adv', '_bczBloodThinnerCasts', $stat[submuscle]);
 	addSkill($skill[BCZ: Dial it up to 11], '+111% Spell Damage, +111% Mys, All Spells Stagger (30 adv)', '_bczDialitupCasts', $stat[submysticality]);
 	addSkill($skill[BCZ: Prepare Spinal Tapas], '1 fullness awesome food that gives +300% Mys for 30 adv', '_bczSpinalTapasCasts', $stat[submysticality]);
@@ -1998,9 +1998,26 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			break;
 		}
-		case $item[blood cubic zirconia]:
+		case $item[blood cubic zirconia]: {
 			info.addExtra(extraInfoPicker('bcz', '<b>Spend</b> your own blood'));
+			void addStatUses(string pref1, string pref2, string pref3, string statName) {
+				buffer descline;
+				descline.append('used ');
+				descline.append(get_property(pref1));
+				descline.append('/');
+				descline.append(get_property(pref2));
+				descline.append('/');
+				descline.append(get_property(pref3));
+				descline.append(' ');
+				descline.append(statName);
+				descline.append(' skills today');
+				info.addToDesc(descline.to_string());
+			}
+			addStatUses('_bczBloodGeyserCasts', '_bczBloodBathCasts', '_bczBloodThinnerCasts', 'mus');
+			addStatUses('_bczRefractedGazeCasts', '_bczDialitupCasts', '_bczSpinalTapasCasts', 'mys');
+			addStatUses('_bczSweatBulletsCasts', '_bczPheromoneCocktailCasts', '_bczSweatEquityCasts', 'mox');
 			break;
+		}
 		case $item[lucky gold ring]:
 			info.addDrops(drops_info {
 				new drop_info('_luckyGoldRingVolcoino', LIMIT_BOOL, 'volcoino'),
