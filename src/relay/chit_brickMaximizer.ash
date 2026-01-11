@@ -8,43 +8,49 @@ record maximizer_result {
 	string afterdisplay;
 };
 
-string[int] recommendedMaximizerStrings() {
-	string[int] res;
+string[string] recommendedMaximizerStrings() {
+	string[string] res;
 
-	void recommendIf(boolean condition, string recommendation) {
+	void recommendIf(boolean condition, string recommendation, string reason) {
 		if(condition) {
-			res[res.count()] = recommendation;
+			if(res contains recommendation) {
+				res[recommendation] += ', ' + reason;
+			} else {
+				res[recommendation] = reason;
+			}
 		}
 	}
 
-	// probably not exhaustive
-	boolean wantMeat = get_property('questL13Final') == 'step7' ||
-		(get_property('sidequestNunsCompleted') == 'none' &&
-			get_property('questL12War') == 'step1' &&
-			get_property('fratboysDefeated').to_int() >= 192);
-	boolean wantMl = get_property('questL03Rat') == 'step1' ||
-		get_property('cyrptCrannyEvilness').to_int() > 13 ||
-		($strings[step1, step2] contains get_property('questL09Topping') &&
-			get_property('oilPeakProgress').to_float() > 0) ||
-		chit_available($item[unstable fulminate]) > 0;
-	boolean wantInit = get_property('cyrptAlcoveEvilness').to_int() > 13 ||
-		($strings[step1, step2] contains get_property('questL09Topping') &&
-			(get_property('twinPeakProgress').to_int() & 7) == 7 &&
-			initiative_modifier() < 40) ||
-		(get_property('questL13Final') != 'unstarted' &&
-			get_property('nsContestants1').to_int() < 0);
+	boolean highlandsTime = $strings[step1, step2] contains get_property('questL09Topping');
+	string nsQuest = get_property('questL13Final');
+	boolean nunsTime = get_property('sidequestNunsCompleted') == 'none' &&
+		get_property('questL12War') == 'step1' &&
+		get_property('fratboysDefeated').to_int() >= 192;
 	boolean kitchenTime = get_property('questM20Necklace') == 'started';
 	boolean peakTime = $strings[step3, step4] contains get_property('questL08Trapper');
 	boolean wantPassiveDamage = get_property('questL13Final') == 'step6';
 	boolean wantSpellDamage = get_property('questL13Final') == 'step8';
 
-	recommendIf(wantMeat, 'meat');
-	recommendIf(wantML, 'ML');
-	recommendIf(wantInit, 'init');
-	recommendIf(kitchenTime, 'hot res 9 max, stench res 9 max');
-	recommendIf(peakTime, 'cold res 5 max');
-	recommendIf(wantPassiveDamage, 'damage aura, thorns');
-	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst');
+	recommendIf(nsQuest == 'step7', 'meat', 'wall of meat');
+	recommendIf(nunsTime, 'meat, outfit frat warrior fatigues', 'nuns');
+	// probably not an exhaustive list of reasons to want ML
+	recommendIf(get_property('questL03Rat') == 'step1', 'ML', 'rat kings');
+	recommendIf(get_property('cyrptCrannyEvilness').to_int() > 13, 'ML', 'ghuol whelps');
+	recommendIf(highlandsTime && get_property('oilPeakProgress').to_float() > 0, 'ML', 'oil peak');
+	recommendIf(available_amount($item[unstable fulminate]) > 0, 'ML', 'wine bomb');
+	// likewise probably not exhaustive list of reasons to want init
+	recommendIf(get_property('cyrptAlcoveEvilness').to_int() > 13, 'init', 'modern zmobie');
+	recommendIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7
+		&& initiative_modifier() < 40, 'init', 'twin peaks');
+	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0, 'init', 'init test');
+	// probably want more ele res considerations
+	recommendIf(kitchenTime, 'hot res 9 max, stench res 9 max', 'kitchen');
+	recommendIf(peakTime, 'cold res 5 max', 'peak');
+	recommendIf(highlandsTime && get_property('booPeakProgress').to_int() > 0, 'cold res, spooky res', 'surviving a-boo clues');
+	recommendIf(nsQuest == 'step4', 'all res', 'hedge maze');
+	// some towerkilling recs
+	recommendIf(wantPassiveDamage, 'damage aura, thorns', 'towerkilling');
+	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst', 'towerkilling');
 
 	return res;
 }
@@ -52,7 +58,7 @@ string[int] recommendedMaximizerStrings() {
 void bakeMaximizer() {
 	buffer result;
 
-	string[int] recommendations = recommendedMaximizerStrings();
+	string[string] recommendations = recommendedMaximizerStrings();
 	string[string] fields = form_fields();
 	string equipWhere = fields["maxequipwhere"];
 	int equipScope = equipWhere == "pullbuy" ? 2 : equipWhere == "create" ? 1 : equipWhere == "onhand"
@@ -102,9 +108,11 @@ void bakeMaximizer() {
 	result.append(' />');
 	if(recommendations.count() > 0) {
 		result.append('<datalist id="maxsuggestions">');
-		foreach i,str in recommendations {
+		foreach str, reason in recommendations {
 			result.append('<option value="');
 			result.append(str);
+			result.append('" label="');
+			result.append(reason);
 			result.append('" />');
 		}
 		result.append('</datalist>');

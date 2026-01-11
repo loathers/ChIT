@@ -876,6 +876,8 @@ record fam_rec {
 	string reason;
 };
 
+string[string] recommendedMaximizerStrings();
+
 fam_rec [int] getFamRecs(slot s) {
 	familiar activeFam =
 		s == $slot[familiar] ? my_familiar()
@@ -930,10 +932,6 @@ fam_rec [int] getFamRecs(slot s) {
 		: $familiars[Twitching Space Critter, Bad Vibe, Bulky Buddy Box, Holiday Log, Pet Coral,
 			Pet Rock, Synthetic Rock, Toothsome Rock, Exotic Parrot];
 
-	
-	boolean highlandsTime = $strings[step1, step2] contains get_property('questL09Topping');
-	string nsQuest = get_property('questL13Final');
-
 	if(s == $slot[familiar]) {
 		addFirstIf($strings[started, step1] contains get_property('questL11Black') &&
 			(item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0,
@@ -943,27 +941,13 @@ fam_rec [int] getFamRecs(slot s) {
 			Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], 'felonia');
 	}
 
-	// this is probably not an exhaustive list of reasons to want ML
-	addFirstIf(get_property('questL03Rat') == 'step1', mlFams, 'rat kings');
-	addFirstIf(get_property('cyrptCrannyEvilness').to_int() > 13, mlFams, 'ghuol whelps');
-	addFirstIf(highlandsTime && get_property('oilPeakProgress').to_float() > 0, mlFams, 'oil peak');
-	addFirstIf(available_amount($item[unstable fulminate]) > 0, mlFams, 'wine bomb');
-
-	// this is also probably not an exhaustive list of reasons to want init
-	addFirstIf(get_property('cyrptAlcoveEvilness').to_int() > 13, initFams, 'modern zmobie');
-	addFirstIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7
-		&& initiative_modifier() < 40, initFams, 'twin peaks');
-	addFirstIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0, initFams, 'init test');
-
-	addFirstIf(nsQuest == 'step6', skinFams, 'towerkilling');
-
-	boolean kitchenTime = get_property('questM20Necklace') == 'started';
-	boolean cantTakeTheHeat = numeric_modifier('Hot Resistance') < 9 || numeric_modifier('Stench Resistance') < 9;
-	addFirstIf(kitchenTime && cantTakeTheHeat, resFams, 'haunted kitchen');
-	addFirstIf($strings[step3, step4] contains get_property('questL08Trapper')
-		&& numeric_modifier('Cold Resistance') < 5, resFams, 'misty peak');
-	addFirstIf(highlandsTime && get_property('booPeakProgress').to_int() > 0, resFams, 'surviving a-boo clues');
-	addFirstIf(nsQuest == 'step4', resFams, 'hedge maze');
+	string[string] maxRecs = recommendedMaximizerStrings();
+	addFirstIf(maxRecs contains 'ML', mlFams, maxRecs['ML']);
+	addFirstIf(maxRecs contains 'init', initFams, maxRecs['init']);
+	addFirstIf(maxRecs contains 'damage aura, thorns', skinFams, 'towerkilling');
+	foreach rec,reason in maxRecs {
+		addFirstIf(rec.contains_text(' res'), resFams, reason);
+	}
 	
 	return recs;
 }
