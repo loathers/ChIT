@@ -56,7 +56,7 @@ void bakeMaximizer() {
 	string[string] fields = form_fields();
 	string equipWhere = fields["maxequipwhere"];
 	int equipScope = equipWhere == "pullbuy" ? 2 : equipWhere == "create" ? 1 : equipWhere == "onhand"
-		? 0 : cvars["chit.maximizer.lastScope"].to_int();
+		? 0 : cvars["chit.maximizer.scope"].to_int();
 	boolean[string] allFilters = $strings[equip,cast,wish,other,usable,booze,food,spleen];
 	maximizer_result[int] maximizeOut;
 	string maxFilters = "";
