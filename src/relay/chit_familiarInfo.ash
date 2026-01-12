@@ -942,12 +942,15 @@ fam_rec [int] getFamRecs(slot s) {
 	}
 
 	string[string] maxRecs = recommendedMaximizerStrings();
-	addFirstIf(maxRecs contains 'ML', mlFams, maxRecs['ML']);
-	addFirstIf(maxRecs contains 'init', initFams, maxRecs['init']);
-	addFirstIf(maxRecs contains 'damage aura, thorns', skinFams, 'towerkilling');
-	foreach rec,reason in maxRecs {
-		addFirstIf(rec.contains_text(' res'), resFams, reason);
+	void addFirstIfMaxRecsContain(string content, boolean[familiar] fams) {
+		foreach rec,reason in maxRecs {
+			addFirstIf(rec.contains_text(content), fams, reason);
+		}
 	}
+	addFirstIfMaxRecsContain('ML', mlFams);
+	addFirstIfMaxRecsContain('init', initFams);
+	addFirstIfMaxRecsContain('damage aura, thorns', skinFams);
+	addFirstIfMaxRecsContain(' res', resFams);
 	
 	return recs;
 }
