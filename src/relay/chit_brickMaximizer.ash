@@ -80,7 +80,11 @@ void bakeMaximizer() {
 				maxFilters = maxFilters.simple_list_add(filter, ',');
 			}
 		}
-		set_property('chit.maximizer.filters', maxFilters);
+		if(maxFilters == '' && cvars['chit.maximizer.filters'] != '') {
+			maxFilters = cvars["chit.maximizer.filters"];
+		} else {
+			set_property('chit.maximizer.filters', maxFilters);
+		}
 		string actualMax = fields["tomax"];
 		if(cvars["chit.maximizer.noTies"].to_boolean() && !actualMax.contains_text('-tie')) {
 			actualMax += ",-tie";
