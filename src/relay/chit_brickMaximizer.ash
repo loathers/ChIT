@@ -49,8 +49,8 @@ string[string] recommendedMaximizerStrings() {
 	recommendIf(highlandsTime && get_property('booPeakProgress').to_int() > 0, 'cold res, spooky res, 0.05 hp', 'surviving a-boo clues');
 	recommendIf(nsQuest == 'step4', 'all res', 'hedge maze');
 	// some towerkilling recs
-	recommendIf(wantPassiveDamage, 'damage aura, thorns', 'towerkilling');
-	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst', 'towerkilling');
+	recommendIf(wantPassiveDamage, 'damage aura, thorns', 'wall of skin');
+	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst', 'wall of bones');
 	// other ns contests
 	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants2').to_int() < 0,
 		get_property('nsChallenge2'), get_property('nsChallenge2') + ' test');
