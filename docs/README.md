@@ -198,7 +198,8 @@ The following preferences further refine the content and appearance of individua
 - chit.familiar.hiddengear: Comma delimited list of generic familiar equipment to hide from the familiar gear picker.
   - Default:
 - chit.familiar.iconize-weirdos: Should we display familiars like melodramedary as their hatchling images instead?
-
+  - Default: false
+- chit.familiar.showtypes: Should we display the basic familiar types a familiar has in its popover when pickng fams?
   - Default: false
 
 - chit.gear.favorites: Vertical bar (|) separated list of equipment that you have set as a personal favorite.

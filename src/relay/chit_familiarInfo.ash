@@ -167,6 +167,45 @@ void addFamWeightTracking(chit_info info, familiar f, int target, boolean target
 	}
 }
 
+static {
+	string[int, string, string] famtxt;
+	file_to_map("data/familiars.txt", famtxt);
+	string[familiar] fType;
+	string processFamType(string type) {
+		switch(type) {
+			case 'combat0': return 'Phys Atk';
+			case 'combat1': return 'Elem Atk';
+			case 'block': return 'Potato';
+			case 'delevel0': return 'Barrrnacle';
+			case 'delevel1': return 'Pickle';
+			case 'hp0': return '+HP';
+			case 'mp0': return '+MP';
+			case 'item0': return 'Fairy';
+			case 'item1': return 'Food Fairy';
+			case 'item2': return 'Booze Fairy';
+			case 'item3': return 'Candy Fairy';
+			case 'meat0': return 'Leprechaun';
+			case 'stat0': return 'Volleyball';
+			case 'stat1': return 'Sombrero';
+			case 'hp1': return '+HP';
+			case 'mp1': return '+MP';
+			case 'underwater': return 'Underwater';
+		}
+		return '';
+	}
+	foreach id,nm,mg,tps in famtxt {
+		string processed;
+		foreach i,tp in tps.split_string(',') {
+			string tpProcessed = processFamType(tp);
+			if(processed != '' && tpProcessed != '') {
+				processed += '/';
+			}
+			processed += processFamType(tp);
+		}
+		fType[to_familiar(nm)] = processed;
+	}
+}
+
 chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 	boolean isStandardFam = s == $slot[familiar] && my_path() != $path[Pocket Familiars];
 	item famsEquip = familiar_equipped_equipment(f);
@@ -176,6 +215,9 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 	if(forPopover) {
 		info.addToDesc(f + ' (' + familiar_weight(f) +
 			(familiar_weight(f) == 1 ? 'lb' : 'lbs') + ')');
+		if(cvars["chit.familiar.showtypes"].to_boolean() && fType[f] != '') {
+			info.addToDesc(fType[f]);
+		}
 	}
 	info.image = itemimage(f.image);
 

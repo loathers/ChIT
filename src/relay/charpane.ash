@@ -34,6 +34,7 @@ chit_setvar("chit.familiar.hiddengear", "");
 chit_setvar("chit.familiar.protect", false);
 chit_setvar("chit.familiar.showlock", false);
 chit_setvar("chit.familiar.iconize-weirdos", false);
+chit_setvar("chit.familiar.showtypes", false);
 chit_setvar("chit.effects.classicons", "none");
 chit_setvar("chit.effects.describe", true);
 chit_setvar("chit.effects.modicons", true);
