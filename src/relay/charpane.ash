@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28871; // eternity codpiece equip command
+since r28878; // fix for socp shop
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";
