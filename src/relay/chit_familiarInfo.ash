@@ -931,6 +931,9 @@ fam_rec [int] getFamRecs(slot s) {
 		? $familiars[Mu, Exotic Parrot]
 		: $familiars[Twitching Space Critter, Bad Vibe, Bulky Buddy Box, Holiday Log, Pet Coral,
 			Pet Rock, Synthetic Rock, Toothsome Rock, Exotic Parrot];
+	boolean [familiar] meatFams = s == $slot[familiar]
+		? $familiars[Hobo Monkey, Leprechaun]
+		: $familiars[Golden Monkey, Ghost of Crimbo Commerce, Happy Medium, Knob Goblin Organ Grinder];
 
 	if(s == $slot[familiar]) {
 		addFirstIf($strings[started, step1] contains get_property('questL11Black') &&
@@ -947,6 +950,7 @@ fam_rec [int] getFamRecs(slot s) {
 			addFirstIf(rec.contains_text(content), fams, reason);
 		}
 	}
+	addFirstIfMaxRecsContain('meat', meatFams);
 	addFirstIfMaxRecsContain('ML', mlFams);
 	addFirstIfMaxRecsContain('init', initFams);
 	addFirstIfMaxRecsContain('damage aura, thorns', skinFams);
