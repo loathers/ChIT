@@ -844,13 +844,13 @@ void picker_eterncod_slot(int i) {
 	item inSlot = equipped_item(to_slot("codpiece" + i));
 	picker.pickerStart('eterncod' + i, inSlot == $item[none] ? ('Fill slot ' + i) : ('Replace ' + inSlot + ' in slot ' + i));
 
-	void addGem(item gem, string mod, string smuggle) {
+	void addGem(item gem, string smuggle) {
 		int available = chit_available(gem);
 		if(available == 0) {
 			return;
 		}
 		boolean current = false;
-		string desc = parseMods(mod);
+		string desc = parseMods(string_modifier('EternityCodpiece:' + gem, 'Evaluated Modifiers'));
 		string lastAvail = string_modifier(gem, 'Last Available');
 		if(lastAvail != '') {
 			int lastAvailYear = lastAvail.substring(0, 4).to_int();
@@ -868,80 +868,80 @@ void picker_eterncod_slot(int i) {
 		picker.pickerGenericOption('mount', gem, desc, available, sideCommand('equip codpiece' + i + ' ' + gem), !current, itemimage(gem.image));
 	}
 
-	void addGem(item gem, string mod) {
+	void addGem(item gem) {
 		string smuggle = '';
 		if(gem.to_slot() != $slot[none]) {
 			smuggle = (gem.to_slot() == $slot[acc1] ? 'acc' : gem.to_slot()) + ' with ' + parseItem(gem); 
 		} else if(gem.autosell_price() > 2500) {
 			smuggle = gem.autosell_price() + ' meat autosell';
 		}
-		addGem(gem, mod, smuggle);
+		addGem(gem, smuggle);
 	}
 
-	addGem($item[Alien gemstone], 'Muscle Experience: +1');
-	addGem($item[angry agate], 'PvP Fights: +1');
-	addGem($item[autumn years wisdom], 'Mysticality Experience: +1');
-	addGem($item[azurite], 'Sleaze Damage: +10</span>');
-	addGem($item[baconstone], 'Mysticality Percent: +11');
-	addGem($item[bananagate], 'Stench Spell Damage: +10');
-	addGem($item[barrel beryl], 'Booze Drop: +20');
-	addGem($item[beach ball marble], 'Combat Initiative: +9');
-	addGem($item[beige clambroth marble], 'Combat Initiative: +7');
-	addGem($item[big bumboozer marble], 'Combat Initiative: +11');
-	addGem($item[black catseye marble], 'Combat Initiative: +10');
-	addGem($item[blood cubic zirconia], 'Spooky Resistance: +5, Spooky Damage: +5', 'Comes automatically...');
-	addGem($item[BRICKO pearl], 'Candy Drops: +20');
-	addGem($item[brown crock marble], 'Combat Initiative: +2');
-	addGem($item[bumblebee marble], 'Combat Initiative: +5');
-	addGem($item[control crystal], 'Mysticality: +5');
-	addGem($item[crystalline seal eye], 'Damage vs. Seals: +25');
-	addGem($item[crystallized memory], 'Muscle: +5');
-	addGem($item[crystallized pumpkin spice], 'Food Drop: +20');
-	addGem($item[cubic zirconia], 'Maximum MP Percent: +10');
-	addGem($item[effluvious emerald], 'Stench Resistance: +2');
-	addGem($item[Eye Agate], 'Damage vs. Zombies: +25');
-	addGem($item[eye of the tiger-lily], 'Spell Damage Percent: +10');
-	addGem($item[giant pearl], 'Pool Skill: +1');
-	addGem($item[glacial sapphire], 'Cold Resistance: +2');
-	addGem($item[glimmering golden crystal], 'Familiar Experience: +1');
-	addGem($item[glowing new age crystal], 'MP Regen Min: 5, MP Regen Max: 10');
-	addGem($item[green peawee marble], 'Combat Initiative: +1');
-	addGem($item[hamethyst], 'Muscle Percent: +11');
-	addGem($item[incredibly dense meat gem], 'Meat Drop: +30');
-	addGem($item[jet bennie marble], 'Combat Initiative: +6');
-	addGem($item[kumquartz], 'Cold Spell Damage: +10');
-	addGem($item[Lapis Lazuli], 'Stench Damage: +10');
-	addGem($item[lemonade marble], 'Combat Initiative: +4');
-	addGem($item[lump of diamond], 'Damage Reduction: +5');
-	addGem($item[lunar isotope], 'Pickpocket Chance: +10');
-	addGem($item[marine aquamarine], 'Fishing Skill: +5');
-	addGem($item[massive gemstone], 'Item Drop: +10');
-	addGem($item[moon-amber], 'Damage vs. Ghosts: +25');
-	addGem($item[New Age healing crystal], 'HP Regen Min: 10, HP Regen Max: 20');
-	addGem($item[New Age hurting crystal], 'Familiar Damage: +10');
-	addGem($item[pearidot], 'Sleaze Spell Damage: +10');
-	addGem($item[Peridot of Peril], 'Maximum HP: +20, Maximum MP: +20', 'Comes automatically...');
-	addGem($item[polished moon-amber], 'Damage vs. Werewolves: +25');
-	addGem($item[porquoise], 'Moxie Percent: +11');
-	addGem($item[priceless diamond], 'Damage Absorption: +10', "Marginal Shen's utility");
-	addGem($item[rainbow pearl], 'Cold Damage: +5, Hot Damage: +5, Sleaze Damage: +5, Spooky Damage: +5, Stench Damage: +5', 'swag');
-	addGem($item[red China marble], 'Combat Initiative: +3');
-	addGem($item[rhinestone], 'Moxie Experience: +1');
-	addGem($item[Rubee&trade;], 'Hot Damage: +10');
-	addGem($item[shadow glass], 'Spooky Damage: +10');
-	addGem($item[shard of double-ice], 'Cold Damage: +10');
-	addGem($item[solid gold jewel], 'Maximum HP Percent: +20');
-	addGem($item[steamy ruby], 'Hot Resistance: +2');
-	addGem($item[steely marble], 'Combat Initiative: +8');
-	addGem($item[stone of eXtreme power], 'Muscle: +3, Mysticality: +3, Moxie: +3');
-	addGem($item[strawberyl], 'Hot Spell Damage: +10');
-	addGem($item[tawdry amethyst], 'Sleaze Resistance: +2');
-	addGem($item[tourmalime], 'Spooky Spell Damage: +10');
-	addGem($item[Tuesday's ruby], 'Monster Level: +5');
-	addGem($item[unblemished pearl], 'Adventures: +1');
-	addGem($item[unearthly onyx], 'Spooky Resistance: +2');
-	addGem($item[vampire pearl], 'Damage vs. Vampires: +25');
-	addGem($item[Xiblaxian crystal], 'Damage vs. Bugbears: +25');
+	addGem($item[Alien gemstone]);
+	addGem($item[angry agate]);
+	addGem($item[autumn years wisdom]);
+	addGem($item[azurite]);
+	addGem($item[baconstone]);
+	addGem($item[bananagate]);
+	addGem($item[barrel beryl]);
+	addGem($item[beach ball marble]);
+	addGem($item[beige clambroth marble]);
+	addGem($item[big bumboozer marble]);
+	addGem($item[black catseye marble]);
+	addGem($item[blood cubic zirconia], 'Comes automatically...');
+	addGem($item[BRICKO pearl]);
+	addGem($item[brown crock marble]);
+	addGem($item[bumblebee marble]);
+	addGem($item[control crystal]);
+	addGem($item[crystalline seal eye]);
+	addGem($item[crystallized memory]);
+	addGem($item[crystallized pumpkin spice]);
+	addGem($item[cubic zirconia]);
+	addGem($item[effluvious emerald]);
+	addGem($item[Eye Agate]);
+	addGem($item[eye of the tiger-lily]);
+	addGem($item[giant pearl]);
+	addGem($item[glacial sapphire]);
+	addGem($item[glimmering golden crystal]);
+	addGem($item[glowing new age crystal]);
+	addGem($item[green peawee marble]);
+	addGem($item[hamethyst]);
+	addGem($item[incredibly dense meat gem]);
+	addGem($item[jet bennie marble]);
+	addGem($item[kumquartz]);
+	addGem($item[Lapis Lazuli]);
+	addGem($item[lemonade marble]);
+	addGem($item[lump of diamond]);
+	addGem($item[lunar isotope]);
+	addGem($item[marine aquamarine]);
+	addGem($item[massive gemstone]);
+	addGem($item[moon-amber]);
+	addGem($item[New Age healing crystal]);
+	addGem($item[New Age hurting crystal]);
+	addGem($item[pearidot]);
+	addGem($item[Peridot of Peril], 'Comes automatically...');
+	addGem($item[polished moon-amber]);
+	addGem($item[porquoise]);
+	addGem($item[priceless diamond], "Marginal Shen's utility");
+	addGem($item[rainbow pearl], 'swag');
+	addGem($item[red China marble]);
+	addGem($item[rhinestone]);
+	addGem($item[Rubee&trade;]);
+	addGem($item[shadow glass]);
+	addGem($item[shard of double-ice]);
+	addGem($item[solid gold jewel]);
+	addGem($item[steamy ruby]);
+	addGem($item[steely marble]);
+	addGem($item[stone of eXtreme power]);
+	addGem($item[strawberyl]);
+	addGem($item[tawdry amethyst]);
+	addGem($item[tourmalime]);
+	addGem($item[Tuesday's ruby]);
+	addGem($item[unblemished pearl]);
+	addGem($item[unearthly onyx]);
+	addGem($item[vampire pearl]);
+	addGem($item[Xiblaxian crystal]);
 
 	picker.pickerFinish('Mounting gemstone...');
 }
