@@ -37,12 +37,14 @@ string[string] recommendedMaximizerStrings() {
 	recommendIf(get_property('questL03Rat') == 'step1', 'ML', 'rat kings');
 	recommendIf(get_property('cyrptCrannyEvilness').to_int() > 13, 'ML, -combat', 'ghuol whelps');
 	recommendIf(highlandsTime && get_property('oilPeakProgress').to_float() > 0, 'ML, 0.2 item', 'oil peak');
-	recommendIf(available_amount($item[unstable fulminate]) > 0, 'ML 82 max', 'wine bomb');
+	recommendIf(available_amount($item[unstable fulminate]) > 0, '82 max, ML', 'wine bomb');
 	// likewise probably not exhaustive list of reasons to want init
-	recommendIf(get_property('cyrptAlcoveEvilness').to_int() > 13, 'init 850 max, -combat', 'modern zmobie');
-	recommendIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7
-		&& initiative_modifier() < 40, 'init 40 max, -combat', 'twin peaks');
-	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0, 'init', 'init test');
+	recommendIf(get_property('cyrptAlcoveEvilness').to_int() > 13,
+		'init 850 max, -combat', 'modern zmobie');
+	recommendIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7,
+		'init 40 max, -combat', 'twin peaks');
+	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0,
+		'400 max, init', 'init test');
 	// probably want more ele res considerations
 	recommendIf(kitchenTime, 'hot res 9 max, stench res 9 max', 'kitchen');
 	recommendIf(peakTime, 'cold res 5 max, 0.02 meat', 'peak');
@@ -50,13 +52,15 @@ string[string] recommendedMaximizerStrings() {
 	recommendIf(nsQuest == 'step4', 'all res', 'hedge maze');
 	// some towerkilling recs
 	recommendIf(wantPassiveDamage, 'damage aura, thorns', 'wall of skin');
-	recommendIf(wantSpellDamage, 'spell damage percent, 200 lantern, 0.5 myst', 'wall of bones');
+	recommendIf(wantSpellDamage,
+		'spell damage percent, 200 lantern, 0.5 myst, -1000 damage aura, -1000 thorns', 'wall of bones');
 	// other ns contests
-	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants2').to_int() < 0,
-		get_property('nsChallenge2'), get_property('nsChallenge2') + ' test');
-	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants3').to_int() < 0,
-		get_property('nsChallenge3') + ' damage, ' + get_property('nsChallenge3') + ' spell damage',
-		get_property('nsChallenge3') + ' test');
+	string testStat = get_property('nsChallenge1').to_lower_case();
+	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants2').to_int() < 0 && testStat != 'none',
+		'600 max, ' + testStat, testStat + ' test');
+	string testElement = get_property('nsChallenge2').to_lower_case();
+	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants3').to_int() < 0 && testElement != 'none',
+		'100 max, ' + testElement + ' damage, ' + testElement + ' spell damage', testElement + ' test');
 
 	return res;
 }
