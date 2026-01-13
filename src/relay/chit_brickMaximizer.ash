@@ -23,9 +23,9 @@ string[string] recommendedMaximizerStrings() {
 
 	boolean highlandsTime = $strings[step1, step2] contains get_property('questL09Topping');
 	string nsQuest = get_property('questL13Final');
+	string warQuest = get_property('questL12War');
 	boolean nunsTime = get_property('sidequestNunsCompleted') == 'none' &&
-		get_property('questL12War') == 'step1' &&
-		get_property('fratboysDefeated').to_int() >= 192;
+		warQuest == 'step1' && get_property('fratboysDefeated').to_int() >= 192;
 	boolean kitchenTime = get_property('questM20Necklace') == 'started';
 	boolean peakTime = $strings[step3, step4] contains get_property('questL08Trapper');
 	boolean wantPassiveDamage = nsQuest == 'step6';
@@ -61,6 +61,12 @@ string[string] recommendedMaximizerStrings() {
 	string testElement = get_property('nsChallenge2').to_lower_case();
 	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants3').to_int() < 0 && testElement != 'none',
 		'100 max, ' + testElement + ' damage, ' + testElement + ' spell damage', testElement + ' test');
+	// SUPER incomplete list of reasons to want -combat
+	recommendIf(warQuest == 'started', '-combat, outfit frat warrior fatigues', 'war start');
+	// incomplete list of reasons to want +combat
+	recommendIf($strings[started, step1] contains get_property('questL11Black') &&
+		(item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0,
+		'combat 5 max, item 200 max', 'black forest');
 
 	return res;
 }
