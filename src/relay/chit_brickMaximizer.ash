@@ -180,6 +180,13 @@ void bakeMaximizer() {
 	result.append('</form>');
 
 	if(fields contains "tomax") {
+		matcher m = create_matcher("^\\s*([\\d\\.]+)\\s*[Mm][Aa][Xx]\\s*,", fields["tomax"]);
+		if(m.find()) {
+			float maxThreshold = m.group(1).to_float();
+			if(current_maximizer_score(fields["tomax"]) >= maxThreshold) {
+				result.append('<tr><td colspan="5"><b>You already met your goal! Don\'t waste anything!</b></td></tr>');
+			}
+		}
 		result.append('<tr class="darkrow"><td>Icon</td><td>Commmand</td><td>Score</td><td>Info</td><td>Go!</td></tr>');
 		foreach i,plan in maximizeOut {
 			result.append('<tr');
