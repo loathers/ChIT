@@ -939,7 +939,7 @@ void bakeEffects() {
 
 		b.tagStart("tr", attrmap { "class": "effects" });
 		b.tagStart("td", attrmap { "class": "icon" });
-		b.addImg(info.image, attrmap { "title": "TODO" });
+		b.addImg(info.image, attrmap { "title": info.name });
 		b.tagFinish("td");
 		b.tagStart("td", attrmap { "class": "info", "colspan": (
 			get_property("relayAddsUpArrowLinks").to_boolean() ? "2" : ""
