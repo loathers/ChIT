@@ -397,6 +397,14 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 
   - Default: true
 
+- chit.maximizer.noTies: If true, always add -tie to maximizer queries if it's not already present.
+
+  - Default: true
+
+- chit.maximizer.filters, chit.maximizer.max, chit.maximizer.scope: Variables used to track state
+  for the maximizer brick across reloads. There should be no need to configure them from the command
+  line, and doing so might even cause problems, because some need to be formatted correctly.
+
 # Credits
 
 - Primary Maintainer: [soolar](https://github.com/soolar)
