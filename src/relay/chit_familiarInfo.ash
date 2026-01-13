@@ -986,6 +986,12 @@ fam_rec [int] getFamRecs(slot s) {
 		}
 	}
 
+	addFirstIf(s == $slot[familiar] && get_property('cubelingProgress').to_int() < 12 &&
+		(chit_available($item[eleven-foot pole]) == 0 ||
+			chit_available($item[ring of detect boring doors]) == 0 ||
+			chit_available($item[pick-o-matic lock picks]) == 0) &&
+		!can_interact(), $familiars[Gelatinous Cubeling], "daily dungeon items");
+
 	// I believe this to be exhaustive for both normal and bjorn fams, at least at present
 	boolean [familiar] mlFams = s == $slot[familiar]
 		? $familiars[Purse Rat]
