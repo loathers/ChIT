@@ -758,8 +758,13 @@ buff parseBuff(string source) {
 		columnIcon = columnIcon.replace_string(myBuff.effectImage, "lattecup1.gif");
 		myBuff.effectImage = "lattecup1.gif";
 	}
-	else if (myBuff.effectName.contains_text("Spooky VHS Monster"))
+	else if(myBuff.effectName.contains_text("Spooky VHS Monster"))
 		effectAlias = "VHS Taped " + get_property("spookyVHSTapeMonster");
+	else if(myBuff.effectName.contains_text("Club 'Em Into Next Week Monster")) {
+		columnIcon = columnIcon.replace_string(myBuff.effectImage, "leg_club2.gif");
+		myBuff.effectImage = "leg_club2.gif";
+		desc = get_property("clubEmNextWeekMonster");
+	}
 
 	buffer result;
 	result.append('<tr class="effect"');
