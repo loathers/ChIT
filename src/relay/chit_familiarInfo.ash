@@ -986,11 +986,17 @@ fam_rec [int] getFamRecs(slot s) {
 		}
 	}
 
-	addFirstIf(s == $slot[familiar] && get_property('cubelingProgress').to_int() < 12 &&
-		(chit_available($item[eleven-foot pole]) == 0 ||
-			chit_available($item[ring of detect boring doors]) == 0 ||
-			chit_available($item[pick-o-matic lock picks]) == 0) &&
-		!can_interact(), $familiars[Gelatinous Cubeling], "daily dungeon items");
+	string[string] maxRecs = recommendedMaximizerStrings();
+	void addFirstIfMaxRecsContain(string content, boolean[familiar] fams) {
+		foreach rec,reason in maxRecs {
+			addFirstIf(rec.contains_text(content), fams, reason);
+		}
+	}
+	void addFirstIfMaxRecReasonsContain(string content, boolean[familiar] fams) {
+		foreach res,reason in maxRecs {
+			addFirstIf(reason.contains_text(content), fams, content);
+		}
+	}
 
 	// I believe this to be exhaustive for both normal and bjorn fams, at least at present
 	boolean [familiar] mlFams = s == $slot[familiar]
@@ -1018,24 +1024,25 @@ fam_rec [int] getFamRecs(slot s) {
 		: $familiars[Golden Monkey, Ghost of Crimbo Commerce, Happy Medium, Knob Goblin Organ Grinder];
 
 	if(s == $slot[familiar]) {
-		addFirstIf($strings[started, step1] contains get_property('questL11Black') &&
-			(item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0,
-			$familiars[Reconstituted Crow, Reassembled Blackbird], 'black forest');
+		addFirstIfMaxRecReasonsContain('black forest', $familiars[Reconstituted Crow, Reassembled Blackbird]);
 
 		addFirstIf(get_property('questM03Bugbear') == 'step2', $familiars[Flaming Gravy Fairy, Frozen Gravy Fairy,
 			Stinky Gravy Fairy, Sleazy Gravy Fairy, Spooky Gravy Fairy], 'felonia');
+
+		addFirstIf(get_property('cubelingProgress').to_int() < 12 &&
+			(chit_available($item[eleven-foot pole]) == 0 ||
+				chit_available($item[ring of detect boring doors]) == 0 ||
+				chit_available($item[Pick-O-Matic lockpicks]) == 0) &&
+			!can_interact(), $familiars[Gelatinous Cubeling], "daily dungeon items");
+
+		addFirstIfMaxRecReasonsContain('wall of bones',
+			$familiars[Tiny Plastic Santa Claus Skeleton, Magic Dragonfish]);
 	}
 
-	string[string] maxRecs = recommendedMaximizerStrings();
-	void addFirstIfMaxRecsContain(string content, boolean[familiar] fams) {
-		foreach rec,reason in maxRecs {
-			addFirstIf(rec.contains_text(content), fams, reason);
-		}
-	}
 	addFirstIfMaxRecsContain('meat', meatFams);
 	addFirstIfMaxRecsContain('ML', mlFams);
 	addFirstIfMaxRecsContain('init', initFams);
-	addFirstIfMaxRecsContain('damage aura, thorns', skinFams);
+	addFirstIfMaxRecReasonsContain('wall of skin', skinFams);
 	addFirstIfMaxRecsContain(' res', resFams);
 	
 	return recs;
