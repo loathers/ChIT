@@ -22,6 +22,7 @@ string[string] recommendedMaximizerStrings() {
 	}
 
 	boolean highlandsTime = $strings[step1, step2] contains get_property('questL09Topping');
+	boolean bridgeTime = get_property('questL09Topping') == 'started';
 	string nsQuest = get_property('questL13Final');
 	string warQuest = get_property('questL12War');
 	boolean nunsTime = get_property('sidequestNunsCompleted') == 'none' &&
@@ -67,6 +68,12 @@ string[string] recommendedMaximizerStrings() {
 	recommendIf($strings[started, step1] contains get_property('questL11Black') &&
 		(item_amount($item[reassembled blackbird]) + item_amount($item[reconstituted crow])) == 0,
 		'combat 5 max, item 200 max', 'black forest');
+	// smorc stuff
+	recommendIf(bridgeTime, '-ml, item, spell damage percent, cold spell damage', 'orc chasm');
+	boolean blechTime = bridgeTime && get_property('smutOrcNoncombatProgress').to_int() >= 15;
+	recommendIf(blechTime, 'muscle, weapon damage, 10 weapon damage percent', 'blech house');
+	recommendIf(blechTime, 'mysticality, spell damage, 10 spell damage percent', 'blech house');
+	recommendIf(blechTime, 'moxie, 20 sleaze res', 'blech house');
 
 	return res;
 }
