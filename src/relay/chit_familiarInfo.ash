@@ -966,7 +966,7 @@ fam_rec [int] getFamRecs(slot s) {
 		foreach i, rec in recs {
 			if(rec.f == f) {
 				// show additional reason instead of recomminding repeatedly
-				rec.reason += ', ' + reason;
+				rec.reason += '/' + reason;
 				return;
 			}
 		}

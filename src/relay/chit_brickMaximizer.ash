@@ -14,7 +14,7 @@ string[string] recommendedMaximizerStrings() {
 	void recommendIf(boolean condition, string recommendation, string reason) {
 		if(condition) {
 			if(res contains recommendation) {
-				res[recommendation] += ', ' + reason;
+				res[recommendation] += '/' + reason;
 			} else {
 				res[recommendation] = reason;
 			}
