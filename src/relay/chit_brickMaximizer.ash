@@ -35,7 +35,7 @@ string[string] recommendedMaximizerStrings() {
 	recommendIf(nsQuest == 'step7', 'meat', 'wall of meat');
 	recommendIf(nunsTime, 'meat, outfit frat warrior fatigues', 'nuns');
 	// probably not an exhaustive list of reasons to want ML
-	recommendIf(get_property('questL03Rat') == 'step1', 'ML', 'rat kings');
+	recommendIf(get_property('questL03Rat') == 'step1', 'ML, combat', 'rat kings');
 	recommendIf(get_property('cyrptCrannyEvilness').to_int() > 13, 'ML, -combat', 'ghuol whelps');
 	recommendIf(highlandsTime && get_property('oilPeakProgress').to_float() > 0, 'ML, 0.2 item', 'oil peak');
 	recommendIf(available_amount($item[unstable fulminate]) > 0, '82 max, ML', 'wine bomb');
