@@ -26,7 +26,7 @@ string[string] recommendedMaximizerStrings() {
 	string nsQuest = get_property('questL13Final');
 	string warQuest = get_property('questL12War');
 	boolean nunsTime = get_property('sidequestNunsCompleted') == 'none' &&
-		warQuest == 'step1' && get_property('fratboysDefeated').to_int() >= 192;
+		warQuest == 'step1' && get_property('hippiesDefeated').to_int() >= 192;
 	boolean kitchenTime = get_property('questM20Necklace') == 'started';
 	boolean peakTime = $strings[step3, step4] contains get_property('questL08Trapper');
 	boolean wantPassiveDamage = nsQuest == 'step6';
@@ -42,7 +42,7 @@ string[string] recommendedMaximizerStrings() {
 	// likewise probably not exhaustive list of reasons to want init
 	recommendIf(get_property('cyrptAlcoveEvilness').to_int() > 13,
 		'init 850 max, -combat', 'modern zmobie');
-	recommendIf(highlandsTime && (get_property('twinPeakProgress').to_int() & 7) == 7,
+	recommendIf(highlandsTime && get_property('twinPeakProgress').to_int() == 7,
 		'init 40 max, -combat', 'twin peaks');
 	recommendIf(nsQuest != 'unstarted' && get_property('nsContestants1').to_int() < 0,
 		'400 max, init', 'init test');
