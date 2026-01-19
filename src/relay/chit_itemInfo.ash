@@ -845,6 +845,13 @@ void picker_eterncod_slot(int i) {
 	picker.pickerStart('eterncod' + i, inSlot == $item[none] ? ('Fill slot ' + i) : ('Replace ' + inSlot + ' in slot ' + i));
 
 	void addGem(item gem, string smuggle) {
+		if(smuggle == '') {
+			if(gem.to_slot() != $slot[none]) {
+				smuggle = (gem.to_slot() == $slot[acc1] ? 'acc' : gem.to_slot()) + ' with ' + parseItem(gem); 
+			} else if(gem.autosell_price() > 2500) {
+				smuggle = gem.autosell_price() + ' meat autosell';
+			}
+		}
 		int available = chit_available(gem);
 		if(available == 0) {
 			return;
@@ -865,83 +872,21 @@ void picker_eterncod_slot(int i) {
 		if(smuggle != '') {
 			desc += '<br />Smuggled: ' + smuggle;
 		}
-		picker.pickerGenericOption('mount', gem, desc, available, sideCommand('equip codpiece' + i + ' ' + gem), !current, itemimage(gem.image));
+		picker.pickerItemOption(gem, 'mount', gem.name, desc, available,
+			sideCommand('equip codpiece' + i + ' ' + gem), !current);
 	}
 
-	void addGem(item gem) {
-		string smuggle = '';
-		if(gem.to_slot() != $slot[none]) {
-			smuggle = (gem.to_slot() == $slot[acc1] ? 'acc' : gem.to_slot()) + ' with ' + parseItem(gem); 
-		} else if(gem.autosell_price() > 2500) {
-			smuggle = gem.autosell_price() + ' meat autosell';
+	string[item] smuggleNotes = {
+		$item[blood cubic zirconia]: 'Comes automatically...',
+		$item[Peridot of Peril]: 'Comes automatically...',
+		$item[priceless diamond]: "Marginal Shen's utility",
+	};
+
+	foreach it in $items[] {
+		if(string_modifier('EternityCodpiece:' + it, 'Modifiers') != '') {
+			addGem(it, smuggleNotes[it]);
 		}
-		addGem(gem, smuggle);
 	}
-
-	addGem($item[Alien gemstone]);
-	addGem($item[angry agate]);
-	addGem($item[autumn years wisdom]);
-	addGem($item[azurite]);
-	addGem($item[baconstone]);
-	addGem($item[bananagate]);
-	addGem($item[barrel beryl]);
-	addGem($item[beach ball marble]);
-	addGem($item[beige clambroth marble]);
-	addGem($item[big bumboozer marble]);
-	addGem($item[black catseye marble]);
-	addGem($item[blood cubic zirconia], 'Comes automatically...');
-	addGem($item[BRICKO pearl]);
-	addGem($item[brown crock marble]);
-	addGem($item[bumblebee marble]);
-	addGem($item[control crystal]);
-	addGem($item[crystalline seal eye]);
-	addGem($item[crystallized memory]);
-	addGem($item[crystallized pumpkin spice]);
-	addGem($item[cubic zirconia]);
-	addGem($item[effluvious emerald]);
-	addGem($item[Eye Agate]);
-	addGem($item[eye of the tiger-lily]);
-	addGem($item[giant pearl]);
-	addGem($item[glacial sapphire]);
-	addGem($item[glimmering golden crystal]);
-	addGem($item[glowing new age crystal]);
-	addGem($item[green peawee marble]);
-	addGem($item[hamethyst]);
-	addGem($item[incredibly dense meat gem]);
-	addGem($item[jet bennie marble]);
-	addGem($item[kumquartz]);
-	addGem($item[Lapis Lazuli]);
-	addGem($item[lemonade marble]);
-	addGem($item[lump of diamond]);
-	addGem($item[lunar isotope]);
-	addGem($item[marine aquamarine]);
-	addGem($item[massive gemstone]);
-	addGem($item[moon-amber]);
-	addGem($item[New Age healing crystal]);
-	addGem($item[New Age hurting crystal]);
-	addGem($item[pearidot]);
-	addGem($item[Peridot of Peril], 'Comes automatically...');
-	addGem($item[polished moon-amber]);
-	addGem($item[porquoise]);
-	addGem($item[priceless diamond], "Marginal Shen's utility");
-	addGem($item[rainbow pearl], 'swag');
-	addGem($item[red China marble]);
-	addGem($item[rhinestone]);
-	addGem($item[Rubee&trade;]);
-	addGem($item[shadow glass]);
-	addGem($item[shard of double-ice]);
-	addGem($item[solid gold jewel]);
-	addGem($item[steamy ruby]);
-	addGem($item[steely marble]);
-	addGem($item[stone of eXtreme power]);
-	addGem($item[strawberyl]);
-	addGem($item[tawdry amethyst]);
-	addGem($item[tourmalime]);
-	addGem($item[Tuesday's ruby]);
-	addGem($item[unblemished pearl]);
-	addGem($item[unearthly onyx]);
-	addGem($item[vampire pearl]);
-	addGem($item[Xiblaxian crystal]);
 
 	picker.pickerFinish('Mounting gemstone...');
 }
