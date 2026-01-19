@@ -792,10 +792,12 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			}
 			case $familiar[Mini Kiwi]:
-				info.addExtra(extraInfoLink('kwiki mart', attrmap {
-					'target': 'mainpane',
-					'href': 'shop.php?whichshop=kiwi',
-				}));
+				if(item_amount($item[mini kiwi]) > 0) {
+					info.addExtra(extraInfoLink('kwiki mart', attrmap {
+						'target': 'mainpane',
+						'href': 'shop.php?whichshop=kiwi',
+					}));
+				}
 				break;
 			case $familiar[Burly Bodyguard]:
 				drops[drops.count()] = new drop_info('bodyguardCharge', 50, 'chat progress');
