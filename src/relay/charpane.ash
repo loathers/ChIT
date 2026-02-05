@@ -3414,11 +3414,17 @@ void pickOutfit() {
 
 	//Loader
 	foreach i,o in get_outfits()
-		if(i != 0) {
-			if(is_wearing_outfit(o) && o != "Birthday Suit")
+		if(i != 0 && have_outfit(o)) {
+			string outfitCommand;
+			if (o == "Your Previous Outfit")
+				outfitCommand = "outfit last";
+			else
+				outfitCommand = "outfit " + o;
+
+			if(is_wearing_outfit(o) && o != "Your Previous Outfit")
 				picker.append('<tr class="pickitem current"><td class="info" style="color:#999999">' + o + '</td>');
 			else
-				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand("outfit "+o) + '">' + localize(o) + '</a></td>');
+				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand(outfitCommand) + '">' + localize(o) + '</a></td>');
 		}
 
 	picker.append('<tr class="pickitem"><td style="color:white;background-color:blue;font-weight:bold;">Custom Outfits</td></tr>');
