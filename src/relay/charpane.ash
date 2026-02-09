@@ -648,8 +648,11 @@ buff parseBuff(string source) {
 		desc = info.desc;
 	}
 	string effectAlias = myBuff.effectName;
-	// temp(?) fix for %birdname%
+	// fix for %birdname% from bird calendar
 	columnArrow = columnArrow.replace_string("%birdname%", "bird");
+	// fix for multinamed buffs or skills or whatever from heartstone
+	columnArrow = columnArrow.replace_string("%pals", "pals");
+	columnArrow = columnArrow.replace_string("%buff", "buff");
 	// Add MP or item cost to increase effect
 	matcher howUp = create_matcher("cmd\\=((cast 1 )?([^^]+?)(?:\\^ .+?)?)&pwd", url_decode(columnArrow));
 	if(howUp.find()) {
