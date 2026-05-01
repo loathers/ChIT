@@ -9,7 +9,6 @@ void bakeStateModifiers() {
 		lines += 1;
 	}
 
-	print(chitSource["mods"]);
 	matcher section_matcher = create_matcher('<b><font size=2>([^:]+):</font></b><br><div style=\'text-align: left\'><small>(.*?)</small></div><center><p>', chitSource["mods"]);
 	while(section_matcher.find()) {
 		foreach i, line in section_matcher.group(2).split_string('<br>') {
