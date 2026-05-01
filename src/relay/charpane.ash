@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r28883; // maximize enhancements
+since r28991; // legendary pasta wand
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

@@ -2001,6 +2001,9 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}
 			info.addExtra(extraInfoPicker('eterncod', '<b>decorate</b> your codpiece'));
 			break;
+		case $item[legendary pasta wand]:
+			info.name = '<span class="legendary">' + info.name + '</span>';
+			break;
 	}
 
 	// latte reminder
