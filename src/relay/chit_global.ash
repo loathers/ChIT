@@ -555,7 +555,7 @@ string define_prop(string name, string type, string def, boolean useDEFAULT) {
 }
 
 void chit_setvar(string name, string type, string def, boolean useDEFAULT) {
-	cvars[name] = define_prop(name, type, def, useDEFAULT);
+	cvars[name] = cvars["chit.oopsAllDefaults"].to_boolean() ? def : define_prop(name, type, def, useDEFAULT);
 }
 void chit_setvar(string name, string type, string def) { chit_setvar(name, type, def, true); }
 void chit_setvar(string name, boolean def) { chit_setvar(name, "boolean", def); }

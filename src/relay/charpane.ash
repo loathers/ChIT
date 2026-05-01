@@ -18,6 +18,7 @@ import "chit_brickMaximizer.ash";
 
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
+chit_setvar("chit.oopsAllDefaults", false);
 chit_setvar("chit.autoscroll", true);
 chit_setvar("chit.currencies", "item", "11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
 chit_setvar("chit.currencies.special", "asdonmartinfuel");
