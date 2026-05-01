@@ -15,6 +15,7 @@ import "chit_brickRobo.ash";
 import "chit_brickNext.ash";
 import "chit_brickShrunkenHead.ash";
 import "chit_brickMaximizer.ash";
+import "chit_brickStateModifiers.ash";
 
 // Set default values for configuration properties.
 // For more information refer to the README.md on Github
@@ -57,12 +58,12 @@ chit_setvar("chit.helpers.spookyraven", true);
 chit_setvar("chit.helpers.wormwood", "stats,spleen");
 chit_setvar("chit.helpers.xiblaxian", true);
 chit_setvar("chit.kol.coolimages", true);
-chit_setvar("chit.effects.layout", "advmods,songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics");
+chit_setvar("chit.effects.layout", "songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics");
 chit_setvar("chit.floor.layout", "update,familiar");
 chit_setvar("chit.roof.layout", "character,stats,gear");
 chit_setvar("chit.stats.layout", "muscle,myst,moxie|hp,mp,axel|mcd|drip|trail,florist");
 chit_setvar("chit.toolbar.layout", "trail,quests,modifiers,elements,organs");
-chit_setvar("chit.walls.layout", "helpers,thrall,robo,vykea,effects,horsery,boombox,shrunkenhead");
+chit_setvar("chit.walls.layout", "helpers,statemodifiers,thrall,robo,vykea,effects,horsery,boombox,shrunkenhead");
 chit_setvar("chit.quests.hide", false);
 chit_setvar("chit.stats.showbars", true);
 chit_setvar("chit.thrall.showname", false);
@@ -849,7 +850,6 @@ void bakeEffects() {
 	// buffer [string] doesn't seem to work and it is a nightmare
 	buffer [string] specials;
 	buffer helpers;
-	buffer advmods;
 	int total = 0;
 
 	void appendTo(string bufferType, string content) {
@@ -871,10 +871,6 @@ void bakeEffects() {
 	string layout = cvars["chit.effects.layout"].to_lower_case().replace_string(" ", "");
 	if (layout == "") layout = "buffs";
 	boolean showSongs = contains_text(layout,"songs");
-	// you absolutely want to see advmods, so put them first if they're not in the layout
-	if(!contains_text(layout, "advmods")) {
-		layout = "advmods," + layout;
-	}
 
 	//Load effects map
 	static {
@@ -1001,34 +997,6 @@ void bakeEffects() {
 		total += 1;
 	}
 
-	if(chitSource["advmods"] != "") {
-		record noncommod {
-			string icon;
-			string desc;
-			string matchtext;
-		};
-		noncommod[int] nomcommods = {
-			new noncommod("clarabell.gif", "clara's bell", "Clara's Bell"),
-			new noncommod("jellyglob.gif", "stench jelly", "jelly all over you"),
-			new noncommod("cincho.gif", "cincho fiesta exit", "exit mode on your cincho"),
-			new noncommod("jparka2.gif", "spikolodon spike", "spikes are scaring away most monsters"),
-			new noncommod("pillminder.gif", "sneakisol", "avoiding fights until something cool happens"),
-			new noncommod("tuba.gif", "apriling band tuba", "tuba playing has scared away most monsters"),
-			new noncommod("bountyrifle.gif", "allied radio sniper support", "sniper is guiding you"),
-			new noncommod("ski1.gif", "avalanche", "triggered an avalanche"),
-		};
-
-		foreach i,noncom in nomcommods {
-			if(chitSource["advmods"].contains_text(noncom.matchtext)) {
-				advmods.append('<tr class="effect"><td class="icon"><img height=20 width=20 src="/images/itemimages/');
-				advmods.append(noncom.icon);
-				advmods.append('" /></td><td class="info" colspan="3">Noncom guaranteed by ');
-				advmods.append(noncom.desc);
-				advmods.append('</td></tr>');
-			}
-		}
-	}
-
 	if (length(intrinsics) > 0 ) {
 		intrinsics.insert(0, '<tbody class="intrinsics">');
 		intrinsics.append('</tbody>');
@@ -1040,10 +1008,6 @@ void bakeEffects() {
 	if (length(buffs) > 0) {
 		buffs.insert(0, '<tbody class="buffs">');
 		buffs.append('</tbody>');
-	}
-	if (length(advmods) > 0) {
-		advmods.insert(0, '<tbody class="advmods">');
-		advmods.append('</tbody>');
 	}
 	closeBuffers();
 
@@ -1058,7 +1022,6 @@ void bakeEffects() {
 				case "buffs": result.append(buffs); break;
 				case "songs": result.append(songs); break;
 				case "intrinsics": result.append(intrinsics); break;
-				case "advmods": result.append(advmods); break;
 				default:
 					result.append(specials[drawers[i]]);
 					break;
@@ -4097,10 +4060,11 @@ boolean parsePage(buffer original) {
 		source = parse.replace_first("");
 	}
 
-	parse = create_matcher('<p><b><font size=2>Adventure Modifiers:</font></b><br>(.*?)<p>', source);
+	parse = create_matcher('<p><b><font size=2>[^:]+:</font></b><br>.*?<p><b><font size=2>Effects:', source);
 	if(find(parse)) {
-		chitSource["advmods"] = parse.group(1);
-		// don't strip out advmods from source out of an abundance of caution
+		chitSource["mods"] = parse.group(0);
+		// don't strip out mods from source out of an abundance of caution
+		// that and it contains a small portion of effects
 	}
 
 	// Parse the beginning of the page
@@ -4382,6 +4346,7 @@ void bakeBricks() {
 						case "next": bakeNext(); break;
 						case "shrunkenhead": bakeShrunkenHead(); break;
 						case "maximizer": bakeMaximizer(); break;
+						case "statemodifiers": bakeStateModifiers(); break;
 
 						// Reserved words
 						case "helpers": case "update": break;

@@ -1191,3 +1191,7 @@ div.chit_left-handman {
 	color: #ff8000;
 	background-color: black;
 }
+
+.sectionHeader {
+	font-weight: bold;
+}

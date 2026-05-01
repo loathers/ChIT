@@ -119,6 +119,7 @@ Inside each area you can place any of the following "bricks":
 - next: Provides a dropdown to tell ChIT where you're going next to get recommendations beforehand
 - shrunkenhead: Provides some info on your reanimated monster, or a reminder to reanimate something if you have an unused shrunken head
 - maximizer: Provides an interface to the mafia maximizer. Not recommended outside of the toolbar. Work in progress.
+- statemodifiers: A list of things like adventure modifiers (noncom forcers, for example) and misc modifiers (stuff that started showing up with the legendary pasta wand foods). You probably don't want to cut this.
 
 ### Layout Variables
 
@@ -128,7 +129,7 @@ Simply place your bricks in the area you want, in the order you want them.
 - chit.roof.layout: List of bricks to place in your roof
   - Default: character,stats,gear
 - chit.walls.layout: List of bricks to place in your walls
-  - Default: helpers,thrall,robo,vykea,effects,horsery,boombox
+  - Default: helpers,statemodifiers,thrall,robo,vykea,effects,horsery,boombox
 - chit.floor.layout: List of bricks to place in your floor
   - Default: update,familiar
 - chit.toolbar.layout: Comma-separated list of bricks to place in the toolbar
@@ -347,7 +348,6 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - intrinsics - intrinsic effects
   - songs - AT Songs
   - elx - Everything Looks Color effects
-  - advmods - Adventure Modifiers (currently just non-combat forcers)
   - dread - Dreadsylvania Songs
   - expression - Facial Expression
   - shanty - Crimbo 2025 Shanties
@@ -358,7 +358,7 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
   - holorecord - Nuclear Autumn holorecords
   - Example:
     - intrinsics,limited,buffs - displays intrinsic effects first, then any AT songs, then all other effects/buffs
-  - Default: advmods,songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics
+  - Default: songs,dread,expression,shanty,asdon,aob,aoj,awol,holorecord,elx,buffs,intrinsics
 - chit.effects.usermap: Allows you to use personalized versions of chit_effects.txt
   - true: uses chit_effects\_\[yourname].txt
   - false: uses chit_effects.txt (default)
