@@ -1255,31 +1255,46 @@ void bakeTrail() {
 
 }
 
-static { string [thrall] [int] pasta;
-	pasta[$thrall[Vampieroghi]][1] = "Attacks and heals";
-	pasta[$thrall[Vampieroghi]][5] = "Dispels bad effects";
-	pasta[$thrall[Vampieroghi]][10] = "+60 max HP";
-	pasta[$thrall[Vermincelli]][1] = "MP after combat";
-	pasta[$thrall[Vermincelli]][5] = "Poisons enemy";
-	pasta[$thrall[Vermincelli]][10] = "+30 max MP";
-	pasta[$thrall[Angel Hair Wisp]][1] = "Bonus Init";
-	pasta[$thrall[Angel Hair Wisp]][5] = "Prevents enemy crits";
-	pasta[$thrall[Angel Hair Wisp]][10] = "Blocks enemy attacks";
-	pasta[$thrall[Elbow Macaroni]][1] = "Muscle matches Myst";
-	pasta[$thrall[Elbow Macaroni]][5] = "Weapon damage";
-	pasta[$thrall[Elbow Macaroni]][10] = "+10% Weapon Crits";
-	pasta[$thrall[Penne Dreadful]][1] = "Moxie matches Myst";
-	pasta[$thrall[Penne Dreadful]][5] = "Delevels enemy";
-	pasta[$thrall[Penne Dreadful]][10] = "10 DR";
-	pasta[$thrall[Spaghetti Elemental]][1] = "Increases exp";
-	pasta[$thrall[Spaghetti Elemental]][5] = "Blocks first attack";
-	pasta[$thrall[Spaghetti Elemental]][10] = "Spell damage +5";
-	pasta[$thrall[Lasagmbie]][1] = "Bonus meat drops";
-	pasta[$thrall[Lasagmbie]][5] = "Spooky attacks";
-	pasta[$thrall[Lasagmbie]][10] = "Spooky spells +10";
-	pasta[$thrall[Spice Ghost]][1] = "Bonus item drops";
-	pasta[$thrall[Spice Ghost]][5] = "Drops spices";
-	pasta[$thrall[Spice Ghost]][10] = "Better entangling";
+string [thrall] [int] pasta;
+pasta[$thrall[Vampieroghi]][1] = "Attacks and heals";
+pasta[$thrall[Vampieroghi]][5] = "Dispels bad effects";
+pasta[$thrall[Vampieroghi]][10] = "+60 max HP";
+pasta[$thrall[Vermincelli]][1] = "MP after combat";
+pasta[$thrall[Vermincelli]][5] = "Poisons enemy";
+pasta[$thrall[Vermincelli]][10] = "+30 max MP";
+pasta[$thrall[Angel Hair Wisp]][1] = "Bonus Init";
+pasta[$thrall[Angel Hair Wisp]][5] = "Prevents enemy crits";
+pasta[$thrall[Angel Hair Wisp]][10] = "Blocks enemy attacks";
+pasta[$thrall[Elbow Macaroni]][1] = "Muscle matches Myst";
+pasta[$thrall[Elbow Macaroni]][5] = "Weapon damage";
+pasta[$thrall[Elbow Macaroni]][10] = "+10% Weapon Crits";
+pasta[$thrall[Penne Dreadful]][1] = "Moxie matches Myst";
+pasta[$thrall[Penne Dreadful]][5] = "Delevels enemy";
+pasta[$thrall[Penne Dreadful]][10] = "10 DR";
+pasta[$thrall[Spaghetti Elemental]][1] = "Increases exp";
+pasta[$thrall[Spaghetti Elemental]][5] = "Blocks first attack";
+pasta[$thrall[Spaghetti Elemental]][10] = "Spell damage +5";
+pasta[$thrall[Lasagmbie]][1] = "Bonus meat drops";
+pasta[$thrall[Lasagmbie]][5] = "Spooky attacks";
+pasta[$thrall[Lasagmbie]][10] = "Spooky spells +10";
+pasta[$thrall[Spice Ghost]][1] = "Bonus item drops";
+pasta[$thrall[Spice Ghost]][5] = "Drops spices";
+pasta[$thrall[Spice Ghost]][10] = "Better entangling";
+
+boolean haveWand = item_amount($item[Legendary Pasta Wand]) + equipped_amount($item[Legendary Pasta Wand]) > 0;
+
+if(haveWand) {
+	pasta[$thrall[Vampieroghi]][11] = "Spooky Res +1";
+	pasta[$thrall[Vermincelli]][11] = "Rats sometimes free";
+	pasta[$thrall[Angel Hair Wisp]][11] = "Mys +20";
+	pasta[$thrall[Elbow Macaroni]][11] = "Mus +20";
+	pasta[$thrall[Penne Dreadful]][11] = "Mox +20";
+	pasta[$thrall[Spaghetti Elemental]][11] = "Spooky damage +10";
+	pasta[$thrall[Lasagmbie]][11] = "Occasional Mana Refill";
+}
+
+if(haveWand || get_property("pumpkinSpiceWhorlUsed").to_boolean()) {
+	pasta[$thrall[Spice Ghost]][11] = "Spicy first meal";
 }
 
 void pickerThrall() {
