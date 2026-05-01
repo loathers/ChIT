@@ -879,6 +879,7 @@ void picker_eterncod_slot(int i) {
 	string[item] smuggleNotes = {
 		$item[blood cubic zirconia]: 'Comes automatically...',
 		$item[Peridot of Peril]: 'Comes automatically...',
+		$item[Heartstone]: 'Comes automatically...',
 		$item[priceless diamond]: "Marginal Shen's utility",
 	};
 
