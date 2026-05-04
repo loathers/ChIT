@@ -2007,6 +2007,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addExtra(extraInfoLink('<b>purchase</b> subscription', 'double enchants for 100 adv (500 meat)', attrmap {
 				'href': '/inventory.php?pwd=' + my_hash() + '&itemid=' + it.to_int() + '&action=adobesubscribe',
 				'target': 'mainpane',
+				'class': 'visit done',
 			}));
 			break;
 		case $item[legendary seal-clubbing club]:
