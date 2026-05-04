@@ -951,7 +951,7 @@ void pickerPickerOption(buffer picker, string noun, string desc, string parenthe
 	});
 }
 
-void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
+void pickerSkillOption(buffer picker, skill sk, string name, string desc, string parenthetical, boolean usable) {
 	if(sk.combat && usable) {
 		usable = false;
 		if(desc != "") {
@@ -960,10 +960,18 @@ void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetica
 		desc += '(Available in combat)';
 	}
 
-	picker.pickerGenericOption('Cast', sk.to_string(), desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
+	if(name == '') {
+		name = sk.name;
+	}
+
+	picker.pickerGenericOption('Cast', name, desc, parenthetical, sideCommand('cast 1 ' + sk.to_string()), usable, itemimage(sk.image), attrmap {
 		'onclick': "javascript:poop('desc_skill.php?whichskill=" + sk.to_int() + "&self=true','skill',350,300);",
 		'title': 'Pop out skill description',
 	});
+}
+
+void pickerSkillOption(buffer picker, skill sk, string desc, string parenthetical, boolean usable) {
+	pickerSkillOption(picker, sk, '', desc, parenthetical, usable);
 }
 
 // Examples: Edpiece, Jurassic Parka, etc

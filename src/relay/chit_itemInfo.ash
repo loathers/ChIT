@@ -936,6 +936,30 @@ void picker_baseballteam() {
 	picker.pickerFinish('');
 }
 
+void picker_heartstone() {
+	buffer picker;
+	picker.pickerStart('heartstone', 'Cast with your heart');
+
+	void addSkill(skill sk, string name, string desc, string knownPref) {
+		boolean known = get_property(knownPref).to_boolean();
+		string parenthetical = known ? (sk.timescast + '/' + sk.dailylimit + ' used') : 'unknown';
+		boolean usable = known && (sk.timescast < sk.dailylimit);
+		picker.pickerSkillOption(sk, 'Heartstone: ' + name, desc, parenthetical, usable);
+	}
+
+	addSkill($skill[Heartstone: %pals], 'PALS', 'Familiar weight/exp/dmg buff',
+		'heartstonePalsUnlocked');
+	addSkill($skill[Heartstone: %buff], 'BUFF', 'All Stats +50 and +50% buff',
+		'heartstoneBuffUnlocked');
+	addSkill($skill[Heartstone: %luck], 'LUCK', 'Grants Lucky!', 'heartstoneLuckUnlocked');
+	addSkill($skill[Heartstone: %kill], 'KILL', 'Insta-kill with Stat gains',
+		'heartstoneKillUnlocked');
+	addSkill($skill[Heartstone: %banish], 'GONE', 'Insta-kill Banish', 'heartstoneBanishUnlocked');
+	addSkill($skill[Heartstone: %stun], 'STUN', 'Ridiculously long stun', 'heartstoneStunUnlocked');
+
+	picker.pickerFinish('Casting...');
+}
+
 /*****************************************************
 	The bulky function itself
 *****************************************************/
@@ -2063,6 +2087,46 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addDrops(drops_info {
 				new drop_info('_baseballInnings', 3, 'innings'),
 			});
+			break;
+		}
+		case $item[Heartstone]: {
+			string letters = get_property("heartstoneLetters");
+			if(letters != "") {
+				info.name += ' (' + letters + ')';
+			}
+			info.addExtra(extraInfoPicker('heartstone', '<b>use</b> some skills'));
+			drops_info drops;
+			string[int] unknowns;
+			void addSkillDrop(skill sk, string name, string unlockedPref, boolean unimportant) {
+				if(get_property(unlockedPref).to_boolean()) {
+					drops[drops.count()] = new drop_info(sk.dailylimitpref,
+						sk.dailylimit == 1 ? LIMIT_BOOL : sk.dailylimit, name, '', unimportant);
+				}
+				else {
+					unknowns[unknowns.count()] = name;
+				}
+			}
+			addSkillDrop($skill[Heartstone: %pals], 'PALS', 'heartstonePalsUnlocked', false);
+			addSkillDrop($skill[Heartstone: %buff], 'BUFF', 'heartstoneBuffUnlocked', true);
+			addSkillDrop($skill[Heartstone: %luck], 'LUCK', 'heartstoneLuckUnlocked', false);
+			addSkillDrop($skill[Heartstone: %kill], 'KILL', 'heartstoneKillUnlocked', true);
+			addSkillDrop($skill[Heartstone: %banish], 'GONE', 'heartstoneBanishUnlocked', false);
+			addSkillDrop($skill[Heartstone: %stun], 'STUN', 'heartstoneStunUnlocked', true);
+			if(drops.count() > 0) {
+				info.addDrops(drops);
+			}
+			if(unknowns.count() > 0) {
+				// join_strings seems broken
+				buffer unknown;
+				foreach i,name in unknowns {
+					if(i > 0) {
+						unknown.append('/');
+					}
+					unknown.append(name);
+				}
+				unknown.append(' unknown');
+				info.addToDesc(unknown);
+			}
 			break;
 		}
 	}
