@@ -942,7 +942,7 @@ void picker_heartstone() {
 
 	void addSkill(skill sk, string name, string desc, string knownPref) {
 		boolean known = get_property(knownPref).to_boolean();
-		string parenthetical = known ? (sk.timescast + '/' + sk.dailylimit + ' used') : 'unknown';
+		string parenthetical = known ? (sk.timescast + '/' + max(sk.dailylimit, 1) + ' used') : 'not known';
 		boolean usable = known && (sk.timescast < sk.dailylimit);
 		picker.pickerSkillOption(sk, 'Heartstone: ' + name, desc, parenthetical, usable);
 	}
@@ -2100,7 +2100,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			void addSkillDrop(skill sk, string name, string unlockedPref, boolean unimportant) {
 				if(get_property(unlockedPref).to_boolean()) {
 					drops[drops.count()] = new drop_info(sk.dailylimitpref,
-						sk.dailylimit == 1 ? LIMIT_BOOL : sk.dailylimit, name, '', unimportant);
+						sk.dailylimit == 0 ? LIMIT_BOOL : sk.dailylimit, name, '', unimportant);
 				}
 				else {
 					unknowns[unknowns.count()] = name;
@@ -2124,7 +2124,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 					}
 					unknown.append(name);
 				}
-				unknown.append(' unknown');
+				unknown.append(' not known');
 				info.addToDesc(unknown);
 			}
 			break;
