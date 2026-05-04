@@ -2019,9 +2019,16 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		case $item[The Eternity Codpiece]:
 			foreach s in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5] {
-				string evm = string_modifier("EternityCodpiece:" + equipped_item(s), "Evaluated Modifiers");
+				item jewel = equipped_item(s);
+				string evm = string_modifier("EternityCodpiece:" + jewel, "Evaluated Modifiers");
 				if(evm != '') {
 					extraMods += ", " + evm;
+				}
+				chit_info jewelInfo = jewel.getItemInfo(s, false, false, false);
+				info.addToDesc(jewelInfo.desc);
+				foreach i,extra in jewelInfo.extra {
+					extra.image = itemimage(jewel.image);
+					info.addExtra(extra);
 				}
 			}
 			info.addExtra(extraInfoPicker('eterncod', '<b>decorate</b> your codpiece'));
