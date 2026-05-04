@@ -2043,6 +2043,17 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			if(teamCount > 0) {
 				info.addExtra(extraInfoPicker('baseballteam', '<b>check</b> your lineup'));
 			}
+			if(teamCount >= 9 && get_property('_baseballInnings').to_int() < 3) {
+				// http://127.0.0.1:60080/inventory.php?pwd=7e0d589dbd0dfdaf4b4944a3ac4312d1&action=pball
+				info.addExtra(extraInfoLink('<b>play</b> ball', attrmap {
+					'href': 'inventory.php?pwd=' + my_hash() + '&action=pball',
+					'class': 'visit done',
+					'target': 'mainpane',
+				}));
+			}
+			info.addDrops(drops_info {
+				new drop_info('_baseballInnings', 3, 'innings'),
+			});
 			break;
 		}
 	}
