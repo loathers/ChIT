@@ -880,6 +880,7 @@ void picker_eterncod_slot(int i) {
 		$item[blood cubic zirconia]: 'Comes automatically...',
 		$item[Peridot of Peril]: 'Comes automatically...',
 		$item[Heartstone]: 'Comes automatically...',
+		$item[Baseball Diamond]: 'Comes automatically...',
 		$item[priceless diamond]: "Marginal Shen's utility",
 	};
 
@@ -908,6 +909,29 @@ void picker_eterncod() {
 		'/inventory.php?action=docodpiece&pwd=' + my_hash(), true,
 		itemimage($item[The Eternity Codpiece].image), attrmap {}, attrmap { 'target': 'mainpane',
 		'class': 'done' });
+
+	picker.pickerFinish('');
+}
+
+void picker_baseballteam() {
+	buffer picker;
+	picker.pickerStart('baseballteam', 'Checking your baseball lineup');
+
+	foreach i,idStr in get_property("baseballTeam").split_string(",") {
+		monster teamMember = idStr.to_int().to_monster();
+		buffer drops;
+		drops.append('drops: ');
+		foreach i,drop_info in item_drops_array(teamMember) {
+			if(i > 0) {
+				drops.append(', ');
+			}
+			drops.append(drop_info.drop.name);
+			if(drop_info.type.contains_text('c')) {
+				drops.append('*');
+			}
+		}
+		picker.pickerMonsterOption(teamMember, '', drops, '', '', false);
+	}
 
 	picker.pickerFinish('');
 }
@@ -2005,6 +2029,15 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[legendary pasta wand]:
 			info.name = '<span class="legendary">' + info.name + '</span>';
 			break;
+		case $item[Baseball Diamond]: {
+			string teamStr = get_property("baseballTeam");
+			int teamCount = teamStr == "" ? 0 : teamStr.split_string(",").count();
+			info.addToDesc(teamCount + '/9 players');
+			if(teamCount > 0) {
+				info.addExtra(extraInfoPicker('baseballteam', '<b>check</b> your lineup'));
+			}
+			break;
+		}
 	}
 
 	// latte reminder

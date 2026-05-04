@@ -769,6 +769,10 @@ string itemimage(string src) {
 	return '/images/itemimages/' + src;
 }
 
+string adventureimage(string src) {
+	return '/images/adventureimages/' + src;
+}
+
 void br(buffer buf) {
 	buf.tagSelfClosing('br', attrmap {});
 }
@@ -977,6 +981,16 @@ void pickerSelectionOption(buffer picker, string name, string desc, string cmd, 
 
 void pickerSelectionOption(buffer picker, string name, string desc, string cmd, string img, boolean current) {
 	picker.pickerSelectionOption(name, desc, cmd, img, current, true);
+}
+
+void pickerMonsterOption(buffer picker, monster m, string verb, string desc, string parenthetical, string href, boolean usable) {
+	buffer leftSection;
+	leftSection.pickerAddImage(adventureimage(m.image), false, attrmap {
+		'class': 'monsterIcon',
+	});
+
+	picker.pickerGenericOption(verb, m.name, desc, parenthetical, href, usable,
+		leftSection.to_string(), attrmap {}, '');
 }
 
 string parseEff(effect eff);
