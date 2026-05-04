@@ -1029,8 +1029,14 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 					'href': sideCommand('backupcamera reverser off'),
 				}));
 			}
+			string cameraMode = get_property('backupCameraMode');
 			info.addExtra(extraInfoPicker('backupcamera', '<b>Configure</b> your camera (currently '
-				+ get_property('backupCameraMode') + ')'));
+				+ cameraMode + ')'));
+			switch(cameraMode) {
+				case 'meat': extraMods = 'Meat Drop: +50'; break;
+				case 'ml': extraMods = 'Monster Level: +' + min(3 * my_level(), 50); break;
+				case 'init': extraMods = 'Initiative: +100'; break;
+			}
 			break;
 		case $item[V for Vivala mask]:
 		case $item[replica V for Vivala mask]:
