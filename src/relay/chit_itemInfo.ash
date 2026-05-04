@@ -2027,7 +2027,9 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				chit_info jewelInfo = jewel.getItemInfo(s, false, false, false);
 				info.addToDesc(jewelInfo.desc);
 				foreach i,extra in jewelInfo.extra {
-					extra.image = itemimage(jewel.image);
+					if(extra.image == '') {
+						extra.image = itemimage(jewel.image);
+					}
 					info.addExtra(extra);
 				}
 			}
