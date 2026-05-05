@@ -1578,7 +1578,8 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		case $item[Apriling Band Helmet]:
 			drops_info drops;
 			if(total_turns_played() >= get_property('nextAprilBandTurn').to_int()) {
-				info.addExtra(extraInfoPicker('aprilbandsong', '<b>Change</b> the marching song'));
+				info.addExtra(extraInfoPicker('aprilbandsong', '<b>Change</b> the marching song' +
+					'<br /><span class="descline">can change again after 11 turns</span>'));
 				drops[drops.count()] = new drop_info('', 1, 'song change', '', false, false, 0, true);
 			}
 			else {
