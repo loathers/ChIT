@@ -395,13 +395,13 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 			case $familiar[Gelatinous Cubeling]: {
 				int progress = get_property('cubelingProgress').to_int();
 				if(progress < 6) {
-					drops[drops.count()] = new drop_info('', LIMIT_BOOL_INVERTED, 'pole');
+					drops[drops.count()] = new drop_info('', LIMIT_BOOL, 'pole');
 				}
 				if(progress < 9) {
-					drops[drops.count()] = new drop_info('', LIMIT_BOOL_INVERTED, 'ring');
+					drops[drops.count()] = new drop_info('', LIMIT_BOOL, 'ring');
 				}
 				if(progress < 12) {
-					drops[drops.count()] = new drop_info('', LIMIT_BOOL_INVERTED, 'pick');
+					drops[drops.count()] = new drop_info('', LIMIT_BOOL, 'pick');
 					if(in_hardcore()) {
 						info.dangerLevel = DANGER_GOOD;
 					}
