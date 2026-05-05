@@ -940,22 +940,22 @@ void picker_heartstone() {
 	buffer picker;
 	picker.pickerStart('heartstone', 'Cast with your heart');
 
-	void addSkill(skill sk, string name, string desc, string knownPref) {
+	void addSkill(skill sk, string name, string desc, string knownPref, int limit) {
 		boolean known = get_property(knownPref).to_boolean();
-		string parenthetical = known ? (sk.timescast + '/' + max(sk.dailylimit, 1) + ' used') : 'not known';
-		boolean usable = known && (sk.timescast < sk.dailylimit);
+		string parenthetical = known ? (sk.timescast + '/' + limit + ' used') : 'not known';
+		boolean usable = known && (sk.timescast < limit);
 		picker.pickerSkillOption(sk, 'Heartstone: ' + name, desc, parenthetical, usable);
 	}
 
 	addSkill($skill[Heartstone: %pals], 'PALS', 'Familiar weight/exp/dmg buff',
-		'heartstonePalsUnlocked');
+		'heartstonePalsUnlocked', 5);
 	addSkill($skill[Heartstone: %buff], 'BUFF', 'All Stats +50 and +50% buff',
-		'heartstoneBuffUnlocked');
-	addSkill($skill[Heartstone: %luck], 'LUCK', 'Grants Lucky!', 'heartstoneLuckUnlocked');
+		'heartstoneBuffUnlocked', 5);
+	addSkill($skill[Heartstone: %luck], 'LUCK', 'Grants Lucky!', 'heartstoneLuckUnlocked', 1);
 	addSkill($skill[Heartstone: %kill], 'KILL', 'Insta-kill with Stat gains',
-		'heartstoneKillUnlocked');
-	addSkill($skill[Heartstone: %banish], 'GONE', 'Insta-kill Banish', 'heartstoneBanishUnlocked');
-	addSkill($skill[Heartstone: %stun], 'STUN', 'Ridiculously long stun', 'heartstoneStunUnlocked');
+		'heartstoneKillUnlocked', 5);
+	addSkill($skill[Heartstone: %banish], 'GONE', 'Insta-kill Banish', 'heartstoneBanishUnlocked', 5);
+	addSkill($skill[Heartstone: %stun], 'STUN', 'Ridiculously long stun', 'heartstoneStunUnlocked', 5);
 
 	picker.pickerFinish('Casting...');
 }
@@ -2097,18 +2097,20 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addExtra(extraInfoPicker('heartstone', '<b>use</b> some skills'));
 			drops_info drops;
 			string[int] unknowns;
-			void addSkillDrop(skill sk, string name, string unlockedPref, boolean unimportant) {
+			void addSkillDrop(skill sk, string name, string unlockedPref, boolean unimportant, int limit) {
 				if(get_property(unlockedPref).to_boolean()) {
-					drops[drops.count()] = new drop_info(sk.dailylimitpref,
-						sk.dailylimit == 0 ? LIMIT_BOOL : sk.dailylimit, name, '', unimportant);
+					drops[drops.count()] = new drop_info(sk.dailylimitpref, limit, name, '', unimportant);
 				}
 				else {
 					unknowns[unknowns.count()] = name;
 				}
 			}
+			void addSkillDrop(skill sk, string name, string unlockedPref, boolean unimportant) {
+				addSkillDrop(sk, name, unlockedPref, unimportant, 5);
+			}
 			addSkillDrop($skill[Heartstone: %pals], 'PALS', 'heartstonePalsUnlocked', false);
 			addSkillDrop($skill[Heartstone: %buff], 'BUFF', 'heartstoneBuffUnlocked', true);
-			addSkillDrop($skill[Heartstone: %luck], 'LUCK', 'heartstoneLuckUnlocked', false);
+			addSkillDrop($skill[Heartstone: %luck], 'LUCK', 'heartstoneLuckUnlocked', false, LIMIT_BOOL);
 			addSkillDrop($skill[Heartstone: %kill], 'KILL', 'heartstoneKillUnlocked', true);
 			addSkillDrop($skill[Heartstone: %banish], 'GONE', 'heartstoneBanishUnlocked', false);
 			addSkillDrop($skill[Heartstone: %stun], 'STUN', 'heartstoneStunUnlocked', true);
