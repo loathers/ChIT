@@ -2141,6 +2141,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addDrop(new drop_info('_cupOf13sJewels', 13, 'adv gained', '', false, false, 0, false, true));
 			break;
 		}
+		case $item[Portable Laughing Stock]:
+			info.addToDesc(get_property("_laughingStockCharges") + " fights since fruit");
+			info.addToDesc(get_property("_laughingStockFruitDropped") + " fruit dropped");
+			break;
 	}
 
 	// latte reminder
