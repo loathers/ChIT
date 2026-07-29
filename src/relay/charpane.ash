@@ -3415,14 +3415,20 @@ void pickOutfit() {
 
 	//Loader
 	foreach i,o in get_outfits()
-		if(i != 0 && have_outfit(o)) {
+		if(i != 0) {
 			string outfitCommand;
 			if (o == "Your Previous Outfit")
 				outfitCommand = "outfit last";
 			else
 				outfitCommand = "outfit " + o;
-
-			if(is_wearing_outfit(o) && o != "Your Previous Outfit")
+			boolean equipped = is_wearing_outfit(o);
+			if(o == "Birthday Suit") {
+				foreach s in $slots[hat, back, shirt, weapon, off-hand, pants, acc1, acc2, acc3, familiar] {
+					if(equipped_item(s) != $item[none])
+						equipped = false;
+				}
+			}
+			if(equipped && o != "Your Previous Outfit")
 				picker.append('<tr class="pickitem current"><td class="info" style="color:#999999">' + o + '</td>');
 			else
 				picker.append('<tr class="pickitem"><td class="info"><a class="change" href="'+ sideCommand(outfitCommand) + '">' + localize(o) + '</a></td>');
