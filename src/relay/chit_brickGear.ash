@@ -308,7 +308,7 @@ void pickerGear(slot s) {
 	picker.pickerStart("gear" + s, "Change " + (famMode ? "fam equip" : s));
 
 	boolean good_slot(slot checked_slot, item it) {
-		if(to_slot(it) == checked_slot) return true;
+		if(to_slot(it) == checked_slot) return can_equip(it);
 		if(s == $slot[familiar]) {
 			if(famSlot != $slot[none] && famSlot == to_slot(it))
 				return true;
@@ -324,9 +324,9 @@ void pickerGear(slot s) {
 				if(equipped_item($slot[weapon]).weapon_type() != $stat[Moxie])
 					return false;
 			}
-			return to_slot(it) == $slot[weapon] && item_type(it) != "chefstaff" && item_type(it) != "accordion" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
+			return to_slot(it) == $slot[weapon] && can_equip(it) && item_type(it) != "chefstaff" && item_type(it) != "accordion" && weapon_hands(it) == 1 && have_skill($skill[double-fisted skull smashing]);
 		case $slot[acc2]: case $slot[acc3]:
-			return to_slot(it) == $slot[acc1];
+			return to_slot(it) == $slot[acc1] && can_equip(it);
 		}
 		return false;
 	}
@@ -835,7 +835,7 @@ void pickerGear(slot s) {
 	void add_inventory_section() {
 		item [int] avail;
 		foreach it in get_inventory()
-			if(be_good(it) && can_equip(it) && good_slot(s, it) && !have_equipped(it) && !(cvars["chit.gear.layout"] == "default" && displayedItems contains it))
+			if(be_good(it) && good_slot(s, it) && !have_equipped(it) && !(cvars["chit.gear.layout"] == "default" && displayedItems contains it))
 				avail[ count(avail) ] = it;
 
 		if(count(avail) > 0) {
