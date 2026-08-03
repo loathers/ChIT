@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r29119; // laughing stock hereabouts
+since r29128; // interesting coin
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";
@@ -21,7 +21,7 @@ import "chit_brickStateModifiers.ash";
 // For more information refer to the README.md on Github
 chit_setvar("chit.oopsAllDefaults", false);
 chit_setvar("chit.autoscroll", true);
-chit_setvar("chit.currencies", "item", "11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;");
+chit_setvar("chit.currencies", "item", "11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;|Interesting Coin");
 chit_setvar("chit.currencies.special", "asdonmartinfuel");
 chit_setvar("chit.currencies.showmany", false);
 chit_setvar("chit.currencies.showmany.choices", "meat");
@@ -3265,6 +3265,8 @@ void allCurrency(buffer result) {
 				return constructLink("blOw some Os", "shop.php?whichshop=xo");
 			case $item[Rubee&trade;]:
 				return constructLink("Spend Rubees&trade;", "shop.php?whichshop=fantasyrealm");
+			case $item[Interesting Coin]:
+				return constructLink("Invest Your Interesting Coins", "shop.php?whichshop=interesting");
 			default:
 				return "";
 		}
