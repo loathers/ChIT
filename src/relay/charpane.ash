@@ -3366,7 +3366,7 @@ void allCurrency(buffer result) {
 			result.append('" alt="');
 			result.append(curr.name);
 			result.append('"><span>');
-			result.append(curr.amount);
+			result.append(formatInt(curr.amount));
 			result.append('</span><img src="/images/itemimages/');
 			result.append(curr.icon);
 			result.append('"></a></li>');
