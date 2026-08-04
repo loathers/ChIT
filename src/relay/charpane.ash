@@ -3219,17 +3219,13 @@ void allCurrency(buffer result) {
 	}
 
 	string constructLink(string title, string url) {
-		return '<a title="' + title + '" target="mainpane" href="' + url + '">';
+		return '<a class="curr_link" title="' + title + '" target="mainpane" href="' + url + '">';
 	}
 
 	string getCurrencyItemLink(item it) {
 		switch(it) {
-			case $item[disassembled clover]:
-				return item_amount($item[ten-leaf clover]) > 0 ? '<a title="disassemble a clover" href="' + sideCommand("use 1 ten-leaf clover") + '">' : "";
-			case $item[ten-leaf clover]:
-				return item_amount($item[disassembled clover]) > 0 ? '<a title="assemble a clover" href="' + sideCommand("use 1 disassembled clover") + '">' : "";
 			case $item[11-leaf clover]:
-				return '<a title="contemplate your clovers" target=mainpane href="inventory.php?ftext=11-leaf+clover">';
+				return constructLink("contemplate your clovers", "inventory.php?ftext=11-leaf+clover");
 			case $item[hobo nickel]:
 				return constructLink("Wander on over to hobopolis", "clan_hobopolis.php");
 			case $item[Freddy Kruegerand]:
@@ -3348,7 +3344,7 @@ void allCurrency(buffer result) {
 			currencies[curr.tag] = true;
 			result.append('<li');
 			if(displayedCurrencies[curr.tag]) result.append(' class="current"');
-			result.append('><a href="/KoLmafia/sideCommand?cmd=');
+			result.append('><a class="change_curr" href="/KoLmafia/sideCommand?cmd=');
 			if(showMany) {
 				result.append(url_encode("set chit.currencies.showmany.choices = "));
 				if(simple_list_contains(chitCurrency,curr.tag,"|"))
@@ -3367,9 +3363,13 @@ void allCurrency(buffer result) {
 			result.append(curr.name);
 			result.append('"><span>');
 			result.append(formatInt(curr.amount));
-			result.append('</span><img src="/images/itemimages/');
+			result.append('</span></a>');
+			if(curr.link != "") result.append(curr.link);
+			result.append('<img src="/images/itemimages/');
 			result.append(curr.icon);
-			result.append('"></a></li>');
+			result.append('">');
+			if(curr.link != "") result.append('</a>');
+			result.append('</li>');
 		}
 	}
 	result.append('<li class="currency_edit"><a onclick=\'var currencies = prompt("Edit displayed currencies: (Items that you have none of will not be displayed)", "');

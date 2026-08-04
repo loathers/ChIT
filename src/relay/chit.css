@@ -956,9 +956,10 @@ img#fam_equip {
 	vertical-align: middle;
 }
 #chit_currency ul li {
-	display: block;
+	display: grid;
 	position: relative;
 	z-index: 12;
+	grid-template-columns: 1fr 16px;
 }
 #chit_currency li ul {
 	margin: 0;
@@ -966,12 +967,11 @@ img#fam_equip {
 	text-align: right;
 	display: none;
 }
-#chit_currency ul li a {
+#chit_currency ul li a.change_curr {
 	display: block;
 	text-decoration: none;
-	padding: 5px 15px 5px 15px;
+	padding: 5px 5px 5px 15px;
 	background: #ffffff;
-	margin-left: 1px;
 	white-space: nowrap;
 	font-weight: bold;
 	color: black;
@@ -979,10 +979,15 @@ img#fam_equip {
 	font-size: 14px;
 }
 #chit_currency ul li img {
+	padding: 6px 1px 6px 1px;
+	background: #ffffff;
 	max-width: 14px;
 	max-height: 14px;
 }
 #chit_currency ul li.current a {
+	background: #dddddd;
+}
+#chit_currency ul li.current img {
 	background: #dddddd;
 }
 #chit_currency ul li a:hover {
@@ -1000,6 +1005,8 @@ img#fam_equip {
 }
 #chit_currency li:hover li.currency_edit {
 	border-bottom: none;
+	padding: 5px 15px 5px 15px;
+	background: #ffffff;
 }
 #chit_currency span.currency_block {
 	margin-left: 0.3em;
