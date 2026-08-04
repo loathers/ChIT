@@ -2138,7 +2138,11 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				'class': 'visit done',
 				'target': 'mainpane',
 			}));
-			info.addDrop(new drop_info('_cupOf13sJewels', 13, 'adv gained', '', false, false, 0, false, true));
+			info.addDrops(drops_info {
+				new drop_info('_cupOf13sJewels', 13, 'adv gained', '', false, false, 0, false, true),
+				new drop_info('_cupOf13sCharges', -11, 'booze drop'),
+				new drop_info('_cupOf13sDrops', LIMIT_TOTAL, 'booze dropped', 'boozes dropped', true),
+			});
 			break;
 		}
 		case $item[Portable Laughing Stock]:
