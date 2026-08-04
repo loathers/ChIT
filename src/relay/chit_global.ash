@@ -433,7 +433,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 			if(space && (drop.limit > LIMIT_PERIODIC) && !percentile) {
 				toAdd += ' ';
 			}
-			toAdd += (limit == 1) ? drop.singular : drop.plural;
+			toAdd += (limit == -1) ? (dropped == 1 ? drop.singular : drop.plural) : (limit == 1) ? drop.singular : drop.plural;
 		}
 	}
 	if(toAdd != '') {
