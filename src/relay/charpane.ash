@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r29128; // interesting coin
+since r29144; // Display Name modifier
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

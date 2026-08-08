@@ -967,7 +967,9 @@ chit_info getFamiliarInfo(familiar f, slot s);
 
 chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean includeMods, boolean weirdFamMode) {
 	chit_info info;
-	info.name = it.to_string();
+	info.name = string_modifier(it, $modifier[Display Name]);
+	if(info.name == "")
+		info.name = it.to_string();
 	info.image = itemimage(it.image);
 	string extraMods = '';
 
@@ -2042,7 +2044,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			}));
 			break;
 		case $item[legendary seal-clubbing club]:
-			info.name = '<span class="legendary">' + info.name + '</span>';
+			//info.name = '<span class="legendary">' + info.name + '</span>';
 			info.addDrops(drops_info {
 				new drop_info('_clubEmBattlefieldUsed', 5, 'Across the Battlefield'),
 				new drop_info('_clubEmNextWeekUsed', 5, 'Into Next Week'),
@@ -2068,7 +2070,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addExtra(extraInfoPicker('eterncod', '<b>decorate</b> your codpiece'));
 			break;
 		case $item[legendary pasta wand]:
-			info.name = '<span class="legendary">' + info.name + '</span>';
+			//info.name = '<span class="legendary">' + info.name + '</span>';
 			break;
 		case $item[Baseball Diamond]: {
 			string teamStr = get_property("baseballTeam");

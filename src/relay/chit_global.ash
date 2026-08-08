@@ -1223,6 +1223,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|Generic'
 		+ '|[^,:]+: 0(?:, |$)'
 		+ '|Wiki Name: "[^"]+"'
+		+ '|Display Name: "[^"]+"'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
