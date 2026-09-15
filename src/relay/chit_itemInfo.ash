@@ -2023,7 +2023,17 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[lucky gold ring]:
 			info.addDrops(drops_info {
-				new drop_info('_luckyGoldRingVolcoino', LIMIT_BOOL, 'volcoino'),
+				new drop_info('_luckyGoldRingBeachBuck', 25, 'Beach Buck'),
+				new drop_info('_luckyGoldRingCoinspiracy', 25, 'Coinspiracy'),
+				new drop_info('_luckyGoldRingFunFunds', 15, 'FunFunds'),
+				new drop_info('_luckyGoldRingVolcoino', 2, 'Volcoino'),
+				new drop_info('_luckyGoldRingWalmart', 15, 'Wal-Mart gift certificate'),
+				new drop_info('_luckyGoldRingRubee', 10, 'Rubee'),
+				new drop_info('_luckyGoldRingBit', 10, '0 or 1'),
+				new drop_info('_luckyGoldRingMeat', LIMIT_TOTAL, '80-120 meat'),
+				new drop_info('_luckyGoldRingSandDollar', LIMIT_TOTAL, 'sand dollar'),
+				new drop_info('_luckyGoldRingHoboNickel', LIMIT_TOTAL, 'hobo nickel'),
+				new drop_info('_luckyGoldRingFreddy', LIMIT_TOTAL, 'Freddy Kruegerand'),
 			});
 			break;
 		case $item[pro skateboard]:
