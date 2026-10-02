@@ -871,7 +871,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			case $familiar[Sword of S Words]:
 				drops[drops.count()] = new drop_info('_swordOfSWordsMonsterChanged', 3, 'kill command', 'kill commands', true);
-				drops[drops.count()] = new drop_info('_swordOfSWordsMonsterChanged', 100, 'kill', 'kills');
+				drops[drops.count()] = new drop_info('_swordOfSWordsKills', 100, 'kill', 'kills');
 				int targetId = get_property('swordOfSWordsMonster').to_int();
 				string target = targetId == -1 ? 'nothing' : to_monster(targetId).name;
 				info.addToDesc('hunting ' + target);
