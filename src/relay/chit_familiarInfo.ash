@@ -885,6 +885,7 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				}
 				if(eleAvail.count() > 0) {
 					info.addToDesc(`{eleAvail.join('/')} Blessing{eleAvail.count() > 1 ? 's' : ''} Available`);
+					info.incDrops(eleAvail.count() >= 6 ? DROPS_ALL : DROPS_SOME);
 				}
 				break;
 			}
