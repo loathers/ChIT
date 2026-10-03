@@ -1719,19 +1719,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addDrops(rockets);
 			if(rockets.count() > 0) {
 				info.desc += ' available';
-				string gradientStr = '';
-				int angleStep = 360 / gradient.count();
-				foreach i,color in gradient {
-					gradientStr += color;
-					if(i != 0) {
-						gradientStr += ' ' + (i * angleStep) + 'deg';
-					}
-					if(i != gradient.count() - 1) {
-						gradientStr += ' ' + ((i + 1) * angleStep) + 'deg, ';
-					}
-				}
-				info.customStyle = 'border-style: solid; border-width: 2px !important; border-image: conic-gradient(' +
-					gradientStr + ') 1 !important;';
+				info.customStyle = buildGradient(gradient);
 			}
 			break;
 		}

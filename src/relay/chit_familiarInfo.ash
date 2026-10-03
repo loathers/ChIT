@@ -878,14 +878,28 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				break;
 			case $familiar[Meat Shield Maiden]: {
 				string[int] eleAvail;
+				string[int] colors;
+				string colorFromEle(string ele) {
+					switch(ele) {
+						case 'Physical': return 'black';
+						case 'Cold': return 'blue';
+						case 'Hot': return 'red';
+						case 'Sleaze': return 'purple';
+						case 'Spooky': return 'grey';
+						case 'Stench': return 'green';
+					}
+					abort(`Invalid ele {ele} in gradientFromEle (Meat Shield Maiden)`);
+					return 'invalid';
+				}
 				foreach ele in $strings[Physical, Cold, Hot, Sleaze, Spooky, Stench] {
 					if(!get_property(`_blessingShield{ele}Received`).to_boolean()) {
 						eleAvail[eleAvail.count()] = ele == "Physical" ? ele : `<span class="mod{ele}">{ele}</span>`;
+						colors[colors.count()] = colorFromEle(ele);
 					}
 				}
 				if(eleAvail.count() > 0) {
 					info.addToDesc(`{eleAvail.join('/')} Blessing{eleAvail.count() > 1 ? 's' : ''} Available`);
-					info.incDrops(eleAvail.count() >= 6 ? DROPS_ALL : DROPS_SOME);
+					info.customStyle = buildGradient(colors);
 				}
 				break;
 			}

@@ -1,4 +1,5 @@
-// Global variables and functions which need to be defined for imported files as well as the main program.
+// Global variables and functions which need to be defined for imported files as well as the main
+// program.global
 
 string [string] chitSource;
 string [string] chitBricks;
@@ -450,6 +451,23 @@ boolean addDrop(chit_info info, drop_info drop) {
 
 void addExtra(chit_info info, extra_info extra) {
 	info.extra[info.extra.count()] = extra;
+}
+
+string buildGradient(string[int] colors) {
+	int angleStep = 360 / colors.count();
+	buffer gradient;
+	gradient.append('border-style: solid; border-width: 2px !important; border-image: conic-gradient(');
+	foreach i,color in colors {
+		gradient.append(color);
+		if(i != 0) {
+			gradient.append(` {i * angleStep}deg`);
+		}
+		if(i != colors.count() - 1) {
+			gradient.append(` {(i + 1) * angleStep}deg, `);
+		}
+	}
+	gradient.append(') 1 !important;');
+	return gradient.to_string();
 }
 
 /*****************************************************
