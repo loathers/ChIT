@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r29144; // Display Name modifier
+since r29302; // Shield Maiden blessing tracking
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

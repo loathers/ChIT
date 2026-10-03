@@ -876,6 +876,18 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				string target = targetId == -1 ? 'nothing' : to_monster(targetId).name;
 				info.addToDesc('hunting ' + target);
 				break;
+			case $familiar[Meat Shield Maiden]: {
+				string[int] eleAvail;
+				foreach ele in $strings[Physical, Cold, Hot, Sleaze, Spooky, Stench] {
+					if(!get_property(`_blessingShield{ele}Received`).to_boolean()) {
+						eleAvail[eleAvail.count()] = ele == "Physical" ? ele : `<span class="mod{ele}">{ele}</span>`;
+					}
+				}
+				if(eleAvail.count() > 0) {
+					info.addToDesc(`{eleAvail.join('/')} Blessing{eleAvail.count() > 1 ? 's' : ''} Available`);
+				}
+				break;
+			}
 		}
 
 		if(f.drops_limit > 0) {
