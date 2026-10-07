@@ -3197,74 +3197,77 @@ void allCurrency(buffer result) {
 		string tag;
 		string icon;
 		int amount;
-		string link;
+		string href;
 		item it;
+		string flavorText;
 	};
 
 	boolean [string] displayedCurrencies;
 
-	chit_currency constructCurrency(string name, string tag, string icon, int amount, string link, item it) {
+	chit_currency constructCurrency(string name, string tag, string icon, int amount, string href, item it, string flavorText) {
 		chit_currency curr;
 		curr.name = name;
 		curr.tag = tag;
 		curr.icon = icon;
 		curr.amount = amount;
-		curr.link = link;
+		curr.href = href;
 		curr.it = it;
+		curr.flavorText = flavorText;
 		return curr;
 	}
 
-	chit_currency constructCurrency(string name, string tag, string icon, int amount, string link) {
-		return constructCurrency(name, tag, icon, amount, link, $item[none]);
+	chit_currency constructCurrency(string name, string tag, string icon, int amount, string href) {
+		return constructCurrency(name, tag, icon, amount, href, $item[none], '');
 	}
 
-	string constructLink(string title, string url) {
-		return '<a class="curr_link" title="' + title + '" target="mainpane" href="' + url + '">';
-	}
-
-	string getCurrencyItemLink(item it) {
+	chit_currency getCurrencyFromItem(item it) {
+		chit_currency constructCurrencyFromItem(string flavorText, string href) {
+			return constructCurrency(it.to_string(), it.to_string(), it.image, it.item_amount(), href, it, flavorText);
+		}
 		switch(it) {
 			case $item[11-leaf clover]:
-				return constructLink("contemplate your clovers", "inventory.php?ftext=11-leaf+clover");
+				return constructCurrencyFromItem("contemplate your clovers", "inventory.php?ftext=11-leaf+clover");
 			case $item[hobo nickel]:
-				return constructLink("Wander on over to hobopolis", "clan_hobopolis.php");
+				return constructCurrencyFromItem("Wander on over to hobopolis", "clan_hobopolis.php");
 			case $item[Freddy Kruegerand]:
-				return constructLink("Visit The Terrified Eagle Inn", "shop.php?whichshop=dv");
+				return constructCurrencyFromItem("Visit The Terrified Eagle Inn", "shop.php?whichshop=dv");
 			case $item[Beach Buck]:
-				return constructLink("Take a trip to Spring Break Beach", "place.php?whichplace=airport_sleaze");
+				return constructCurrencyFromItem("Take a trip to Spring Break Beach", "place.php?whichplace=airport_sleaze");
 			case $item[Coinspiracy]:
-				return constructLink("Down the hatch to the Conspiracy Island bunker", "place.php?whichplace=airport_spooky_bunker");
+				return constructCurrencyFromItem("Down the hatch to the Conspiracy Island bunker", "place.php?whichplace=airport_spooky_bunker");
 			case $item[FunFunds&trade;]:
-				return constructLink("Buy some souvenirs at the Dinsey Company Store", "shop.php?whichshop=landfillstore");
+				return constructCurrencyFromItem("Buy some souvenirs at the Dinsey Company Store", "shop.php?whichshop=landfillstore");
 			case $item[Volcoino]:
-				return constructLink("Boogie right on down to Disco GiftCo", "shop.php?whichshop=infernodisco");
+				return constructCurrencyFromItem("Boogie right on down to Disco GiftCo", "shop.php?whichshop=infernodisco");
 			case $item[Wal-Mart gift certificate]:
-				return constructLink("Browse the goods at Wal-Mart", "shop.php?whichshop=glaciest");
+				return constructCurrencyFromItem("Browse the goods at Wal-Mart", "shop.php?whichshop=glaciest");
 			case $item[rad]:
-				return constructLink("Fiddle with your genes", "shop.php?whichshop=mutate");
+				return constructCurrencyFromItem("Fiddle with your genes", "shop.php?whichshop=mutate");
 			case $item[source essence]:
 				string termlink = 'campground.php?action=terminal';
 				if(my_path().name == "Nuclear Autumn")
 					termlink = 'place.php?whichplace=falloutshelter&action=vault_term';
-				return constructLink("Boot up the Source Terminal", termlink);
+				return constructCurrencyFromItem("Boot up the Source Terminal", termlink);
 			case $item[BACON]:
-				return constructLink("Born too late to explore the Earth&#013;Born too soon to explore the galaxy&#013;Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
+				return constructCurrencyFromItem("Born too late to explore the Earth, Born too soon to explore the galaxy, Born just in time to BROWSE DANK MEMES", "shop.php?whichshop=bacon");
 			case $item[cop dollar]:
-				return constructLink("Visit the quartermaster", "shop.php?whichshop=detective");
+				return constructCurrencyFromItem("Visit the quartermaster", "shop.php?whichshop=detective");
 			case $item[sprinkles]:
-				return constructLink("Take a tour of Gingerbread City", "place.php?whichplace=gingerbreadcity");
+				return constructCurrencyFromItem("Take a tour of Gingerbread City", "place.php?whichplace=gingerbreadcity");
 			case $item[Spacegate Research]:
-				return constructLink("Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
+				return constructCurrencyFromItem("Exchange your research at the Fabrication Facility", "shop.php?whichshop=spacegate");
 			case $item[X]: case $item[giant X]:
-				return constructLink("eXpend some Xes", "shop.php?whichshop=xo");
+				return constructCurrencyFromItem("eXpend some Xes", "shop.php?whichshop=xo");
 			case $item[O]: case $item[giant O]:
-				return constructLink("blOw some Os", "shop.php?whichshop=xo");
+				return constructCurrencyFromItem("blOw some Os", "shop.php?whichshop=xo");
 			case $item[Rubee&trade;]:
-				return constructLink("Spend Rubees&trade;", "shop.php?whichshop=fantasyrealm");
+				return constructCurrencyFromItem("Spend Rubees&trade;", "shop.php?whichshop=fantasyrealm");
 			case $item[Interesting Coin]:
-				return constructLink("Invest Your Interesting Coins", "shop.php?whichshop=interesting");
+				return constructCurrencyFromItem("Invest Your Interesting Coins", "shop.php?whichshop=interesting");
+			case $item[buffalo dime]:
+				return constructCurrencyFromItem("Visit the LT&T Office", "place.php?whichplace=town_right&action=townright_ltt");
 			default:
-				return "";
+				return constructCurrencyFromItem("", "");
 		}
 	}
 
@@ -3274,26 +3277,17 @@ void allCurrency(buffer result) {
 				return constructCurrency("Meat", "meat", "meat.gif", my_meat(), "");
 			case "asdonmartinfuel":
 				return constructCurrency("Asdon Martin fuel", name, "tank.gif", get_fuel(),
-					constructLink("Fuel up your sweet spy car.", "campground.php?action=fuelconvertor"));
+					"campground.php?action=fuelconvertor", $item[none], 'Fuel up your sweet spy car.');
 			default:
 				item it = to_item(name);
-				return constructCurrency(it.to_string(), it.to_string(), it.image, it.item_amount(), getCurrencyItemLink(it), it);
+				return getCurrencyFromItem(it);
 		}
 	}
 
 	void addCurrencyIcon(buffer result, chit_currency curr) {
-		result.append(curr.link);
-		result.append('<img class="currency_icon" src="/images/itemimages/');
-		result.append(curr.icon);
-		result.append('" alt="');
-		result.append(curr.name);
-		if(curr.link == "") {
-			result.append('" class="hand" title="');
-			result.append(curr.name);
-		}
-		result.append('" />');
-		if(curr.link != "")
-			result.append('</a>');
+		result.addElementWithPopover('img', '', attrmap { 'src': itemimage(curr.icon), 'class': 'currency_icon hand' },
+			curr.name, curr.flavorText, curr.href != '' ? 'a' : '',
+			attrmap { 'href': curr.href, 'target': 'mainpane', 'class': 'curr_link' });
 	}
 
 	void addCurrency(buffer result, chit_currency curr) {
@@ -3364,11 +3358,7 @@ void allCurrency(buffer result) {
 			result.append('"><span>');
 			result.append(formatInt(curr.amount));
 			result.append('</span></a>');
-			if(curr.link != "") result.append(curr.link);
-			result.append('<img src="/images/itemimages/');
-			result.append(curr.icon);
-			result.append('">');
-			if(curr.link != "") result.append('</a>');
+			result.addCurrencyIcon(curr);
 			result.append('</li>');
 		}
 	}

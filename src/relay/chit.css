@@ -958,7 +958,6 @@ img#fam_equip {
 #chit_currency ul li {
 	display: grid;
 	position: relative;
-	z-index: 12;
 	grid-template-columns: 1fr 16px;
 }
 #chit_currency li ul {
