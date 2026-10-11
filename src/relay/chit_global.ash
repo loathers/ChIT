@@ -1288,7 +1288,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 	//Combine modifiers for  (weapon and spell) damage bonuses, (min and max) regen modifiers and maximum (HP and MP) mods
 	enew.set_length(0);
 	parse = create_matcher("((?:Hot|Cold|Spooky|Stench|Sleaze|Prismatic) )Damage: ([+-]?\\d+), \\1Spell Damage: \\2"
-		+"|([HM]P Regen )Min: \\+?(\\d+), \\3Max: \\+?(\\d+)"
+		+"|([HM]P(?: / MP)? Regen )Min: \\+?(\\d+), \\3Max: \\+?(\\d+)"
 		+"|Maximum HP( Percent|): ([^,]+), Maximum MP\\6: ([^,]+)"
 		+"|Weapon Damage( Percent|): ([+-]?\\d+), Spell Damage\\9?: \\10"
 		+'|Avatar: "([^"]+)"'
@@ -1371,6 +1371,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 	evm = parse.replace_all('$2 Turns $1');
 
 	//shorten various text
+	evm = replace_string(evm,"HP / MP", "HP/MP");
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
