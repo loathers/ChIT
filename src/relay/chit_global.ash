@@ -1242,6 +1242,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|[^,:]+: 0(?:, |$)'
 		+ '|Wiki Name: "[^"]+"'
 		+ '|Display Name: "[^"]+"'
+		+ '|Enchantment Count: \\d+'
 		+ '|Free Pull:? ?\\+?\\d*', evm);
 	evm = parse.replace_all("");
 
