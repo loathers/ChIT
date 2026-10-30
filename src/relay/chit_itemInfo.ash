@@ -2142,7 +2142,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		}
 		case $item[Portable Laughing Stock]:
-			info.addToDesc(get_property("_laughingStockCharges") + " fights since fruit");
+			info.addToDesc(`worn for {get_property("_laughingStockCharges")} combats`);
 			info.addToDesc(get_property("_laughingStockFruitDropped") + " fruit dropped");
 			break;
 	}
