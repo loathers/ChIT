@@ -446,7 +446,7 @@ CCSwordZoneInfo getCCSwordZoneInfo(location l) {
 		case $location[The Shore\, Inc. Travel Agency]: return new CCSwordZoneInfo('Shore', true, CCSWORD_LIFETIME, '2 scrip, stats, buff');
 		case $location[The Black Forest]: return new CCSwordZoneInfo('BlackForest', true, CCSWORD_LIFETIME, 'exploration progress');
 		case $location[The Spooky Forest]: return new CCSwordZoneInfo('SpookyForest', false, CCSWORD_DAILY, 'fruits');
-		case $location[The Daily Dungeon]: return new CCSwordZoneInfo('Daily Dungeon', true, CCSWORD_LIFETIME, 'fat loot token');
+		case $location[The Daily Dungeon]: return new CCSwordZoneInfo('DailyDungeon', true, CCSWORD_LIFETIME, 'fat loot token');
 		case $location[South of the Border]: return new CCSwordZoneInfo('SouthOfTheBorder', false, CCSWORD_DAILY, 'fam exp buff');
 		case $location[The Penultimate Fantasy Airship]: return new CCSwordZoneInfo('', false, CCSWORD_UNLIMITED, 'sgeea and stuff');
 		case $location[The Castle in the Clouds in the Sky (Basement)]:
