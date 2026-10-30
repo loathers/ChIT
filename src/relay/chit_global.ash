@@ -807,7 +807,7 @@ void br(buffer buf) {
 *****************************************************/
 string[int] brickStack;
 
-void brickStart(buffer brick, string name, string id, string colspan) {
+void brickStart(buffer brick, string name, string id, string colspan, boolean mainpane) {
 	if(chitBricks contains id) {
 		print("Tried to bake brick " + id + ", but we already finished that one!", "red");
 	}
@@ -815,7 +815,7 @@ void brickStart(buffer brick, string name, string id, string colspan) {
 
 	brick.tagStart('table', attrmap {
 		'id': 'chit_' + id,
-		'class': 'chit_brick nospace',
+		'class': 'chit_brick nospace' + (mainpane ? ' in_mainpane' : ''),
 	});
 	brick.tagStart('tbody');
 	brick.tagStart('tr');
@@ -826,6 +826,10 @@ void brickStart(buffer brick, string name, string id, string colspan) {
 	brick.append(name);
 	brick.tagFinish('th');
 	brick.tagFinish('tr');
+}
+
+void brickStart(buffer brick, string name, string id, string colspan) {
+	brickStart(brick, name, id, colspan, false);
 }
 
 void brickStart(buffer brick, string name, string id) {

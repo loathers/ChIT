@@ -160,6 +160,11 @@ table.chit_brick {
 	width: 100%;
 	padding: 1px 1px 0px 1px;
 }
+table.chit_brick.in_mainpane {
+	max-width: 50em;
+	margin-left: auto;
+	margin-right: auto;
+}
 table.chit_brick:last-child {
 	margin-bottom: 0px;
 }
@@ -1158,7 +1163,7 @@ div.chit_left-handman {
 	display: none;
 	width: max-content;
 	max-width: 90%;
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
 	padding: 5px;

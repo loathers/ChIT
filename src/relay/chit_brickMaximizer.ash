@@ -82,7 +82,7 @@ string[string] recommendedMaximizerStrings() {
 	return res;
 }
 
-void bake_maximizer() {
+void bake_maximizer(boolean mainpane) {
 	buffer result;
 
 	string[string] recommendations = recommendedMaximizerStrings();
@@ -93,9 +93,13 @@ void bake_maximizer() {
 	boolean[string] allFilters = $strings[equip,cast,wish,other,usable,booze,food,spleen];
 	maximizer_result[int] maximizeOut;
 	string maxFilters = "";
+	int priceScope = fields contains "maxpricescope"
+		? fields["maxpricescope"].to_int()
+		: cvars["chit.maximizer.priceScope"].to_int();
 	if(fields contains "tomax") {
 		set_property('chit.maximizer.max', fields["tomax"]);
 		set_property('chit.maximizer.scope', equipScope);
+		set_property('chit.maximizer.priceScope', priceScope == 2 ? `DEFAULT:{priceScope}` : priceScope.to_string());
 		foreach filter in allFilters {
 			if(fields["max" + filter].to_boolean()) {
 				maxFilters = maxFilters.simple_list_add(filter, ',');
@@ -110,7 +114,7 @@ void bake_maximizer() {
 		if(cvars["chit.maximizer.noTies"].to_boolean() && !actualMax.contains_text('-tie')) {
 			actualMax += ",-tie";
 		}
-		maximizeOut = maximize(actualMax, get_property("autoBuyPriceLimit").to_int(), 2, equipScope, maxFilters);
+		maximizeOut = maximize(actualMax, get_property("autoBuyPriceLimit").to_int(), priceScope, equipScope, maxFilters);
 	} else {
 		maxFilters = cvars["chit.maximizer.filters"];
 	}
@@ -120,8 +124,8 @@ void bake_maximizer() {
 		displayName += ' (Current score: '
 			+ current_maximizer_score(fields['tomax']).to_string('%,.2f') + ')';
 	}
-	result.brickStart(displayName, 'maximizer', '5');
-	result.tagStart('form', attrmap { 'action': './charpane.php' });
+	result.brickStart(displayName, 'maximizer', '5', true);
+	result.tagStart('form', attrmap { 'action': mainpane ? './chitmax.ash' : './charpane.php' });
 	result.tagStart('tr');
 	result.tagStart('td', attrmap { 'class': 'info', 'colspan': '3' });
 	result.tagSelfClosing('input', attrmap {
@@ -214,6 +218,68 @@ void bake_maximizer() {
 	result.tagFinish('label');
 	result.tagFinish('td');
 	result.tagFinish('tr');
+	if(mainpane) {
+		result.tagStart('tr');
+		result.tagStart('td');
+		result.append('Max price');
+		result.tagFinish('td');
+		result.tagStart('td');
+		result.tagSelfClosing('input', attrmap {
+			'type': 'number',
+			'name': 'maxpricelimit',
+			'value': fields contains 'maxpricelimit' ? fields['maxpricelimit'] : cvars['chit.maximizer.priceLimit'],
+		});
+		result.tagFinish('td');
+		result.tagStart('td');
+		result.tagSelfClosing('input', attrmap {
+			'type': 'radio',
+			'id': 'maxpricenocheck',
+			'name': 'maxpricescope',
+			'value': '0',
+			'checked': priceScope == 0 ? 'TRUE' : '',
+		});
+		result.tagStart('label', attrmap { 'for': 'maxpricenocheck' });
+		result.append("don't check");
+		result.tagFinish('label');
+		result.tagFinish('td');
+		result.tagStart('td');
+		result.tagSelfClosing('input', attrmap {
+			'type': 'radio',
+			'id': 'maxpricebuyable',
+			'name': 'maxpricescope',
+			'value': '1',
+			'checked': priceScope == 1 ? 'TRUE' : '',
+		});
+		result.tagStart('label', attrmap { 'for': 'maxpricebuyable' });
+		result.append("buyable only");
+		result.tagFinish('label');
+		result.tagFinish('td');
+		result.tagStart('td');
+		result.tagSelfClosing('input', attrmap {
+			'type': 'radio',
+			'id': 'maxpriceall',
+			'name': 'maxpricescope',
+			'value': '2',
+			'checked': priceScope == 2 ? 'TRUE' : '',
+		});
+		result.tagStart('label', attrmap { 'for': 'maxpriceall' });
+		result.append("all consumables");
+		result.tagFinish('label');
+		result.tagFinish('td');
+		result.tagFinish('tr');
+	}
+	if(!mainpane) {
+		result.tagStart('tr');
+		result.tagStart('td', attrmap { 'colspan': '5' });
+		result.tagStart('button', attrmap {
+			'formtarget': 'mainpane',
+			'formaction': './chitmax.ash',
+		});
+		result.append('Maximize in mainpane');
+		result.tagFinish('button');
+		result.tagFinish('td');
+		result.tagFinish('tr');
+	}
 	result.tagFinish('form');
 
 	if(fields contains "tomax") {
@@ -249,7 +315,7 @@ void bake_maximizer() {
 		result.tagFinish('tr');
 		foreach i,plan in maximizeOut {
 			result.tagStart('tr', attrmap { 'class': i % 2 == 1 ? 'darkrow' : '' });
-			result.tagStart('td', attrmap { 'class': 'smallicon' });
+			result.tagStart('td', attrmap { 'class': mainpane ? 'icon' : 'smallicon' });
 			chit_info effInfo = getEffectInfo(plan.effect);
 			if(plan.item != $item[none] && plan.effect == $effect[none]) {
 				result.addItemIcon(plan.item, '', true);
@@ -281,7 +347,7 @@ void bake_maximizer() {
 			result.tagFinish('td');
 			result.tagStart('td');
 			if(plan.command != '') {
-				result.tagStart('form', attrmap { 'action': './charpane.php' });
+				result.tagStart('form', attrmap { 'action': mainpane ? './chitmax.ash' : './charpane.php' });
 				result.tagSelfClosing('input', attrmap {
 					'type': 'hidden',
 					'name': 'autoopen',
@@ -314,4 +380,8 @@ void bake_maximizer() {
 	}
 
 	result.brickFinish();
+}
+
+void bake_maximizer() {
+	bake_maximizer(false);
 }

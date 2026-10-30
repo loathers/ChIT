@@ -401,7 +401,14 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 
   - Default: true
 
-- chit.maximizer.filters, chit.maximizer.max, chit.maximizer.scope: Variables used to track state
+- chit.maximizer.priceLimit: The default price limit to use for the maximizer.
+
+  - Default: The current value of your autoBuyPriceLimit, which will update as you change
+    autoBuyPriceLimit (until you manually change it). To restore it to following autoBuyPriceLimit,
+    either set it to match your autoBuyPriceLimit without prefixing it with "NONDEFAULT:" or simply
+    set the property's value to "DEFAULT"
+
+- chit.maximizer.filters, chit.maximizer.max, chit.maximizer.scope, chit.maximizer.priceScope: Variables used to track state
   for the maximizer brick across reloads. There should be no need to configure them from the command
   line, and doing so might even cause problems, because some need to be formatted correctly.
 

@@ -73,6 +73,8 @@ chit_setvar("chit.maximizer.noTies", true);
 chit_setvar("chit.maximizer.filters", "string", "", false);
 chit_setvar("chit.maximizer.max", "string", "", false);
 chit_setvar("chit.maximizer.scope", "int", 0, false);
+chit_setvar("chit.maximizer.priceLimit", get_property("autoBuyPriceLimit").to_int());
+chit_setvar("chit.maximizer.priceScope", 2);
 
 /************************************************************************************
 CHaracter Info Toolbox
