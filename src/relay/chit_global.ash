@@ -1409,10 +1409,11 @@ string parseMods(string evm, boolean span, boolean debug) {
 
 	if(span) {
 		matcher elemental =
-		create_matcher("(((?:^|,)\\s*)([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic)[^,]+))", evm);
+		create_matcher("(((?:^|,)\\s*)([^,]*(Hot|Cold|Spooky|Stench|Sleaze|Prismatic|All Res)[^,]+))", evm);
 		while(elemental.find()) {
+			string ele = elemental.group(4) == "All Res" ? "Prismatic" : elemental.group(4);
 			evm = replace_string(evm, elemental.group(1), elemental.group(2) + "<span class=mod" +
-				elemental.group(4) + ">" + elemental.group(3) + "</span>");
+				ele + ">" + elemental.group(3) + "</span>");
 		}
 	}
 
