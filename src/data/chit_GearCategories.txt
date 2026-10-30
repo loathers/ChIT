@@ -89,6 +89,7 @@ path	Heimz Fortified Kidney Beans, Tesla's Electroplated Beans, Mixed Garbanzos 
 path	lead umbrella	Manual: true, Path: Nuclear Autumn
 path	hammer, heavy hammer, [10462]fire flower, bonfire flower, work boots, fancy boots, back shell, spiky back shell, bony back shell, cape, power pants, frosty button	Manual: true, Path: Path of the Plumber
 path	B. L. A. R. T., rusty empty nacho cheese can, literal bucket hat, water candle	Manual: true, Path: Wildfire
+path	right bear arm, left bear arm	Manual: true, Path: Zombie Slayer
 
 # Bounty hunting stuff
 bounty	pirate fledges	Manual: true, Bounty: warrrrrt, Force: true

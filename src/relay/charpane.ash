@@ -74,7 +74,7 @@ chit_setvar("chit.maximizer.filters", "string", "", false);
 chit_setvar("chit.maximizer.max", "string", "", false);
 chit_setvar("chit.maximizer.scope", "int", 0, false);
 chit_setvar("chit.maximizer.priceLimit", get_property("autoBuyPriceLimit").to_int());
-chit_setvar("chit.maximizer.priceScope", 2);
+chit_setvar("chit.maximizer.priceScope", 2); // if you update this, also update the check for DEFAULTing in chit_brickMaximizer.ash
 
 /************************************************************************************
 CHaracter Info Toolbox
@@ -2966,7 +2966,7 @@ void bakeStats() {
 				matcher horde = create_matcher("(zombies/.*?\\.gif).*?Horde:\\s*([\\d,]+)", health);
 				if(find(horde)) {
 					# image: 167 x 100 pixels
-					result.append('<tr style="height:100px;"><td colspan="'+ (showBars? 3: 2) +'"><center><img src=images/otherimages/' + horde.group(1) + ' style="width:100%; border:0px"></center></td></tr>');
+					result.append('<tr style="height:50px;"><td colspan="'+ (showBars? 3: 2) +'"><center><img src=images/otherimages/' + horde.group(1) + ' style="width:50%; border:0px"></center></td></tr>');
 					result.append('<tr><td class="label" colspan="'+ (showBars? 3: 2) +'"><center>'+HordeLink+'Horde: ' + horde.group(2) + '</a></center></td></tr>');
 					return;
 				}
