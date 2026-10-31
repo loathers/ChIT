@@ -751,27 +751,26 @@ buff parseBuff(string source) {
 		columnTurns = '<a target="mainpane" href="skills.php?pwd='+my_hash()+'&action=Skillz&whichskill=15017&skillform=Use+Skill&quantity=1">&infin;</a>';
 
 	// Add spoiler info that mafia doesn't provide
-	if(myBuff.effectName.contains_text("Romantic Monster window")) {
-		effectAlias = effectAlias.replace_string("Romantic Monster", get_property("romanticTarget"));
-		effectAlias += " #" + (4 - get_property("_romanticFightsLeft").to_int());
-	}
+	if(myBuff.effectName.contains_text("Romantic Monster window"))
+		desc = `{get_property("romanticTarget")} #{4 - get_property("_romanticFightsLeft").to_int()}`;
 	else if(myBuff.effectName.contains_text("Digitize Monster"))
-		effectAlias = "Digitized " + get_property("_sourceTerminalDigitizeMonster") + " #" +
-                  (to_int(get_property("_sourceTerminalDigitizeMonsterCount")) + 1);
+		desc = `{get_property("_sourceTerminalDigitizeMonster")} #{get_property("_sourceTerminalDigitizeMonsterCount").to_int() + 1}`;
 	else if(myBuff.effectName.contains_text("Enamorang Monster"))
-		effectAlias = "Enamoranged " + get_property("enamorangMonster");
+		desc = get_property("enamorangMonster");
 	else if(myBuff.effectName.contains_text("Latte Monster")) {
-		effectAlias = "Latte " + get_property("_latteMonster");
+		desc = get_property("_latteMonster");
 		columnIcon = columnIcon.replace_string(myBuff.effectImage, "lattecup1.gif");
 		myBuff.effectImage = "lattecup1.gif";
 	}
-	else if(myBuff.effectName.contains_text("Spooky VHS Monster"))
-		effectAlias = "VHS Taped " + get_property("spookyVHSTapeMonster");
+	else if(myBuff.effectName.contains_text("Spooky VHS Tape Monster"))
+		desc = get_property("spookyVHSTapeMonster");
 	else if(myBuff.effectName.contains_text("Club 'Em Into Next Week Monster")) {
 		columnIcon = columnIcon.replace_string(myBuff.effectImage, "leg_club2.gif");
 		myBuff.effectImage = "leg_club2.gif";
 		desc = get_property("clubEmNextWeekMonster");
 	}
+	else if(myBuff.effectName.contains_text("Vote Monster"))
+		desc = get_property("_voteMonster");
 
 	buffer result;
 	result.append('<tr class="effect"');
