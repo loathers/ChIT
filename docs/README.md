@@ -229,7 +229,6 @@ The following preferences further refine the content and appearance of individua
     - path - gear that is particularly useful in your current path
     - prismatic - gear with prismatic elemental damage
     - elemental - gear with any elemental damage at all
-    - res - gear with a significant total amount of elemental resistance
     - resistance - gear with any elemental resistance at all
     - fam weight - gear with +familiar weight
     - mainstat - +mainstat gear
@@ -249,7 +248,7 @@ The following preferences further refine the content and appearance of individua
     - charter - gear for charter quests or other charter related tasks
     - today - gear that will disappear at the end of the day
     - rollover - gear with +adv (and +fites if your hippy stone is broken), will only display when overdrunk
-    - DRUNK - just Drunkula's wineglass, will only display when overdrunk
+    - overindulgence - organ capacity and drunkula's wineglass, as needed
     - Wow - World's best adventurer?! Wow! Good for you! A+!
   - Category names ARE case sensitive. The list is comma delimited.
   - You can also create your own custom categories, by editting data/chit_GearCategories.txt
@@ -261,12 +260,12 @@ The following preferences further refine the content and appearance of individua
     - pull_(true/false): whether to display items in this category when you only have them in Hagnk's and have pulls left
     - create_(true/false): whether to display items when you could make them but don't have any made
   - When these options are not explicitly provided for a category, the defaults are decided by chit.gear.display.in-run.defaults
-  - Default: favorites:amount_all:pull_true:create_true, astral:amount_all, item, -combat, +combat, quest:amount_all:pull_true:create_true, today:amount_all:create_false, ML, path:amount_all, prismatic, res, resistance:amount_2, charter:amount_all, rollover, DRUNK:amount_all, Wow:amount_all, exp
+  - Default: favorites:pull_true:create_true, astral, item, -combat, +combat, quest:pull_true:create_true, today, ML, path, prismatic, resistance, charter, rollover, overindulgence, Wow, exp
 - chit.gear.display.in-run.defaults: The default values for the options in chit.gear.display.in-run when not provided
   - Follows the same rules as the valid options section listed above in chit.gear.display.in-run
   - Default: create_false, pull_false, amount_all
 - chit.gear.display.aftercore: Same as chit.gear.display.in-run, but shown in aftercore instead of in-run
-  - Default: favorites:amount_all, quest:amount_all, charter:amount_all, today:amount_all:create_false, rollover, DRUNK:amount_all
+  - Default: favorites:amount_all, quest:amount_all, charter:amount_all, today:amount_all:create_false, path, rollover, overindulgence:amount_all
 - chit.gear.display.aftercore.defaults: Same as chit.gear.display.in-run.defaults, but for aftercore
   - Default: create_true, pull_true, amount_1
 - chit.gear.ignoreG-Lover: Whether or not to avoid hiding G-less gear in G-Lover

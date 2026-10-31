@@ -236,8 +236,16 @@ void addFavGear() {
 					if(to_boolean(val) != hippy_stone_broken())
 						ok = false;
 					break;
+				case "Overeaten":
+					if(to_boolean(val) != (my_fullness() > fullness_limit()))
+						ok = false;
+					break;
 				case "Drunk":
 					if(to_boolean(val) != (my_inebriety() > inebriety_limit()))
+						ok = false;
+					break;
+				case "Overspleened":
+					if(to_boolean(val) != (my_spleen_use() > spleen_limit()))
 						ok = false;
 					break;
 				case "Mainstat":

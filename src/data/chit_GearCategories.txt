@@ -12,7 +12,9 @@
 # Attribute Name	Arguments
 # IsTrue	Any boolean modifier, again see the wiki. It must be true for an item to be listed
 # PvP	Boolean: The hippy stone is smashed
+# Overeaten	Boolean: The player has overeaten
 # Drunk	Boolean: The player is overdrunk
+# Overspleened	Boolean: The player is jaundiced
 # Mainstat	Any stats, in the form of "Muscle" "Mysticality" or "Moxie" (case sensitive) can contain several, eg "Muscle or Moxie"
 #	The way you phrase it is irrelevant as long as it contains the full name of all stats you want in the proper case
 # Quest	Any argument to zlib's qprop function
@@ -53,9 +55,12 @@ smithsness	Smithsness
 today	1	IsTrue: Lasts Until Rollover
 rollover	Adventures	PvP: false, Drunk: true
 rollover	Adventures, PVP Fights	PvP: true, Drunk: true
+overindulgence	Stomach Capacity	Overeaten: true
+overindulgence	Liver Capacity	Drunk: true
+overindulgence	Spleen Capacity	Overspleened: true
 
 # Manual lists
-DRUNK	Drunkula's wineglass	Manual: true, Drunk: true
+overindulgence	Drunkula's wineglass	Manual: true, Drunk: true
 Wow	World's Best Adventurer sash	Manual: true
 astral	astral bludgeon, astral shield, astral chapeau, astral bracer, astral longbow, astral shorts, astral mace, astral trousers, astral ring, astral statuette, astral pistol, astral mask, astral pet sweater, astral shirt	Manual: true
 
