@@ -110,13 +110,13 @@ void picker_snapper() {
 void picker_socpshop() {
 	int bones = item_amount($item[knucklebone]);
 	int hagnksBones = storage_amount($item[knucklebone]);
+	coinmaster socp = $coinmaster[Skeleton of Crimbo Past];
 
 	buffer picker;
 	picker.pickerStart('socpshop', 'Spend them bones (' + bones + ' on hand' + (hagnksBones > 0 ?
 		(', ' + hagnksBones + ' in storage') : '') + ')');
 
 	void addItem(item it, string desc, string pref, boolean useHagnks) {
-		coinmaster socp = $coinmaster[Skeleton of Crimbo Past];
 		boolean available = !get_property(pref).to_boolean();
 		int cost = socp.sell_price(it);
 		picker.pickerItemOption(it, 'buy', it.name, desc, available ? (cost + ' knucklebones') : 'sold out',
@@ -134,7 +134,9 @@ void picker_socpshop() {
 
 	item dailySpecial = get_property("_crimboPastDailySpecialItem").to_int().to_item();
 	if(dailySpecial != $item[none]) {
-		addItem(dailySpecial, 'daily special item from a crimbo past', '_crimboPastDailySpecial', true);
+		int mpb = historical_price(dailySpecial) / socp.sell_price(dailySpecial);
+		string mpbstr = dailySpecial.tradeable ? `~{mpb}` : "&infin;";
+		addItem(dailySpecial, `daily special item from a crimbo past ({mpbstr} meat/bone)`, '_crimboPastDailySpecial', true);
 	}
 
 	picker.pickerGenericOption('visit', 'the store', 'fallback in case of issues', '',
