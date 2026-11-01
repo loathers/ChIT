@@ -1243,7 +1243,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 		+ '|: True'
 		+ '|None'
 		+ '|Generic'
-		+ '|[^,:]+: 0(?:, |$)'
+		+ '|[^,:]+: 0(?:,|$)'
 		+ '|Wiki Name: "[^"]+"'
 		+ '|Display Name: "[^"]+"'
 		+ '|Enchantment Count: \\d+'
