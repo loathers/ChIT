@@ -310,7 +310,7 @@ record drop_info {
 
 typedef drop_info[int] drops_info;
 
-boolean addDrops(chit_info info, drop_info[int] drops) {
+boolean addDrops(chit_info info, drop_info[int] drops, boolean slashInsteadOfComma) {
 	string toAdd = '';
 	int bestDrop = DROPS_NONE;
 
@@ -374,7 +374,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 				upDrops(DROPS_SOME, drop);
 			}
 			if(toAdd != '') {
-				toAdd += ', ';
+				toAdd += slashInsteadOfComma ? '/' : ', ';
 			}
 			toAdd += timeToDrop + ' turn';
 			if(timeToDrop != 1) {
@@ -407,7 +407,7 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		if(drop.limit > LIMIT_PERIODIC) {
 			boolean space = true;
 			if(toAdd != '') {
-				toAdd += ', ';
+				toAdd += slashInsteadOfComma ? '/' : ', ';
 			}
 
 			if(drop.limit == LIMIT_INFINITE) {
@@ -443,6 +443,10 @@ boolean addDrops(chit_info info, drop_info[int] drops) {
 		return true;
 	}
 	return false;
+}
+
+boolean addDrops(chit_info info, drop_info[int] drops) {
+	return addDrops(info, drops, false);
 }
 
 boolean addDrop(chit_info info, drop_info drop) {

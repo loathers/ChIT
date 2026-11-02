@@ -1716,7 +1716,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 					'', true, false, 0, true);
 				gradient[gradient.count()] = 'purple';
 			}
-			info.addDrops(rockets);
+			info.addDrops(rockets, true);
 			if(rockets.count() > 0) {
 				info.desc += ' available';
 				info.customStyle = buildGradient(gradient);
