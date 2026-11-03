@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r29302; // Shield Maiden blessing tracking
+since r29406; // short order cook drop tracking
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";

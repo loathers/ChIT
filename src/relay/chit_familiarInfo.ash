@@ -565,9 +565,20 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 					info.incDrops(DROPS_ALL);
 				}
 				break;
-			case $familiar[Shorter-Order Cook]:
-				info.addDrop(new drop_info('_shortOrderCookCharge', have_equipped($item[blue plate]) ? -9 : -11, 'short drop'));
+			case $familiar[Shorter-Order Cook]: {
+				item last = get_property("shortOrderCookLastDrop").to_item();
+				string nextDrop() {
+					switch(last) {
+						case $item[short stack of pancakes]: return "short stick of butter (-5% combat)";
+						case $item[short stick of butter]: return "short glass of water (+5 fam exp)";
+						case $item[short glass of water]: return "short white (x2 fam actions)";
+						case $item[short white]: return "short beer (x2 fam dmg)";
+						default: return "short stack of pancakes (+10lbs)";
+					}
+				}
+				info.addDrop(new drop_info('_shortOrderCookCharge', have_equipped($item[blue plate]) ? -9 : -11, nextDrop()));
 				break;
+			}
 			case $familiar[Mini-Crimbot]:
 				info.addExtra(extraInfoLink('configure', attrmap {
 					'target': 'mainpane',
