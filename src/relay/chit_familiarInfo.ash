@@ -916,6 +916,11 @@ chit_info getFamiliarInfo(familiar f, slot s, boolean forPopover) {
 				}
 				break;
 			}
+			case $familiar[Patriotic Eagle]: {
+				int screechCombats = get_property("screechCombats").to_int();
+				info.addToDesc(screechCombats <= 0 ? 'screech ready' : `{screechCombats} combats to screech`);
+				break;
+			}
 		}
 
 		if(f.drops_limit > 0) {
