@@ -4,21 +4,28 @@ boolean [item] favGear;
 boolean [item] favGearWeirdFam;
 float [string, item] recommendedGear;
 
-float equip_modifier(item it, string mod) {
+float equip_modifier(item it, modifier mod) {
 	if(my_path().name == "Gelatinous Noob") return 0;
 	switch(it) {
-	case $item[your cowboy boots]:
-		return equipped_item($slot[bootskin]).numeric_modifier(mod)
-			+ equipped_item($slot[bootspur]).numeric_modifier(mod);
-	case $item[over-the-shoulder Folder Holder]:
-		float modtot;
-		foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
-			modtot += equipped_item(sl).numeric_modifier(mod);
-		return modtot;
+		case $item[your cowboy boots]:
+			return equipped_item($slot[bootskin]).numeric_modifier(mod)
+				+ equipped_item($slot[bootspur]).numeric_modifier(mod);
+		case $item[over-the-shoulder Folder Holder]: {
+			float modtot;
+			foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
+				modtot += equipped_item(sl).numeric_modifier(mod);
+			return modtot;
+		}
+		case $item[The Eternity Codpiece]: {
+			float modtot;
+			foreach sl in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5]
+				modtot += equipped_item(sl).numeric_modifier(mod);
+			return modtot;
+		}
 	}
 	return numeric_modifier(it, mod);
 }
-float equip_modifier(item it, string mod, int weight) {
+float equip_modifier(item it, modifier mod, int weight) {
 	if(weight == 0) return 0;
 	return equip_modifier(it, mod) * weight;
 }
@@ -138,18 +145,92 @@ void addFavGear() {
 	if(turnsToGhost <= 0 || get_property("ghostLocation") != "")
 		forceAddGear($item[protonic accelerator pack], "ghost");
 
+	int MOD_REGULAR = 0;
+	int MOD_FLATVAL = 1;
+
+	record modifier_value {
+		float multiplier;
+		int modType;
+		modifier mod;
+		// for manual scores
+		item it;
+	};
+	record gear_category {
+		float [item] list;
+		string name;
+		modifier_value [int] modifiers;
+		string [string, int] attributes;
+		boolean [item] changing;
+	};
+
+	boolean is_updating(item it) {
+		if(string_modifier(it, $modifier[Modifiers]).index_of('[') >= 0) {
+			return true;
+		}
+		return boolean_modifier(it, $modifier[Variable]);
+	}
+
+
+	void categorizeItem(item it, gear_category cat) {
+		if(boolean_modifier(it, $modifier[Variable]) && !cat.changing[it]) {
+			cat.changing[it] = true;
+			// categorize changing items in the every frame pass
+			return;
+		}
+
+		float score = 0;
+		foreach i,mod in cat.modifiers {
+			if(mod.modType == MOD_FLATVAL) {
+				score += mod.multiplier;
+			}
+			else if(mod.mod != $modifier[none]) {
+				if(!cat.changing[it] && string_modifier(it, $modifier[Modifiers]).index_of(`{mod.mod}: [`) >= 0) {
+					cat.changing[it] = true;
+					// categorize changing items in the every frame pass
+					return;
+				}
+				score += equip_modifier(it, mod.mod, mod.multiplier);
+			}
+			else if(mod.it != $item[none]) {
+				vprint(`Weird gear category issue in category {cat.name}`, "red", 1);
+			}
+		}
+		foreach attr,i,val in cat.attributes {
+				switch(attr) {
+					case "IsTrue":
+						if(!boolean_modifier(it,val))
+							score = -1;
+						break;
+				}
+		}
+		if(weapon_hands(it) > 1)
+			score /= 2;
+		if(score > 0)
+			cat.list[it] = score;
+	}
+
+	void categorizeItem(item it, gear_category [int] catList) {
+		foreach i,cat in catList {
+			if(!to_boolean(cat.attributes["Manual", 0])) {
+				categorizeItem(it, cat);
+			}
+		}
+	}
+
+	void updateChangingItems(gear_category cat) {
+		foreach it in cat.changing {
+			categorizeItem(it, cat);
+		}
+	}
+
+	void updateChangingItems(gear_category [int] catList) {
+		foreach i,cat in catList {
+			updateChangingItems(cat);
+		}
+	}
+
 	// Find varous stuff instead of hardcoding lists
 	static {
-		record modifier_value {
-			float multiplier;
-			string mod;
-		};
-		record gear_category {
-			float [item] list;
-			string name;
-			modifier_value [int] modifiers;
-			string [string, int] attributes;
-		};
 		gear_category [int] catList;
 		gear_category newCategory(string name, string mods, string attrs) {
 			gear_category cat;
@@ -160,14 +241,20 @@ void addFavGear() {
 				if(split.count() == 1) {
 					if(split[0].to_float() != 0.0) {
 						curr.multiplier = split[0].to_float();
-						curr.mod = "flatval";
+						curr.modType = MOD_FLATVAL;
 					} else {
 						curr.multiplier = 1;
-						curr.mod = split[0];
+						curr.mod = to_modifier(split[0]);
+						if(curr.mod == $modifier[none]) {
+							curr.it = to_item(split[0]);
+						}
 					}
 				} else {
 					curr.multiplier = to_float(split[0]);
-					curr.mod = split[1];
+					curr.mod = to_modifier(split[1]);
+					if(curr.mod == $modifier[none]) {
+						curr.it = to_item(split[0]);
+					}
 				}
 				cat.modifiers[i] = curr;
 			}
@@ -195,37 +282,18 @@ void addFavGear() {
 			newCategory(name, mods, attrs);
 
 		foreach it in $items[] {
-			foreach i,cat in catList {
-				if(!to_boolean(cat.attributes["Manual", 0])) {
-					float score = 0;
-					foreach i,mod in cat.modifiers {
-						if(mod.mod == "flatval")
-							score += mod.multiplier;
-						else
-							score += equip_modifier(it, mod.mod) * mod.multiplier;
-					}
-					foreach attr,i,val in cat.attributes {
-							switch(attr) {
-								case "IsTrue":
-									if(!boolean_modifier(it,val))
-										score = -1;
-									break;
-							}
-					}
-					if(weapon_hands(it) > 1)
-						score /= 2;
-					if(score > 0)
-						cat.list[it] = score;
-				}
-			}
+			categorizeItem(it, catList);
 		}
+		// these can't vary, so no need to re-categorize later
 		foreach i,cat in catList {
 			if(to_boolean(cat.attributes["Manual", 0])) {
 				foreach i,mod in cat.modifiers
-					cat.list[to_item(mod.mod)] = mod.multiplier;
+					cat.list[mod.it] = mod.multiplier;
 			}
 		}
 	}
+
+	updateChangingItems(catList);
 
 	foreach i,cat in catList {
 		boolean ok = true;
@@ -778,13 +846,15 @@ void pickerGear(slot s) {
 
 		switch(item_type(it)) {
 		case "chefstaff":
-			weight = equip_modifier(it, "Spell Damage Percent");  // They all have 10 power, so this number is a surrogate
+			weight = equip_modifier(it, $modifier[Spell Damage Percent]);  // They all have 10 power, so this number is a surrogate
 			break;
 		case "accessory":
-			# weight = get_power(it) + equip_modifier(it, "Item Drop", 6) + equip_modifier(it, "Monster Level", my_level() < 13? 4: 0)
-				# + (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 5;
-			weight = get_power(it) + equip_modifier(it, "Item Drop") * 6 + equip_modifier(it, "Monster Level") * (my_level() < 13? 4: 0)
-				+ (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 5;
+			# weight = get_power(it) + equip_modifier(it, $modifier[Item Drop], 6) + equip_modifier(it, $modifier[Monster Level], my_level() < 13? 4: 0)
+				# + (equip_modifier(it, $modifier[MP Regen Max]) + equip_modifier(it, $modifier[MP Regen Min])) * 5;
+			weight = get_power(it) + equip_modifier(it, $modifier[Item Drop], 6)
+				+ equip_modifier(it, $modifier[Monster Level], my_level() < 13 ? 4 : 0)
+				+ equip_modifier(it, $modifier[MP Regen Max], 5)
+				+ equip_modifier(it, $modifier[MP Regen Min], 5);
 			break;
 		case "club":
 			if(my_class() == $class[Seal Clubber])
@@ -819,20 +889,20 @@ void pickerGear(slot s) {
 		case $stat[Muscle]:
 			if(weapon_type(it) == $stat[Moxie])
 				weight *= 0.5;
-			weight += equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min");
-			weight += equip_modifier(it, "Muscle") * 2;
-			weight += equip_modifier(it, "Muscle Percent") * my_basestat($stat[Muscle]) / 50;
+			weight += equip_modifier(it, $modifier[MP Regen Max]) + equip_modifier(it, $modifier[MP Regen Min]);
+			weight += equip_modifier(it, $modifier[Muscle], 2);
+			weight += equip_modifier(it, $modifier[Muscle Percent]) * my_basestat($stat[Muscle]) / 50;
 			break;
 		case $stat[Mysticality]:
-			weight += (equip_modifier(it, "MP Regen Max") + equip_modifier(it, "MP Regen Min")) * 2;
-			weight += equip_modifier(it, "Spell Damage") * 3;
-			weight += equip_modifier(it, "Spell Damage Percent");
+			weight += (equip_modifier(it, $modifier[MP Regen Max]) + equip_modifier(it, $modifier[MP Regen Min])) * 2;
+			weight += equip_modifier(it, $modifier[Spell Damage]);
+			weight += equip_modifier(it, $modifier[Spell Damage Percent]);
 			break;
 		case $stat[Moxie]:
 			if(weapon_type(it) != $stat[Moxie] && !(have_skill($skill[Tricky Knifework]) && item_type(it) == "knife"))
 				weight *= 0.5;
-			weight += equip_modifier(it, "Moxie") * 3;
-			weight += equip_modifier(it, "Moxie Percent") * my_basestat($stat[Moxie]) / 33.3;
+			weight += equip_modifier(it, $modifier[Moxie], 3);
+			weight += equip_modifier(it, $modifier[Moxie Percent], my_basestat($stat[Moxie]) / 33.3);
 			break;
 		}
 
