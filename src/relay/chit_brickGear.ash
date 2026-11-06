@@ -10,7 +10,8 @@ float equip_modifier(item it, modifier mod) {
 		case $item[your cowboy boots]:
 			return equipped_item($slot[bootskin]).numeric_modifier(mod)
 				+ equipped_item($slot[bootspur]).numeric_modifier(mod);
-		case $item[over-the-shoulder Folder Holder]: {
+		case $item[over-the-shoulder Folder Holder]:
+		case $item[replica over-the-shoulder Folder Holder]: {
 			float modtot;
 			foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
 				modtot += equipped_item(sl).numeric_modifier(mod);
