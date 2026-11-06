@@ -2149,6 +2149,15 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addToDesc(`worn for {get_property("_laughingStockCharges")} combats`);
 			info.addToDesc(get_property("_laughingStockFruitDropped") + " fruit dropped");
 			break;
+		case $item[legendary acorndion]:
+			info.addDrops(drops_info {
+				new drop_info('_legendaryAcornBridgeParts', LIMIT_TOTAL, 'bridge part', 'bridge parts', true),
+				new drop_info('_legendaryAcornFruit', LIMIT_TOTAL, 'fruit', '', true),
+				new drop_info('_legendaryAcornFungalReplicas', 33, 'replica', 'replicas', true),
+				new drop_info('_legendaryAcornSeaCows', 33, 'sea cow', 'sea cows', true),
+				new drop_info('_legendaryAcornSeaFruit', LIMIT_TOTAL, 'sea fruit', '', true),
+			});
+			break;
 	}
 
 	// latte reminder
