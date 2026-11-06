@@ -4,6 +4,15 @@ boolean [item] favGear;
 boolean [item] favGearWeirdFam;
 float [string, item] recommendedGear;
 
+boolean has_special_slots(item it) {
+	return $items[
+		your cowboy boots,
+		over-the-shoulder Folder Holder,
+		replica over-the-shoulder Folder Holder,
+		The Eternity Codpiece,
+	] contains it;
+}
+
 float equip_modifier(item it, modifier mod) {
 	if(my_path().name == "Gelatinous Noob") return 0;
 	switch(it) {
@@ -164,16 +173,8 @@ void addFavGear() {
 		boolean [item] changing;
 	};
 
-	boolean is_updating(item it) {
-		if(string_modifier(it, $modifier[Modifiers]).index_of('[') >= 0) {
-			return true;
-		}
-		return boolean_modifier(it, $modifier[Variable]);
-	}
-
-
 	void categorizeItem(item it, gear_category cat) {
-		if(boolean_modifier(it, $modifier[Variable]) && !cat.changing[it]) {
+		if((boolean_modifier(it, $modifier[Variable]) || has_special_slots(it)) && !cat.changing[it]) {
 			cat.changing[it] = true;
 			// categorize changing items in the every frame pass
 			return;
