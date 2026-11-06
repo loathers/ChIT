@@ -1518,6 +1518,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				'target': 'mainpane',
 				'href': 'inventory.php?action=grind',
 			}));
+			info.addToDesc(`{floor(sausage_goblin_chance() * 100)}% goblin chance`);
+			if(sausage_goblin_chance() > 0.95) {
+				info.incDrops(sausage_goblin_chance() == 1.0 ? DROPS_ALL : DROPS_SOME);
+			}
 			break;
 		}
 		case $item[Eight Days a Week Pill Keeper]:
