@@ -2158,6 +2158,10 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				new drop_info('_legendaryAcornSeaFruit', LIMIT_TOTAL, 'sea fruit', '', true),
 			});
 			break;
+		case $item[Flash Liquidizer Ultra Dousing Accessory]:
+			info.name = 'F.L.U.D.A.';
+			info.addDrop(new drop_info('_douseFoeUses', 3, 'douse', 'douses'));
+			break;
 	}
 
 	// latte reminder
