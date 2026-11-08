@@ -2151,6 +2151,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			break;
 		case $item[legendary acorndion]:
 			info.addDrops(drops_info {
+				new drop_info('_legendaryAcornsUsed', 12, 'acorn', 'acorns'),
 				new drop_info('_legendaryAcornBridgeParts', LIMIT_TOTAL, 'bridge part', 'bridge parts', true),
 				new drop_info('_legendaryAcornFruit', LIMIT_TOTAL, 'fruit', '', true),
 				new drop_info('_legendaryAcornFungalReplicas', 33, 'replica', 'replicas', true),

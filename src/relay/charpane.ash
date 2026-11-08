@@ -1,5 +1,5 @@
 script "Character Information Toolbox";
-since r29410; // legendary acorndion tracking
+since r29412; // legendary acorndion tracking++
 import "zlib.ash";
 import "chit_global.ash";
 import "chit_itemInfo.ash";
