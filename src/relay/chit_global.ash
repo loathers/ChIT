@@ -1554,7 +1554,7 @@ boolean isImportantOffhand(item it) {
 }
 
 boolean usesSubstats() {
-	return my_class() != $class[Grey Goo];
+	return !($classes[Grey Goo, Zootomist] contains my_class());
 }
 
 // Why did ChIT not have a helper function for this already...
