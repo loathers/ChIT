@@ -3784,8 +3784,10 @@ void bakeCharacter() {
 		string swagger = get_property('availableSwagger').to_int().formatInt();
 		string seasonSwagger = get_property(`{season}Swagger`).to_int().formatInt();
 		string desc = season == "none" ? 'Current season is unknown' : `Currently {season} season`;
+		string essenceCost = get_property("essenceOfAnnoyanceCost").to_int().formatInt();
 		if(swagger != "0") desc += `, {swagger} swagger available`;
 		if(seasonSwagger != "0") desc += `, {seasonSwagger} lifetime {season} swagger`;
+		if(get_property("essenceOfAnnoyanceAvailable").to_boolean()) desc += `, {essenceCost} swagger for Essence`;
 		desc += ', Click to visit the Colosseum';
 		result.addElementWithPopover('div', `<span>{pvp_attacks_left()}</span><img src="/images/itemimages/slimpvp.gif" />`,
 			attrmap { 'style': 'float:right' }, `{pvp_attacks_left()} PvP fights remaining`,
