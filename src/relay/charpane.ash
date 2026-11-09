@@ -3803,9 +3803,13 @@ void bakeCharacter() {
 	result.append('<td><div class="chit_resource">');
 	result.allCurrency();
 	result.append('</div></td><td><div class="chit_resource">');
+	string advDesc =  `Current {get_property("kingLiberated") == "true" ? "life" : "run"}: {my_daycount()} / {turns_played()}`;
+	advDesc += `, {my_ascensions().formatInt()} total ascensions`;
+	advDesc += `, {total_turns_played().formatInt()} total adventures`;
+	advDesc += ', Click to view ascension history';
 	result.addElementWithPopover('div', `<span>{my_adventures()}</span><img src="/images/itemimages/slimhourglass.gif" />`,
-		attrmap { 'style': 'float:right' }, `{my_adventures()} Adventures remaining`,
-		`Current {get_property("kingLiberated") == "true" ? "life" : "run"}: {my_daycount()} / {turns_played()}`);
+		attrmap { 'style': 'float:right' }, `{my_adventures()} Adventures remaining`, advDesc,
+		'a', attrmap { 'href': `/ascensionhistory.php?back=self&who={my_id()}`, 'target': 'mainpane' });
 	result.append('</div><div style="clear:both"></div></td>');
 	result.append('</tr>');
 
