@@ -3777,23 +3777,32 @@ void bakeCharacter() {
 	result.append('<tr><td class="info">');
 	result.append(myLifeStyle());
 	result.append('</td>');
-	if(hippy_stone_broken() && index_of(chitSource["health"], "peevpee.php") > 0) {
-		matcher fites = create_matcher("PvP Fights Remaining.+?black>([\\d,]+)</span>", chitSource["health"]);
-		if(fites.find())
-			result.append('<td><div class="chit_resource"><div title="PvP Fights Remaining" style="float:right"><span>'
-				+ fites.group(1) + '</span><a href="peevpee.php" target="mainpane">'
-				+ '<img src="/images/itemimages/slimpvp.gif"></a></div></div></td><div style="clear:both"></div>');
-		#result.append('<td class="turns" align="top" title="Turns played (this run)">' + formatInt(turns_played()) + '</td>');
+	if(hippy_stone_broken()) {
+		result.tagStart('td');
+		result.tagStart('div', attrmap { 'class': 'chit_resource' });
+		string season = get_property('currentPVPSeason');
+		string swagger = get_property('availableSwagger').to_int().formatInt();
+		string seasonSwagger = get_property(`{season}Swagger`).to_int().formatInt();
+		string desc = season == "none" ? 'Current season is unknown' : `Currently {season} season`;
+		if(swagger != "0") desc += `, {swagger} swagger available`;
+		if(seasonSwagger != "0") desc += `, {seasonSwagger} lifetime {season} swagger`;
+		desc += ', Click to visit the Colosseum';
+		result.addElementWithPopover('div', `<span>{pvp_attacks_left()}</span><img src="/images/itemimages/slimpvp.gif" />`,
+			attrmap { 'style': 'float:right' }, `{pvp_attacks_left()} PvP fights remaining`,
+			desc, 'a', attrmap { 'href': 'peevpee.php', 'target': 'mainpane' });
+		result.tagFinish('div');
+		result.tagFinish('td');
+		result.tagStart('div', attrmap { 'style': 'clear:both' });
+		result.tagFinish('div');
 	}
 	result.append('</tr>');
 
 	result.append('<tr>');
 	result.append('<td colspan="2"><div class="chit_resource">');
 	result.allCurrency();
-	result.append('<div title="'+my_adventures()+' Adventures remaining'
-		+ (get_property("kingLiberated") == "true"? '': '\n Current Run: '+my_daycount() +' / '+ turns_played())
-		+ '" style="float:right"><span>' + my_adventures()
-		+ '</span><img src="/images/itemimages/slimhourglass.gif"></div>');
+	result.addElementWithPopover('div', `<span>{my_adventures()}</span><img src="/images/itemimages/slimhourglass.gif" />`,
+		attrmap { 'style': 'float:right' }, `{my_adventures()} Adventures remaining`,
+		`Current {get_property("kingLiberated") == "true" ? "life" : "run"}: {my_daycount()} / {turns_played()}`);
 	result.append('</div><div style="clear:both"></div></td>');
 	result.append('</tr>');
 

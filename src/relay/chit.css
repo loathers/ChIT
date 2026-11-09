@@ -365,6 +365,7 @@ tr.florist :first-line {
 }
 .chit_resource div span,
 .chit_resource div img {
+	color: darkred;
 	vertical-align: middle;
 }
 .chit_resource div img {
