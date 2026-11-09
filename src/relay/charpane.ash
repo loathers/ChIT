@@ -3815,20 +3815,12 @@ void bakeCharacter() {
 	result.append('</tr>');
 
 	if(index_of(source, "<table title=") > -1) {
-		result.append('<tr><td class="progress" colspan="3" title="');
-		result.append( to_string(my_level() ** 2 + 4 - my_basestat(my_primestat())) );
-		result.append(' ');
-		result.append(my_primestat().to_lower_case());
-		result.append(' until level ');
-		result.append(to_string(my_level() + 1));
-		if(usesSubstats()) {
-			result.append('\n (');
-			result.append(formatInt(needed));
-			result.append(' substats needed)');
-		}
-		result.append('" ><div class="progressbar" style="width:');
-		result.append(progress);
-		result.append('%"></div></td></tr>');
+		result.tagStart('tr');
+		result.addElementWithPopover('td', `<div class="progressbar" style="width:{progress}%" />`,
+			attrmap { 'class': 'progress', 'colspan': '3' },
+			my_level() < 255 ? `{my_level() ** 2 + 4 - my_basestat(my_primestat())} {my_primestat().to_lower_case()} until level {my_level() + 1}` : 'Max level, wow!',
+			(usesSubstats() && my_level() < 255) ? `{formatInt(needed)} substats needed` : '');
+		result.tagFinish('tr');
 	}
 	result.append('</table>');
 
