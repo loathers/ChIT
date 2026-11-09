@@ -3760,7 +3760,7 @@ void bakeCharacter() {
 	result.append('" title="Visit your guild">');
 	result.append(myTitle());
 	result.append('</a>');
-	result.append('</td><td class="level" rowspan="2" style="width:30px;');
+	result.append('</td><td class="level" rowspan="2" style="');
 	result.append(councilStyle);
 	result.append('"><a target="mainpane" href="council.php" title="');
 	result.append(councilText);
@@ -3798,8 +3798,9 @@ void bakeCharacter() {
 	result.append('</tr>');
 
 	result.append('<tr>');
-	result.append('<td colspan="2"><div class="chit_resource">');
+	result.append('<td><div class="chit_resource">');
 	result.allCurrency();
+	result.append('</div></td><td><div class="chit_resource">');
 	result.addElementWithPopover('div', `<span>{my_adventures()}</span><img src="/images/itemimages/slimhourglass.gif" />`,
 		attrmap { 'style': 'float:right' }, `{my_adventures()} Adventures remaining`,
 		`Current {get_property("kingLiberated") == "true" ? "life" : "run"}: {my_daycount()} / {turns_played()}`);
