@@ -4,36 +4,92 @@ boolean [item] favGear;
 boolean [item] favGearWeirdFam;
 float [string, item] recommendedGear;
 
-boolean has_special_slots(item it) {
+boolean is_configurable(item it) {
 	return $items[
 		your cowboy boots,
 		over-the-shoulder Folder Holder,
 		replica over-the-shoulder Folder Holder,
 		The Eternity Codpiece,
+		Jurassic Parka,
+		replica Jurassic Parka,
+		card sleeve,
+		scratch 'n' sniff sword,
+		scratch 'n' sniff crossbow,
+		backup camera,
+		The Crown of Ed the Undying,
+		unwrapped knock-off retro superhero cape,
+		Snow Suit,
+		Buddy Bjorn,
+		Crown of Thrones,
+		unbreakable umbrella,
 	] contains it;
 }
 
 float equip_modifier(item it, modifier mod) {
 	if(my_path().name == "Gelatinous Noob") return 0;
+	float modtot = numeric_modifier(it, mod);
+	void handleSpecialSlots(boolean [slot] slots) {
+		foreach s in slots
+			modtot += equipped_item(s).numeric_modifier(mod);
+	}
+	void handleModeable(string modename, boolean [string] modeprefs) {
+		string prefVals;
+		foreach modepref in modeprefs {
+			if(prefVals != '') {
+				prefVals += ' ';
+			}
+			prefVals += get_property(modepref);
+		}
+		modtot += numeric_modifier(`{modename}:{prefVals}`, mod);
+	}
+	void handleModeable(string modename, string modepref) {
+		handleModeable(modename, boolean [string] { modepref: true });
+	}
 	switch(it) {
 		case $item[your cowboy boots]:
-			return equipped_item($slot[bootskin]).numeric_modifier(mod)
-				+ equipped_item($slot[bootspur]).numeric_modifier(mod);
+			handleSpecialSlots($slots[bootskin, bootspur]);
+			break;
 		case $item[over-the-shoulder Folder Holder]:
-		case $item[replica over-the-shoulder Folder Holder]: {
-			float modtot;
-			foreach sl in $slots[folder1, folder2, folder3, folder4, folder5]
-				modtot += equipped_item(sl).numeric_modifier(mod);
-			return modtot;
-		}
-		case $item[The Eternity Codpiece]: {
-			float modtot;
-			foreach sl in $slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5]
-				modtot += equipped_item(sl).numeric_modifier(mod);
-			return modtot;
-		}
+		case $item[replica over-the-shoulder Folder Holder]:
+			handleSpecialSlots($slots[folder1, folder2, folder3, folder4, folder5]);
+			break;
+		case $item[The Eternity Codpiece]:
+			handleSpecialSlots($slots[codpiece1, codpiece2, codpiece3, codpiece4, codpiece5]);
+			break;
+		case $item[Jurassic Parka]:
+		case $item[replica Jurassic Parka]:
+			handleModeable('JurassicParka', 'parkaMode');
+			break;
+		case $item[card sleeve]:
+			handleSpecialSlots($slots[card-sleeve]);
+			break;
+		case $item[scratch 'n' sniff sword]:
+		case $item[scratch 'n' sniff crossbow]:
+			handleSpecialSlots($slots[sticker1, sticker2, sticker3]);
+			break;
+		case $item[backup camera]:
+			handleModeable('BackupCamera', 'backupCameraMode');
+			break;
+		case $item[The Crown of Ed the Undying]:
+			handleModeable('Edpiece', 'edPiece');
+			break;
+		case $item[unwrapped knock-off retro superhero cape]:
+			handleModeable('RetroCape', $strings[retroCapeSuperhero, retroCapeWashingInstructions]);
+			break;
+		case $item[Snow Suit]:
+			handleModeable('SnowSuit', 'snowsuit');
+			break;
+		case $item[Buddy Bjorn]:
+			modtot += numeric_modifier(`Throne:{my_bjorned_familiar()}`, mod);
+			break;
+		case $item[Crown of Thrones]:
+			modtot += numeric_modifier(`Throne:{my_enthroned_familiar()}`, mod);
+			break;
+		case $item[unbreakable umbrella]:
+			handleModeable('UnbreakableUmbrella', 'umbrellaState');
+			break;
 	}
-	return numeric_modifier(it, mod);
+	return modtot;
 }
 float equip_modifier(item it, modifier mod, int weight) {
 	if(weight == 0) return 0;
@@ -174,7 +230,7 @@ void addFavGear() {
 	};
 
 	void categorizeItem(item it, gear_category cat) {
-		if((boolean_modifier(it, $modifier[Variable]) || has_special_slots(it)) && !cat.changing[it]) {
+		if((boolean_modifier(it, $modifier[Variable]) || is_configurable(it)) && !cat.changing[it]) {
 			cat.changing[it] = true;
 			// categorize changing items in the every frame pass
 			return;

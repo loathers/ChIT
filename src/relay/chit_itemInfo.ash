@@ -973,6 +973,20 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 	info.image = itemimage(it.image);
 	string extraMods = '';
 
+	void handleModeableMods(string modeable, boolean [string] modePrefs) {
+		string prefVals;
+		foreach modePref in modePrefs {
+			if(prefVals != '') {
+				prefVals += ' ';
+			}
+			prefVals += get_property(modePref);
+		}
+		extraMods = string_modifier(`{modeable}:{prefVals}`, $modifier[Evaluated Modifiers]);
+	}
+	void handleModeableMods(string modeable, string modePref) {
+		handleModeableMods(modeable, boolean [string] { modePref: true });
+	}
+
 	switch(it) {
 		case $item[none]:
 			info.image = itemimage('blank.gif');
@@ -1058,11 +1072,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			string cameraMode = get_property('backupCameraMode');
 			info.addExtra(extraInfoPicker('backupcamera', '<b>Configure</b> your camera (currently '
 				+ cameraMode + ')'));
-			switch(cameraMode) {
-				case 'meat': extraMods = 'Meat Drop: +50'; break;
-				case 'ml': extraMods = 'Monster Level: +' + min(3 * my_level(), 50); break;
-				case 'init': extraMods = 'Initiative: +100'; break;
-			}
+			handleModeableMods('BackupCamera', 'backupCameraMode');
 			break;
 		case $item[V for Vivala mask]:
 		case $item[replica V for Vivala mask]:
@@ -1309,6 +1319,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				case 'cocoon': info.image = itemimage('unbrella1.gif'); break;
 				default: print('Invalid umbrellaState ' + state + '???', 'red'); break;
 			}
+			handleModeableMods('UnbreakableUmbrella', 'umbrellaState');
 			break;
 		}
 		case $item[June cleaver]: {
@@ -1344,6 +1355,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				case 'ghostasaurus': info.image = itemimage('jparka1.gif'); break;
 				case 'pterodactyl': info.image = itemimage('jparka9.gif'); break;
 			}
+			handleModeableMods('JurassicParka', 'parkaMode');
 			break;
 		}
 		case $item[cursed monkey's paw]: {
@@ -1431,7 +1443,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			if(currPiece == '') {
 				currPiece = 'none';
 			}
-			extraMods = string_modifier('Edpiece:' + currPiece, 'Evaluated Modifiers');
+			handleModeableMods('Edpiece', 'edPiece');
 			info.addExtra(extraInfoPicker('edpiece','<b>Change</b> decoration (currently ' + currPiece + ')',
 				edpieceToImage(currPiece)));
 			break;
@@ -1542,6 +1554,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 			info.addExtra(extraInfoPicker('retrosupercapeall', '<b>Change</b> to any setup!'));
 			info.addToDesc(retroSupercapeCurrentSetupName());
 			info.image = retroHeroToIcon(get_property('retroCapeSuperhero'));
+			handleModeableMods('RetroCape', $strings[retroCapeSuperhero, retroCapeWashingInstructions]);
 			break;
 		case $item[The Jokester's gun]:
 			info.addDrop(new drop_info('_firedJokestersGun', LIMIT_BOOL, 'firing'));
@@ -1904,6 +1917,8 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 		}
 		case $item[LED candle]: {
 			info.addExtra(extraInfoPicker('ledcandle', '<b>Adjust</b> LED candle'));
+			info.addToDesc(`{get_property('ledCandleMode')} mode`);
+			handleModeableMods('LedCandle', 'ledCandleMode');
 			break;
 		}
 		case $item[bag of many confections]: {
@@ -1941,6 +1956,7 @@ chit_info getItemInfo(item it, slot relevantSlot, boolean stripHtml, boolean inc
 				case 'goatee': info.image = itemimage('snowface4.gif'); break;
 				case 'hat': info.image = itemimage('snowface5.gif'); break;
 			}
+			handleModeableMods('SnowSuit', 'snowsuit');
 			break;
 		}
 		case $item[toy Cupid bow]: {
