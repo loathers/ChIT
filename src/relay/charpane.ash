@@ -3275,7 +3275,8 @@ void allCurrency(buffer result) {
 	chit_currency getCurrency(string name) {
 		switch(name) {
 			case "meat": case "none": // none supported for backwards compatibility
-				return constructCurrency("Meat", "meat", "meat.gif", my_meat(), "");
+				return constructCurrency("Meat", "meat", "meat.gif", my_meat(),
+					have_shop() ? "/managestore.php" : "", $item[none], have_shop() ? "Manage your store" : "");
 			case "asdonmartinfuel":
 				return constructCurrency("Asdon Martin fuel", name, "tank.gif", get_fuel(),
 					"campground.php?action=fuelconvertor", $item[none], 'Fuel up your sweet spy car.');
