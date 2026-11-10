@@ -1,3 +1,4 @@
+var url = "/chitapi.ash";
 
 var roofOffset = 4;
 var floorOffset = 4;
@@ -34,7 +35,7 @@ function chitCheckForUpdate() {
 			}
 		}
 	}
-	request.open("POST", "/charpane.php");
+	request.open("POST", url);
 	request.send("API=status");
 }
 
@@ -94,7 +95,7 @@ function chitUpdatePageAndFireTimer() {
 			chitIssueTimer();
 		}
 	}
-	request.open("POST", "/charpane.php");
+	request.open("POST", url);
 	request.send("API=body");
 }
 

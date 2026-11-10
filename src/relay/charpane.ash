@@ -4925,15 +4925,7 @@ void main() {
 	if(fields contains "action" && fields["action"] == "cliexec" && fields contains "cmd") {
 		cli_execute(fields["cmd"]);
 	}
-	if(fields contains "API" && fields["API"] == "status") {
-		APIStatusResponse().to_json().write();
-		return;
-	}
-	if(fields contains "API" && fields["API"] == "body") {
-		visit_url().modifyPage(true).write();
-	} else {
-		visit_url().modifyPage().write();
-	}
+	visit_url().modifyPage().write();
 
 	foreach tag, openCount in tagsOpen {
 		if(openCount > 0) {
