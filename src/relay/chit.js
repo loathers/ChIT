@@ -104,6 +104,7 @@ function chitUpdatePageHTML(body) {
 		return;
 	}
 	// TODO: Save the entries in any forms (maximizer for example)
+	chitDocumentCleanup();
 	document.body.innerHTML = body;
 	chitDocumentReady();
 }
@@ -226,7 +227,7 @@ function chitDocumentReady() {
 			$(this).bind(event, listener);
 		});
 	});
-	
+
 	//Tool Launchers
 	$(".tool_launcher").live("click", function(e) {
 		
@@ -349,7 +350,28 @@ function chitDocumentReady() {
 	$(".chit_walls_stretch").live("click", function(e) {
 		toggle_stretch();
 	});
+}
 
+function chitDocumentCleanup() {
+	$(".chit_launcher").unbind("click contextmenu");
+	$(".chit_picker a.change").die("click");
+	$(".chit_picker a.done").die("click");
+	$(".chit_picker tr.picknone").die("click");
+	$(".chit_picker th").die("click");
+	$(".chit_skeleton").die("click");
+	$(document).die("click");
+	$(".chit_popoverlauncher").each(function(e) {
+		['mouseenter', 'mouseleave', 'focus', 'blur'].forEach((event) => {
+			$(this).unbind(event);
+		});
+	});
+	$(".tool_launcher").die("click");
+	$("div.chit_skeleton table.chit_brick th").die("click");
+	$("div.chit_skeleton table.chit_brick th a").die("click");
+	$("#chit_mcd tbody a").die("click");
+	$("a.visit").die("click");
+	$(window).unbind("resize");
+	$(".chit_walls_stretch").die("click");
 }
 
 $(document).ready(chitDocumentReady);
