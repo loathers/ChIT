@@ -1381,6 +1381,7 @@ string parseMods(string evm, boolean span, boolean debug) {
 
 	//shorten various text
 	evm = replace_string(evm,"HP / MP", "HP/MP");
+	evm = replace_string(evm,"All Attributes", "Stats");
 	evm = replace_string(evm,"Damage Reduction","DR");
 	evm = replace_string(evm,"Damage Absorption","DA");
 	evm = replace_string(evm,"Weapon","Wpn");
