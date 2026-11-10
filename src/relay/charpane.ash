@@ -4052,26 +4052,6 @@ void bakeHeader() {
 	//Remove KoL's javascript familiar picker so that it can use our modified version in chit.js
 	result.replace_string('<script type="text/javascript" src="/images/scripts/familiarfaves.20120307.js"></script>', '');
 
-	// remove restricted familiars for KoL's familiar picker
-	matcher famfavmatch = create_matcher("(var FAMILIARFAVES = .+?\\];)",result);
-	if(famfavmatch.find()) {
-		string replacefamfavs = "var FAMILIARFAVES = [";
-		matcher singlefamfavmatch = create_matcher('\\[".+?","(.+?)","(.+?)",\\d+\\]',famfavmatch.group(1)); // ["Onegai Marie","Angry Jung Man","jungman",165]
-		while(singlefamfavmatch.find()) {
-			familiar fam = to_familiar(replace_string(singlefamfavmatch.group(1),"\\",""));
-			if(is_unrestricted(fam)) {
-				string singlefamfav = singlefamfavmatch.group(0);
-				singlefamfav = singlefamfav.replace_string("[[", "[");
-				// Attend to familiar images also. (This uses mdofied familiar images!)
-				singlefamfav = singlefamfav.replace_string(singlefamfavmatch.group(2), getFamiliarInfo(fam).image);
-				replacefamfavs += singlefamfav + ",";
-			}
-		}
-		replacefamfavs+="];";
-		replacefamfavs .replace_string("= [[[","= [[");
-		result.replace_string(famfavmatch.group(0),replacefamfavs);
-	}
-
 	// Add javascript for remembering autoscroll if desired
 	if(to_boolean(cvars["chit.autoscroll"]))
 		result.replace_string("<body ", autoscrollScript);
