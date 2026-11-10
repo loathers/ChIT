@@ -4841,6 +4841,7 @@ buffer modifyPage(buffer source, boolean bodyOnly) {
 string [string] APIStatusResponse() {
 	string [string] result = {
 		'advs': my_adventures(),
+		'fites': pvp_attacks_left(),
 		'turncount': my_turncount(),
 		'hp': my_hp(),
 		'hpmax': my_maxhp(),
