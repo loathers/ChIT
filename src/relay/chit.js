@@ -9,6 +9,10 @@ var fuidom = window.FloatingUIDOM;
 
 var updateTimer;
 var lastAPIResponse;
+var openThingID;
+var openThingPos;
+
+var DEBUG = false;
 
 // modeled very similarly to TourGuide's autorefresh implementation
 function chitIssueTimer() {
@@ -18,6 +22,7 @@ function chitIssueTimer() {
 	// TODO: Guide has some stuff with the timer decaying/growing in response to some stuff,
 	// I imagine this is unnecessary because of the automating refreshes when manually doing stuff in
 	// game, but I'm not certain. Investigate further.
+	if(DEBUG) console.log("PING");
 	updateTimer = setTimeout(chitCheckForUpdate, 5000);
 }
 
@@ -106,11 +111,41 @@ function chitUpdatePageHTML(body) {
 	}
 	// TODO: Save the entries in any forms (maximizer for example)
 	chitDocumentCleanup();
+	if(DEBUG) console.log("UPDATE");
 	document.body.innerHTML = body;
 	chitDocumentReady();
+	if(openThingID !== undefined) {
+		var thing = $(openThingID);
+		if(thing) {
+			if(openThingID.startsWith("#chit_tool")) {
+				thing.css({
+					'position': 'absolute',
+					'left': '4px',
+					'right': '4px',
+					'bottom': openThingPos + 'px',
+					'max-height': '98%',
+					'overflow-y': 'auto',
+				});
+			} else {
+				thing.css({
+					'position': 'absolute',
+					'top': openThingPos,
+					'max-height': '93%',
+					'overflow-y': 'auto'
+				});
+				activePicker = thing;
+			}
+			thing.show();
+		}
+	}
 }
 
 chitCheckForUpdate();
+
+function clearOpenThing() {
+	openThingID = undefined;
+	openThingPos = undefined;
+}
 
 function chitDocumentReady() {
 
@@ -121,6 +156,8 @@ function chitDocumentReady() {
 		var caller = $(this);
 		var top = caller.offset().top + caller.height() + 2;
 		var picker = $("#" + caller.attr("rel"));
+		openThingID = "#" + caller.attr("rel");
+		openThingPos = top;
 		
 		if (picker) {
 			if (picker.is(':hidden')) {
@@ -140,7 +177,7 @@ function chitDocumentReady() {
         activePicker = picker;
 			} else {
 				picker.hide();
-        activePicker = null;
+				activePicker = null;
 			}
 		}
         return false;
@@ -149,18 +186,23 @@ function chitDocumentReady() {
 		var caller = $(this);
 		var picker = caller.closest(".chit_picker");
 		var subpicker = caller.attr("rel");
+		openPicker = subpicker;
+		clearOpenThing();
 		picker.find("tr.pickloader" + subpicker).show();
 		picker.find("tr.pickitem").hide();
 		picker.find("tr.florist").hide();
 	});
 	$(".chit_picker a.done").live("click", function(e) {
 		$(this).closest(".chit_skeleton").hide();
+		clearOpenThing();
 	});
 	$(".chit_picker tr.picknone").live("click", function(e) {
 		$(this).closest(".chit_skeleton").hide();
+		clearOpenThing();
 	});
 	$(".chit_picker th").live("click", function(e) {
 		$(this).closest(".chit_skeleton").hide();
+		clearOpenThing();
 	});
 	
 	$(".chit_skeleton").live("click", function(e) {
@@ -235,6 +277,8 @@ function chitDocumentReady() {
 		var caller = $(this);
 		var bottom = $("#chit_toolbar").outerHeight() + floorOffset -1;
 		var tool = $("#chit_tool" + caller.attr("rel"));
+		openThingID = "#chit_tool" + caller.attr("rel");
+		openThingPos = bottom;
 		
 		if (tool) {
 			if (tool.is(':hidden')) {
@@ -250,12 +294,14 @@ function chitDocumentReady() {
 				tool.slideDown('fast');
 			} else {
 				tool.slideUp('fast');
+				clearOpenThing();
 			}
 		}
         return false;
 	});
 	$("div.chit_skeleton table.chit_brick th").live("click", function(e) {
 		$(this).closest("div.chit_skeleton").hide();
+		clearOpenThing();
 		e.stopPropagation();
 	});
 	$("div.chit_skeleton table.chit_brick th a").live("click", function(e) {
@@ -274,7 +320,6 @@ function chitDocumentReady() {
 	
 	//Resize window
 	$(window).resize(function() {
-	
 		var pad = 5;
 		var roof = $("#chit_roof");
 		var walls = $("#chit_walls");
@@ -299,12 +344,10 @@ function chitDocumentReady() {
 			}
 		}
 		
-		
 		if (walls && (roofHeight >= availableHeight)) {
 			walls.css("bottom", (floorOffset + floorHeight + pad) + "px");
 			roof.css("overflow-y","auto");
 		}
-		
 		
 		else if (walls && (roofHeight < availableHeight)) {
 			walls.css("bottom", (floorOffset + floorHeight + pad) + "px");
@@ -314,8 +357,6 @@ function chitDocumentReady() {
 				walls.css("top", (roofOffset) + "px");
 			}
 		}
-		
-		
 	});
 	
 	
