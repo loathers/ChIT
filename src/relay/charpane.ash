@@ -4863,7 +4863,9 @@ string [string] APIStatusResponse() {
 		'spleen': my_spleen_use(),
 		'spleenlimit': spleen_limit(),
 		'lastmonster': last_monster().to_int(),
+		'combatround': current_round(),
 		'loggedin': my_hash().length() > 0 && my_id() > 0,
+		'clan': get_clan_name(),
 	};
 
 	int totalEffectTurns = 0;
