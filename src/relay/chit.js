@@ -140,8 +140,6 @@ function chitUpdatePageHTML(body) {
 	}
 }
 
-chitCheckForUpdate();
-
 function clearOpenThing() {
 	openThingID = undefined;
 	openThingPos = undefined;

@@ -391,6 +391,12 @@ Helpers are there merely for convenience; they will NOT try to auto-adventure fo
 
   - Default: true
 
+- chit.autoreload: Automatically reload the charpane's body as your state changes (useful when
+  adventuring automatically with a script or something like that, not very useful otherwise due to
+  kol autoreloading the whole charpane fairly often anyway during manual play).
+
+  - Default: false
+
 - chit.display.popovers: If true, show popovers with a little extra detail instead of using html
   title text for some things. Might switch back to defaulting to false if issues are found.
 

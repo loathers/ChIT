@@ -21,6 +21,7 @@ import "chit_brickStateModifiers.ash";
 // For more information refer to the README.md on Github
 chit_setvar("chit.oopsAllDefaults", false);
 chit_setvar("chit.autoscroll", true);
+chit_setvar("chit.autoreload", false);
 chit_setvar("chit.currencies", "item", "11-leaf clover|rad|hobo nickel|Freddy Kruegerand|Chroner|Beach Buck|Coinspiracy|FunFunds&trade;|Volcoino|Wal-Mart gift certificate|BACON|buffalo dime|Source essence|cop dollar|sprinkles|Spacegate Research|Rubee&trade;|Interesting Coin");
 chit_setvar("chit.currencies.special", "asdonmartinfuel");
 chit_setvar("chit.currencies.showmany", false);
@@ -4055,6 +4056,10 @@ void bakeHeader() {
 	// Add javascript for remembering autoscroll if desired
 	if(to_boolean(cvars["chit.autoscroll"]))
 		result.replace_string("<body ", autoscrollScript);
+
+	string autoreloadScript = '<script type="text/javascript">chitCheckForUpdate()</script><body ';
+	if(to_boolean(cvars["chit.autoreload"]))
+		result.replace_string("<body ", autoreloadScript);
 
 	chitBricks["header"] = result.to_string();
 
