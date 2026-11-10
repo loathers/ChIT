@@ -6,7 +6,110 @@ var activePicker = null;
 
 var fuidom = window.FloatingUIDOM;
 
-$(document).ready(function () {
+var updateTimer;
+var lastAPIResponse;
+
+// modeled very similarly to TourGuide's autorefresh implementation
+function chitIssueTimer() {
+	if(updateTimer !== undefined) {
+		clearTimeout(updateTimer);
+	}
+	// TODO: Guide has some stuff with the timer decaying/growing in response to some stuff,
+	// I imagine this is unnecessary because of the automating refreshes when manually doing stuff in
+	// game, but I'm not certain. Investigate further.
+	updateTimer = setTimeout(chitCheckForUpdate, 5000);
+}
+
+function chitCheckForUpdate() {
+	var request = new XMLHttpRequest();
+	request.onerror = chitIssueTimer;
+	request.onabort = chitIssueTimer;
+	request.ontimeout = chitIssueTimer;
+	request.onreadystatechange = function() {
+		if(request.readyState === 4) {
+			if(request.status === 200) {
+				chitParseAPIResponseAndFireTimer(request.responseText);
+			} else {
+				chitIssueTimer();
+			}
+		}
+	}
+	request.open("POST", "/charpane.php");
+	request.send("API=status");
+}
+
+function chitParseAPIResponseAndFireTimer(response_string) {
+	var response;
+	try {
+		response = JSON.parse(response_string);
+	} catch(exception) {
+		issueTimer();
+		return;
+	}
+
+	if(lastAPIResponse === undefined) {
+		lastAPIResponse = response;
+		chitIssueTimer();
+		return;
+	}
+
+	if(response["loggedin"] === "false" && lastAPIResponse["loggedin"] === "true") {
+		// don't refresh while logged out
+		return;
+	}
+
+	function objectMatch(obj1, obj2) {
+		for(var i in obj1) {
+			if(typeof obj1[i] !== typeof obj2[i]) {
+				return false;
+			} else if(typeof obj1[i] === "object") {
+				if(!objectMatch(obj1[i], obj2[i])) {
+					return false;
+				}
+			} else if(obj1[i] !== obj2[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	if(!objectMatch(response, lastAPIResponse)) {
+		chitUpdatePageAndFireTimer();
+	} else {
+		chitIssueTimer();
+	}
+}
+
+function chitUpdatePageAndFireTimer() {
+	var request = new XMLHttpRequest();
+	request.onerror = chitIssueTimer;
+	request.onabort = chitIssueTimer;
+	request.ontimeout = chitIssueTimer;
+	request.onreadystatechange = function() {
+		if(request.readyState === 4) {
+			if(request.status === 200) {
+				chitUpdatePageHTML(request.responseText);
+			}
+			chitIssueTimer();
+		}
+	}
+	request.open("POST", "/charpane.php");
+	request.send("API=body");
+}
+
+function chitUpdatePageHTML(body) {
+	if(body.length < 11) {
+		return;
+	}
+	// TODO: Save the entries in any forms (maximizer for example)
+	document.body.innerHTML = body;
+	chitDocumentReady();
+}
+
+chitCheckForUpdate();
+
+function chitDocumentReady() {
 
 	//Picker Launchers
 	//use bind for multiple events (KoL uses jQuery 1.3, using multiple events for 'live' was added in jQuery 1.4)
@@ -246,8 +349,11 @@ $(document).ready(function () {
 		toggle_stretch();
 	});
 
-}); 
+}
 
+$(document).ready(chitDocumentReady);
+
+/*
 // Now for KoLmafia's Familiar Picker, with a small change: Familiar change goes through Mafia so that a new familiar item may be automatically equipped
 // Also requires full path information for images, so they can be customized
 var familiarpicklist = (function () {
@@ -345,4 +451,4 @@ $(document).ready(function () {
 		else { $(this).trigger('contextmenu'); return false; }
 	});
 });
-
+*/

@@ -4353,10 +4353,11 @@ void bakeValhalla() {
 
 }
 
-void bakeBricks() {
-
-	bakeHeader();
-	bakeFooter();
+void bakeBricks(boolean bodyOnly) {
+	if(!bodyOnly) {
+		bakeHeader();
+		bakeFooter();
+	}
 
 	// Standardize brick layouts
 	foreach layout in $strings[chit.roof.layout, chit.walls.layout, chit.floor.layout, chit.toolbar.layout, chit.stats.layout, chit.effects.layout]
@@ -4776,7 +4777,7 @@ buffer spelunky(buffer source) {
 	return source;
 }
 
-buffer modifyPage(buffer source) {
+buffer modifyPage(buffer source, boolean bodyOnly) {
 	if(source.length() < 6)
 		return source.append('<center><a href="charpane.php" title="Reload"><img src="' + imagePath + 'refresh.png"></a> &nbsp;Reload after cutscene...</center>');
 	if(cvars["chit.disable"]=="true")
@@ -4838,16 +4839,79 @@ buffer modifyPage(buffer source) {
 	chitTools["maximizer"] = "Use the maximizer|stats.png"; // TODO: icon
 
 	// Bake all the bricks we're gonna need
-	bakeBricks();
+	bakeBricks(bodyOnly);
 
 	//Build the house
 	buffer page;
-	page.append(chitBricks["header"]);
+	if(!bodyOnly)
+		page.append(chitBricks["header"]);
 	page.append(buildHouse());
-	page.append(chitBricks["footer"]);
+	if(!bodyOnly)
+		page.append(chitBricks["footer"]);
 
 	return page;
+}
 
+// modeled very similarly to TourGuide's autorefresh implementation
+string [string] APIStatusResponse() {
+	string [string] result = {
+		'advs': my_adventures(),
+		'turncount': my_turncount(),
+		'hp': my_hp(),
+		'mp': my_mp(),
+		'ml': monster_level_adjustment(),
+		'init': initiative_modifier(),
+		'combatrate': combat_rate_modifier(),
+		'itemdrop': item_drop_modifier(),
+		'meatdrop': meat_drop_modifier(),
+		'familiar': my_familiar().to_int(),
+		'famxp': my_familiar().experience,
+		'meat': my_meat(),
+		'bjorned': my_bjorned_familiar().to_int(),
+		'enthroned': my_enthroned_familiar().to_int(),
+		'pulls': pulls_remaining(),
+		'location': my_location().to_int(),
+		'fullness': my_fullness(),
+		'fullnesslimit': fullness_limit(),
+		'inebriety': my_inebriety(),
+		'inebrietylimit': inebriety_limit(),
+		'spleen': my_spleen_use(),
+		'spleenlimit': spleen_limit(),
+		'lastmonster': last_monster().to_int(),
+		'loggedin': my_hash().length() > 0 && my_id() > 0,
+	};
+
+	int totalEffectTurns = 0;
+	int totalEffectCount = 0;
+	foreach eff, turns in my_effects() {
+		totalEffectTurns += turns;
+		totalEffectCount += 1;
+	}
+	result['effectcount'] = totalEffectCount;
+	result['effectturns'] = totalEffectTurns;
+
+	int [slot] equipped_items;
+	foreach s in $slots[] {
+		item equipped = equipped_item(s);
+		if(equipped != $item[none])
+			equipped_items[s] = equipped.to_int();
+	}
+	result['equipment'] = equipped_items.to_json();
+
+	if(florist_available()) {
+		result['florist'] = get_florist_plants()[my_location()].to_json();
+	}
+
+	int invCount = 0;
+	foreach it, amount in get_inventory()
+		invCount += amount;
+	result['invcount'] = invCount;
+
+	return result;
+}
+
+buffer modifyPage(buffer source) {
+	return modifyPage(source, false);
 }
 
 void main() {
@@ -4861,7 +4925,15 @@ void main() {
 	if(fields contains "action" && fields["action"] == "cliexec" && fields contains "cmd") {
 		cli_execute(fields["cmd"]);
 	}
-	visit_url().modifyPage().write();
+	if(fields contains "API" && fields["API"] == "status") {
+		APIStatusResponse().to_json().write();
+		return;
+	}
+	if(fields contains "API" && fields["API"] == "body") {
+		visit_url().modifyPage(true).write();
+	} else {
+		visit_url().modifyPage().write();
+	}
 
 	foreach tag, openCount in tagsOpen {
 		if(openCount > 0) {
