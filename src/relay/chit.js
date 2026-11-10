@@ -176,6 +176,7 @@ function chitDocumentReady() {
 			} else {
 				picker.hide();
 				activePicker = null;
+				clearOpenThing();
 			}
 		}
         return false;
