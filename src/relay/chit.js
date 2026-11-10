@@ -43,7 +43,7 @@ function chitParseAPIResponseAndFireTimer(response_string) {
 	try {
 		response = JSON.parse(response_string);
 	} catch(exception) {
-		issueTimer();
+		chitIssueTimer();
 		return;
 	}
 
