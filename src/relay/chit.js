@@ -76,6 +76,7 @@ function chitParseAPIResponseAndFireTimer(response_string) {
 	}
 
 	if(!objectMatch(response, lastAPIResponse)) {
+		lastAPIResponse = response;
 		chitUpdatePageAndFireTimer();
 	} else {
 		chitIssueTimer();
