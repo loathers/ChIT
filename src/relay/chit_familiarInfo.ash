@@ -156,7 +156,7 @@ void addFamWeightTracking(chit_info info, familiar f, int target, boolean target
 	info.addToDesc(targetIsWeight ? (famweight + (famweight > 1 ? 'lbs' : 'lb') + ' base') : (f.experience + ' exp'));
 	if(famweight < 20 || !targetIsWeight) {
 		string toAdd;
-		int expRate = numeric_modifier('Familiar Experience') + 1;
+		int expRate = numeric_modifier($modifier[Familiar Experience]);
 		if(expRate != 1) {
 			info.addToDesc(expRate + ' exp/combat');
 		}
